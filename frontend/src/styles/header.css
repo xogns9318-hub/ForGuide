@@ -9,17 +9,18 @@
     width: 100%;
     max-width: var(--page-width);
     margin: 0 auto;
-    padding: 26px var(--page-padding);
+    padding: 20px var(--page-padding);
 
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 24px;
+    gap: 20px;
 }
 
+/* 로고 */
 .site-logo {
     flex-shrink: 0;
-    width: 240px;
+    width: 192px;
 }
 
 .site-logo img {
@@ -40,9 +41,9 @@
 
 .nav-link {
     display: block;
-    padding: 14px 12px;
+    padding: 11px 10px;
     border-radius: 8px;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
     transition: background-color 120ms ease;
 }
@@ -53,7 +54,7 @@
     color: var(--primary);
 }
 
-/* 세부 메뉴는 기본적으로 숨김 */
+/* 세부 메뉴 */
 .nav-dropdown {
     display: flex;
     flex-direction: column;
@@ -63,18 +64,18 @@
     left: 0;
     z-index: 100;
 
-    min-width: 260px;
-    padding: 12px;
+    min-width: 208px;
+    padding: 10px;
     border: 1px solid var(--line);
-    border-radius: 14px;
+    border-radius: 12px;
     background: var(--surface);
     box-shadow: 0 12px 28px rgb(32 59 51 / 12%);
 }
 
 .nav-dropdown-link {
-    padding: 12px 14px;
+    padding: 10px 12px;
     border-radius: 8px;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .nav-dropdown-link:hover,
@@ -89,12 +90,12 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 12px;
     color: var(--muted);
-    font-size: 14px;
+    font-size: 12px;
 }
 
-.header-actions>a:hover {
+.header-actions > a:hover {
     color: var(--primary);
 }
 
@@ -108,69 +109,14 @@
 .header-language {
     display: flex;
     align-items: center;
-    gap: 10px;
-}
-
-.header-language select {
-    min-width: 112px;
-    padding: 10px 12px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: var(--mint-soft);
-    color: var(--ink);
-}
-
-@media (max-width: 1280px) {
-    .site-header-inner {
-        gap: 16px;
-    }
-
-    .site-logo {
-        width: 200px;
-    }
-
-    .nav-link {
-        font-size: 18px;
-    }
-}
-
-/* 헤더 크기와 간격 축소 */
-.site-header-inner {
-    padding: 20px var(--page-padding);
-    gap: 20px;
-}
-
-.site-logo {
-    width: 192px;
-}
-
-.nav-link {
-    padding: 11px 10px;
-    font-size: 16px;
-}
-
-.nav-dropdown {
-    min-width: 208px;
-    padding: 10px;
-    border-radius: 12px;
-}
-
-.nav-dropdown-link {
-    padding: 10px 12px;
-    font-size: 14px;
-}
-
-.header-actions {
-    gap: 12px;
-    font-size: 12px;
-}
-
-.header-language {
     gap: 8px;
 }
 
 .header-language select {
     min-width: 90px;
     padding: 8px 10px;
+    border: 1px solid var(--line);
     border-radius: 10px;
+    background: var(--mint-soft);
+    color: var(--ink);
 }
