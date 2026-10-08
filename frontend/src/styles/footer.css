@@ -1,0 +1,22 @@
+/* 푸터 영역 */
+.site-footer {
+    border-top: 1px solid var(--line);
+    background: var(--background);
+}
+
+/* 본문과 동일한 너비 사용 */
+.site-footer-inner {
+    width: 100%;
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 24px var(--page-padding);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    color: var(--muted);
+    font-size: 14px;
+}

@@ -1,0 +1,176 @@
+/* 헤더 배경 */
+.site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+}
+
+/* 헤더 내부 배치 */
+.site-header-inner {
+    width: 100%;
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 26px var(--page-padding);
+
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.site-logo {
+    flex-shrink: 0;
+    width: 240px;
+}
+
+.site-logo img {
+    width: 100%;
+}
+
+/* 카테고리 배치 */
+.site-navigation {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.nav-item {
+    position: relative;
+}
+
+.nav-link {
+    display: block;
+    padding: 14px 12px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: 700;
+    transition: background-color 120ms ease;
+}
+
+.nav-link:hover,
+.nav-link.is-active {
+    background: var(--mint-soft);
+    color: var(--primary);
+}
+
+/* 세부 메뉴는 기본적으로 숨김 */
+.nav-dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 100;
+
+    min-width: 260px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+    box-shadow: 0 12px 28px rgb(32 59 51 / 12%);
+}
+
+.nav-dropdown-link {
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.nav-dropdown-link:hover,
+.nav-dropdown-link[aria-current="page"] {
+    background: var(--mint-soft);
+    color: var(--primary);
+}
+
+/* 회원 메뉴와 언어 선택 */
+.header-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.header-actions>a:hover {
+    color: var(--primary);
+}
+
+.header-logout {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+}
+
+.header-language {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-language select {
+    min-width: 112px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--mint-soft);
+    color: var(--ink);
+}
+
+@media (max-width: 1280px) {
+    .site-header-inner {
+        gap: 16px;
+    }
+
+    .site-logo {
+        width: 200px;
+    }
+
+    .nav-link {
+        font-size: 18px;
+    }
+}
+
+/* 헤더 크기와 간격 축소 */
+.site-header-inner {
+    padding: 20px var(--page-padding);
+    gap: 20px;
+}
+
+.site-logo {
+    width: 192px;
+}
+
+.nav-link {
+    padding: 11px 10px;
+    font-size: 16px;
+}
+
+.nav-dropdown {
+    min-width: 208px;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.nav-dropdown-link {
+    padding: 10px 12px;
+    font-size: 14px;
+}
+
+.header-actions {
+    gap: 12px;
+    font-size: 12px;
+}
+
+.header-language {
+    gap: 8px;
+}
+
+.header-language select {
+    min-width: 90px;
+    padding: 8px 10px;
+    border-radius: 10px;
+}
