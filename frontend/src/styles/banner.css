@@ -1,0 +1,97 @@
+/* 공통 배너 */
+.page-banner {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    padding: 36px 40px;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+
+    background:
+        radial-gradient(
+            ellipse at 90% 10%,
+            var(--pending),
+            transparent 48%
+        ),
+        linear-gradient(
+            115deg,
+            var(--mint),
+            var(--mint-soft) 52%,
+            var(--mint)
+        );
+}
+
+/* 배너 사선 장식 */
+.page-banner::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+
+    width: 300px;
+    height: 300px;
+    top: -130px;
+    right: -50px;
+    border-radius: 50%;
+
+    background: repeating-linear-gradient(
+        135deg,
+        transparent 0 18px,
+        rgb(255 255 255 / 55%) 18px 20px
+    );
+}
+
+/* 배너 원형 장식 */
+.page-banner::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+
+    width: 190px;
+    height: 190px;
+    bottom: -120px;
+    right: 90px;
+
+    border: 28px solid var(--brand);
+    border-radius: 50%;
+    opacity: 0.18;
+}
+
+/* 배너 상단 문구 */
+.page-banner-eyebrow {
+    margin-bottom: 14px;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* 배너 제목 */
+.page-banner h1 {
+    max-width: 760px;
+    font-size: 32px;
+    line-height: 1.35;
+    letter-spacing: -1px;
+    word-break: keep-all;
+}
+
+/* 배너 설명 */
+.page-banner-description {
+    max-width: 680px;
+    margin-top: 18px;
+    color: var(--muted);
+    word-break: keep-all;
+}
+
+/* 작은 화면의 배너 */
+@media (max-width: 768px) {
+    .page-banner {
+        padding: 28px 24px;
+    }
+
+    .page-banner h1 {
+        font-size: 28px;
+    }
+}
