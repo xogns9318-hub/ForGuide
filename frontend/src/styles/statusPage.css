@@ -1,0 +1,132 @@
+/* 헤더와 푸터가 없는 전체 화면 */
+.status-page {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: var(--page-padding);
+    background: var(--background);
+}
+
+/* 상태 아이콘과 문구의 중앙 배치 */
+.status-page-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    width: 100%;
+    max-width: var(--page-width);
+    text-align: center;
+}
+
+/* 공통 아이콘 크기 */
+.status-page-icon {
+    width: 88px;
+    height: 88px;
+    color: var(--primary);
+}
+
+/* SVG 아이콘 크기 */
+.status-page-icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* 실패와 잘못된 접근 표시 */
+.status-page-icon.is-error {
+    color: var(--error);
+}
+
+/* 모래시계 회전 */
+.status-page-icon.is-loading svg {
+    transform-origin: center;
+    animation: status-hourglass-turn 1.6s linear infinite;
+}
+
+/* 중앙 안내 문구 */
+.status-page-message {
+    font-size: 24px;
+    line-height: 1.6;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+}
+
+/* 상태 화면의 버튼 배치 */
+.status-page-actions {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+/* 입력 검증과 예시 표시 영역 */
+.status-page-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 480px;
+    text-align: left;
+}
+
+/* 입력 항목 아래 오류 안내 */
+.status-field-error {
+    color: var(--error);
+    font-size: 14px;
+}
+
+/* 예시 데이터와 예시값 배지 */
+.status-example-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--control-radius);
+    background: var(--pending);
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* 마스킹 예시 목록 */
+.status-example-info {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+}
+
+/* 항목 제목과 마스킹 값 배치 */
+.status-example-info > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+}
+
+/* 마스킹 항목 제목 */
+.status-example-info dt {
+    color: var(--muted);
+}
+
+/* 마스킹 값의 기본 여백 제거 */
+.status-example-info dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+/* 모래시계 한 바퀴 회전 */
+@keyframes status-hourglass-turn {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 움직임 최소화 설정에서는 회전 정지 */
+@media (prefers-reduced-motion: reduce) {
+    .status-page-icon.is-loading svg {
+        animation: none;
+    }
+}

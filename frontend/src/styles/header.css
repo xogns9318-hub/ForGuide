@@ -6,28 +6,29 @@
 
 /* 헤더 내부 배치 */
 .site-header-inner {
-    width: 100%;
-    max-width: var(--page-width);
-    margin: 0 auto;
-    padding: 20px var(--page-padding);
-
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 20px;
+
+    width: 100%;
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 20px var(--page-padding);
 }
 
-/* 로고 */
+/* 로고 영역 */
 .site-logo {
     flex-shrink: 0;
     width: 192px;
 }
 
+/* 로고 이미지 */
 .site-logo img {
     width: 100%;
 }
 
-/* 카테고리 배치 */
+/* 주 기능 메뉴 배치 */
 .site-navigation {
     display: flex;
     align-items: center;
@@ -35,10 +36,12 @@
     gap: 4px;
 }
 
+/* 세부 메뉴의 위치 기준 */
 .nav-item {
     position: relative;
 }
 
+/* 주 기능 링크 */
 .nav-link {
     display: block;
     padding: 11px 10px;
@@ -48,21 +51,23 @@
     transition: background-color 120ms ease;
 }
 
+/* 선택한 메뉴 강조 */
 .nav-link:hover,
 .nav-link.is-active {
     background: var(--mint-soft);
     color: var(--primary);
 }
 
-/* 세부 메뉴 */
+/* 펼쳐지는 세부 메뉴 */
 .nav-dropdown {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
     position: absolute;
     top: 100%;
     left: 0;
     z-index: 100;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 
     min-width: 208px;
     padding: 10px;
@@ -72,33 +77,37 @@
     box-shadow: 0 12px 28px rgb(32 59 51 / 12%);
 }
 
+/* 세부 기능 링크 */
 .nav-dropdown-link {
     padding: 10px 12px;
     border-radius: 8px;
     font-size: 14px;
 }
 
+/* 선택한 세부 기능 강조 */
 .nav-dropdown-link:hover,
 .nav-dropdown-link[aria-current="page"] {
     background: var(--mint-soft);
     color: var(--primary);
 }
 
-/* 회원 메뉴와 언어 선택 */
+/* 회원 메뉴와 언어 선택 배치 */
 .header-actions {
-    margin-left: auto;
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 12px;
+    margin-left: auto;
     color: var(--muted);
     font-size: 12px;
 }
 
+/* 회원 링크 강조 */
 .header-actions > a:hover {
     color: var(--primary);
 }
 
+/* 로그아웃 버튼 */
 .header-logout {
     padding: 0;
     border: 0;
@@ -106,17 +115,19 @@
     color: inherit;
 }
 
+/* 언어 제목과 선택창 배치 */
 .header-language {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
+/* 언어 선택창 */
 .header-language select {
     min-width: 90px;
     padding: 8px 10px;
     border: 1px solid var(--line);
-    border-radius: 10px;
+    border-radius: var(--control-radius);
     background: var(--mint-soft);
     color: var(--ink);
 }

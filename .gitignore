@@ -37,3 +37,6 @@ out/
 .vscode/
 
 node_modules/
+
+# 프론트엔드 배포 결과물 제외
+/frontend/dist/
