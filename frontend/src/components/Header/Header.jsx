@@ -1,22 +1,18 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { categories, languages } from "../../routes/routeConfig";
+import { categories } from "../../routes/routeConfig";
+import { useTranslation } from "react-i18next";
+import LanguageSelector from "../LanguageSelector/LanguageSelector";
 import "../../styles/header.css";
 
-// 로고와 메뉴 표시
 export default function Header({
-    isLoggedIn = false,
-    language = "ko",
-    onLanguageChange,
-    onLogout,
-}) {
-    // 현재 페이지 주소
+                                   isLoggedIn = false,
+                                   onLogout,
+                               }) {
     const { pathname } = useLocation();
-
-    // 열려 있는 메뉴
+    const { t } = useTranslation();
     const [openMenu, setOpenMenu] = useState(null);
 
-    // 현재 메뉴의 강조 여부
     const isCategoryActive = (category) => {
         return (
             pathname === category.path ||
@@ -27,24 +23,20 @@ export default function Header({
     return (
         <header className="site-header">
             <div className="site-header-inner">
-                {/* 로고를 누르면 홈으로 이동 */}
                 <Link to="/" className="site-logo" aria-label="ForGuide 홈">
                     <img src="/ForGuide_Logo.png" alt="ForGuide" />
                 </Link>
 
-                {/* 주 기능 메뉴 */}
                 <nav
                     className="site-navigation"
                     aria-label="주요 서비스"
                     onMouseLeave={() => setOpenMenu(null)}
                     onBlur={(event) => {
-                        // 메뉴 밖으로 이동하면 닫기
                         if (!event.currentTarget.contains(event.relatedTarget)) {
                             setOpenMenu(null);
                         }
                     }}
                     onKeyDown={(event) => {
-                        // Esc 키로 메뉴 닫기
                         if (event.key === "Escape") {
                             setOpenMenu(null);
                         }
@@ -56,7 +48,6 @@ export default function Header({
                             key={category.id}
                             onMouseEnter={() => setOpenMenu(category.id)}
                         >
-                            {/* 주 기능 페이지로 이동 */}
                             <Link
                                 to={category.path}
                                 className={`nav-link ${
@@ -68,10 +59,11 @@ export default function Header({
                                 onFocus={() => setOpenMenu(category.id)}
                                 onClick={() => setOpenMenu(null)}
                             >
-                                {category.label}
+                                {t(`navigation.${category.id}`, {
+                                    defaultValue: category.label,
+                                })}
                             </Link>
 
-                            {/* 선택한 메뉴의 세부 기능 */}
                             {category.children.length > 0 &&
                                 openMenu === category.id && (
                                     <div className="nav-dropdown">
@@ -97,48 +89,26 @@ export default function Header({
                 </nav>
 
                 <div className="header-actions">
-                    {/* 로그인 여부에 따른 회원 메뉴 */}
                     {isLoggedIn ? (
                         <>
-                            <Link to="/mypage">마이페이지</Link>
-                            <Link to="/my-finance">내 금융 정보</Link>
+                            <Link to="/mypage">{t("header.myPage")}</Link>
+                            <Link to="/my-finance">{t("header.myFinance")}</Link>
                             <button
                                 type="button"
                                 className="header-logout"
                                 onClick={onLogout}
                             >
-                                로그아웃
+                                {t("header.logout")}
                             </button>
                         </>
                     ) : (
                         <>
-                            <Link to="/login">로그인</Link>
-                            <Link to="/signup">회원가입</Link>
+                            <Link to="/login">{t("header.login")}</Link>
+                            <Link to="/signup">{t("header.signup")}</Link>
                         </>
                     )}
 
-                    {/* 언어 선택 */}
-                    <label className="header-language">
-                        <span>Language</span>
-                        <select
-                            value={language}
-                            onChange={(event) => {
-                                // 선택한 언어 전달
-                                onLanguageChange?.(event.target.value);
-
-                                // 마우스 선택 후 테두리 해제
-                                if (event.currentTarget.matches(":hover")) {
-                                    event.currentTarget.blur();
-                                }
-                            }}
-                        >
-                            {languages.map((item) => (
-                                <option key={item.value} value={item.value}>
-                                    {item.label}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
+                    <LanguageSelector />
                 </div>
             </div>
         </header>

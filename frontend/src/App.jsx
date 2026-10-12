@@ -1,19 +1,17 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import AppRoutes from "./routes/AppRoutes.jsx";
 
 // 공통 상태를 관리하고 페이지 경로 연결
 export default function App() {
-    // 선택한 언어
-    const [language, setLanguage] = useState("ko");
-
-    // 로그인 여부
+    const { i18n } = useTranslation();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     return (
         <AppRoutes
-            language={language}
+            language={i18n.resolvedLanguage || i18n.language}
             isLoggedIn={isLoggedIn}
-            onLanguageChange={setLanguage}
+            onLanguageChange={(language) => i18n.changeLanguage(language)}
             onLogout={() => setIsLoggedIn(false)}
         />
     );
