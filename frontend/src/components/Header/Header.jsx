@@ -1,16 +1,17 @@
 import { Link, useLocation } from "react-router-dom";
-import { categories, languages } from "../../routes/routeConfig";
+import { categories } from "../../routes/routeConfig";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import LanguageSelector from "../LanguageSelector/LanguageSelector";
 import "../../styles/header.css";
 
 
 export default function Header({
     isLoggedIn = false,
-    language = "ko",
-    onLanguageChange,
     onLogout,
 }) {
     const { pathname } = useLocation();
+    const { t } = useTranslation();
 
     // 한 번에 하나의 세부 메뉴만 표시
     const [openMenu, setOpenMenu] = useState(null);
@@ -59,7 +60,9 @@ export default function Header({
                                 onFocus={() => setOpenMenu(category.id)}
                                 onClick={() => setOpenMenu(null)}
                             >
-                                {category.label}
+                                {t(`navigation.${category.id}`, {
+                                    defaultValue: category.label,
+                                })}
                             </Link>
 
                             {category.children.length > 0 && openMenu === category.id && (
@@ -85,8 +88,8 @@ export default function Header({
                     {/* 로그인 상태에 따라 메뉴 변경 */}
                     {isLoggedIn ? (
                         <>
-                            <Link to="/mypage">마이페이지</Link>
-                            <Link to="/my-finance">내 금융 정보</Link>
+                            <Link to="/mypage">{t("header.myPage")}</Link>
+                            <Link to="/my-finance">{t("header.myFinance")}</Link>
                             <button
                                 type="button"
                                 className="header-logout"
@@ -97,31 +100,12 @@ export default function Header({
                         </>
                     ) : (
                         <>
-                            <Link to="/login">로그인</Link>
-                            <Link to="/signup">회원가입</Link>
+                            <Link to="/login">{t("header.login")}</Link>
+                            <Link to="/signup">{t("header.signup")}</Link>
                         </>
                     )}
 
-                    <label className="header-language">
-                        <span>Language</span>
-                        <select
-                            value={language}
-                            onChange={(event) => {
-                                onLanguageChange?.(event.target.value);
-
-                                // 마우스로 선택한 뒤 포커스 해제
-                                if (event.currentTarget.matches(":hover")) {
-                                    event.currentTarget.blur();
-                                }
-                            }}
-                        >
-                            {languages.map((item) => (
-                                <option key={item.value} value={item.value}>
-                                    {item.label}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
+                   <LanguageSelector />
                 </div>
             </div>
         </header>
