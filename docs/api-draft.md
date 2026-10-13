@@ -102,7 +102,7 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 
 ## 회원 (`src/auth/api/memberApi.js`)
 
-로그인 필요(access token). 성공하면 스토어의 회원 정보도 갱신한다.
+로그인 필요(access token). 성공하면 스토어의 회원 정보도 갱신한다. 백엔드: `auth/controller/MemberController`, `auth/service/MemberService`, `auth/image/`. 회원 번호는 토큰에서만 꺼낸다.
 
 | 함수 | 실제 API | 요청 | 응답 `data` | 실패 코드 |
 | --- | --- | --- | --- | --- |
@@ -117,5 +117,7 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | --- | --- |
 | 형식 | JPG·PNG. 확장자·MIME뿐 아니라 파일 시작 바이트(시그니처)까지 확인하고, 선택한 형식과 실제 내용이 같아야 한다 |
 | 용량 | 1바이트 이상, 4MB 이하 |
-| 저장 | 서버 폴더에 저장하고 접근 주소를 `profileImageUrl`로 돌려준다 (mock은 브라우저 임시 주소, 새로고침하면 사라짐) |
+| 저장 | 서버 폴더(`forguide.profile-image.dir`, 기본 `uploads/profile-images`, 환경변수 `PROFILE_IMAGE_DIR`)에 무작위 이름으로 저장. 새 이미지를 올리면 이전 파일은 지운다 (mock은 브라우저 임시 주소) |
+| 주소 | `/api/v1/profile-images/{파일이름}`. **조회(GET)만 로그인 없이 공개** |
+| 서버 추가 검사 | 실제로 이미지로 열리는지, 가로·세로 4096px 이하인지 (압축 폭탄 방지) |
 | 업로드 준비 | 전송 전 `prepareProfileImage(file)`를 거친다. 지금은 그대로 보내고, 나중에 JPG 자동 변환을 이 함수 안에 추가한다 |

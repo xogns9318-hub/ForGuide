@@ -1,11 +1,13 @@
 package com.example.forguide.auth.security;
 
+import com.example.forguide.auth.image.ProfileImageStorage;
 import com.example.forguide.auth.jwt.JwtProperties;
 import com.example.forguide.auth.jwt.JwtProvider;
 import jakarta.servlet.DispatcherType;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -52,6 +54,8 @@ public class SecurityConfig {
                         // ── 공개 주소 ──
                         // 인증: 회원가입·아이디 중복 확인·로그인·재발급·로그아웃
                         .requestMatchers("/api/v1/auth/**").permitAll()
+                        // 프로필 이미지 조회 (다른 사람의 프로필 이미지도 볼 수 있어야 하므로 조회만 공개)
+                        .requestMatchers(HttpMethod.GET, ProfileImageStorage.URL_PREFIX + "**").permitAll()
 
                         // ── 그 밖의 모든 주소는 로그인 필요 ──
                         .anyRequest().authenticated())
