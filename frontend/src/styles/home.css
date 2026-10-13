@@ -26,11 +26,7 @@
     padding: 32px;
     border: 1px solid var(--line);
     border-radius: var(--panel-radius);
-    background: linear-gradient(
-        180deg,
-        var(--mint-soft),
-        var(--card-end)
-    );
+    background: #e8f4ef;
 }
 
 /* 아이콘 배경 */
