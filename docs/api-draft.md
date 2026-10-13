@@ -72,8 +72,10 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 
 ## 인증 (`src/auth/api/authApi.js`)
 
-현재 mock(300~800ms 지연, `// MOCK:` 주석). mock 여부는 `src/auth/api/mockConfig.js`의 `USE_MOCK` 하나로 auth의 api 파일이 함께 바꾼다. 함수 시그니처는 유지한다.
-mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아이디 `demouser`, 이메일 `demo@example.com`.
+현재 **실제 API 사용**(`USE_MOCK = false`). mock 코드(300~800ms 지연, `// MOCK:` 주석)는 백엔드 없이 화면만 볼 때를 위해 남겨 두었다. mock 여부는 `src/auth/api/mockConfig.js`의 `USE_MOCK` 하나로 auth의 api 파일이 함께 바꾼다. 함수 시그니처는 유지한다.
+mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아이디 `demouser`, 이메일 `demo@example.com` (공용 DB에도 같은 데모 계정이 있다).
+
+개발 실행: 프론트 `npm --prefix frontend run dev`(5173)가 `/api` 요청을 백엔드(8080)로 전달한다(`vite.config.js` 프록시). 백엔드는 환경변수 `JWT_SECRET`이 있어야 켜진다.
 
 | 함수 | 실제 API | 요청 | 응답 `data` | 실패 코드 |
 | --- | --- | --- | --- | --- |
