@@ -1,5 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuthStore } from "../../store/useAuthStore.js";
+import { useAuthStore } from "../store/useAuthStore.js";
 
 // 로그인한 사람만 들어가는 화면을 감싸는 레이아웃 라우트
 // 사용: <Route element={<RequireAuth />}> 안에 회원 전용 화면을 넣는다

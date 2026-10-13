@@ -40,3 +40,41 @@
     color: var(--primary);
     font-size: 14px;
 }
+
+/* 프로필 이미지와 파일 선택을 한 줄로 배치 */
+.mypage-image-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.mypage-image-row .form-field {
+    flex: 1;
+    min-width: 240px;
+}
+
+/* 파일 선택 입력은 공통 입력창 높이를 쓰지 않는다 (브라우저 기본 버튼 모양 유지) */
+.mypage-image-row input[type="file"] {
+    height: auto;
+    padding: 10px 14px;
+}
+
+/* 원형 프로필 이미지 (크기는 컴포넌트의 size로 정한다) */
+.profile-avatar {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--surface);
+}
+
+/* 이미지가 없을 때 이름 첫 글자 */
+.profile-avatar-initial {
+    background: var(--mint);
+    color: var(--primary);
+    font-weight: 700;
+}

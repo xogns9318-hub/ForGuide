@@ -3,18 +3,11 @@ import { ApiError } from "./apiError.js";
 import { USE_MOCK, mockDelay } from "./mockConfig.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { validateProfileImage } from "../utils/profileImage.js";
-import { validateNickname } from "../utils/validation.js";
+import { validateNickname } from "../utils/authValidation.js";
 
 // ── 공개 함수 (화면은 이 함수들만 쓴다) ──
 // 응답 member: { memberId, loginId, name, email, nickname, profileImageUrl } (비밀번호 없음)
-// 변경에 성공하면 스토어의 회원 정보도 함께 갱신한다 (헤더·커뮤니티 등에 바로 반영)
-
-// 내 정보 조회
-export async function getMe() {
-    const member = USE_MOCK ? await mockGetMe() : await client.get("/members/me");
-    useAuthStore.getState().setMember(member);
-    return member;
-}
+// 변경에 성공하면 스토어의 회원 정보도 함께 갱신한다 (다시 불러오지 않아도 화면에 바로 반영)
 
 // 프로필 이미지 변경
 // file: prepareProfileImage()를 거친 파일. 서버로는 multipart/form-data의 "image" 항목으로 보낸다
@@ -51,11 +44,6 @@ function mockCurrentMember() {
         throw new ApiError("AUTH_REQUIRED", "로그인이 필요합니다.", { status: 401 });
     }
     return member;
-}
-
-async function mockGetMe() {
-    await mockDelay();
-    return { ...mockCurrentMember() };
 }
 
 // MOCK: 이전에 만든 미리보기 주소 (새 이미지로 바꿀 때 메모리에서 해제)

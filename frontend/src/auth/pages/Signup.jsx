@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Banner from "../Banner/Banner.jsx";
-import ExampleBadge from "../ExampleBadge/ExampleBadge.jsx";
-import FieldError from "../FieldError/FieldError.jsx";
-import { checkLoginId, signup } from "../../api/authApi.js";
-import { ApiError } from "../../api/apiError.js";
+import Banner from "../../components/Banner/Banner.jsx";
+import ExampleBadge from "../../components/ExampleBadge/ExampleBadge.jsx";
+import FieldError from "../../components/FieldError/FieldError.jsx";
+import { checkLoginId, signup } from "../api/authApi.js";
+import { ApiError } from "../api/apiError.js";
 import {
     validateLoginId,
     validatePassword,
     validateName,
     validateEmail,
-} from "../../utils/validation.js";
-import "../../styles/auth.css";
+} from "../utils/authValidation.js";
+import "../auth.css";
 
 // 입력 항목 순서 (오류가 있으면 이 순서대로 첫 항목에 포커스)
 const fieldOrder = ["loginId", "password", "name", "email"];

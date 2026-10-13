@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import "../../styles/profileAvatar.css";
+import "../auth.css";
 
-// 회원 프로필 이미지 (마이페이지·커뮤니티 작성자 등 공통)
+// 회원 프로필 이미지 (원형)
 // imageUrl이 없거나 불러오기에 실패하면 이름 첫 글자로 대신 표시한다
 // size: 화면에 보이는 지름(px)
 export default function ProfileAvatar({ imageUrl, name = "", size = 48 }) {

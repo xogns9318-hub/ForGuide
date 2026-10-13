@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Banner from "../Banner/Banner.jsx";
-import ExampleBadge from "../ExampleBadge/ExampleBadge.jsx";
-import FieldError from "../FieldError/FieldError.jsx";
-import { updateNickname } from "../../api/memberApi.js";
-import { ApiError } from "../../api/apiError.js";
-import { useAuthStore } from "../../store/useAuthStore.js";
-import { validateNickname } from "../../utils/validation.js";
-// 제목+배지 배치(auth-panel-head)는 회원 화면 공용 스타일을 쓴다
-import "../../styles/auth.css";
+import Banner from "../../components/Banner/Banner.jsx";
+import ExampleBadge from "../../components/ExampleBadge/ExampleBadge.jsx";
+import FieldError from "../../components/FieldError/FieldError.jsx";
+import { updateNickname } from "../api/memberApi.js";
+import { ApiError } from "../api/apiError.js";
+import { useAuthStore } from "../store/useAuthStore.js";
+import { validateNickname } from "../utils/authValidation.js";
+import "../auth.css";
 
 // 프로필 수정 (Figma: 프로필 수정 · 기본 정보, /mypage/edit) — 지금은 닉네임만 수정
 // RequireAuth 안에서만 열리므로 로그인한 회원 정보가 있다
@@ -46,7 +45,7 @@ export default function ProfileEdit() {
         setError("");
 
         try {
-            // 성공하면 memberApi가 스토어의 회원 정보를 갱신한다 (마이페이지·커뮤니티에 바로 반영)
+            // 성공하면 memberApi가 스토어의 회원 정보를 갱신한다 (마이페이지에 바로 반영)
             await updateNickname(nickname);
             if (!mounted.current) return;
 
@@ -68,7 +67,7 @@ export default function ProfileEdit() {
 
     return (
         <div className="page-stack">
-            <Banner title="프로필 수정" description="커뮤니티에 보일 닉네임을 정하세요." />
+            <Banner title="프로필 수정" description="사용할 닉네임을 정하세요." />
 
             <form className="panel" onSubmit={handleSubmit} noValidate aria-labelledby="profile-edit-title">
                 <div className="auth-panel-head panel-title">

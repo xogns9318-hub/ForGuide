@@ -1,21 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import Banner from "../Banner/Banner.jsx";
-import ExampleBadge from "../ExampleBadge/ExampleBadge.jsx";
-import FieldError from "../FieldError/FieldError.jsx";
-import ProfileAvatar from "../ProfileAvatar/ProfileAvatar.jsx";
-import { updateProfileImage } from "../../api/memberApi.js";
-import { ApiError } from "../../api/apiError.js";
-import { useAuthStore } from "../../store/useAuthStore.js";
+import Banner from "../../components/Banner/Banner.jsx";
+import ExampleBadge from "../../components/ExampleBadge/ExampleBadge.jsx";
+import FieldError from "../../components/FieldError/FieldError.jsx";
+import ProfileAvatar from "../components/ProfileAvatar.jsx";
+import { updateProfileImage } from "../api/memberApi.js";
+import { ApiError } from "../api/apiError.js";
+import { useAuthStore } from "../store/useAuthStore.js";
 import {
     PROFILE_IMAGE_ACCEPT,
     PROFILE_IMAGE_HELP,
     prepareProfileImage,
     validateProfileImage,
-} from "../../utils/profileImage.js";
-// 제목+배지 배치(auth-panel-head)와 성공 안내(auth-field-ok)는 회원 화면 공용 스타일을 쓴다
-import "../../styles/auth.css";
-import "../../styles/myPage.css";
+} from "../utils/profileImage.js";
+import "../auth.css";
 
 // 마이페이지 (Figma: /mypage) — 지금은 프로필 이미지 설정만 제공
 // RequireAuth 안에서만 열리므로 로그인한 회원 정보가 있다

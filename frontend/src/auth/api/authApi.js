@@ -8,7 +8,7 @@ import {
     validatePassword,
     validateName,
     validateEmail,
-} from "../utils/validation.js";
+} from "../utils/authValidation.js";
 
 // ── 공개 함수 (화면은 이 함수들만 쓴다) ──
 

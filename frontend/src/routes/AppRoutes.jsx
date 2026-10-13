@@ -5,21 +5,8 @@ import Banner from "../components/Banner/Banner.jsx";
 import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import StatusPage from "../components/StatusPage/StatusPage.jsx";
-import Signup from "../components/Signup/Signup.jsx";
-import Login from "../components/Login/Login.jsx";
-import RequireAuth from "../components/RequireAuth/RequireAuth.jsx";
-import MyPage from "../components/MyPage/MyPage.jsx";
-import ProfileEdit from "../components/ProfileEdit/ProfileEdit.jsx";
+import { authPaths, authRoutes } from "../auth/authRoutes.jsx";
 import "../styles/home.css";
-
-// 로그인 없이 들어갈 수 있는 회원 화면 (나머지 회원 화면은 로그인 필요)
-const publicAccountPaths = ["/signup", "/login"];
-
-// 화면이 완성된 회원 전용 페이지 (여기에 없는 주소는 배너만 있는 임시 화면)
-const memberPages = {
-    "/mypage": MyPage,
-    "/mypage/edit": ProfileEdit,
-};
 
 // 배너와 세부 기능을 연결할 서비스 주소 목록
 const serviceRoutes = categories.flatMap((category) => [
@@ -173,28 +160,19 @@ export default function AppRoutes({
                     />
                 ))}
 
-                {/* 회원가입·로그인 화면 */}
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/login" element={<Login />} />
+                {/* 회원가입·로그인·마이페이지 (auth) */}
+                {authRoutes()}
 
-                {/* 회원 전용 화면: 로그인하지 않으면 /login?next=원래주소 로 이동 */}
-                <Route element={<RequireAuth />}>
-                    {/* 마이페이지·프로필 수정·내 금융 정보 (완성된 화면이 없으면 임시 화면) */}
-                    {accountRoutes
-                        .filter((route) => !publicAccountPaths.includes(route.path))
-                        .map((route) => {
-                            const Page = memberPages[route.path];
-                            return (
-                                <Route
-                                    key={route.path}
-                                    path={route.path}
-                                    element={
-                                        Page ? <Page /> : <PlaceholderPage title={route.label} />
-                                    }
-                                />
-                            );
-                        })}
-                </Route>
+                {/* 회원 페이지 (auth가 화면을 제공하지 않는 주소) */}
+                {accountRoutes.filter((route) => !authPaths.includes(route.path)).map((route) => (
+                    <Route
+                        key={route.path}
+                        path={route.path}
+                        element={
+                            <PlaceholderPage title={route.label} />
+                        }
+                    />
+                ))}
             </Route>
 
             {/* 로딩 화면 */}
