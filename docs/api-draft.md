@@ -84,6 +84,9 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | `logout()` | `POST /auth/logout` | 없음 (refresh token 쿠키) | 없음 | 실패해도 화면의 로그인 상태는 지운다 |
 
 - `member`: `{ memberId, loginId, name, email, nickname, profileImageUrl }`. 비밀번호는 어떤 응답에도 넣지 않는다.
+- 백엔드 구현: `auth/controller/AuthController`, `auth/service/AuthService`, `auth/mapper/`(SQL `resources/mapper/auth/`). 회원가입 성공은 201.
+- refresh token: 무작위 32바이트(쿠키 `refreshToken`, HttpOnly·SameSite=Strict·Path=/api/v1/auth·Max-Age 14일). DB `refresh_tokens.token`에는 SHA-256 해시만 저장. 재발급 시 교체하고, 같은 토큰은 한 번만 쓸 수 있다.
+- 로그인: 없는 아이디도 비밀번호 비교 시간을 똑같이 써서 응답 시간으로 가입 여부를 알 수 없게 한다.
 - 앱 시작 시 `App.jsx`가 `restoreSession()`을 한 번 부르고, 끝나면 성공·실패와 무관하게 `initialized`를 표시한다.
 - `login` 성공 시 스토어에 저장한다. 실패 메시지는 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는다.
 - 이메일은 소문자로 바꿔 비교·저장한다.
