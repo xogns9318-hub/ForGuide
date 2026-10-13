@@ -5,15 +5,21 @@ import Banner from "../components/Banner/Banner.jsx";
 import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import StatusPage from "../components/StatusPage/StatusPage.jsx";
+import Community from "../components/Community/Community.jsx";
+import  { useTranslation } from "react-i18next";
 
 // 배너를 연결할 서비스 주소 목록
 const serviceRoutes = categories.flatMap((category) => [
     {
+        categoryId: category.id,
         label: category.label,
         path: category.path,
         description: category.description,
     },
-    ...category.children,
+    ...category.children.map((child) => ({
+        ...child,
+        categoryId: category.id,
+    })),
 ]);
 
 // 일반 페이지의 공통 레이아웃
@@ -45,10 +51,35 @@ function DefaultLayout({
 }
 
 // 아직 본문이 없는 페이지의 배너
-function PlaceholderPage({ title, description }) {
+function PlaceholderPage({ title, description, categoryId, serviceId, }) {
+    const { t } = useTranslation();
+
+    const translatedTitle = serviceId
+        ? t(`home.features.${categoryId}.${serviceId}`, {
+            defaultValue: title,
+        })
+        : categoryId
+            ? t(`navigation.${categoryId}`, {
+                defaultValue: title,
+            })
+            : title;
+
+    const translatedDescription = serviceId
+        ? t(`service.${serviceId}.description`, {
+            defaultValue: description,
+        })
+        : categoryId
+            ? t(`home.categories.${categoryId}.description`, {
+                defaultValue: description,
+            })
+            : description;
+
     return (
         <div className="page-stack">
-            <Banner title={title} description={description} />
+            <Banner
+                title={translatedTitle}
+                description={translatedDescription}
+            />
         </div>
     );
 }
@@ -76,8 +107,13 @@ export default function AppRoutes({
                 {/* 홈 화면 */}
                 <Route path="/" element={<Home />} />
 
-                {/* 서비스 페이지 */}
-                {serviceRoutes.map((route) => (
+                {/* 커뮤니티 목록 화면 */}
+                <Route path="/service/community" element={<Community />} />
+
+                {/* 아직 본문이 없는 서비스 페이지 */}
+                {serviceRoutes
+                    .filter((route) => route.path !== "/service/community")
+                    .map((route) => (
                     <Route
                         key={route.path}
                         path={route.path}
@@ -85,10 +121,12 @@ export default function AppRoutes({
                             <PlaceholderPage
                                 title={route.label}
                                 description={route.description}
+                                categoryId={route.categoryId}
+                                serviceId={route.id}
                             />
                         }
                     />
-                ))}
+                    ))}
 
                 {/* 회원 페이지 */}
                 {accountRoutes.map((route) => (

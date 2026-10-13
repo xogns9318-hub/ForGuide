@@ -59,6 +59,7 @@ const ko = {
             },
         },
 
+
         features: {
             counseling: {
                 consultation: "도움 기관 안내",
@@ -83,6 +84,86 @@ const ko = {
     footer: {
         description: "이곳은 Footer입니다. 발냄새가 지독한 곳이죠.",
         copyright: "© 이것이 최선입니까 휴먼?",
+    },
+
+    service: {
+        consultation: {
+            description:
+                "도움이 필요한 문제를 고르고, 상황에 맞는 도움 기관을 찾아보세요.",
+        },
+        preparationCard: {
+            description:
+                "정확한 구비서류와 본인 확인 지참물(신분증 등)을 미리 확인하는 데 도움을 드립니다.",
+        },
+        loan: {
+            description:
+                "대출 이용 정보를 입력하고, 목적에 맞는 상품을 살펴보세요.",
+        },
+        insurance: {
+            description:
+                "기본 정보와 필요한 보장을 바탕으로 보험 상품을 살펴보세요.",
+        },
+        account: {
+            description:
+                "급여 수령과 송금 등 이용 목적에 맞는 계좌를 살펴보세요.",
+        },
+        monthlyPayment: {
+            description:
+                "대출금액과 금리, 기간을 입력하고 예상 월 상환액을 확인하세요.",
+        },
+        totalInterest: {
+            description:
+                "상환 기간 동안 발생하는 예상 총 이자와 총 상환액을 확인하세요.",
+        },
+        jobListings: {
+            description:
+                "나에게 맞는 일자리를 살펴보세요.",
+        },
+        employment: {
+            description:
+                "지원 방식에 맞는 이력서를 작성하고 저장하거나 출력하세요.",
+        },
+    },
+
+    status: {
+        loading: {
+            title: "이동중입니다! 잠시만 기다려주세요",
+        },
+
+        empty: {
+            title: "조회된 결과가 없습니다!",
+            description: "입력한 조건을 변경하고 다시 조회해주세요.",
+            changeButton: "조건 변경하기",
+        },
+
+        error: {
+            title: "잘못된 접근입니다! 다시 돌아가세요!!",
+            homeButton: "홈으로 돌아가기",
+        },
+
+        failure: {
+            title: "정보를 불러오지 못했습니다! 다시 시도해주세요.",
+            description: "잠시 후 다시 시도해주세요.",
+            retryButton: "다시 시도",
+            retryError: "다시 시도했지만 실패했습니다. 잠시 후 시도해주세요.",
+        },
+
+        example: {
+            title: "예시 표시와 개인정보 마스킹",
+            description: "아래는 실제 개인정보가 없는 표시 예시입니다.",
+            nameLabel: "가상 이름",
+            accountLabel: "가상 계좌번호",
+        },
+
+        input: {
+            title: "입력 내용을 확인해주세요.",
+            description:
+                "필수 입력 검증을 확인하는 초안입니다. 실제 서비스 항목과 범위는 별도로 적용합니다.",
+            label: "입력값",
+            submitButton: "입력 확인",
+            success: "필수 입력 검증을 통과했습니다.",
+            requiredError: "필수 입력 항목입니다.",
+        },
     },
 };
 

@@ -84,6 +84,80 @@ const ja ={
         description: "ここはフッターです。ひどい足の臭いがします。",
         copyright: "© これがベストなのですか、人間？",
     },
+
+    service: {
+        consultation: {
+            description:
+                "支援が必要な問題を選び、自分の状況に合った支援機関を探しましょう。",
+        },
+        preparationCard: {
+            description:
+                "相談前に必要書類と本人確認書類をあらかじめ確認しましょう。",
+        },
+        loan: {
+            description:
+                "ローンの利用情報を入力し、目的に合った商品を確認しましょう。",
+        },
+        insurance: {
+            description:
+                "基本情報と必要な補償をもとに、自分に合った保険商品を確認しましょう。",
+        },
+        account: {
+            description:
+                "給与の受け取りや送金などの利用目的に合った銀行口座を確認しましょう。",
+        },
+        monthlyPayment: {
+            description:
+                "借入額、金利、期間を入力して、毎月の返済予定額を確認しましょう。",
+        },
+        totalInterest: {
+            description:
+                "返済期間中に発生する予定の総利息と総返済額を確認しましょう。",
+        },
+        jobListings: {
+            description:
+                "自分に合った求人情報を確認しましょう。",
+        },
+        employment: {
+            description:
+                "応募方法に合わせて履歴書を作成し、保存または印刷しましょう。",
+        },
+    },
+
+    status: {
+        loading: {
+            title: "移動しています。しばらくお待ちください。",
+        },
+        error: {
+            title: "このページにはアクセスできません。",
+            homeButton: "ホームに戻る",
+        },
+        failure: {
+            title: "情報を読み込めませんでした。もう一度お試しください。",
+            description: "しばらくしてからもう一度お試しください。",
+            retryButton: "再試行",
+            retryError: "再試行に失敗しました。しばらくしてからお試しください。",
+        },
+        empty: {
+            title: "結果が見つかりませんでした。",
+            description: "条件を変更して、もう一度検索してください。",
+            changeButton: "条件を変更",
+        },
+        example: {
+            title: "表示例と個人情報のマスキング",
+            description: "以下は実際の個人情報を含まない表示例です。",
+            nameLabel: "サンプル名",
+            accountLabel: "サンプル口座番号",
+        },
+        input: {
+            title: "入力内容を確認してください。",
+            description: "必須入力の確認用ドラフトです。",
+            label: "入力値",
+            submitButton: "入力を確認",
+            success: "必須入力の確認を通過しました。",
+            requiredError: "必須入力項目です。",
+        },
+    },
 };
 
 export default ja;

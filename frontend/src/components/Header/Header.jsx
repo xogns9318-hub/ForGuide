@@ -79,7 +79,9 @@ export default function Header({
                                                 }
                                                 onClick={() => setOpenMenu(null)}
                                             >
-                                                {child.label}
+                                                {t(`home.features.${category.id}.${child.id}`, {
+                                                    defaultValue: child.label,
+                                                })}
                                             </Link>
                                         ))}
                                     </div>
