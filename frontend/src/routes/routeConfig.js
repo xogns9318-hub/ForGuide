@@ -56,13 +56,13 @@ export const categories = [
             "월 상환액과 총이자, 상환 일정을 확인하며 자금 계획을 세워보세요.",
         children: [
             {
-                label: "월 상환액",
+                label: "월 상환액 계산기",
                 path: "/service/monthlyPayment",
                 description:
                     "대출금액과 금리, 기간을 입력하고 예상 월 상환액을 확인하세요.",
             },
             {
-                label: "총 이자",
+                label: "총 이자 계산기",
                 path: "/service/totalInterest",
                 description:
                     "상환 기간 동안 발생하는 예상 총 이자와 총 상환액을 확인하세요.",

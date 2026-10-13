@@ -44,7 +44,7 @@ export default function Home() {
             <Banner
                 eyebrow="한국 생활의 길잡이, ForGuide"
                 title="당신의 행복한 한국 생활을 돕는 곳"
-                description="임금·계좌·생활비·상환·취업까지. 낯선 생활에서 겪는 어려움을 정리하고, 내 상황에 맞는 도움을 찾아보세요."
+                description="여기 홈입니다."
             />
 
             {/* 서비스 소개 */}

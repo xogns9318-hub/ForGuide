@@ -51,8 +51,7 @@
     transition: background-color 120ms ease;
 }
 
-/* 선택한 메뉴 강조 */
-.nav-link:hover,
+/* 현재 강조 대상으로 정한 메뉴 하나만 표시 */
 .nav-link.is-active {
     background: var(--mint-soft);
     color: var(--primary);
@@ -61,7 +60,7 @@
 /* 펼쳐지는 세부 메뉴 */
 .nav-dropdown {
     position: absolute;
-    top: 100%;
+    top: calc(100% + 1px);
     left: 0;
     z-index: 100;
 
@@ -75,6 +74,16 @@
     border-radius: 12px;
     background: var(--surface);
     box-shadow: 0 12px 28px rgb(32 59 51 / 12%);
+}
+
+/* 1px 간격을 지나갈 때도 세부 메뉴 유지 */
+.nav-dropdown::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
 }
 
 /* 세부 기능 링크 */
@@ -103,7 +112,7 @@
 }
 
 /* 회원 링크 강조 */
-.header-actions > a:hover {
+.header-actions>a:hover {
     color: var(--primary);
 }
 

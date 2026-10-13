@@ -22,11 +22,18 @@
     --control-height: 48px;
 
     /* 기본 글꼴 */
-    font-family: "Segoe UI", "Malgun Gothic", sans-serif;
+    font-family: "Segoe UI",
+    "Malgun Gothic",
+    sans-serif;
     font-size: 16px;
     line-height: 1.65;
     color: var(--ink);
     background: var(--background);
+}
+
+/* 스크롤바 유무와 관계없이 공통 화면의 좌우 위치 유지 */
+html {
+    scrollbar-gutter: stable;
 }
 
 /* 테두리와 여백을 너비에 포함 */
