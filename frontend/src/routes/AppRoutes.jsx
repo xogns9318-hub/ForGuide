@@ -8,6 +8,7 @@ import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import StatusPage from "../components/StatusPage/StatusPage.jsx";
 import Community from "../components/Community/Community.jsx";
+import { authPaths, authRoutes } from "../auth/authRoutes.jsx";
 import "../styles/home.css";
 
 // 배너와 세부 기능을 연결할 서비스 주소 목록
@@ -210,7 +211,13 @@ export default function AppRoutes({
                         />
                     ))}
 
-                {accountRoutes.map((route) => (
+                {/* 회원가입·로그인·마이페이지 */}
+                {authRoutes()}
+
+                {/* 로그인 라우트와 중복되지 않는 기존 회원 페이지 */}
+                {accountRoutes
+                    .filter((route) => !authPaths.includes(route.path))
+                    .map((route) => (
                     <Route
                         key={route.path}
                         path={route.path}
