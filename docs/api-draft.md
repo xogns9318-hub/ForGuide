@@ -28,6 +28,29 @@ auth 컨트롤러는 `ApiResponse`로 응답하고, 실패는 `ApiException(Erro
 | `LOGIN_ID_DUPLICATED` · `EMAIL_DUPLICATED` | 409 | 회원 중복 |
 | `INVALID_IMAGE` | 400 | 프로필 이미지 형식·용량 |
 
+## 인증 설정 (백엔드 `auth/jwt`, `auth/security`)
+
+| 위치 | 역할 |
+| --- | --- |
+| `auth/jwt/JwtProperties` | `jwt.*` 설정값. 수명 기본값 access 30분, refresh 14일 |
+| `auth/jwt/JwtProvider` | access token 발급·검증. 만료 `TOKEN_EXPIRED`, 위조·형식 오류 `TOKEN_INVALID` |
+| `auth/security/JwtAuthenticationFilter` | `Authorization: Bearer {토큰}` 검증 → 컨트롤러에서 `@AuthenticationPrincipal Long memberId` |
+| `auth/security/JwtAuthenticationEntryPoint` | 로그인 필요 주소에 인증 없음 → 401 (`AUTH_REQUIRED`·`TOKEN_EXPIRED`·`TOKEN_INVALID`) |
+| `auth/security/SecurityConfig` | 세션 없음(STATELESS), BCrypt, 접근 규칙 |
+
+접근 규칙: **기본 잠금.** `/api/v1/auth/**`만 공개하고 나머지는 로그인 필요.
+다른 기능에서 로그인 없이 써야 하는 주소는 해당 담당자가 `SecurityConfig`의 "공개 주소" 구역에 한 줄 추가한다.
+
+실행 전 준비: 비밀키는 저장소에 넣지 않는다. 각자 환경변수 `JWT_SECRET`(Base64, 32바이트 이상)을 설정해야 백엔드가 켜진다.
+
+PowerShell에서 키 만들기:
+
+```powershell
+[Convert]::ToBase64String((1..32 | ForEach-Object {Get-Random -Maximum 256}))
+```
+
+IntelliJ 실행 설정의 Environment variables에 `JWT_SECRET=만든값`을 넣는다. 없거나 짧으면 서버가 이유를 출력하고 시작하지 않는다.
+
 ## 공통 요청 클라이언트 (`src/auth/api/client.js`)
 
 auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한다. 화면에서 `fetch`를 직접 쓰지 않는다.
