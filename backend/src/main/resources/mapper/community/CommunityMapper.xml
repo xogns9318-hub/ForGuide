@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.forguide.community.repository.CommunityMapper">
+
+    <!-- 게시글 전체 목록 조회 -->
+    <select id="findAllPosts"
+            resultType="com.example.forguide.community.dto.CommunityPostResponse">
+
+        SELECT
+            p.post_id AS postId,
+            p.member_id AS memberId,
+            m.nickname AS nickname,
+            m.profile_image_url AS profileImageUrl,
+            p.topic AS topic,
+            p.content AS content,
+            p.language AS language,
+            p.content_version AS contentVersion,
+            p.created_at AS createdAt,
+            p.updated_at AS updatedAt
+        FROM community_posts p
+        INNER JOIN members m
+            on p.member_id = m.member_id
+        ORDER BY p.created_at DESC, p.post_id DESC
+
+    </select>
+
+    <!-- 게시글 상세 조회 -->
+    <select id="findPostById"
+            resultType="com.example.forguide.community.dto.CommunityPostResponse">
+
+        SELECT
+            p.post_id AS postId,
+            p.member_id AS memberId,
+            m.nickname AS nickname,
+            m.profile_image_url AS profileImageUrl,
+            p.topic AS topic,
+            p.content AS content,
+            p.language AS language,
+            p.content_version AS contentVersion,
+            p.created_at AS createdAt,
+            p.updated_at AS updatedAt
+        FROM community_posts p
+        INNER JOIN members m
+            ON p.member_id = m.member_id
+        WHERE p.post_id = #{postId}
+    </select>
+
+    <!-- 무한 스크롤용 게시글 조회 -->
+    <select id="findPostsByCursor"
+            resultType="com.example.forguide.community.dto.CommunityPostResponse">
+
+        SELECT
+            p.post_id AS postId,
+            p.member_id AS memberId,
+            m.nickname AS nickname,
+            m.profile_image_url AS profileImageUrl,
+            p.topic AS topic,
+            p.content AS content,
+            p.language AS language,
+            p.content_version AS contentVersion,
+            p.created_at AS createdAt,
+            p.updated_at AS updatedAt
+        FROM community_posts p
+        INNER JOIN members m
+            ON p.member_id = m.member_id
+
+        <if test="cursorCreatedAt != null and cursorPostId != null">
+            WHERE (
+                p.created_at &lt; #{cursorCreatedAt}
+                OR (
+                    p.created_at = #{cursorCreatedAt}
+                    AND p.post_id &lt; #{cursorPostId}
+                )
+            )
+        </if>
+        ORDER BY p.created_at DESC, p.post_id DESC
+        LIMIT #{size}
+
+    </select>
+
+    <!-- 게시글 작성 -->
+    <insert id="insertPost">
+        INSERT INTO community_posts (
+            member_id,
+            topic,
+            content,
+            language,
+            content_version,
+            created_at,
+            updated_at
+        )
+        VALUES (
+            #{memberId},
+            #{topic},
+            #{content},
+            #{language},
+            1,
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+
+</mapper>
