@@ -8,16 +8,20 @@ function PostCard({ post }) {
             <div className="community-author">
                 <div className="community-avatar" aria-hidden="true">♙</div>
                 <div>
-                    <strong>{post.author}</strong>
-                    <p>@sample*** · 2026-10-01</p>
+                    <strong>{post.nickname}</strong>
+                    <p>
+                        {post.createdAt
+                            ? new Date(post.createdAt).toLocaleDateString("ko-KR")
+                            : "작성일 없음"}
+                    </p>
                 </div>
             </div>
 
             <p className="community-post-content">{post.content}</p>
 
             <div className="community-post-actions" aria-label="게시글 반응">
-                <span>♡ {post.likes}</span>
-                <span>◯ 댓글 {post.comments}</span>
+                <span>♡ {post.likes ?? 0}</span>
+                <span>◯ 댓글 {post.comments ?? 0}</span>
                 <span>↪ 0</span>
             </div>
 
@@ -34,13 +38,19 @@ function PostCard({ post }) {
 export default function Community() {
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // 나중에 실제 게시글 조회 API로 교체할 자리입니다.
+    // 커뮤니티 화면이 처음 나타날 때 서버에서 게시글을 조회
     useEffect(() => {
         getCommunityPosts().then((data) => {
             setPosts(data);
-            setIsLoading(false);
-        });
+        })
+            .catch((err) => {
+                setError(err.message);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }, []);
 
     return (
@@ -66,13 +76,14 @@ export default function Community() {
                 </div>
 
                 <div className="community-post-area">
-                    <span className="community-example-badge">예시 데이터</span>
                     {isLoading ? (
                         <p className="community-loading">게시글을 불러오는 중입니다.</p>
+                    ) : error ? (
+                        <p role="alert">{error}</p>
                     ) : (
                         <div className="community-post-list">
                             {posts.map((post) => (
-                                <PostCard key={post.id} post={post} />
+                                <PostCard key={post.postId} post={post} />
                             ))}
                         </div>
                     )}

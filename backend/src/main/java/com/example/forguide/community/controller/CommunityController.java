@@ -7,11 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDateTime;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import com.example.forguide.member.common.ApiResponse;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/community")
+@RequestMapping("/api/v1/community")
 @RequiredArgsConstructor
 public class CommunityController {
 
@@ -19,33 +21,42 @@ public class CommunityController {
 
     // 게시글 전체 목록 조회
     @GetMapping("/posts")
-    public List<CommunityPostResponse> getAllPosts() {
-        return communityService.getAllPosts();
+    public ApiResponse<List<CommunityPostResponse>> getAllPosts() {
+        return ApiResponse.ok(communityService.getAllPosts());
     }
 
     // 게시글 상세 조회
     @GetMapping("/posts/{postId}")
-    public CommunityPostResponse getPostById(@PathVariable Long postId) {
-        return communityService.getPostById(postId);
+    public ApiResponse<CommunityPostResponse> getPostById(
+            @PathVariable Long postId
+    ) {
+        return ApiResponse.ok(communityService.getPostById(postId));
     }
 
     // 무한 스크롤용 게시글 조회
     @GetMapping("/posts/scroll")
-    public List<CommunityPostResponse> getPostsByCursor(
+    public ApiResponse<List<CommunityPostResponse>> getPostsByCursor(
             @RequestParam(required = false) LocalDateTime cursorCreatedAt,
             @RequestParam(required = false) Long cursorPostId,
             @RequestParam int size
     ) {
-        return communityService.getPostsByCursor(
+        return ApiResponse.ok(
+                communityService.getPostsByCursor(
                 cursorCreatedAt,
                 cursorPostId,
                 size
+            )
         );
     }
 
     // 게시글 작성
     @PostMapping("/posts")
-    public int createPost(@RequestBody CommunityPostCreateRequest request) {
-        return communityService.createPost(1L, request);
+    public ApiResponse<Integer> createPost(
+            @AuthenticationPrincipal Long memberId,
+            @RequestBody CommunityPostCreateRequest request
+    ) {
+        return ApiResponse.ok(
+                communityService.createPost(memberId, request)
+        );
     }
 }
