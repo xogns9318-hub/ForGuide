@@ -6,16 +6,16 @@
 
 실제 조회 실패 화면에서는 onRetry로 조회 함수를 전달한다.
 독립 /failure 화면의 재시도 버튼은 페이지를 새로고침한다.
-## 인증 응답·예외 (백엔드 `auth/common`)
+## 인증 응답·예외 (백엔드 `member/common`)
 
-auth 컨트롤러는 `ApiResponse`로 응답하고, 실패는 `ApiException(ErrorCode)`를 던진다. 프론트 `src/auth/api/client.js`와 같은 형식이다. 예외 처리기는 `auth` 패키지에만 적용된다.
+회원(member) 컨트롤러는 `ApiResponse`로 응답하고, 실패는 `ApiException(ErrorCode)`를 던진다. 프론트 `src/auth/api/client.js`와 같은 형식이다. 예외 처리기는 `member` 패키지에만 적용된다.
 
 | 위치 | 역할 |
 | --- | --- |
-| `auth/common/ApiResponse` | `ApiResponse.ok(data)`, `ApiResponse.ok()`, `ApiResponse.fail(code, message, fieldErrors)` |
-| `auth/common/ErrorCode` | 인증·회원 오류 코드·HTTP 상태·기본 문구 목록 |
-| `auth/common/ApiException` | `throw new ApiException(ErrorCode.EMAIL_DUPLICATED, Map.of("email", "..."))` |
-| `auth/common/AuthExceptionHandler` | auth 컨트롤러 단계 예외 → 실패 응답. `@Valid` 실패는 `INVALID_INPUT` + 항목별 `fieldErrors`, 예상 못 한 오류는 `INTERNAL_ERROR`(원인은 서버 로그에만) |
+| `member/common/ApiResponse` | `ApiResponse.ok(data)`, `ApiResponse.ok()`, `ApiResponse.fail(code, message, fieldErrors)` |
+| `member/common/ErrorCode` | 인증·회원 오류 코드·HTTP 상태·기본 문구 목록 |
+| `member/common/ApiException` | `throw new ApiException(ErrorCode.EMAIL_DUPLICATED, Map.of("email", "..."))` |
+| `member/common/AuthExceptionHandler` | member 컨트롤러 단계 예외 → 실패 응답. `@Valid` 실패는 `INVALID_INPUT` + 항목별 `fieldErrors`, 예상 못 한 오류는 `INTERNAL_ERROR`(원인은 서버 로그에만) |
 
 | 코드 | 상태 | 용도 |
 | --- | --- | --- |
@@ -28,15 +28,15 @@ auth 컨트롤러는 `ApiResponse`로 응답하고, 실패는 `ApiException(Erro
 | `LOGIN_ID_DUPLICATED` · `EMAIL_DUPLICATED` | 409 | 회원 중복 |
 | `INVALID_IMAGE` | 400 | 프로필 이미지 형식·용량 |
 
-## 인증 설정 (백엔드 `auth/jwt`, `auth/security`)
+## 인증 설정 (백엔드 `member/jwt`, `member/security`)
 
 | 위치 | 역할 |
 | --- | --- |
-| `auth/jwt/JwtProperties` | `jwt.*` 설정값. 수명 기본값 access 30분, refresh 14일 |
-| `auth/jwt/JwtProvider` | access token 발급·검증. 만료 `TOKEN_EXPIRED`, 위조·형식 오류 `TOKEN_INVALID` |
-| `auth/security/JwtAuthenticationFilter` | `Authorization: Bearer {토큰}` 검증 → 컨트롤러에서 `@AuthenticationPrincipal Long memberId` |
-| `auth/security/JwtAuthenticationEntryPoint` | 로그인 필요 주소에 인증 없음 → 401 (`AUTH_REQUIRED`·`TOKEN_EXPIRED`·`TOKEN_INVALID`) |
-| `auth/security/SecurityConfig` | 세션 없음(STATELESS), BCrypt, 접근 규칙 |
+| `member/jwt/JwtProperties` | `jwt.*` 설정값. 수명 기본값 access 30분, refresh 14일 |
+| `member/jwt/JwtProvider` | access token 발급·검증. 만료 `TOKEN_EXPIRED`, 위조·형식 오류 `TOKEN_INVALID` |
+| `member/security/JwtAuthenticationFilter` | `Authorization: Bearer {토큰}` 검증 → 컨트롤러에서 `@AuthenticationPrincipal Long memberId` |
+| `member/security/JwtAuthenticationEntryPoint` | 로그인 필요 주소에 인증 없음 → 401 (`AUTH_REQUIRED`·`TOKEN_EXPIRED`·`TOKEN_INVALID`) |
+| `member/security/SecurityConfig` | 세션 없음(STATELESS), BCrypt, 접근 규칙 |
 
 접근 규칙: **기본 잠금.** `/api/v1/auth/**`만 공개하고 나머지는 로그인 필요.
 다른 기능에서 로그인 없이 써야 하는 주소는 해당 담당자가 `SecurityConfig`의 "공개 주소" 구역에 한 줄 추가한다.
@@ -86,7 +86,7 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | `logout()` | `POST /auth/logout` | 없음 (refresh token 쿠키) | 없음 | 실패해도 화면의 로그인 상태는 지운다 |
 
 - `member`: `{ memberId, loginId, name, email, nickname, profileImageUrl }`. 비밀번호는 어떤 응답에도 넣지 않는다.
-- 백엔드 구현: `auth/controller/AuthController`, `auth/service/AuthService`, `auth/mapper/`(SQL `resources/mapper/auth/`). 회원가입 성공은 201.
+- 백엔드 구현: `member/controller/AuthController`, `member/service/AuthService`, `member/mapper/`(SQL `resources/mapper/member/`). 회원가입 성공은 201.
 - refresh token: 무작위 32바이트(쿠키 `refreshToken`, HttpOnly·SameSite=Strict·Path=/api/v1/auth·Max-Age 14일). DB `refresh_tokens.token`에는 SHA-256 해시만 저장. 재발급 시 교체하고, 같은 토큰은 한 번만 쓸 수 있다.
 - 로그인: 없는 아이디도 비밀번호 비교 시간을 똑같이 써서 응답 시간으로 가입 여부를 알 수 없게 한다.
 - 앱 시작 시 `App.jsx`가 `restoreSession()`을 한 번 부르고, 끝나면 성공·실패와 무관하게 `initialized`를 표시한다.
@@ -104,7 +104,7 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 
 ## 회원 (`src/auth/api/memberApi.js`)
 
-로그인 필요(access token). 성공하면 스토어의 회원 정보도 갱신한다. 백엔드: `auth/controller/MemberController`, `auth/service/MemberService`, `auth/image/`. 회원 번호는 토큰에서만 꺼낸다.
+로그인 필요(access token). 성공하면 스토어의 회원 정보도 갱신한다. 백엔드: `member/controller/MemberController`, `member/service/MemberService`, `member/image/`. 회원 번호는 토큰에서만 꺼낸다.
 
 | 함수 | 실제 API | 요청 | 응답 `data` | 실패 코드 |
 | --- | --- | --- | --- | --- |
