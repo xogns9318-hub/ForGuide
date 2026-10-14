@@ -1,0 +1,78 @@
+/* 공통 선택창의 목록 위치 기준 */
+.select-box {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+}
+
+/* 선택창 버튼 */
+.select-box-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    min-height: var(--control-height);
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--control-radius);
+    background: var(--surface);
+    color: var(--ink);
+    text-align: left;
+}
+
+/* 화살표 크기 */
+.select-box-trigger svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+}
+
+/* 열려 있을 때와 키보드 선택 시 빈틈 없는 강조 */
+.select-box.is-open .select-box-trigger,
+.select-box-trigger:focus-visible {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 1px var(--primary);
+}
+
+/* 펼쳐지는 선택 목록 */
+.select-box-options {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 200;
+    width: 100%;
+    padding: 6px;
+    border: 1px solid var(--line);
+    border-radius: var(--control-radius);
+    background: var(--surface);
+    box-shadow: 0 8px 20px rgb(32 59 51 / 12%);
+}
+
+/* 선택 항목 */
+.select-box-option {
+    padding: 10px 8px;
+    border-radius: 6px;
+    color: var(--ink);
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* 마우스 또는 방향키로 가리킨 항목 */
+.select-box-option.is-active {
+    background: var(--mint-soft);
+    color: var(--primary);
+}
+
+/* 헤더 언어 선택창 크기 */
+.select-box.is-compact {
+    width: 110px;
+}
+
+/* 헤더 언어 선택창 배경 */
+.select-box.is-compact .select-box-trigger {
+    min-height: 40px;
+    padding: 8px 10px;
+    background: var(--mint-soft);
+}

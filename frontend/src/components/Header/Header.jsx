@@ -6,9 +6,9 @@ import LanguageSelector from "../LanguageSelector/LanguageSelector";
 import "../../styles/header.css";
 
 export default function Header({
-                                   isLoggedIn = false,
-                                   onLogout,
-                               }) {
+    isLoggedIn = false,
+    onLogout,
+}) {
     const { pathname } = useLocation();
     const { t } = useTranslation();
     const [openMenu, setOpenMenu] = useState(null);
@@ -50,9 +50,14 @@ export default function Header({
                         >
                             <Link
                                 to={category.path}
-                                className={`nav-link ${
-                                    isCategoryActive(category) ? "is-active" : ""
-                                }`}
+                                className={`nav-link ${(
+                                        openMenu !== null
+                                            ? openMenu === category.id
+                                            : isCategoryActive(category)
+                                    )
+                                        ? "is-active"
+                                        : ""
+                                    }`}
                                 aria-current={
                                     pathname === category.path ? "page" : undefined
                                 }

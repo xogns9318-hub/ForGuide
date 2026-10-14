@@ -6,6 +6,7 @@ import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import StatusPage from "../components/StatusPage/StatusPage.jsx";
 import "../styles/home.css";
+import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
 
 // 배너와 세부 기능을 연결할 서비스 주소 목록
 const serviceRoutes = categories.flatMap((category) => [
@@ -150,11 +151,15 @@ export default function AppRoutes({
                         key={route.path}
                         path={route.path}
                         element={
-                            <PlaceholderPage
-                                title={route.label}
-                                description={route.description}
-                                children={route.children}
-                            />
+                            route.path === "/service/monthlyPayment" ? (
+                                <MonthlyPayment />
+                            ) : (
+                                <PlaceholderPage
+                                    title={route.label}
+                                    description={route.description}
+                                    children={route.children}
+                                />
+                            )
                         }
                     />
                 ))}
