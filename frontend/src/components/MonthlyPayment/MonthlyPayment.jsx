@@ -49,20 +49,14 @@ export default function MonthlyPayment() {
         graceMonths: "0",
     });
 
-    const [errors, setErrors] = useState({});
     const [repaymentMethod, setRepaymentMethod] = useState("equalPayment");
 
-    // 허용되지 않는 입력은 반영하지 않고 오류 안내
+    // 허용되지 않는 입력은 반영하지 않고 기존 값 유지
     function handleInputChange(field, nextValue) {
         const message =
             field.name === "annualInterestRate"
                 ? validateRateInput(nextValue)
                 : validateIntegerInput(nextValue, field.maximum);
-
-        setErrors((previous) => ({
-            ...previous,
-            [field.name]: message,
-        }));
 
         if (message) {
             return;
@@ -114,7 +108,6 @@ export default function MonthlyPayment() {
                     {numericFields.map((field) => {
                         const inputId = `monthly-${field.name}`;
                         const helpId = `${inputId}-help`;
-                        const errorId = `${inputId}-error`;
 
                         return (
                             <div
@@ -137,11 +130,8 @@ export default function MonthlyPayment() {
                                         }
                                         autoComplete="off"
                                         value={values[field.name]}
-                                        aria-invalid={Boolean(errors[field.name])}
                                         aria-describedby={
-                                            errors[field.name]
-                                                ? `${helpId} ${errorId}`
-                                                : helpId
+                                            getConvertedText(field.name) ? helpId : undefined
                                         }
                                         onChange={(event) =>
                                             handleInputChange(
@@ -159,20 +149,13 @@ export default function MonthlyPayment() {
                                     </span>
                                 </div>
 
-                                <p
-                                    id={helpId}
-                                    className="monthly-converted-value"
-                                >
-                                    {getConvertedText(field.name)}
-                                </p>
-
-                                {errors[field.name] && (
+                                {/* 입력된 금액과 기간의 환산 문구만 표시 */}
+                                {getConvertedText(field.name) && (
                                     <p
-                                        id={errorId}
-                                        className="monthly-input-error"
-                                        role="alert"
+                                        id={helpId}
+                                        className="monthly-converted-value"
                                     >
-                                        {errors[field.name]}
+                                        {getConvertedText(field.name)}
                                     </p>
                                 )}
                             </div>

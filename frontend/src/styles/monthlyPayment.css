@@ -146,3 +146,38 @@
     font-size: 28px;
     font-weight: 700;
 }
+
+/* 숫자 항목의 제목과 입력란 간격 축소 */
+.monthly-number-field label {
+    margin-bottom: 4px;
+}
+
+/* 입력란 높이를 줄여 제목과 숫자를 가깝게 배치 */
+.monthly-number-line {
+    min-height: 36px;
+}
+
+/* 입력 중·입력 후 숫자는 항상 진한 색으로 표시 */
+.monthly-number-line input {
+    padding: 4px 0;
+    color: var(--muted);
+}
+
+/* 환산 문구와 경고문은 입력선 아래 같은 간격 사용 */
+.monthly-converted-value,
+.monthly-input-error {
+    margin-top: 6px;
+    min-height: 20px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* 환산된 금액과 기간도 항상 진한 색으로 표시 */
+.monthly-converted-value {
+    color: var(--muted);
+}
+
+/* 경고 문구 색상 */
+.monthly-input-error {
+    color: var(--error);
+}

@@ -14,7 +14,7 @@ export default function Footer() {
                 {/* 하단 문구 */}
                 <p>{t("footer.copyright")}</p>
  
- 9           </div>
+            </div>
         </footer>
     );
 }
