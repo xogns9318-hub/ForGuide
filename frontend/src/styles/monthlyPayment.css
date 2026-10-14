@@ -1,183 +1,748 @@
 /* 계산기 제목 */
 .monthly-payment h1 {
+    /* 글씨 크기 지정 */
     font-size: 22px;
+    /* 글줄 높이 지정 */
     line-height: 1.4;
 }
 
 /* 제목 아래 설명 */
 .monthly-payment-description {
+    /* 요소 바깥쪽 여백 지정 */
     margin: 16px 0 20px;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
     color: var(--muted);
+    /* 글씨 크기 지정 */
     font-size: 14px;
 }
 
-/* 기존 입력·결과 영역의 배치 유지 */
+/* 왼쪽 입력과 오른쪽 결과 배치 */
 .monthly-payment-layout {
+    /* 자식 요소의 배치 방식 지정 */
     display: grid;
+    /* 그리드 열의 개수와 너비 지정 */
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* 자식 요소를 교차축 기준으로 정렬 */
+    align-items: start;
+    /* 자식 요소 사이 간격 지정 */
     gap: 56px;
 }
 
-/* 왼쪽 입력 항목 배치 */
+/* 입력 항목 배치 */
 .monthly-payment-fields {
+    /* 자식 요소의 배치 방식 지정 */
     display: flex;
+    /* flex 요소가 나열되는 방향 지정 */
     flex-direction: column;
+    /* 자식 요소 사이 간격 지정 */
     gap: 18px;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
     min-width: 0;
 }
 
-/* 숫자 입력 항목의 기본 색상 */
+/* 입력선의 기본 색 */
 .monthly-number-field {
     --input-color: var(--line);
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
     min-width: 0;
 }
 
-/* 입력 중에는 선과 숫자·환산 문구를 진하게 표시 */
+/* 입력 중 선 강조 */
 .monthly-number-field:focus-within {
     --input-color: var(--primary);
 }
 
-/* 항목 제목 */
-.monthly-number-field label,
-.monthly-method-field label {
+/* 입력 제목과 숫자 사이 간격 */
+.monthly-number-field label {
+    /* 자식 요소의 배치 방식 지정 */
     display: block;
-    margin-bottom: 10px;
+    /* 아래쪽 요소와의 바깥 간격 지정 */
+    margin-bottom: 4px;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
     color: var(--ink);
+    /* 글씨 크기 지정 */
     font-size: 14px;
 }
 
-/* 왼쪽 영역의 1/3 길이를 사용하는 입력선 */
+/* 기존 입력선 너비 유지 */
 .monthly-number-line {
+    /* 자식 요소의 배치 방식 지정 */
     display: flex;
+    /* 자식 요소를 교차축 기준으로 정렬 */
     align-items: center;
+    /* 자식 요소 사이 간격 지정 */
     gap: 8px;
+    /* 가로 크기 지정 */
     width: 33.333%;
-    min-height: var(--control-height);
+    /* 높이가 줄어들 수 있는 최소 기준 지정 */
+    min-height: 36px;
+    /* 아래쪽 구분선 지정 */
     border-bottom: 2px solid var(--input-color);
 }
 
-/* 사각 테두리 없는 숫자 입력 */
+/* 숫자 입력 */
 .monthly-number-line input {
+    /* 남은 공간을 사용하는 비율과 기본 크기 지정 */
     flex: 1;
+    /* 가로 크기 지정 */
     width: 0;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
     min-width: 0;
-    padding: 8px 0;
+    /* 테두리 안쪽 여백 지정 */
+    padding: 4px 0;
+    /* 테두리 두께·형태·색 지정 */
     border: 0;
+    /* 모서리의 둥근 정도 지정 */
     border-radius: 0;
+    /* 포커스 강조선 지정 */
     outline: none;
+    /* 배경색 또는 배경 무늬 지정 */
     background: transparent;
-    color: var(--input-color);
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--muted);
+    /* 글씨 크기 지정 */
     font-size: 16px;
+    /* 숫자 표시 형식 지정 */
     font-variant-numeric: tabular-nums;
 }
 
-/* 공통 강조 테두리 대신 입력선으로 포커스 표시 */
+/* 밑줄로 포커스를 표시하므로 사각 강조 제거 */
 .monthly-number-line input:focus-visible {
+    /* 포커스 강조선 지정 */
     outline: none;
 }
 
-/* 입력 오른쪽 단위 */
+/* 오른쪽 단위 */
 .monthly-input-unit {
+    /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
     flex-shrink: 0;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
     color: var(--ink);
+    /* 글씨 크기 지정 */
     font-size: 14px;
 }
 
-/* 금액·기간 환산 문구 */
-.monthly-converted-value {
-    min-height: 20px;
-    margin-top: 6px;
-    color: var(--input-color);
-    font-size: 14px;
-}
-
-/* 잘못된 입력 안내 */
+/* 환산 문구와 거치 경고의 위치 통일 */
+.monthly-converted-value,
 .monthly-input-error {
-    margin-top: 4px;
-    color: var(--error);
+    /* 높이가 줄어들 수 있는 최소 기준 지정 */
+    min-height: 20px;
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 6px;
+    /* 글씨 크기 지정 */
     font-size: 14px;
+    /* 글줄 높이 지정 */
+    line-height: 1.4;
 }
 
-/* 선택창도 숫자 입력선과 너비 통일 */
-.monthly-method-select {
-    width: 33.333%;
+/* 환산 문구 색 */
+.monthly-converted-value {
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--muted);
 }
 
-/* 입력 아래 설명 */
+/* 거치 기간 관계 오류 */
+.monthly-input-error {
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--error);
+}
+
+/* 입력 안내 */
 .monthly-payment-fields .form-help {
+    /* 글줄 높이 지정 */
     line-height: 1.65;
+    /* 단어가 줄을 넘어갈 때 나누는 방식 지정 */
     word-break: keep-all;
 }
 
-/* 계산 버튼 위치 유지 */
+/* 계산 버튼 위치 */
 .monthly-payment-button {
     align-self: flex-start;
 }
 
-/* 기존 결과 영역의 배치 유지 */
-.monthly-payment-results {
-    display: grid;
-    grid-template-rows: repeat(3, minmax(0, 1fr));
+/* 오른쪽 빈 영역과 결과 영역 */
+.loan-result-area {
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
     min-width: 0;
-    margin: 0;
-    padding: 20px 0;
 }
 
-/* 결과 항목 */
-.monthly-payment-result {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 20px;
+/* 결과 상환 방식 선택 */
+.loan-method-tabs {
+    /* 자식 요소의 배치 방식 지정 */
+    display: grid;
+    /* 그리드 열의 개수와 너비 지정 */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* 아래쪽 구분선 지정 */
+    border-bottom: 1px solid var(--line);
 }
 
-/* 결과 제목 */
-.monthly-payment-result dt {
+/* 상환 방식 버튼 */
+.loan-method-tabs button {
+    /* 테두리 안쪽 여백 지정 */
+    padding: 12px 6px;
+    /* 테두리 두께·형태·색 지정 */
+    border: 0;
+    /* 아래쪽 구분선 지정 */
+    border-bottom: 3px solid transparent;
+    /* 배경색 또는 배경 무늬 지정 */
+    background: transparent;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
     color: var(--muted);
-    font-size: 16px;
+    /* 글씨 크기 지정 */
+    font-size: 15px;
+}
+
+/* 현재 선택한 상환 방식 */
+.loan-method-tabs button.is-active {
+    /* 아래쪽 테두리의 강조 색 지정 */
+    border-bottom-color: var(--primary);
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--primary);
+    /* 글씨 굵기 지정 */
     font-weight: 700;
 }
 
-/* 결과 금액 자리 */
-.monthly-payment-result dd {
+/* 상환 방식 설명 */
+.loan-method-description {
+    /* 요소 바깥쪽 여백 지정 */
+    margin: 20px 0 12px;
+    /* 글씨 굵기 지정 */
+    font-weight: 600;
+    /* 단어가 줄을 넘어갈 때 나누는 방식 지정 */
+    word-break: keep-all;
+}
+
+/* 결과 요약 */
+.loan-summary {
+    /* 자식 요소의 배치 방식 지정 */
+    display: grid;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 12px;
+    /* 요소 바깥쪽 여백 지정 */
+    margin: 24px 0 28px;
+}
+
+/* 요약 이름과 금액 */
+.loan-summary > div {
+    /* 자식 요소의 배치 방식 지정 */
+    display: grid;
+    /* 그리드 열의 개수와 너비 지정 */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    /* 자식 요소를 교차축 기준으로 정렬 */
+    align-items: start;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 12px;
+}
+
+/* 요약 제목 */
+.loan-summary dt {
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--muted);
+}
+
+/* 요약 금액 */
+.loan-summary dd {
+    /* 요소 바깥쪽 여백 지정 */
     margin: 0;
+    /* 글씨의 가로 정렬 지정 */
+    text-align: right;
+    /* 글씨 굵기 지정 */
+    font-weight: 700;
+    /* 긴 문구의 줄바꿈 기준 지정 */
+    overflow-wrap: anywhere;
+}
+
+/* 상환표 제목 */
+.loan-schedule-title {
+    /* 아래쪽 요소와의 바깥 간격 지정 */
+    margin-bottom: 16px;
+    /* 글씨 크기 지정 */
+    font-size: 18px;
+}
+
+/* 긴 표는 오른쪽 영역 안에서 스크롤 */
+.loan-table-scroll {
+    /* 내용 영역의 최대 높이 제한 */
+    max-height: 480px;
+    /* 영역을 넘는 내용의 표시 방식 지정 */
+    overflow: auto;
+    /* 테두리 두께·형태·색 지정 */
+    border: 1px solid var(--line);
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: var(--control-radius);
+}
+
+/* 상환표 */
+.loan-schedule-table {
+    /* 가로 크기 지정 */
+    width: 100%;
+    /* 표 셀 테두리를 합칠지 지정 */
+    border-collapse: separate;
+    /* 표 셀 사이 간격 지정 */
+    border-spacing: 0;
+    /* 글씨 크기 지정 */
+    font-size: 13px;
+    /* 숫자 표시 형식 지정 */
+    font-variant-numeric: tabular-nums;
+}
+
+/* 표 셀 */
+.loan-schedule-table th,
+.loan-schedule-table td {
+    /* 테두리 안쪽 여백 지정 */
+    padding: 12px 10px;
+    /* 아래쪽 구분선 지정 */
+    border-bottom: 1px solid var(--line);
+    /* 오른쪽 구분선 지정 */
+    border-right: 1px solid var(--line);
+    /* 글씨의 가로 정렬 지정 */
+    text-align: right;
+    /* 공백 처리와 줄바꿈 방식 지정 */
+    white-space: nowrap;
+}
+
+/* 표 헤더 고정 */
+.loan-schedule-table thead th {
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: sticky;
+    /* 기준 영역의 위쪽 위치 지정 */
+    top: 0;
+    /* 겹친 요소의 표시 순서 지정 */
+    z-index: 1;
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--mint);
+    /* 글씨의 가로 정렬 지정 */
+    text-align: center;
+}
+
+/* 회차 열 */
+.loan-schedule-table tbody th {
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--muted);
+    /* 글씨의 가로 정렬 지정 */
+    text-align: center;
+    /* 글씨 굵기 지정 */
+    font-weight: 400;
+}
+
+/* 교차 행 배경 */
+.loan-schedule-table tbody tr:nth-child(odd) {
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--mint-soft);
+}
+
+/* 바깥 테두리와 중복되는 선 제거 */
+.loan-schedule-table tr > :last-child {
+    /* 오른쪽 구분선 지정 */
+    border-right: 0;
+}
+
+.loan-schedule-table tbody tr:last-child > * {
+    /* 아래쪽 구분선 지정 */
+    border-bottom: 0;
+}
+
+/* 거치 회차 표시 */
+.loan-grace-label {
+    /* 자식 요소의 배치 방식 지정 */
+    display: block;
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 2px;
+    /* 글씨 크기 지정 */
+    font-size: 11px;
+}
+
+/* 계산 기준 설명 */
+.loan-calculation-note {
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 12px;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--muted);
+    /* 글씨 크기 지정 */
+    font-size: 12px;
+    /* 글줄 높이 지정 */
+    line-height: 1.6;
+}
+
+/* 입력·결과 영역 아래의 그래프 */
+.loan-chart-panel {
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 28px;
+    /* 위쪽 안쪽 여백 지정 */
+    padding-top: 24px;
+    /* 위쪽 구분선 지정 */
+    border-top: 1px solid var(--line);
+}
+
+/* 그래프 제목 */
+.loan-chart-panel h2 {
+    /* 아래쪽 요소와의 바깥 간격 지정 */
+    margin-bottom: 8px;
+    /* 글씨 크기 지정 */
+    font-size: 20px;
+}
+
+/* 그래프 높이 */
+.loan-chart {
+    /* 세로 크기 지정 */
+    height: 320px;
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 16px;
+}
+
+/* 그래프 금액 안내 */
+.loan-chart-tooltip {
+    /* 테두리 안쪽 여백 지정 */
+    padding: 12px;
+    /* 테두리 두께·형태·색 지정 */
+    border: 1px solid var(--line);
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: var(--control-radius);
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--surface);
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
     color: var(--ink);
-    font-size: 28px;
-    font-weight: 700;
+    /* 글씨 크기 지정 */
+    font-size: 13px;
 }
 
-/* 숫자 항목의 제목과 입력란 간격 축소 */
-.monthly-number-field label {
-    margin-bottom: 4px;
+/* 툴팁 문구 간격 */
+.loan-chart-tooltip p {
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 4px;
 }
 
-/* 입력란 높이를 줄여 제목과 숫자를 가깝게 배치 */
-.monthly-number-line {
-    min-height: 36px;
+/* 왼쪽 제목부터 계산 버튼까지를 한 영역으로 배치 */
+.loan-input-column {
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
 }
 
-/* 입력 중·입력 후 숫자는 항상 진한 색으로 표시 */
-.monthly-number-line input {
-    padding: 4px 0;
+/* 양쪽 열의 높이 일치 */
+.monthly-payment-layout {
+    /* 자식 요소를 교차축 기준으로 정렬 */
+    align-items: stretch;
+}
+
+/* 오른쪽 높이는 왼쪽 열이 결정 */
+.loan-result-slot {
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: relative;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+}
+
+/* 결과 내용이 전체 계산기 높이를 늘리지 않도록 처리 */
+.loan-result-area {
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: absolute;
+    /* 위·오른쪽·아래·왼쪽 위치를 한 번에 지정 */
+    inset: 0;
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* flex 요소가 나열되는 방향 지정 */
+    flex-direction: column;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 높이가 줄어들 수 있는 최소 기준 지정 */
+    min-height: 0;
+    /* 영역을 넘는 내용의 표시 방식 지정 */
+    overflow: hidden;
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--surface);
+}
+
+/* 표 외의 설명과 요약은 높이를 유지 */
+.loan-result-area > :not(.loan-table-scroll) {
+    /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
+    flex-shrink: 0;
+}
+
+/* 남은 높이를 표에 할당하고 표 내부에서 스크롤 */
+.loan-table-scroll {
+    /* 남은 공간을 사용하는 비율과 기본 크기 지정 */
+    flex: 1 1 0;
+    /* 높이가 줄어들 수 있는 최소 기준 지정 */
+    min-height: 0;
+    /* 내용 영역의 최대 높이 제한 */
+    max-height: none;
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--surface);
+}
+
+/* 표 셀의 높이와 세로 정렬 통일 */
+.loan-schedule-table th,
+.loan-schedule-table td {
+    /* 세로 크기 지정 */
+    height: 48px;
+    /* 테두리 안쪽 여백 지정 */
+    padding: 10px 8px;
+    /* 표 셀 안의 세로 정렬 지정 */
+    vertical-align: middle;
+    /* 글줄 높이 지정 */
+    line-height: 20px;
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--surface);
+}
+
+/* 헤더와 모든 행은 흰색 배경 */
+.loan-schedule-table thead th,
+.loan-schedule-table tbody tr,
+.loan-schedule-table tbody tr:nth-child(odd),
+.loan-schedule-table tbody th,
+.loan-schedule-table tbody td {
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--surface);
+}
+
+/* 총 이자 비교 제목 */
+.loan-comparison-title {
+    /* 아래쪽 요소와의 바깥 간격 지정 */
+    margin-bottom: 12px;
+    /* 글씨 크기 지정 */
+    font-size: 20px;
+}
+
+/* 세 가지 방식의 결과를 나란히 배치 */
+.loan-interest-comparison {
+    /* 자식 요소의 배치 방식 지정 */
+    display: grid;
+    /* 그리드 열의 개수와 너비 지정 */
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    /* 자식 요소 사이 간격 지정 */
+    gap: 12px;
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 24px;
+}
+
+/* 비교 카드도 흰색만 사용 */
+.loan-interest-card {
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 테두리 안쪽 여백 지정 */
+    padding: 16px 12px;
+    /* 테두리 두께·형태·색 지정 */
+    border: 1px solid var(--line);
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: var(--control-radius);
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--surface);
+}
+
+/* 비교 카드의 상환 방식 이름 */
+.loan-interest-card h3 {
+    /* 아래쪽 요소와의 바깥 간격 지정 */
+    margin-bottom: 20px;
+    /* 글씨 크기 지정 */
+    font-size: 15px;
+}
+
+/* 비교 금액 배치 */
+.loan-interest-card dl {
+    /* 자식 요소의 배치 방식 지정 */
+    display: grid;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 20px;
+    /* 요소 바깥쪽 여백 지정 */
+    margin: 0;
+}
+
+/* 금액 항목 이름 */
+.loan-interest-card dt {
+    /* 아래쪽 요소와의 바깥 간격 지정 */
+    margin-bottom: 6px;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
     color: var(--muted);
+    /* 글씨 크기 지정 */
+    font-size: 13px;
 }
 
-/* 환산 문구와 경고문은 입력선 아래 같은 간격 사용 */
-.monthly-converted-value,
-.monthly-input-error {
-    margin-top: 6px;
-    min-height: 20px;
+/* 금액이 길어도 카드 밖으로 나가지 않기 */
+.loan-interest-card dd {
+    /* 요소 바깥쪽 여백 지정 */
+    margin: 0;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--ink);
+    /* 글씨 크기 지정 */
     font-size: 14px;
-    line-height: 1.4;
+    /* 글씨 굵기 지정 */
+    font-weight: 700;
+    /* 긴 문구의 줄바꿈 기준 지정 */
+    overflow-wrap: anywhere;
 }
 
-/* 환산된 금액과 기간도 항상 진한 색으로 표시 */
-.monthly-converted-value {
+/* 이자 계산 근거 */
+.loan-interest-explanation {
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 24px;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
     color: var(--muted);
+    /* 글씨 크기 지정 */
+    font-size: 14px;
+    /* 글줄 높이 지정 */
+    line-height: 1.7;
+    /* 단어가 줄을 넘어갈 때 나누는 방식 지정 */
+    word-break: keep-all;
 }
 
-/* 경고 문구 색상 */
-.monthly-input-error {
-    color: var(--error);
+/* 총 이자 화면의 기준 설명은 결과 영역 아래쪽에 배치 */
+.loan-interest-area .loan-calculation-note {
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: auto;
+    /* 위쪽 안쪽 여백 지정 */
+    padding-top: 16px;
+}
+
+/* 왼쪽은 입력과 그래프, 오른쪽은 요약과 상환표 */
+.monthly-payment-layout {
+    /* 자식 요소를 교차축 기준으로 정렬 */
+    align-items: stretch;
+    /* 행 사이 간격 지정 */
+    row-gap: 32px;
+}
+
+/* 왼쪽 위: 입력 영역 */
+.loan-input-column {
+    /* 그리드에서 사용할 열 위치 지정 */
+    grid-column: 1;
+    /* 그리드에서 사용할 행 위치 지정 */
+    grid-row: 1;
+}
+
+/* 왼쪽 아래: 그래프 */
+.monthly-payment-layout > .loan-chart-panel {
+    /* 그리드에서 사용할 열 위치 지정 */
+    grid-column: 1;
+    /* 그리드에서 사용할 행 위치 지정 */
+    grid-row: 2;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 0;
+    /* 위쪽 안쪽 여백 지정 */
+    padding-top: 0;
+    /* 위쪽 구분선 지정 */
+    border-top: 0;
+}
+
+/* 오른쪽은 왼쪽 입력과 그래프 전체 높이에 맞춤 */
+.loan-result-slot {
+    /* 그리드에서 사용할 열 위치 지정 */
+    grid-column: 2;
+    /* 그리드에서 사용할 행 위치 지정 */
+    grid-row: 1 / span 2;
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: relative;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 높이가 줄어들 수 있는 최소 기준 지정 */
+    min-height: 0;
+}
+
+/* 왼쪽에서 정한 높이 안에 요약과 표를 배치 */
+.loan-result-stack {
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: absolute;
+    /* 위·오른쪽·아래·왼쪽 위치를 한 번에 지정 */
+    inset: 0;
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* flex 요소가 나열되는 방향 지정 */
+    flex-direction: column;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 24px;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 높이가 줄어들 수 있는 최소 기준 지정 */
+    min-height: 0;
+}
+
+/* 선택한 방식의 설명 길이만큼 요약 높이 사용 */
+.loan-result-stack > .loan-result-area {
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: static;
+    /* 위·오른쪽·아래·왼쪽 위치를 한 번에 지정 */
+    inset: auto;
+    /* 남은 공간을 사용하는 비율과 기본 크기 지정 */
+    flex: 0 0 auto;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 영역을 넘는 내용의 표시 방식 지정 */
+    overflow: visible;
+}
+
+/* 요약 바로 아래에서 남은 높이를 상환표에 할당 */
+.loan-result-stack > .loan-schedule-panel {
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* flex 요소가 나열되는 방향 지정 */
+    flex-direction: column;
+    /* 남은 공간을 사용하는 비율과 기본 크기 지정 */
+    flex: 1 1 0;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 높이가 줄어들 수 있는 최소 기준 지정 */
+    min-height: 0;
+}
+
+/* 상환표 제목 */
+.loan-schedule-panel h2 {
+    /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
+    flex-shrink: 0;
+    /* 아래쪽 요소와의 바깥 간격 지정 */
+    margin-bottom: 8px;
+    /* 글씨 크기 지정 */
+    font-size: 20px;
+}
+
+/* 상환 방식과 회차 안내는 줄어들지 않도록 유지 */
+.loan-schedule-panel > .form-help {
+    /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
+    flex-shrink: 0;
+}
+
+/* 요약이 길어지면 표가 줄고, 짧아지면 표가 늘어남 */
+.loan-schedule-panel .loan-table-scroll {
+    /* 남은 공간을 사용하는 비율과 기본 크기 지정 */
+    flex: 1 1 0;
+    /* 세로 크기 지정 */
+    height: auto;
+    /* 높이가 줄어들 수 있는 최소 기준 지정 */
+    min-height: 0;
+    /* 내용 영역의 최대 높이 제한 */
+    max-height: none;
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 16px;
+    /* 영역을 넘는 내용의 표시 방식 지정 */
+    overflow: auto;
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--surface);
+}
+
+/* 총 이자 계산기의 기준 설명도 요약 안에 배치 */
+.loan-interest-area .loan-calculation-note {
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 24px;
+    /* 위쪽 안쪽 여백 지정 */
+    padding-top: 0;
+}
+
+/* 총 이자 비교 카드를 선택 가능하게 표시 */
+.loan-interest-card[role="button"] {
+    /* 마우스 포인터 모양 지정 */
+    cursor: pointer;
+}
+
+/* 선택한 방식은 테두리로 구분하고 흰색 배경 유지 */
+.loan-interest-card[aria-pressed="true"] {
+    /* 테두리 색 지정 */
+    border-color: var(--primary);
+}
+
+/* 비교 카드의 키보드 선택 표시 */
+.loan-interest-card:focus-visible {
+    /* 포커스 강조선 지정 */
+    outline: 2px solid var(--primary);
+    /* 포커스 강조선과 요소 사이 거리 지정 */
+    outline-offset: 0;
 }

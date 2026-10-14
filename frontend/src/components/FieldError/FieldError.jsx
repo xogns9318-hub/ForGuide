@@ -1,3 +1,4 @@
+// 이 화면에서 사용할 스타일 연결
 import "../../styles/statusPage.css";
 
 // 오류가 있는 입력 항목 아래에 안내 표시

@@ -1,19 +1,27 @@
+// 주소 이동과 현재 경로를 확인하는 라우터 기능 사용
 import { Link, Outlet, Route, Routes } from "react-router-dom";
+// 메뉴 이름과 주소를 공통 경로 설정에서 사용
 import { categories, accountRoutes } from "./routeConfig";
 import Home from "../components/Home/Home.jsx";
 import Banner from "../components/Banner/Banner.jsx";
 import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import StatusPage from "../components/StatusPage/StatusPage.jsx";
+// 이 화면에서 사용할 스타일 연결
 import "../styles/home.css";
 import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
+import TotalInterest from "../components/TotalInterest/TotalInterest.jsx";
 
 // 배너와 세부 기능을 연결할 서비스 주소 목록
 const serviceRoutes = categories.flatMap((category) => [
     {
+        // 화면에 표시할 이름
         label: category.label,
+        // 메뉴 선택 시 이동할 주소
         path: category.path,
+        // 기능 또는 계산 방식의 설명
         description: category.description,
+        // 주 기능에 포함된 세부 기능 목록
         children: category.children,
     },
     ...category.children,
@@ -38,6 +46,7 @@ function DefaultLayout({
 
             {/* 현재 일반 페이지 표시 */}
             <main className="page-main">
+                {/* 주소와 일치하는 자식 페이지를 이 위치에 표시 */}
                 <Outlet />
             </main>
 
@@ -72,15 +81,19 @@ const featureIconPaths = {
 // 주 기능 배너와 세부 기능 연결 카드 표시
 function PlaceholderPage({
     title,
+    // 기능 또는 계산 방식의 설명
     description,
+    // 주 기능에 포함된 세부 기능 목록
     children = [],
 }) {
     return (
         <div className="page-stack">
+            {/* 경로 설정의 제목과 설명으로 공통 배너 표시 */}
             <Banner title={title} description={description} />
 
             {children.length > 0 && (
                 <section aria-label={`${title} 세부 기능`}>
+                    {/* 경로 목록을 공통 카드 배치로 표시 */}
                     <div className="home-service-grid">
                         {children.map((feature) => (
                             <Link
@@ -89,6 +102,7 @@ function PlaceholderPage({
                                 className="home-service-card feature-guide-card"
                                 aria-label={feature.label}
                             >
+                                {/* 서비스 아이콘을 공통 배경 영역 안에 표시 */}
                                 <div className="home-service-icon">
                                     <svg
                                         viewBox="0 0 24 24"
@@ -108,6 +122,7 @@ function PlaceholderPage({
                                     </svg>
                                 </div>
 
+                                {/* 결과 또는 서비스 영역 제목 표시 */}
                                 <h2 className="feature-guide-title">
                                     {feature.label}
                                 </h2>
@@ -152,7 +167,25 @@ export default function AppRoutes({
                         path={route.path}
                         element={
                             route.path === "/service/monthlyPayment" ? (
-                                <MonthlyPayment />
+                                <div className="page-stack">
+                                    {/* 경로 설정의 제목과 설명으로 공통 배너 표시 */}
+                                    <Banner
+                                        title={route.label}
+                                        description={route.description}
+                                    />
+                                    {/* 월 상환액 페이지를 공통 계산 화면으로 연결 */}
+                                    <MonthlyPayment />
+                                </div>
+                            ) : route.path === "/service/totalInterest" ? (
+                                <div className="page-stack">
+                                    {/* 경로 설정의 제목과 설명으로 공통 배너 표시 */}
+                                    <Banner
+                                        title={route.label}
+                                        description={route.description}
+                                    />
+                                    {/* 총 이자 페이지를 공통 계산 화면으로 연결 */}
+                                    <TotalInterest />
+                                </div>
                             ) : (
                                 <PlaceholderPage
                                     title={route.label}
