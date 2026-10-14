@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.forguide.member.mapper.RefreshTokenMapper">
+
+    <insert id="insert">
+        INSERT INTO refresh_tokens (member_id, token, expires_at)
+        VALUES (#{memberId}, #{tokenHash}, #{expiresAt})
+    </insert>
+
+    <select id="findMemberIdByValidToken" resultType="long">
+        SELECT member_id FROM refresh_tokens
+        WHERE token = #{tokenHash} AND expires_at &gt; #{now}
+    </select>
+
+    <delete id="deleteByToken">
+        DELETE FROM refresh_tokens WHERE token = #{tokenHash}
+    </delete>
+
+    <delete id="deleteExpiredByMemberId">
+        DELETE FROM refresh_tokens WHERE member_id = #{memberId} AND expires_at &lt;= #{now}
+    </delete>
+</mapper>

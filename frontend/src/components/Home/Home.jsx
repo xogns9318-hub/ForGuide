@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Banner from "../Banner/Banner.jsx";
 import { categories } from "../../routes/routeConfig";
 import "../../styles/home.css";
@@ -38,25 +39,26 @@ function ServiceIcon({ id }) {
 
 // 홈 배너와 서비스 카드 표시
 export default function Home() {
+    const { t } = useTranslation();
     return (
         <div className="page-stack">
             {/* 홈 배너 */}
             <Banner
-                eyebrow="한국 생활의 길잡이, ForGuide"
-                title="당신의 행복한 한국 생활을 돕는 곳"
-                description="여기 홈입니다."
+                eyebrow={t("home.banner.eyebrow")}
+                title={t("home.banner.title")}
+                description={t("home.banner.description")}
             />
 
             {/* 서비스 소개 */}
             <section aria-labelledby="home-services-title">
                 <p className="home-services-eyebrow">
-                    ForGuide 서비스
+                    {t("home.services.eyebrow")}
                 </p>
                 <h2 id="home-services-title">
-                    어떤 도움이 필요하세요?
+                    {t("home.services.title")}
                 </h2>
                 <p className="home-services-intro">
-                    한국 생활에 필요한 여섯 가지 서비스를 한눈에 살펴보세요.
+                    {t("home.services.description")}
                 </p>
 
                 {/* 주 기능 카드 6개 */}
@@ -76,11 +78,15 @@ export default function Home() {
                                     to={category.path}
                                     className="home-category-link"
                                 >
-                                    {category.label}
+                                    {t(`navigation.${category.id}`, {
+                                        defaultValue: category.label,
+                                    })}
                                 </Link>
                             </h3>
 
-                            <p>{category.description}</p>
+                            <p>{t(`home.categories.${category.id}.description`, {
+                                        defaultValue: category.description,
+                                })}</p>
 
                             {/* 세부 기능이 있을 때만 버튼 표시 */}
                             {category.children.length > 0 && (
@@ -88,7 +94,9 @@ export default function Home() {
                                     {category.children.map((child) => (
                                         <li key={child.path}>
                                             <Link to={child.path} className="button">
-                                                {child.label}
+                                                {t(`home.features.${category.id}.${child.path.split("/").pop()}`, {
+                                                    defaultValue: child.label,
+                                                })}
                                             </Link>
                                         </li>
                                     ))}
