@@ -1,4 +1,3 @@
-
 import { Link, Outlet, Route, Routes } from "react-router-dom";
 import { categories, accountRoutes } from "./routeConfig";
 import { useTranslation } from "react-i18next";
@@ -8,6 +7,7 @@ import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import StatusPage from "../components/StatusPage/StatusPage.jsx";
 import Community from "../components/Community/Community.jsx";
+import CommunityWrite from "../components/Community/CommunityWrite.jsx";
 import { authPaths, authRoutes } from "../auth/authRoutes.jsx";
 import "../styles/home.css";
 import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
@@ -122,9 +122,9 @@ function PlaceholderPage({
                                 to={feature.path}
                                 className="home-service-card feature-guide-card"
                                 aria-label={t(
-                                    `home.features.${categoryId}.${feature.path.split("/").pop()}`,
+                                    `home.features.${categoryId}.${feature.id}`,
                                     { defaultValue: feature.label }
-                                )}
+                                    )}
                             >
                                 <div className="home-service-icon">
                                     <svg
@@ -147,14 +147,14 @@ function PlaceholderPage({
 
                                 <h2 className="feature-guide-title">
                                     {t(
-                                        `home.features.${categoryId}.${feature.path.split("/").pop()}`,
+                                        `home.features.${categoryId}.${feature.id}`,
                                         { defaultValue: feature.label }
                                     )}
                                 </h2>
 
                                 <p>
                                     {t(
-                                        `service.${feature.path.split("/").pop()}.description`,
+                                        `service.${feature.id}.description`,
                                         { defaultValue: feature.description }
                                     )}
                                 </p>
@@ -192,6 +192,12 @@ export default function AppRoutes({
                 <Route
                     path="/service/community"
                     element={<Community />}
+                />
+
+                {/* 게시글 작성 전용 페이지 */}
+                <Route
+                    path="/service/community/write"
+                    element={<CommunityWrite />}
                 />
 
                 {/* 서비스 페이지 */}

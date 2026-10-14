@@ -14,7 +14,6 @@ public class CommunityPostResponse {
     private Long memberId;
     private String nickname;
     private String profileImageUrl;
-    private String topic;
     private String content;
     private String language;
     private Integer contentVersion;

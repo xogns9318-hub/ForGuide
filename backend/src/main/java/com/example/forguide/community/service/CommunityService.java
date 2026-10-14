@@ -2,7 +2,7 @@ package com.example.forguide.community.service;
 
 
 import com.example.forguide.community.dto.CommunityPostResponse;
-import com.example.forguide.community.repository.CommunityMapper;
+import com.example.forguide.community.mapper.CommunityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
@@ -50,7 +50,6 @@ public class CommunityService {
     public int createPost(Long memberId, CommunityPostCreateRequest request) {
         return communityMapper.insertPost(
                 memberId,
-                request.getTopic(),
                 request.getContent(),
                 request.getLanguage()
         );
