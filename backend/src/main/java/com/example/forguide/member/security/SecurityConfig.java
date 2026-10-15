@@ -57,6 +57,7 @@ public class SecurityConfig {
                         // 프로필 이미지 조회 (다른 사람의 프로필 이미지도 볼 수 있어야 하므로 조회만 공개)
                         .requestMatchers(HttpMethod.GET, ProfileImageStorage.URL_PREFIX + "**").permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/api/v1/community/posts/**").permitAll()
                         // ── 그 밖의 모든 주소는 로그인 필요 ──
                         .anyRequest().authenticated())
 

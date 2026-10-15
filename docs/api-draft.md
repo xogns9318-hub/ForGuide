@@ -123,3 +123,97 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | 주소 | `/api/v1/profile-images/{파일이름}`. **조회(GET)만 로그인 없이 공개** |
 | 서버 추가 검사 | 실제로 이미지로 열리는지, 가로·세로 4096px 이하인지 (압축 폭탄 방지) |
 | 업로드 준비 | 전송 전 `prepareProfileImage(file)`를 거친다. 지금은 그대로 보내고, 나중에 JPG 자동 변환을 이 함수 안에 추가한다 |
+
+
+## 커뮤니티 API
+
+백엔드 위치:
+- `community/controller/CommunityController.java`
+- `community/service/CommunityService.java`
+- `community/mapper/CommunityMapper.java`
+- `resources/mapper/CommunityMapper.xml`
+- `community/exception/CommunityExceptionHandler.java`
+
+기본 주소: `/api/v1/community`
+
+현재 보안 설정에서는 모든 커뮤니티 API에 로그인이 필요하다.
+
+### 게시글 API
+
+| 메서드 | 주소 | 설명 |
+| --- | --- | --- |
+| GET | `/posts` | 게시글 전체 목록 조회 |
+| GET | `/posts/{postId}` | 게시글 상세 조회 |
+| GET | `/posts/scroll` | 커서 기반 게시글 목록 조회 |
+| POST | `/posts` | 게시글 작성 |
+
+### 무한 스크롤 조회
+
+`GET /api/v1/community/posts/scroll`
+
+요청 파라미터:
+
+| 이름 | 필수 여부 | 설명 |
+| --- | --- | --- |
+| `cursorCreatedAt` | 선택 | 마지막으로 조회한 게시글의 작성 시간 |
+| `cursorPostId` | 선택 | 마지막으로 조회한 게시글 번호 |
+| `size` | 필수 | 조회할 게시글 수 (1~50) |
+
+첫 페이지에서는 커서 두 개를 전달하지 않는다.
+
+다음 페이지에서는 마지막 게시글의 `createdAt`과 `postId`를 전달한다.
+
+정렬 기준:
+1. `created_at DESC`
+2. `post_id DESC`
+
+### 게시글 작성
+
+`POST /api/v1/community/posts`
+
+요청 JSON 예시:
+
+```json
+{
+  "content": "한국 생활에 대해 궁금한 점이 있습니다.",
+  "language": "ko"
+}
+```
+
+입력 검증:
+- `content`: 필수, 공백만 입력 불가, 최대 5000자
+- `language`: 필수, 공백만 입력 불가
+
+게시글 작성자는 클라이언트 요청값이 아닌 로그인 인증 정보로 확인한다.
+
+### 공통 응답 및 오류
+
+성공 응답은 `ApiResponse.ok(data)` 형식을 사용한다.
+
+실패 응답 예시:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_INPUT",
+    "message": "입력값이 올바르지 않습니다.",
+    "fieldErrors": {}
+  }
+}
+```
+
+| HTTP 상태 | 오류 코드 | 설명 |
+| --- | --- | --- |
+| 400 | `INVALID_INPUT` | 필수값 누락, 길이 제한 위반, 잘못된 요청값 |
+| 401 | `AUTH_REQUIRED` | 로그인하지 않은 사용자의 보호된 API 요청 |
+
+커뮤니티의 요청 검증 예외는
+`CommunityExceptionHandler`에서 공통 응답 형식으로 처리한다.
+
+### 테스트 상태
+
+- 프론트엔드 빌드: 성공
+- 백엔드 Java 컴파일: 성공
+- MyBatis 리소스 처리: 성공
+- 실제 MySQL 연결 및 HTTP API 테스트: 대기

@@ -1,6 +1,8 @@
 package com.example.forguide.community.dto;
 
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +10,10 @@ import lombok.Setter;
 @Setter
 public class CommunityPostCreateRequest {
 
-    private String topic;
+    @NotBlank(message = "게시글 내용을 입력해주세요.")
+    @Size(max = 5000, message = "게시글 내용은 5000자 이하여야 합니다.")
     private String content;
+
+    @NotBlank(message = "언어를 선택해주세요.")
     private String language;
 }

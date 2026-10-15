@@ -9,12 +9,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDateTime;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.example.forguide.member.common.ApiResponse;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import org.springframework.validation.annotation.Validated;
+import jakarta.validation.Valid;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/community")
 @RequiredArgsConstructor
+@Validated
 public class CommunityController {
 
     private final CommunityService communityService;
@@ -38,7 +43,7 @@ public class CommunityController {
     public ApiResponse<List<CommunityPostResponse>> getPostsByCursor(
             @RequestParam(required = false) LocalDateTime cursorCreatedAt,
             @RequestParam(required = false) Long cursorPostId,
-            @RequestParam int size
+            @RequestParam @Min(1) @Max(50) int size
     ) {
         return ApiResponse.ok(
                 communityService.getPostsByCursor(
@@ -53,7 +58,7 @@ public class CommunityController {
     @PostMapping("/posts")
     public ApiResponse<Integer> createPost(
             @AuthenticationPrincipal Long memberId,
-            @RequestBody CommunityPostCreateRequest request
+            @Valid @RequestBody CommunityPostCreateRequest request
     ) {
         return ApiResponse.ok(
                 communityService.createPost(memberId, request)
