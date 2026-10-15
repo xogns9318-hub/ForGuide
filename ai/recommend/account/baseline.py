@@ -70,17 +70,22 @@ def judge(product, user):
 def recommend_fast(options, user):
     term = comparison_term(user["residence_status"])
     products = best_option_per_product(options, user["purpose"], term)
-    judged = [(p, *judge(p, user)) for p in products]
-    eligible_rates = [float(p["effective_rate"]) for p, mismatch, _ in judged if not mismatch]
-    best_rate = max(eligible_rates) if eligible_rates else None
+    judged = []
+    best_rate_by_group = {}
+    for product in products:
+        mismatch, check = judge(product, user)
+        group = decide_group(mismatch, check)
+        judged.append((product, mismatch, check, group))
+        if group != GROUP_MISMATCH:
+            rate = float(product["effective_rate"])
+            best_rate_by_group[group] = max(rate, best_rate_by_group.get(group, rate))
 
     results = []
-    for product, mismatch, check in judged:
-        group = decide_group(mismatch, check)
+    for product, mismatch, check, group in judged:
         score, reasons = None, []
         if group != GROUP_MISMATCH:
             features = {
-                "rate": absolute_score(best_rate, float(product["effective_rate"]), RATE_FULL_GAP),
+                "rate": absolute_score(best_rate_by_group[group], float(product["effective_rate"]), RATE_FULL_GAP),
                 "check_count": 1 if product["foreigner_status"] == "확인 필요" else 0,
                 "visit_required": int(product["visit_required"]),
             }
