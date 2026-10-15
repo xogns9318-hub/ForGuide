@@ -71,13 +71,31 @@
     color: var(--primary);
 }
 
-.community-write-area p {
+.community-write-form {
     flex: 1;
+}
+
+.community-write-form textarea {
+    width: 100%;
+    min-height: 76px;
     padding: 20px 14px;
+    border: 1px solid var(--line);
     border-radius: 10px;
     background: var(--surface);
-    color: var(--muted);
+    color: var(--ink);
     font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+}
+
+.community-write-form textarea::placeholder {
+    color: var(--muted);
+}
+
+.community-write-form p {
+    margin-top: 6px;
+    color: #b42318;
+    font-size: 13px;
 }
 
 .community-write-area button {
@@ -202,7 +220,7 @@
         padding: 20px;
     }
 
-    .community-write-area p {
+    .community-write-form textarea {
         padding: 14px 10px;
     }
 

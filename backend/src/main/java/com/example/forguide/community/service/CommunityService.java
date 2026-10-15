@@ -5,9 +5,9 @@ import com.example.forguide.community.dto.CommunityPostResponse;
 import com.example.forguide.community.mapper.CommunityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 import com.example.forguide.community.dto.CommunityPostCreateRequest;
+import com.example.forguide.member.common.ApiException;
+import com.example.forguide.member.common.ErrorCode;
 import java.time.LocalDateTime;
 
 import java.util.List;
@@ -27,11 +27,9 @@ public class CommunityService {
     public CommunityPostResponse getPostById(Long postId) {
         CommunityPostResponse post = communityMapper.findPostById(postId);
 
-        //해당 게시글이 존재하지 않으면 404 오류 반환
-        if(post == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,
-                    "게시글을 찾을 수 없습니다."
-            );
+        // 해당 게시글이 없으면 공통 404 응답 반환
+        if (post == null) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "게시글을 찾을 수 없습니다.");
         }
         return post;
     }
@@ -53,5 +51,24 @@ public class CommunityService {
                 request.getContent(),
                 request.getLanguage()
         );
+    }
+
+    // 작성자를 확인한 뒤 본인 게시글만 삭제
+    public void deletePost(Long postId, Long memberId) {
+        CommunityPostResponse post = communityMapper.findPostById(postId);
+
+        if (post == null) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "게시글을 찾을 수 없습니다.");
+        }
+
+        if (!post.getMemberId().equals(memberId)) {
+            throw new ApiException(ErrorCode.FORBIDDEN, "본인이 작성한 게시글만 삭제할 수 있습니다.");
+        }
+
+        int deletedCount = communityMapper.deletePost(postId, memberId);
+
+        if (deletedCount == 0) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "게시글을 찾을 수 없습니다.");
+        }
     }
 }

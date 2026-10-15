@@ -64,4 +64,14 @@ public class CommunityController {
                 communityService.createPost(memberId, request)
         );
     }
+
+    // 로그인한 작성자 본인만 게시글 삭제
+    @DeleteMapping("/posts/{postId}")
+    public ApiResponse<Void> deletePost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        communityService.deletePost(postId, memberId);
+        return ApiResponse.ok();
+    }
 }
