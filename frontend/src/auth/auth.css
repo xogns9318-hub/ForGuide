@@ -1,0 +1,80 @@
+/* 회원가입·로그인 화면 전용 스타일 (공통 규격 common.css에 없는 것만 둔다) */
+
+/* 폼 제목과 예시 데이터 배지 한 줄 배치 */
+.auth-panel-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+}
+
+/* 비밀번호 입력창 안의 보기 버튼 */
+.auth-password {
+    position: relative;
+}
+
+.auth-password input {
+    padding-right: 72px;
+}
+
+.auth-password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    padding: 4px 10px;
+    border: 0;
+    border-radius: var(--control-radius);
+    background: transparent;
+    color: var(--muted);
+    font-size: 14px;
+    transform: translateY(-50%);
+}
+
+.auth-password-toggle:hover {
+    background: var(--mint-soft);
+}
+
+/* 사용 가능한 아이디 등 긍정 안내 (오류 안내 FieldError와 같은 크기) */
+.auth-field-ok {
+    color: var(--primary);
+    font-size: 14px;
+}
+
+/* 프로필 이미지와 파일 선택을 한 줄로 배치 */
+.mypage-image-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+.mypage-image-row .form-field {
+    flex: 1;
+    min-width: 240px;
+}
+
+/* 파일 선택 입력은 공통 입력창 높이를 쓰지 않는다 (브라우저 기본 버튼 모양 유지) */
+.mypage-image-row input[type="file"] {
+    height: auto;
+    padding: 10px 14px;
+}
+
+/* 원형 프로필 이미지 (크기는 컴포넌트의 size로 정한다) */
+.profile-avatar {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--surface);
+}
+
+/* 이미지가 없을 때 이름 첫 글자 */
+.profile-avatar-initial {
+    background: var(--mint);
+    color: var(--primary);
+    font-weight: 700;
+}
