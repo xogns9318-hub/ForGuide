@@ -24,7 +24,7 @@ export default function LanguageSelector() {
 
     return (
         <div className="header-language">
-            <span id={`${selectorId}-label`}>
+            <span id={`${selectorId}-label`} className="header-language-label">
                 {t("header.language")}
             </span>
 
