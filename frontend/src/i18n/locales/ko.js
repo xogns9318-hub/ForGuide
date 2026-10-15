@@ -71,8 +71,8 @@ const ko = {
                 account: "계좌 추천",
             },
             repayment: {
-                monthlyPayment: "월 상환액",
-                totalInterest: "총 이자",
+                monthlyPayment: "월 상환액 계산기",
+                totalInterest: "총 이자 계산기",
             },
             employment: {
                 jobListings: "일자리 목록",
