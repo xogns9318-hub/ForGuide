@@ -1,45 +1,7 @@
-/* 커뮤니티 상단 소개 영역 */
-.community-page {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.community-hero {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 180px;
-    padding: 36px 38px;
-    overflow: hidden;
-    border-radius: 22px;
-    background: var(--mint);
-}
-
-.community-hero h1 {
-    font-size: 42px;
-    letter-spacing: -3px;
-}
-
-.community-hero p {
-    margin-top: 14px;
-    color: var(--muted);
-}
-
-.community-hero-arch {
-    width: 190px;
-    height: 190px;
-    margin: 55px 60px 0 0;
-    border: 26px solid #ccece1;
-    border-radius: 50%;
-}
-
 /* 게시글을 담는 흰색 영역 */
 .community-board {
+    padding: 0;
     overflow: hidden;
-    border: 1px solid var(--line);
-    border-radius: var(--panel-radius);
-    background: var(--surface);
 }
 
 .community-board-title {
@@ -98,13 +60,62 @@
     font-size: 13px;
 }
 
-.community-write-area button {
-    padding: 11px 16px;
+.community-image-picker {
+    margin-top: 10px;
+}
+
+.community-image-picker label {
+    margin-right: 8px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.community-image-picker input {
+    max-width: 100%;
+    font-size: 13px;
+}
+
+.community-image-picker ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.community-image-picker li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.community-image-picker button {
     border: 0;
-    border-radius: 9px;
-    background: var(--primary);
-    color: var(--surface);
-    font-weight: 700;
+    background: transparent;
+    color: #b42318;
+    cursor: pointer;
+}
+
+.community-post-images {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0 0 20px;
+}
+
+.community-post-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    object-fit: cover;
 }
 
 .community-post-area {
@@ -193,29 +204,7 @@
     text-align: center;
 }
 
-.community-notice-button {
-    padding: 10px 15px;
-    border: 1px solid var(--line);
-    border-radius: 9px;
-    background: var(--surface);
-    color: var(--ink);
-    font-size: 13px;
-    font-weight: 700;
-}
-
 @media (max-width: 768px) {
-    .community-hero {
-        padding: 28px;
-    }
-
-    .community-hero h1 {
-        font-size: 34px;
-    }
-
-    .community-hero-arch {
-        display: none;
-    }
-
     .community-write-area {
         padding: 20px;
     }

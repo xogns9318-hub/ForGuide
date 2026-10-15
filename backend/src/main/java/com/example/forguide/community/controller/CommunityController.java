@@ -13,6 +13,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -54,14 +57,17 @@ public class CommunityController {
         );
     }
 
-    // 게시글 작성
-    @PostMapping("/posts")
+    // 게시글 작성: 본문과 선택 사진(최대 4장)을 multipart/form-data로 받는다
+    @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<Integer> createPost(
             @AuthenticationPrincipal Long memberId,
-            @Valid @RequestBody CommunityPostCreateRequest request
+            @Valid @ModelAttribute CommunityPostCreateRequest request,
+            @RequestParam(value = "images", required = false)
+            @Size(max = 4, message = "게시글 사진은 최대 4장까지 올릴 수 있습니다.")
+            List<MultipartFile> images
     ) {
         return ApiResponse.ok(
-                communityService.createPost(memberId, request)
+                communityService.createPost(memberId, request, images)
         );
     }
 

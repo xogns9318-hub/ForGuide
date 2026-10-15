@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.example.forguide.community.image.CommunityImageStorage;
 
 /**
  * 토큰 기반 인증 설정. 서비스 전체 API에 적용된다.
@@ -56,6 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         // 프로필 이미지 조회 (다른 사람의 프로필 이미지도 볼 수 있어야 하므로 조회만 공개)
                         .requestMatchers(HttpMethod.GET, ProfileImageStorage.URL_PREFIX + "**").permitAll()
+                        .requestMatchers(HttpMethod.GET, CommunityImageStorage.URL_PREFIX + "**").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/posts/**").permitAll()
                         // ── 그 밖의 모든 주소는 로그인 필요 ──
