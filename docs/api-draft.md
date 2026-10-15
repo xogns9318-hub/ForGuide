@@ -35,11 +35,12 @@
 | `member/jwt/JwtProperties` | `jwt.*` 설정값. 수명 기본값 access 30분, refresh 14일 |
 | `member/jwt/JwtProvider` | access token 발급·검증. 만료 `TOKEN_EXPIRED`, 위조·형식 오류 `TOKEN_INVALID` |
 | `member/security/JwtAuthenticationFilter` | `Authorization: Bearer {토큰}` 검증 → 컨트롤러에서 `@AuthenticationPrincipal Long memberId` |
-| `member/security/JwtAuthenticationEntryPoint` | 로그인 필요 주소에 인증 없음 → 401 (`AUTH_REQUIRED`·`TOKEN_EXPIRED`·`TOKEN_INVALID`) |
+| `member/security/JwtAuthenticationEntryPoint` | 잠긴 주소에 인증 없음 → 401 (`AUTH_REQUIRED`·`TOKEN_EXPIRED`·`TOKEN_INVALID`) |
 | `member/security/SecurityConfig` | 세션 없음(STATELESS), BCrypt, 접근 규칙 |
 
-접근 규칙: **기본 잠금.** `/api/v1/auth/**`만 공개하고 나머지는 로그인 필요.
-다른 기능에서 로그인 없이 써야 하는 주소는 해당 담당자가 `SecurityConfig`의 "공개 주소" 구역에 한 줄 추가한다.
+접근 규칙: **기본 열림.** 로그인이 필요한 주소만 잠근다. 현재 잠긴 주소는 `/api/v1/members/me/**`(본인 닉네임·프로필 이미지 저장)뿐이다.
+토큰이 실려 오면 어느 주소에서든 `@AuthenticationPrincipal Long memberId`로 회원 번호를 받는다(토큰이 없으면 `null`).
+다른 기능에서 로그인이 필요한 주소는 해당 담당자가 `SecurityConfig`의 "로그인 필요 주소" 구역에 한 줄 추가한다. 잊으면 로그인 없이 열린다.
 
 실행 전 준비: 비밀키는 저장소에 넣지 않는다. 각자 환경변수 `JWT_SECRET`(Base64, 32바이트 이상)을 설정해야 백엔드가 켜진다.
 

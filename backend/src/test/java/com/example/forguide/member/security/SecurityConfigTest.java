@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * Security·JWT 동작 확인. 앱 전체를 띄우고(테스트 DB: H2) 보호 주소와 공개 주소를 호출한다.
+ * Security·JWT 동작 확인. 앱 전체를 띄우고(테스트 DB: H2) 잠근 주소(/api/v1/members/me/**)와 열린 주소를 호출한다.
  */
 @SpringBootTest
 @Import(SecurityConfigTest.TestController.class)
@@ -51,7 +51,7 @@ class SecurityConfigTest {
 
     @Test
     void 토큰_없이_보호_주소는_401_AUTH_REQUIRED() throws Exception {
-        mockMvc.perform(get("/api/v1/test-protected/me"))
+        mockMvc.perform(get("/api/v1/members/me/test-protected"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.error.code").value("AUTH_REQUIRED"));
@@ -61,7 +61,7 @@ class SecurityConfigTest {
     void 올바른_토큰이면_컨트롤러에서_회원_번호를_받는다() throws Exception {
         String token = jwtProvider.createAccessToken(7L);
 
-        mockMvc.perform(get("/api/v1/test-protected/me").header("Authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/v1/members/me/test-protected").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.memberId").value(7));
     }
@@ -75,7 +75,7 @@ class SecurityConfigTest {
                 .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret)))
                 .compact();
 
-        mockMvc.perform(get("/api/v1/test-protected/me").header("Authorization", "Bearer " + expired))
+        mockMvc.perform(get("/api/v1/members/me/test-protected").header("Authorization", "Bearer " + expired))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error.code").value("TOKEN_EXPIRED"));
     }
@@ -89,7 +89,7 @@ class SecurityConfigTest {
                 .encodeToString("{\"sub\":\"1\",\"exp\":9999999999}".getBytes());
         String forged = parts[0] + "." + forgedPayload + "." + parts[2];
 
-        mockMvc.perform(get("/api/v1/test-protected/me").header("Authorization", "Bearer " + forged))
+        mockMvc.perform(get("/api/v1/members/me/test-protected").header("Authorization", "Bearer " + forged))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error.code").value("TOKEN_INVALID"));
     }
@@ -102,9 +102,23 @@ class SecurityConfigTest {
                 .signWith(Keys.hmacShaKeyFor("another-secret-key-that-is-32-bytes!!".getBytes()))
                 .compact();
 
-        mockMvc.perform(get("/api/v1/test-protected/me").header("Authorization", "Bearer " + otherKeyToken))
+        mockMvc.perform(get("/api/v1/members/me/test-protected").header("Authorization", "Bearer " + otherKeyToken))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error.code").value("TOKEN_INVALID"));
+    }
+
+    @Test
+    void 공개로_등록하지_않은_주소는_토큰_없이_401이다() throws Exception {
+        mockMvc.perform(get("/api/v1/test-open/me"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void 잠그지_않은_주소도_토큰이_있으면_회원_번호를_받는다() throws Exception {
+        String token = jwtProvider.createAccessToken(9L);
+        mockMvc.perform(get("/api/v1/test-open/me").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.memberId").value(9));
     }
 
     @Test
@@ -123,7 +137,7 @@ class SecurityConfigTest {
     @Test
     void 세션_쿠키를_만들지_않는다() throws Exception {
         String token = jwtProvider.createAccessToken(7L);
-        mockMvc.perform(get("/api/v1/test-protected/me").header("Authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/v1/members/me/test-protected").header("Authorization", "Bearer " + token))
                 .andExpect(result -> {
                     if (result.getResponse().getHeader("Set-Cookie") != null
                             && result.getResponse().getHeader("Set-Cookie").contains("JSESSIONID")) {
@@ -135,9 +149,16 @@ class SecurityConfigTest {
     @RestController
     static class TestController {
 
-        @GetMapping("/api/v1/test-protected/me")
+        @GetMapping("/api/v1/members/me/test-protected")
         ApiResponse<Map<String, Long>> me(@AuthenticationPrincipal Long memberId) {
             return ApiResponse.ok(Map.of("memberId", memberId));
+        }
+
+        @GetMapping("/api/v1/test-open/me")
+        ApiResponse<Map<String, Object>> open(@AuthenticationPrincipal Long memberId) {
+            return memberId == null
+                    ? ApiResponse.ok(Map.of("loggedIn", false))
+                    : ApiResponse.ok(Map.of("loggedIn", true, "memberId", memberId));
         }
 
         @GetMapping("/api/v1/auth/test-public")
