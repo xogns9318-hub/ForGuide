@@ -3,8 +3,10 @@ export function validateText(
     value,
     { required = false, minLength, maxLength } = {},
 ) {
+    // 앞뒤 공백을 제거하고 문자열이 아닌 값은 빈 값으로 처리
     const text = typeof value === "string" ? value.trim() : "";
 
+    // 필수 항목의 빈 문자열 검사
     if (required && !text) {
         return "필수 입력 항목입니다.";
     }
@@ -14,6 +16,7 @@ export function validateText(
         return "";
     }
 
+    // 문자를 배열로 세어 문자열 길이 확인
     const length = Array.from(text).length;
 
     if (minLength !== undefined && length < minLength) {

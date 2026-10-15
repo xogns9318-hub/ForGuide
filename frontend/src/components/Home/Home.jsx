@@ -1,6 +1,10 @@
+// 주소 이동과 현재 경로를 확인하는 라우터 기능 사용
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Banner from "../Banner/Banner.jsx";
+// 메뉴 이름과 주소를 공통 경로 설정에서 사용
 import { categories } from "../../routes/routeConfig";
+// 이 화면에서 사용할 스타일 연결
 import "../../styles/home.css";
 
 // 서비스 아이콘 모양
@@ -38,34 +42,38 @@ function ServiceIcon({ id }) {
 
 // 홈 배너와 서비스 카드 표시
 export default function Home() {
+    const { t } = useTranslation();
     return (
         <div className="page-stack">
             {/* 홈 배너 */}
             <Banner
-                eyebrow="한국 생활의 길잡이, ForGuide"
-                title="당신의 행복한 한국 생활을 돕는 곳"
-                description="임금·계좌·생활비·상환·취업까지. 낯선 생활에서 겪는 어려움을 정리하고, 내 상황에 맞는 도움을 찾아보세요."
+                eyebrow={t("home.banner.eyebrow")}
+                title={t("home.banner.title")}
+                description={t("home.banner.description")}
             />
 
             {/* 서비스 소개 */}
             <section aria-labelledby="home-services-title">
                 <p className="home-services-eyebrow">
-                    ForGuide 서비스
+                    {t("home.services.eyebrow")}
                 </p>
+                {/* 결과 또는 서비스 영역 제목 표시 */}
                 <h2 id="home-services-title">
-                    어떤 도움이 필요하세요?
+                    {t("home.services.title")}
                 </h2>
                 <p className="home-services-intro">
-                    한국 생활에 필요한 여섯 가지 서비스를 한눈에 살펴보세요.
+                    {t("home.services.description")}
                 </p>
 
                 {/* 주 기능 카드 6개 */}
                 <div className="home-service-grid">
+                    {/* 공통 카테고리 목록으로 메뉴 또는 카드 생성 */}
                     {categories.map((category) => (
                         <article
                             key={category.id}
                             className="home-service-card"
                         >
+                            {/* 서비스 아이콘을 공통 배경 영역 안에 표시 */}
                             <div className="home-service-icon">
                                 <ServiceIcon id={category.id} />
                             </div>
@@ -76,11 +84,15 @@ export default function Home() {
                                     to={category.path}
                                     className="home-category-link"
                                 >
-                                    {category.label}
+                                    {t(`navigation.${category.id}`, {
+                                        defaultValue: category.label,
+                                    })}
                                 </Link>
                             </h3>
 
-                            <p>{category.description}</p>
+                            <p>{t(`home.categories.${category.id}.description`, {
+                                        defaultValue: category.description,
+                                })}</p>
 
                             {/* 세부 기능이 있을 때만 버튼 표시 */}
                             {category.children.length > 0 && (
@@ -88,7 +100,9 @@ export default function Home() {
                                     {category.children.map((child) => (
                                         <li key={child.path}>
                                             <Link to={child.path} className="button">
-                                                {child.label}
+                                                {t(`home.features.${category.id}.${child.path.split("/").pop()}`, {
+                                                    defaultValue: child.label,
+                                                })}
                                             </Link>
                                         </li>
                                     ))}

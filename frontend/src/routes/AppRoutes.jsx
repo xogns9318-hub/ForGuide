@@ -1,33 +1,42 @@
 import { Link, Outlet, Route, Routes } from "react-router-dom";
 import { categories, accountRoutes } from "./routeConfig";
+import { useTranslation } from "react-i18next";
 import Home from "../components/Home/Home.jsx";
 import Banner from "../components/Banner/Banner.jsx";
 import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import StatusPage from "../components/StatusPage/StatusPage.jsx";
+import Community from "../components/Community/Community.jsx";
+import CommunityWrite from "../components/Community/CommunityWrite.jsx";
+import { authPaths, authRoutes } from "../auth/authRoutes.jsx";
 import "../styles/home.css";
+import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
+import TotalInterest from "../components/TotalInterest/TotalInterest.jsx";
 
 // 배너와 세부 기능을 연결할 서비스 주소 목록
 const serviceRoutes = categories.flatMap((category) => [
     {
+        categoryId: category.id,
         label: category.label,
         path: category.path,
         description: category.description,
         children: category.children,
     },
-    ...category.children,
+    ...category.children.map((child) => ({
+        ...child,
+        categoryId: category.id,
+    })),
 ]);
 
 // 일반 페이지의 공통 레이아웃
 function DefaultLayout({
-    language,
-    isLoggedIn,
-    onLanguageChange,
-    onLogout,
-}) {
+                           language,
+                           isLoggedIn,
+                           onLanguageChange,
+                           onLogout,
+                       }) {
     return (
         <div className="app-layout">
-            {/* 공통 헤더 */}
             <Header
                 language={language}
                 isLoggedIn={isLoggedIn}
@@ -35,12 +44,10 @@ function DefaultLayout({
                 onLogout={onLogout}
             />
 
-            {/* 현재 일반 페이지 표시 */}
             <main className="page-main">
                 <Outlet />
             </main>
 
-            {/* 공통 푸터 */}
             <Footer />
         </div>
     );
@@ -68,25 +75,57 @@ const featureIconPaths = {
         "M6 3h9l4 4v14H6z M15 3v5h4 M9 12h7 M9 16h7",
 };
 
-// 주 기능 배너와 세부 기능 연결 카드 표시
+// 아직 본문이 없는 페이지의 배너 + 주 기능 안내 카드
 function PlaceholderPage({
-    title,
-    description,
-    children = [],
-}) {
+                             title,
+                             description,
+                             categoryId,
+                             serviceId,
+                             children = [],
+                         }) {
+    const { t } = useTranslation();
+
+    // 기존 다국어 번역 기능 유지
+    const translatedTitle = serviceId
+        ? t(`home.features.${categoryId}.${serviceId}`, {
+            defaultValue: title,
+        })
+        : categoryId
+            ? t(`navigation.${categoryId}`, {
+                defaultValue: title,
+            })
+            : title;
+
+    const translatedDescription = serviceId
+        ? t(`service.${serviceId}.description`, {
+            defaultValue: description,
+        })
+        : categoryId
+            ? t(`home.categories.${categoryId}.description`, {
+                defaultValue: description,
+            })
+            : description;
+
     return (
         <div className="page-stack">
-            <Banner title={title} description={description} />
+            <Banner
+                title={translatedTitle}
+                description={translatedDescription}
+            />
 
+            {/* develop에서 추가한 주 기능 안내 카드 */}
             {children.length > 0 && (
-                <section aria-label={`${title} 세부 기능`}>
+                <section aria-label={`${translatedTitle} 세부 기능`}>
                     <div className="home-service-grid">
                         {children.map((feature) => (
                             <Link
                                 key={feature.path}
                                 to={feature.path}
                                 className="home-service-card feature-guide-card"
-                                aria-label={feature.label}
+                                aria-label={t(
+                                    `home.features.${categoryId}.${feature.id}`,
+                                    { defaultValue: feature.label }
+                                    )}
                             >
                                 <div className="home-service-icon">
                                     <svg
@@ -108,10 +147,18 @@ function PlaceholderPage({
                                 </div>
 
                                 <h2 className="feature-guide-title">
-                                    {feature.label}
+                                    {t(
+                                        `home.features.${categoryId}.${feature.id}`,
+                                        { defaultValue: feature.label }
+                                    )}
                                 </h2>
 
-                                <p>{feature.description}</p>
+                                <p>
+                                    {t(
+                                        `service.${feature.id}.description`,
+                                        { defaultValue: feature.description }
+                                    )}
+                                </p>
                             </Link>
                         ))}
                     </div>
@@ -121,16 +168,33 @@ function PlaceholderPage({
     );
 }
 
+// 계산기에도 세부 기능과 같은 번역 배너를 표시합니다.
+function CalculatorPage({ categoryId, serviceId, title, description, children }) {
+    const { t } = useTranslation();
+    const translatedTitle = t(`home.features.${categoryId}.${serviceId}`, {
+        defaultValue: title,
+    });
+    const translatedDescription = t(`service.${serviceId}.description`, {
+        defaultValue: description,
+    });
+
+    return (
+        <div className="page-stack">
+            <Banner title={translatedTitle} description={translatedDescription} />
+            {children}
+        </div>
+    );
+}
+
 // 일반 화면과 전체 상태 화면 연결
 export default function AppRoutes({
-    language,
-    isLoggedIn,
-    onLanguageChange,
-    onLogout,
-}) {
+                                      language,
+                                      isLoggedIn,
+                                      onLanguageChange,
+                                      onLogout,
+                                  }) {
     return (
         <Routes>
-            {/* 헤더와 푸터가 있는 일반 페이지 */}
             <Route
                 element={
                     <DefaultLayout
@@ -141,26 +205,66 @@ export default function AppRoutes({
                     />
                 }
             >
-                {/* 홈 화면 */}
                 <Route path="/" element={<Home />} />
 
-                {/* 서비스 페이지 */}
-                {serviceRoutes.map((route) => (
-                    <Route
-                        key={route.path}
-                        path={route.path}
-                        element={
-                            <PlaceholderPage
-                                title={route.label}
-                                description={route.description}
-                                children={route.children}
-                            />
-                        }
-                    />
-                ))}
+                {/* 커뮤니티 페이지 */}
+                <Route
+                    path="/service/community"
+                    element={<Community />}
+                />
 
-                {/* 회원 페이지 */}
-                {accountRoutes.map((route) => (
+                {/* 게시글 작성 전용 페이지 */}
+                <Route
+                    path="/service/community/write"
+                    element={<CommunityWrite />}
+                />
+
+                {/* 서비스 페이지 */}
+                {serviceRoutes
+                    .filter((route) => route.path !== "/service/community")
+                    .map((route) => (
+                        <Route
+                            key={route.path}
+                            path={route.path}
+                            element={
+                                route.path === "/service/monthlyPayment" ? (
+                                    <CalculatorPage
+                                        categoryId={route.categoryId}
+                                        serviceId={route.id}
+                                        title={route.label}
+                                        description={route.description}
+                                    >
+                                        <MonthlyPayment />
+                                    </CalculatorPage>
+                                ) : route.path === "/service/totalInterest" ? (
+                                    <CalculatorPage
+                                        categoryId={route.categoryId}
+                                        serviceId={route.id}
+                                        title={route.label}
+                                        description={route.description}
+                                    >
+                                        <TotalInterest />
+                                    </CalculatorPage>
+                                ) : (
+                                    <PlaceholderPage
+                                        title={route.label}
+                                        description={route.description}
+                                        categoryId={route.categoryId}
+                                        serviceId={route.id}
+                                        children={route.children}
+                                    />
+                                )
+                            }
+                        />
+                    ))}
+
+                {/* 회원가입·로그인·마이페이지 */}
+                {authRoutes()}
+
+                {/* 로그인 라우트와 중복되지 않는 기존 회원 페이지 */}
+                {accountRoutes
+                    .filter((route) => !authPaths.includes(route.path))
+                    .map((route) => (
                     <Route
                         key={route.path}
                         path={route.path}
@@ -171,43 +275,30 @@ export default function AppRoutes({
                 ))}
             </Route>
 
-            {/* 로딩 화면 */}
             <Route
                 path="/loading"
                 element={<StatusPage type="loading" />}
             />
-
-            {/* 빈 결과 화면 */}
             <Route
                 path="/empty"
                 element={<StatusPage type="empty" />}
             />
-
-            {/* 조회 실패와 재시도 화면 */}
             <Route
                 path="/failure"
                 element={<StatusPage type="failure" />}
             />
-
-            {/* 입력 검증 초안 */}
             <Route
                 path="/input-error"
                 element={<StatusPage type="input" />}
             />
-
-            {/* 예시 표시와 마스킹 초안 */}
             <Route
                 path="/example"
                 element={<StatusPage type="example" />}
             />
-
-            {/* 잘못된 접근 화면 */}
             <Route
                 path="/error"
                 element={<StatusPage type="error" />}
             />
-
-            {/* 등록되지 않은 주소 안내 */}
             <Route
                 path="*"
                 element={<StatusPage type="error" />}

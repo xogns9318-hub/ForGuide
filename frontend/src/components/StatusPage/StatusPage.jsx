@@ -5,16 +5,7 @@ import FieldError from "../FieldError/FieldError.jsx";
 import { validateText } from "../../utils/validation.js";
 import { maskName, maskAccount } from "../../utils/masking.js";
 import "../../styles/statusPage.css";
-
-// 상태별 안내 문구
-const messages = {
-    loading: "이동중입니다! 잠시만 기다려주세요~",
-    empty: "조회된 결과가 없습니다!",
-    failure: "정보를 불러오지 못했습니다! 다시 시도해주세요.",
-    error: "잘못된 접근입니다! 다시 돌아가세요!!",
-    input: "입력 내용을 확인해주세요.",
-    example: "예시 표시와 개인정보 마스킹",
-};
+import { useTranslation } from "react-i18next";
 
 // 상태별 아이콘 표시
 function StatusIcon({ type }) {
@@ -65,6 +56,8 @@ export default function StatusPage({
     onRetry,
     onChangeConditions,
 }) {
+    const { t } = useTranslation();
+
     // 재시도 요청의 중복 실행 방지
     const retryPending = useRef(false);
     const mounted = useRef(false);
@@ -119,9 +112,7 @@ export default function StatusPage({
             await onRetry();
         } catch {
             if (mounted.current) {
-                setRetryError(
-                    "다시 시도했지만 실패했습니다. 잠시 후 시도해주세요.",
-                );
+                setRetryError(t("status.failure.retryError"));
             }
         } finally {
             retryPending.current = false;
@@ -140,7 +131,9 @@ export default function StatusPage({
             required: true,
         });
 
-        setInputError(message);
+        setInputError(
+            message ? t("status.input.requiredError") : "",
+        );
         setInputSuccess("");
 
         if (message) {
@@ -149,7 +142,7 @@ export default function StatusPage({
         }
 
         // 검증 통과만 표시하며 실제 저장·조회는 하지 않기
-        setInputSuccess("필수 입력 검증을 통과했습니다.");
+        setInputSuccess(t("status.input.success"));
     }
 
     return (
@@ -170,14 +163,16 @@ export default function StatusPage({
                     role={isLoading ? "status" : undefined}
                     aria-live={isLoading ? "polite" : undefined}
                 >
-                    {messages[displayType] ?? messages.error}
+                    {t(`status.${displayType}.title`, {
+                        defaultValue: t("status.error.title"),
+                    })}
                 </h1>
 
                 {/* 빈 결과에서는 조건 변경 안내 */}
                 {displayType === "empty" && (
                     <>
                         <p className="text-muted">
-                            입력한 조건을 변경하고 다시 조회해주세요.
+                            {t("status.empty.description")}
                         </p>
 
                         {onChangeConditions ? (
@@ -186,11 +181,11 @@ export default function StatusPage({
                                 className="button button-primary"
                                 onClick={onChangeConditions}
                             >
-                                조건 변경하기
+                                {t("status.empty.changeButton")}
                             </button>
                         ) : (
                             <Link to="/" className="button button-primary">
-                                홈으로 돌아가기
+                                {t("status.error.homeButton")}
                             </Link>
                         )}
                     </>
@@ -200,7 +195,7 @@ export default function StatusPage({
                 {displayType === "failure" && (
                     <>
                         <p className="text-muted">
-                            잠시 후 다시 시도해주세요.
+                            {t("status.failure.description")}
                         </p>
 
                         {retryError && (
@@ -216,11 +211,11 @@ export default function StatusPage({
                                 onClick={handleRetry}
                                 disabled={isRetrying}
                             >
-                                다시 시도
+                                {t("status.failure.retryButton")}
                             </button>
 
                             <Link to="/" className="button">
-                                홈으로 돌아가기
+                                {t("status.error.homeButton")}
                             </Link>
                         </div>
                     </>
@@ -229,7 +224,7 @@ export default function StatusPage({
                 {/* 잘못된 주소 접근 시 홈 이동 */}
                 {displayType === "error" && (
                     <Link to="/" className="button button-primary">
-                        홈으로 돌아가기
+                        {t("status.error.homeButton")}
                     </Link>
                 )}
 
@@ -241,12 +236,11 @@ export default function StatusPage({
                         noValidate
                     >
                         <p className="form-help">
-                            필수 입력 검증을 확인하는 초안입니다.
-                            실제 서비스 항목과 범위는 별도로 적용합니다.
+                            {t("status.input.description")}
                         </p>
 
                         <div className="form-field">
-                            <label htmlFor="status-input">입력값</label>
+                            <label htmlFor="status-input">{t("status.input.label")}</label>
 
                             <input
                                 ref={inputRef}
@@ -278,7 +272,7 @@ export default function StatusPage({
                             type="submit"
                             className="button button-primary"
                         >
-                            입력 확인
+                            {t("status.input.submitButton")}
                         </button>
 
                         <p role="status" aria-live="polite">
@@ -291,7 +285,7 @@ export default function StatusPage({
                 {displayType === "example" && (
                     <section
                         className="status-page-panel panel"
-                        aria-label="예시 표시와 마스킹"
+                        aria-label={t("status.example.title")}
                     >
                         <div className="status-page-actions">
                             <ExampleBadge />
@@ -299,16 +293,16 @@ export default function StatusPage({
                         </div>
 
                         <p className="form-help">
-                            아래는 실제 개인정보가 없는 표시 예시입니다.
+                            {t("status.example.description")}
                         </p>
 
                         <dl className="status-example-info">
                             <div>
-                                <dt>가상 이름</dt>
+                                <dt>{t("status.example.nameLabel")}</dt>
                                 <dd>{maskName("가상명")}</dd>
                             </div>
                             <div>
-                                <dt>가상 계좌번호</dt>
+                                <dt>{t("status.example.accountLabel")}</dt>
                                 <dd>{maskAccount("00000000000")}</dd>
                             </div>
                         </dl>

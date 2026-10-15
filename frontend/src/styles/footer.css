@@ -1,22 +1,35 @@
 /* 푸터 배경과 구분선 */
 .site-footer {
+    /* 위쪽 구분선 지정 */
     border-top: 1px solid var(--line);
+    /* 배경색 또는 배경 무늬 지정 */
     background: var(--background);
 }
 
 /* 푸터 내부 배치 */
 .site-footer-inner {
+    /* 자식 요소의 배치 방식 지정 */
     display: flex;
+    /* 자식 요소를 교차축 기준으로 정렬 */
     align-items: center;
+    /* 자식 요소를 주축 기준으로 정렬 */
     justify-content: space-between;
+    /* 공간이 부족할 때 줄바꿈 여부 지정 */
     flex-wrap: wrap;
+    /* 자식 요소 사이 간격 지정 */
     gap: 12px;
 
+    /* 가로 크기 지정 */
     width: 100%;
+    /* 화면에서 사용할 최대 너비 제한 */
     max-width: var(--page-width);
+    /* 요소 바깥쪽 여백 지정 */
     margin: 0 auto;
+    /* 테두리 안쪽 여백 지정 */
     padding: 24px var(--page-padding);
 
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
     color: var(--muted);
+    /* 글씨 크기 지정 */
     font-size: 14px;
 }

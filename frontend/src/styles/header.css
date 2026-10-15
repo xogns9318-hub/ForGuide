@@ -1,133 +1,576 @@
 /* 헤더 배경 */
 .site-header {
+    /* 배경색 또는 배경 무늬 지정 */
     background: var(--surface);
+    /* 아래쪽 구분선 지정 */
     border-bottom: 1px solid var(--line);
 }
 
-/* 헤더 내부 배치 */
+/* 공통 본문 너비 안에서 헤더를 두 줄로 배치 */
 .site-header-inner {
+    /* 자식 요소의 배치 방식 지정 */
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
+    /* flex 요소가 나열되는 방향 지정 */
+    flex-direction: column;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 4px;
 
+    /* 가로 크기 지정 */
     width: 100%;
+    /* 화면에서 사용할 최대 너비 제한 */
     max-width: var(--page-width);
+    /* 요소 바깥쪽 여백 지정 */
     margin: 0 auto;
-    padding: 20px var(--page-padding);
+    /* 테두리 안쪽 여백 지정 */
+    padding: 16px var(--page-padding);
+}
+
+/* 첫 번째 줄: 왼쪽 로고와 오른쪽 회원 메뉴 */
+.site-header-top {
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* 자식 요소를 교차축 기준으로 정렬 */
+    align-items: center;
+    /* 자식 요소를 주축 기준으로 정렬 */
+    justify-content: space-between;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 24px;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 세로 크기 지정 */
+    height: 56px;
 }
 
 /* 로고 영역 */
 .site-logo {
+    /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
     flex-shrink: 0;
+    /* 가로 크기 지정 */
     width: 192px;
 }
 
 /* 로고 이미지 */
 .site-logo img {
+    /* 가로 크기 지정 */
     width: 100%;
 }
 
-/* 주 기능 메뉴 배치 */
-.site-navigation {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 4px;
-}
-
-/* 세부 메뉴의 위치 기준 */
-.nav-item {
-    position: relative;
-}
-
-/* 주 기능 링크 */
-.nav-link {
-    display: block;
-    padding: 11px 10px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 700;
-    transition: background-color 120ms ease;
-}
-
-/* 선택한 메뉴 강조 */
-.nav-link:hover,
-.nav-link.is-active {
-    background: var(--mint-soft);
-    color: var(--primary);
-}
-
-/* 펼쳐지는 세부 메뉴 */
-.nav-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 100;
-
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-
-    min-width: 208px;
-    padding: 10px;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    background: var(--surface);
-    box-shadow: 0 12px 28px rgb(32 59 51 / 12%);
-}
-
-/* 세부 기능 링크 */
-.nav-dropdown-link {
-    padding: 10px 12px;
-    border-radius: 8px;
-    font-size: 14px;
-}
-
-/* 선택한 세부 기능 강조 */
-.nav-dropdown-link:hover,
-.nav-dropdown-link[aria-current="page"] {
-    background: var(--mint-soft);
-    color: var(--primary);
-}
-
-/* 회원 메뉴와 언어 선택 배치 */
+/* 회원 메뉴와 언어 선택창은 같은 줄에 배치 */
 .header-actions {
+    /* 자식 요소의 배치 방식 지정 */
     display: flex;
+    /* 자식 요소를 교차축 기준으로 정렬 */
     align-items: center;
-    flex-wrap: wrap;
+    /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
+    flex-shrink: 0;
+    /* 자식 요소 사이 간격 지정 */
     gap: 12px;
-    margin-left: auto;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
     color: var(--muted);
+    /* 글씨 크기 지정 */
     font-size: 12px;
+    /* 공백 처리와 줄바꿈 방식 지정 */
+    white-space: nowrap;
+}
+
+/* 회원 메뉴 사이 구분선의 공간 */
+.header-actions>*+* {
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: relative;
+    /* 왼쪽 안쪽 여백 지정 */
+    padding-left: 12px;
+    /* 왼쪽 구분선 지정 */
+    border-left: 0;
+}
+
+/* 요소 높이와 관계없이 같은 길이의 구분선 표시 */
+.header-actions>*+*::before {
+    /* 가상 요소에 표시할 내용 지정 */
+    content: "";
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: absolute;
+    /* 기준 영역의 왼쪽 위치 지정 */
+    left: 0;
+    /* 기준 영역의 위쪽 위치 지정 */
+    top: 50%;
+    /* 요소의 표시 위치 또는 회전 조정 */
+    transform: translateY(-50%);
+    /* 가로 크기 지정 */
+    width: 1px;
+    /* 세로 크기 지정 */
+    height: 16px;
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--line);
+    /* 마우스 입력을 받을지 지정 */
+    pointer-events: none;
 }
 
 /* 회원 링크 강조 */
-.header-actions > a:hover {
+.header-actions>a:hover {
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
     color: var(--primary);
 }
 
 /* 로그아웃 버튼 */
 .header-logout {
+    /* 테두리 안쪽 여백 지정 */
     padding: 0;
+    /* 테두리 두께·형태·색 지정 */
     border: 0;
+    /* 배경색 또는 배경 무늬 지정 */
     background: transparent;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
     color: inherit;
 }
 
-/* 언어 제목과 선택창 배치 */
+/* 언어 제목과 공통 선택창 배치 */
 .header-language {
+    /* 자식 요소의 배치 방식 지정 */
     display: flex;
+    /* 자식 요소를 교차축 기준으로 정렬 */
     align-items: center;
+    /* 자식 요소 사이 간격 지정 */
     gap: 8px;
 }
 
-/* 언어 선택창 */
-.header-language select {
-    min-width: 90px;
+/* 언어에 따라 선택창 너비가 바뀌지 않도록 고정 */
+.header-language .select-box.is-compact {
+    /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
+    flex-shrink: 0;
+    /* 가로 크기 지정 */
+    width: 132px;
+}
+
+/* 선택한 언어 이름은 한 줄로 표시 */
+.header-language .select-box-trigger>span {
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 공백 처리와 줄바꿈 방식 지정 */
+    white-space: nowrap;
+}
+
+/* 두 번째 줄: 카테고리를 같은 너비의 6칸으로 배치 */
+.site-navigation {
+    /* 자식 요소의 배치 방식 지정 */
+    display: grid;
+    /* 그리드 열의 개수와 너비 지정 */
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    /* 가로 크기 지정 */
+    width: 100%;
+}
+
+/* 각 카테고리 칸과 세부 메뉴 위치 기준 */
+.nav-item {
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: relative;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 왼쪽 구분선 지정 */
+    border-left: 1px solid var(--line);
+}
+
+/* 마지막 칸의 오른쪽 구분선 */
+.nav-item:last-child {
+    /* 오른쪽 구분선 지정 */
+    border-right: 1px solid var(--line);
+}
+
+/* 카테고리 칸 크기와 글씨 위치 유지 */
+.nav-link {
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: relative;
+    /* 안쪽 요소가 사용할 독립적인 쌓임 맥락 생성 */
+    isolation: isolate;
+
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* 자식 요소를 교차축 기준으로 정렬 */
+    align-items: center;
+    /* 자식 요소를 주축 기준으로 정렬 */
+    justify-content: center;
+
+    /* 세로 크기 지정 */
+    height: 40px;
+    /* 테두리 안쪽 여백 지정 */
     padding: 8px 10px;
-    border: 1px solid var(--line);
-    border-radius: var(--control-radius);
-    background: var(--mint-soft);
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: 12px;
+
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
     color: var(--ink);
+    /* 글씨 크기 지정 */
+    font-size: 16px;
+    /* 글씨 굵기 지정 */
+    font-weight: 700;
+    /* 글줄 높이 지정 */
+    line-height: 1.35;
+    /* 글씨의 가로 정렬 지정 */
+    text-align: center;
+    /* 공백 처리와 줄바꿈 방식 지정 */
+    white-space: normal;
+    /* 긴 문구의 줄바꿈 기준 지정 */
+    overflow-wrap: anywhere;
+}
+
+/* 강조 배경만 칸 안쪽으로 줄여 표시 */
+.nav-link::before {
+    /* 가상 요소에 표시할 내용 지정 */
+    content: "";
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: absolute;
+    /* 위·오른쪽·아래·왼쪽 위치를 한 번에 지정 */
+    inset: 3px 10px;
+    /* 겹친 요소의 표시 순서 지정 */
+    z-index: -1;
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: 10px;
+    /* 마우스 입력을 받을지 지정 */
+    pointer-events: none;
+}
+
+/* 현재 강조 대상인 카테고리 */
+.nav-link.is-active {
+    /* 배경색 또는 배경 무늬 지정 */
+    background: transparent;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--primary);
+}
+
+.nav-link.is-active::before {
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--mint-soft);
+}
+
+/* 카테고리 중심을 기준으로 세부 메뉴 배치 */
+.nav-dropdown {
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: absolute;
+    /* 기준 영역의 위쪽 위치 지정 */
+    top: calc(100% + 6px);
+    /* 기준 영역의 왼쪽 위치 지정 */
+    left: 50%;
+    /* 요소의 표시 위치 또는 회전 조정 */
+    transform: translateX(-50%);
+    /* 겹친 요소의 표시 순서 지정 */
+    z-index: 100;
+
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* flex 요소가 나열되는 방향 지정 */
+    flex-direction: column;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 4px;
+
+    /* 가로 크기 지정 */
+    width: 240px;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 100%;
+    /* 테두리 안쪽 여백 지정 */
+    padding: 10px;
+    /* 테두리 두께·형태·색 지정 */
+    border: 1px solid var(--line);
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: 12px;
+
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--surface);
+    /* 그림자 또는 테두리에 붙는 추가 강조선 지정 */
+    box-shadow: 0 12px 28px rgb(32 59 51 / 12%);
+}
+
+/* 간격과 테두리를 지나갈 때도 세부 메뉴 유지 */
+.nav-dropdown::before {
+    /* 가상 요소에 표시할 내용 지정 */
+    content: "";
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: absolute;
+    /* 기준 영역의 위쪽 위치 지정 */
+    top: -7px;
+    /* 기준 영역의 왼쪽 위치 지정 */
+    left: 0;
+    /* 기준 영역의 오른쪽 위치 지정 */
+    right: 0;
+    /* 세로 크기 지정 */
+    height: 7px;
+}
+
+/* 세부 기능 글씨 가운데 정렬 */
+.nav-dropdown-link {
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: relative;
+    /* 테두리 안쪽 여백 지정 */
+    padding: 10px 12px;
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: 8px;
+    /* 글씨 크기 지정 */
+    font-size: 14px;
+    /* 글씨의 가로 정렬 지정 */
+    text-align: center;
+}
+
+/* 첫 항목을 제외하고 항목 사이에 가로 구분선 표시 */
+.nav-dropdown-link + .nav-dropdown-link::before {
+    /* 가상 요소에 표시할 내용 지정 */
+    content: "";
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: absolute;
+    /* 기준 영역의 위쪽 위치 지정 */
+    top: -2px;
+    /* 기준 영역의 왼쪽 위치 지정 */
+    left: 0;
+    /* 기준 영역의 오른쪽 위치 지정 */
+    right: 0;
+    /* 세로 크기 지정 */
+    height: 1px;
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--line);
+    /* 마우스 입력을 받을지 지정 */
+    pointer-events: none;
+}
+
+/* 마우스를 올린 항목만 강조 */
+/* 가리키는 항목이 없으면 현재 페이지 항목 강조 */
+.nav-dropdown-link:hover,
+.nav-dropdown:not(:has(.nav-dropdown-link:hover))
+    .nav-dropdown-link[aria-current="page"] {
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--mint-soft);
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--primary);
+}
+
+/* 넓은 화면에서는 작은 화면용 버튼과 메뉴 숨김 */
+.mobile-menu-toggle,
+.mobile-menu-panel {
+    /* 자식 요소의 배치 방식 지정 */
+    display: none;
+}
+
+/* 작은 화면의 헤더와 펼침 메뉴 */
+@media (max-width: 1024px) {
+
+    /* 위쪽 56px + 위아래 여백 32px + 아래 테두리 1px */
+    .site-header {
+        --compact-header-height: 89px;
+
+        /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+        position: sticky;
+        /* 기준 영역의 위쪽 위치 지정 */
+        top: 0;
+        /* 겹친 요소의 표시 순서 지정 */
+        z-index: 1000;
+        /* 세로 크기 지정 */
+        height: var(--compact-header-height);
+    }
+
+    /* 작은 화면에서는 로고와 메뉴 버튼 한 줄만 표시 */
+    .site-header-inner {
+        /* 자식 요소 사이 간격 지정 */
+        gap: 0;
+        /* 테두리 안쪽 여백 지정 */
+        padding: 16px var(--page-padding);
+    }
+
+    .site-header-top {
+        /* 세로 크기 지정 */
+        height: 56px;
+    }
+
+    .site-logo {
+        /* 가로 크기 지정 */
+        width: 160px;
+    }
+
+    /* 기존 회원 메뉴와 카테고리 6칸은 숨김 */
+    .site-header-top>.header-actions,
+    .site-navigation {
+        /* 자식 요소의 배치 방식 지정 */
+        display: none;
+    }
+
+    /* 오른쪽 메뉴 열기·닫기 버튼 */
+    .mobile-menu-toggle {
+        /* 자식 요소의 배치 방식 지정 */
+        display: inline-flex;
+        /* 자식 요소를 교차축 기준으로 정렬 */
+        align-items: center;
+        /* 자식 요소를 주축 기준으로 정렬 */
+        justify-content: center;
+        /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
+        flex-shrink: 0;
+
+        /* 가로 크기 지정 */
+        width: 44px;
+        /* 세로 크기 지정 */
+        height: 44px;
+        /* 테두리 안쪽 여백 지정 */
+        padding: 8px;
+        /* 테두리 두께·형태·색 지정 */
+        border: 0;
+        /* 모서리의 둥근 정도 지정 */
+        border-radius: var(--control-radius);
+
+        /* 배경색 또는 배경 무늬 지정 */
+        background: transparent;
+        /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+        color: var(--primary);
+    }
+
+    .mobile-menu-toggle svg {
+        /* 가로 크기 지정 */
+        width: 28px;
+        /* 세로 크기 지정 */
+        height: 28px;
+    }
+
+    /* 헤더 아래 화면을 덮고 메뉴 내부에서 스크롤 */
+    .mobile-menu-panel {
+        /* 자식 요소의 배치 방식 지정 */
+        display: block;
+        /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+        position: fixed;
+        /* 기준 영역의 위쪽 위치 지정 */
+        top: var(--compact-header-height);
+        /* 기준 영역의 오른쪽 위치 지정 */
+        right: 0;
+        /* 기준 영역의 아래쪽 위치 지정 */
+        bottom: 0;
+        /* 기준 영역의 왼쪽 위치 지정 */
+        left: 0;
+
+        /* 세로로 넘친 내용의 표시와 스크롤 지정 */
+        overflow-y: auto;
+        /* 스크롤 끝에서 뒤쪽 영역으로 스크롤이 이어지는 방식 지정 */
+        overscroll-behavior: contain;
+        /* 배경색 또는 배경 무늬 지정 */
+        background: var(--surface);
+    }
+
+    /* 세로 카테고리 목록 */
+    .mobile-navigation {
+        /* 자식 요소의 배치 방식 지정 */
+        display: flex;
+        /* flex 요소가 나열되는 방향 지정 */
+        flex-direction: column;
+    }
+
+    .mobile-category {
+        /* 아래쪽 구분선 지정 */
+        border-bottom: 1px solid var(--line);
+    }
+
+    /* 세부 기능이 있는 카테고리의 펼침 버튼 */
+    .mobile-category-toggle,
+    .mobile-category-link {
+        /* 자식 요소의 배치 방식 지정 */
+        display: flex;
+        /* 자식 요소를 교차축 기준으로 정렬 */
+        align-items: center;
+        /* 자식 요소를 주축 기준으로 정렬 */
+        justify-content: space-between;
+        /* 자식 요소 사이 간격 지정 */
+        gap: 16px;
+
+        /* 가로 크기 지정 */
+        width: 100%;
+        /* 높이가 줄어들 수 있는 최소 기준 지정 */
+        min-height: 72px;
+        /* 테두리 안쪽 여백 지정 */
+        padding: 20px var(--page-padding);
+        /* 테두리 두께·형태·색 지정 */
+        border: 0;
+
+        /* 배경색 또는 배경 무늬 지정 */
+        background: var(--surface);
+        /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+        color: var(--ink);
+        /* 글씨 크기 지정 */
+        font-size: 17px;
+        /* 글씨 굵기 지정 */
+        font-weight: 700;
+        /* 글줄 높이 지정 */
+        line-height: 1.4;
+        /* 글씨의 가로 정렬 지정 */
+        text-align: left;
+        /* 긴 문구의 줄바꿈 기준 지정 */
+        overflow-wrap: anywhere;
+    }
+
+    /* 펼친 카테고리 강조 */
+    .mobile-category-toggle[aria-expanded="true"],
+    .mobile-category-link[aria-current="page"] {
+        /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+        color: var(--primary);
+    }
+
+    .mobile-category-toggle svg {
+        /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
+        flex-shrink: 0;
+        /* 가로 크기 지정 */
+        width: 20px;
+        /* 세로 크기 지정 */
+        height: 20px;
+    }
+
+    /* 펼친 카테고리 아래의 세부 기능 */
+    .mobile-submenu {
+        /* 자식 요소의 배치 방식 지정 */
+        display: flex;
+        /* flex 요소가 나열되는 방향 지정 */
+        flex-direction: column;
+        /* 테두리 안쪽 여백 지정 */
+        padding: 8px var(--page-padding) 16px;
+        /* 배경색 또는 배경 무늬 지정 */
+        background: var(--mint-soft);
+    }
+
+    .mobile-submenu a {
+        /* 자식 요소의 배치 방식 지정 */
+        display: block;
+        /* 테두리 안쪽 여백 지정 */
+        padding: 14px 12px;
+        /* 모서리의 둥근 정도 지정 */
+        border-radius: var(--control-radius);
+        /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+        color: var(--ink);
+        /* 글씨 크기 지정 */
+        font-size: 15px;
+    }
+
+    .mobile-submenu a:hover,
+    .mobile-submenu a[aria-current="page"] {
+        /* 배경색 또는 배경 무늬 지정 */
+        background: var(--mint);
+        /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+        color: var(--primary);
+    }
+
+    /* 회원 메뉴와 언어 선택은 펼친 메뉴 아래에 표시 */
+    .mobile-header-actions {
+        /* 공간이 부족할 때 줄바꿈 여부 지정 */
+        flex-wrap: wrap;
+        /* 자식 요소를 주축 기준으로 정렬 */
+        justify-content: center;
+        /* 행 사이 간격 지정 */
+        row-gap: 20px;
+        /* 테두리 안쪽 여백 지정 */
+        padding: 24px var(--page-padding) 40px;
+        /* 글씨 크기 지정 */
+        font-size: 14px;
+    }
+
+    /* 언어 선택은 별도 줄로 배치 */
+    .mobile-header-actions>.header-language {
+        /* flex 배치에서 사용할 기본 크기 지정 */
+        flex-basis: 100%;
+        /* 자식 요소를 주축 기준으로 정렬 */
+        justify-content: center;
+        /* 왼쪽 안쪽 여백 지정 */
+        padding-left: 0;
+    }
+
+    .mobile-header-actions>.header-language::before {
+        /* 자식 요소의 배치 방식 지정 */
+        display: none;
+    }
 }
