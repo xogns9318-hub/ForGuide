@@ -1,7 +1,10 @@
+// 주소 이동과 현재 경로를 확인하는 라우터 기능 사용
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Banner from "../Banner/Banner.jsx";
+// 메뉴 이름과 주소를 공통 경로 설정에서 사용
 import { categories } from "../../routes/routeConfig";
+// 이 화면에서 사용할 스타일 연결
 import "../../styles/home.css";
 
 // 서비스 아이콘 모양
@@ -54,6 +57,7 @@ export default function Home() {
                 <p className="home-services-eyebrow">
                     {t("home.services.eyebrow")}
                 </p>
+                {/* 결과 또는 서비스 영역 제목 표시 */}
                 <h2 id="home-services-title">
                     {t("home.services.title")}
                 </h2>
@@ -63,11 +67,13 @@ export default function Home() {
 
                 {/* 주 기능 카드 6개 */}
                 <div className="home-service-grid">
+                    {/* 공통 카테고리 목록으로 메뉴 또는 카드 생성 */}
                     {categories.map((category) => (
                         <article
                             key={category.id}
                             className="home-service-card"
                         >
+                            {/* 서비스 아이콘을 공통 배경 영역 안에 표시 */}
                             <div className="home-service-icon">
                                 <ServiceIcon id={category.id} />
                             </div>

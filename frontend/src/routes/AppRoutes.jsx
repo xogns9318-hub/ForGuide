@@ -11,6 +11,7 @@ import CommunityWrite from "../components/Community/CommunityWrite.jsx";
 import { authPaths, authRoutes } from "../auth/authRoutes.jsx";
 import "../styles/home.css";
 import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
+import TotalInterest from "../components/TotalInterest/TotalInterest.jsx";
 
 // 배너와 세부 기능을 연결할 서비스 주소 목록
 const serviceRoutes = categories.flatMap((category) => [
@@ -167,6 +168,24 @@ function PlaceholderPage({
     );
 }
 
+// 계산기에도 세부 기능과 같은 번역 배너를 표시합니다.
+function CalculatorPage({ categoryId, serviceId, title, description, children }) {
+    const { t } = useTranslation();
+    const translatedTitle = t(`home.features.${categoryId}.${serviceId}`, {
+        defaultValue: title,
+    });
+    const translatedDescription = t(`service.${serviceId}.description`, {
+        defaultValue: description,
+    });
+
+    return (
+        <div className="page-stack">
+            <Banner title={translatedTitle} description={translatedDescription} />
+            {children}
+        </div>
+    );
+}
+
 // 일반 화면과 전체 상태 화면 연결
 export default function AppRoutes({
                                       language,
@@ -209,7 +228,23 @@ export default function AppRoutes({
                             path={route.path}
                             element={
                                 route.path === "/service/monthlyPayment" ? (
-                                    <MonthlyPayment />
+                                    <CalculatorPage
+                                        categoryId={route.categoryId}
+                                        serviceId={route.id}
+                                        title={route.label}
+                                        description={route.description}
+                                    >
+                                        <MonthlyPayment />
+                                    </CalculatorPage>
+                                ) : route.path === "/service/totalInterest" ? (
+                                    <CalculatorPage
+                                        categoryId={route.categoryId}
+                                        serviceId={route.id}
+                                        title={route.label}
+                                        description={route.description}
+                                    >
+                                        <TotalInterest />
+                                    </CalculatorPage>
                                 ) : (
                                     <PlaceholderPage
                                         title={route.label}
