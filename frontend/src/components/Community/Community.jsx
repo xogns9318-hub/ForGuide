@@ -1,12 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { getCommunityPostsByCursor } from "../../api/communityApi.js";
+import {
+    createCommunityPost,
+    deleteCommunityPost,
+    getCommunityPostsByCursor,
+} from "../../api/communityApi.js";
 import "../../styles/community.css";
-import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
+import { useTranslation } from "react-i18next";
 
 
 
-function PostCard({ post }) {
+function PostCard({ post, currentMemberId, onDelete, isDeleting, }) {
     return (
         <article className="community-post-card">
             <div className="community-author">
@@ -24,6 +28,16 @@ function PostCard({ post }) {
             {/* 서버에서 실제로 조회한 게시글 내용만 표시 */}
             <p className="community-post-content">{post.content}</p>
 
+
+            {post.memberId === currentMemberId && (
+                <button
+                    type="button"
+                    onClick={() => onDelete(post.postId)}
+                    disabled={isDeleting}
+                >
+                    {isDeleting ? "삭제 중..." : "삭제"}
+                </button>
+            )}
             {/* 댓글과 좋아요 기능은 API 구현 후 연결할 예정 */}
         </article>
     );
@@ -35,6 +49,11 @@ export default function Community() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [hasMore, setHasMore] = useState(true);
+    const [content, setContent] = useState("");
+    const [writeError, setWriteError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [deletingPostId, setDeletingPostId] = useState(null);
+    const [deleteError, setDeleteError] = useState("");
 
     // 게시글 목록 마지막에 배치할 감시 요소
     const observerTarget = useRef(null);
@@ -51,7 +70,7 @@ export default function Community() {
     // API 요청 실패 여부를 기억해 자동 재요청을 방지
     const errorRef = useRef(false);
 
-    const navigate = useNavigate();
+    const { i18n } = useTranslation();
 
     // 로그인 정보가 준비되었는지 확인
     const initialized = useAuthStore((state) => state.initialized);
@@ -59,22 +78,82 @@ export default function Community() {
     // 현재 로그인한 사용자의 액세스 토큰 확인
     const accessToken = useAuthStore((state) => state.accessToken);
 
+    //삭제 버튼을 본인 게시글에만 표시하기 위한 로그인 회원 정보
+    const member = useAuthStore((state) => state.member);
 
-    function handleWriteClick() {
-        // 로그인 상태 확인 안 끝나면 이동하지 않음
-        if (!initialized) {
+
+    // 커뮤니티 화면 안에서 바로 게시글을 작성
+    async function handleSubmit(event) {
+        event.preventDefault();
+
+        const trimmedContent = content.trim();
+
+        if (!trimmedContent) {
+            setWriteError("게시글 내용을 입력해주세요.");
             return;
         }
 
-        // 로그인하지 않은 사용자는 로그인 페이지로 이동
-        if(!accessToken) {
-            alert("게시글을 작성하려면 로그인이 필요합니다.");
-            navigate("/login");
+        if (!accessToken) {
+            setWriteError("게시글을 작성하려면 로그인이 필요합니다.");
             return;
         }
 
-        //로그인한 사용자는 게시글 작성 페이지로 이동
-        navigate("/service/community/write");
+        if (isSubmitting) {
+            return;
+        }
+
+        setIsSubmitting(true);
+        setWriteError("");
+
+        try {
+            await createCommunityPost({
+                content: trimmedContent,
+                // 작성 언어는 사용자가 고르지 않고 현재 서비스 언어를 사용
+                language: i18n.language,
+            });
+
+            setContent("");
+            window.location.reload();
+        } catch (requestError) {
+            setWriteError(
+                requestError.message || "게시글을 저장하지 못했습니다. 다시 시도해주세요.",
+            );
+        } finally {
+            setIsSubmitting(false);
+        }
+
+    }
+    // 삭제 성공 시 현재 피드 목록에서도 해당 글을 바로 제거
+    async function handleDelete(postId) {
+        if (deletingPostId !== null) {
+            return;
+        }
+
+        const shouldDelete = window.confirm(
+            "이 게시글을 삭제하시겠습니까?",
+        );
+
+        if (!shouldDelete) {
+            return;
+        }
+
+        setDeleteError("");
+        setDeletingPostId(postId);
+
+        try {
+            await deleteCommunityPost(postId);
+
+            setPosts((currentPosts) =>
+                currentPosts.filter((post) => post.postId !== postId),
+            );
+        } catch (requestError) {
+            setDeleteError(
+                requestError.message ||
+                    "게시글을 삭제하지 못했습니다. 다시 시도해주세요.",
+            );
+        } finally {
+            setDeletingPostId(null);
+        }
     }
     // 커뮤니티 화면이 처음 나타날 때 서버에서 게시글을 조회
 
@@ -106,7 +185,17 @@ export default function Community() {
             }
 
             // 기존 게시글을 유지하고 새 게시글을 뒤에 추가
-            setPosts((previousPosts) => [...previousPosts, ...nextPosts]);
+            setPosts((previousPosts) => {
+                const postIds = new Set(
+                    previousPosts.map((post) => post.postId),
+                );
+
+                const uniqueNextPosts = nextPosts.filter(
+                    (post) => !postIds.has(post.postId),
+                );
+
+                return [...previousPosts, ...uniqueNextPosts];
+            });
 
             // 마지막 게시글 정보를 다음 페이지 요청에 사용
             if (nextPosts.length > 0) {
@@ -192,20 +281,39 @@ export default function Community() {
                     <p>한국 생활의 질문과 경험을 함께 나누는 공간</p>
                 </div>
 
-                <div className="community-write-area">
+                <form className="community-write-area" onSubmit={handleSubmit}>
                     <div className="community-avatar" aria-hidden="true">♙</div>
-                    <p>한국 생활에 필요한 정보를 함께 나누고 싶어요.</p>
-                    <button type="button"
-                            onClick={handleWriteClick}
-                            disabled={!initialized}>작성</button>
-                </div>
+                    <div className="community-write-form">
+                        <textarea
+                            id="community-content"
+                            aria-label="게시글 내용"
+                            value={content}
+                            onChange={(event) => {
+                                setContent(event.target.value);
+                                setWriteError("");
+                            }}
+                            placeholder="한국 생활에 필요한 정보를 함께 나누고 싶어요."
+                            maxLength={5000}
+                            rows={3}
+                            disabled={!initialized || isSubmitting}
+                        />
+                        {writeError && <p role="alert">{writeError}</p>}
+                    </div>
+                    <button type="submit" disabled={!initialized || isSubmitting}>
+                        {isSubmitting ? "작성 중..." : "작성"}
+                    </button>
+                </form>
 
 
                 <div className="community-post-area">
                     {/* 이미 불러온 게시글은 추가 로딩 중에도 계속 표시 */}
                     <div className="community-post-list">
                         {posts.map((post) => (
-                            <PostCard key={post.postId} post={post} />
+                            <PostCard key={post.postId} post={post}
+                             currentMemberId={member?.memberId}
+                             onDelete={handleDelete}
+                             isDeleting={deletingPostId === post.postId}
+                            />
                         ))}
                     </div>
 
@@ -229,6 +337,10 @@ export default function Community() {
                                 다시 시도
                             </button>
                         </div>
+                    )}
+
+                    {deleteError && (
+                        <p role="alert">{deleteError}</p>
                     )}
 
                     {/* 다음 게시글이 없으면 마지막 페이지 안내 */}

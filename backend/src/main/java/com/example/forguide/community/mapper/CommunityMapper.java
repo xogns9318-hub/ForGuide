@@ -26,4 +26,7 @@ public interface CommunityMapper {
             @Param("cursorPostId") Long cursorPostId,
             @Param("size") int size
     );
+
+    // 작성자 번호까지 일치하는 게시글만 삭제
+    int deletePost(@Param("postId") Long postId, @Param("memberId") Long memberId);
 }

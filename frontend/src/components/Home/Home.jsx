@@ -100,7 +100,8 @@ export default function Home() {
                                     {category.children.map((child) => (
                                         <li key={child.path}>
                                             <Link to={child.path} className="button">
-                                                {t(`home.features.${category.id}.${child.path.split("/").pop()}`, {
+                                                {/* 하위 메뉴의 고유 id를 사용하여 번역 키 생성 */}
+                                                {t(`home.features.${category.id}.${child.id}`, {
                                                     defaultValue: child.label,
                                                 })}
                                             </Link>

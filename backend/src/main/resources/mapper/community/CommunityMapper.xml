@@ -92,5 +92,12 @@
         )
     </insert>
 
+    <!-- 작성자 번호가 같은 게시글만 삭제 -->
+    <delete id="deletePost">
+        DELETE FROM community_posts
+        WHERE post_id = #{postId}
+          AND member_id = #{memberId}
+    </delete>
+
 
 </mapper>
