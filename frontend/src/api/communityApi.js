@@ -32,3 +32,8 @@ export async function createCommunityPost(postData) {
     // client.js에서 /api/v1 주소와 로그인 토큰을 처리한다.
     return client.post("/community/posts", postData);
 }
+
+//로그인한 작성자가 자신의 게시글 삭제.
+export async function deleteCommunityPost(postId) {
+    return client.delete(`/community/posts/${postId}`);
+}
