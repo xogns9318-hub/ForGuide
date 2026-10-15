@@ -11,6 +11,7 @@ import { authPaths, authRoutes } from "../auth/authRoutes.jsx";
 import "../styles/home.css";
 import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
 import TotalInterest from "../components/TotalInterest/TotalInterest.jsx";
+import Consultation from "../components/Consultation/Consultation.jsx";
 
 // 배너와 세부 기능을 연결할 서비스 주소 목록
 const serviceRoutes = categories.flatMap((category) => [
@@ -29,11 +30,11 @@ const serviceRoutes = categories.flatMap((category) => [
 
 // 일반 페이지의 공통 레이아웃
 function DefaultLayout({
-                           language,
-                           isLoggedIn,
-                           onLanguageChange,
-                           onLogout,
-                       }) {
+    language,
+    isLoggedIn,
+    onLanguageChange,
+    onLogout,
+}) {
     return (
         <div className="app-layout">
             <Header
@@ -76,12 +77,12 @@ const featureIconPaths = {
 
 // 아직 본문이 없는 페이지의 배너 + 주 기능 안내 카드
 function PlaceholderPage({
-                             title,
-                             description,
-                             categoryId,
-                             serviceId,
-                             children = [],
-                         }) {
+    title,
+    description,
+    categoryId,
+    serviceId,
+    children = [],
+}) {
     const { t } = useTranslation();
 
     // 기존 다국어 번역 기능 유지
@@ -124,7 +125,7 @@ function PlaceholderPage({
                                 aria-label={t(
                                     `home.features.${categoryId}.${feature.id}`,
                                     { defaultValue: feature.label }
-                                    )}
+                                )}
                             >
                                 <div className="home-service-icon">
                                     <svg
@@ -187,11 +188,11 @@ function CalculatorPage({ categoryId, serviceId, title, description, children })
 
 // 일반 화면과 전체 상태 화면 연결
 export default function AppRoutes({
-                                      language,
-                                      isLoggedIn,
-                                      onLanguageChange,
-                                      onLogout,
-                                  }) {
+    language,
+    isLoggedIn,
+    onLanguageChange,
+    onLogout,
+}) {
     return (
         <Routes>
             <Route
@@ -218,9 +219,19 @@ export default function AppRoutes({
                     element={<Navigate to="/service/community" replace />}
                 />
 
-                {/* 서비스 페이지 */}
+                {/* 도움 기관 안내는 선택 화면으로 연결 */}
+                <Route
+                    path="/service/consultation"
+                    element={<Consultation />}
+                />
+
+                {/* 별도 화면으로 연결한 경로는 기본 서비스 목록에서 제외 */}
                 {serviceRoutes
-                    .filter((route) => route.path !== "/service/community")
+                    .filter(
+                        (route) =>
+                            route.path !== "/service/community" &&
+                            route.path !== "/service/consultation",
+                    )
                     .map((route) => (
                         <Route
                             key={route.path}
@@ -264,14 +275,14 @@ export default function AppRoutes({
                 {accountRoutes
                     .filter((route) => !authPaths.includes(route.path))
                     .map((route) => (
-                    <Route
-                        key={route.path}
-                        path={route.path}
-                        element={
-                            <PlaceholderPage title={route.label} />
-                        }
-                    />
-                ))}
+                        <Route
+                            key={route.path}
+                            path={route.path}
+                            element={
+                                <PlaceholderPage title={route.label} />
+                            }
+                        />
+                    ))}
             </Route>
 
             <Route

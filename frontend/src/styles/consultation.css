@@ -1,0 +1,129 @@
+/* 제목과 예시 표시를 같은 줄에 배치 */
+.consultation-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+/* 안내 문구와 첫 번째 선택 영역 사이 간격 */
+.consultation-notice {
+    margin: 12px 0 24px;
+}
+
+/* 기본 fieldset 테두리를 제거하고 선택 그룹 사이 간격 설정 */
+.consultation-group {
+    min-width: 0;
+    margin: 0 0 24px;
+    padding: 0;
+    border: 0;
+}
+
+/* 상담 분야와 키워드 그룹 제목 */
+.consultation-group legend {
+    margin-bottom: 12px;
+    padding: 0;
+    font-weight: 700;
+}
+
+/* 복수 선택 안내는 보조 문구로 표시 */
+.consultation-group small {
+    color: var(--muted);
+    font-weight: 400;
+}
+
+/* 버튼을 내용 길이에 맞춰 배치하고 공간이 부족하면 줄바꿈 */
+.consultation-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* 숨긴 입력 요소의 위치 기준 */
+.consultation-choice {
+    position: relative;
+    cursor: pointer;
+}
+
+/* 입력 모양만 숨기고 키보드와 음성 안내 기능은 유지 */
+.consultation-choice input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+}
+
+/* 라디오와 체크박스를 초안의 선택 버튼 모양으로 표시 */
+.consultation-choice span {
+    display: flex;
+    align-items: center;
+    min-height: var(--control-height);
+    padding: 10px 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--control-radius);
+    background: var(--surface);
+    font-weight: 600;
+}
+
+/* 미선택 항목에 마우스를 올렸을 때 연한 강조 */
+.consultation-choice:hover span {
+    background: var(--mint-soft);
+}
+
+/* 실제 선택한 항목은 진한 배경으로 표시 */
+.consultation-choice input:checked+span {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--surface);
+}
+
+/* 키보드로 이동한 항목은 보이는 버튼에 포커스 표시 */
+.consultation-choice input:focus-visible+span {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+
+/* 지역·언어·상담 방식 선택창을 같은 너비의 4열로 배치 */
+.consultation-filters {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+
+/* 선택창과 필수 항목 안내 사이 간격 */
+.consultation-required {
+    margin-top: 20px;
+}
+
+/* 안내받기 이후 표시되는 조건 확인 영역 구분 */
+.consultation-summary {
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+}
+
+/* 확인 영역의 설명과 선택값 사이 간격 */
+.consultation-summary p {
+    margin: 10px 0 18px;
+}
+
+/* 조건 이름과 선택한 값을 두 열로 정렬 */
+.consultation-summary dl>div {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 16px;
+    margin-top: 10px;
+}
+
+/* 조건 이름 강조 */
+.consultation-summary dt {
+    font-weight: 600;
+}
+
+/* 키워드가 많아도 확인 영역 밖으로 넘치지 않도록 처리 */
+.consultation-summary dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+}
