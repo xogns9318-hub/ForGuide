@@ -10,11 +10,20 @@ import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import ProfileAvatar from "../../auth/components/ProfileAvatar.jsx";
+import CommunityCommentSection from "./CommunityCommentSection.jsx";
+import CommunityPostEditForm from "./CommunityPostEditForm.jsx";
 
 const MAX_IMAGE_COUNT = 4;
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 
-function PostCard({ post, currentMemberId, onDelete, isDeleting, }) {
+function PostCard({ post, currentMemberId, onDelete, onUpdate, isDeleting }) {
+    const [isEditing, setIsEditing] = useState(false);
+
+    function handleUpdatedPost(updatedPost) {
+        onUpdate(updatedPost);
+        setIsEditing(false);
+    }
+
     return (
         <article className="community-post-card">
             <div className="community-author">
@@ -33,9 +42,17 @@ function PostCard({ post, currentMemberId, onDelete, isDeleting, }) {
                 </div>
             </div>
 
-            {/* 서버에서 실제로 조회한 게시글 내용만 표시 */}
-            <p className="community-post-content">{post.content}</p>
-            {post.images?.length > 0 && (
+            {isEditing ? (
+                <CommunityPostEditForm
+                    post={post}
+                    onCancel={() => setIsEditing(false)}
+                    onUpdated={handleUpdatedPost}
+                />
+            ) : (
+                <>
+                    {/* 서버에서 실제로 조회한 게시글 내용만 표시 */}
+                    <p className="community-post-content">{post.content}</p>
+                    {post.images?.length > 0 && (
                 <div className="community-post-images">
                     {post.images.map((image) => (
                         <img
@@ -46,10 +63,20 @@ function PostCard({ post, currentMemberId, onDelete, isDeleting, }) {
                         />
                     ))}
                 </div>
+                    )}
+                </>
             )}
 
-
-            {post.memberId === currentMemberId && (
+            {post.memberId === currentMemberId && !isEditing && (
+                <div className="community-post-owner-actions">
+                    <button
+                        type="button"
+                        className="button community-edit-button"
+                        onClick={() => setIsEditing(true)}
+                        disabled={isDeleting}
+                    >
+                        수정
+                    </button>
                 <button
                     type="button"
                     className="button community-delete-button"
@@ -58,8 +85,12 @@ function PostCard({ post, currentMemberId, onDelete, isDeleting, }) {
                 >
                     {isDeleting ? "삭제 중..." : "삭제"}
                 </button>
+                </div>
             )}
-            {/* 댓글과 좋아요 기능은 API 구현 후 연결할 예정 */}
+            <CommunityCommentSection
+                postId={post.postId}
+                postMemberId={post.memberId}
+            />
         </article>
     );
 }
@@ -231,6 +262,15 @@ export default function Community() {
         } finally {
             setDeletingPostId(null);
         }
+    }
+
+    // 수정 성공 응답으로 해당 카드만 즉시 교체한다.
+    function handleUpdatePost(updatedPost) {
+        setPosts((currentPosts) =>
+            currentPosts.map((post) =>
+                post.postId === updatedPost.postId ? updatedPost : post,
+            ),
+        );
     }
     // 커뮤니티 화면이 처음 나타날 때 서버에서 게시글을 조회
 
@@ -421,6 +461,7 @@ export default function Community() {
                             <PostCard key={post.postId} post={post}
                              currentMemberId={member?.memberId}
                              onDelete={handleDelete}
+                             onUpdate={handleUpdatePost}
                              isDeleting={deletingPostId === post.postId}
                             />
                         ))}

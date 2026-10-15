@@ -86,7 +86,45 @@
             #{postId}
         </foreach>
         ORDER BY post_id ASC, display_order ASC
+    </select>
 
+    <!-- 게시글의 댓글과 작성자 정보를 오래된 순서대로 조회 -->
+    <select id="findCommentsByPostId"
+            resultType="com.example.forguide.community.dto.CommunityCommentResponse">
+        SELECT
+            c.comment_id AS commentId,
+            c.post_id AS postId,
+            c.member_id AS memberId,
+            m.nickname AS nickname,
+            m.profile_image_url AS profileImageUrl,
+            c.content AS content,
+            c.content_version AS contentVersion,
+            c.created_at AS createdAt,
+            c.updated_at AS updatedAt
+        FROM community_comments c
+        INNER JOIN members m
+            ON c.member_id = m.member_id
+        WHERE c.post_id = #{postId}
+        ORDER BY c.created_at ASC, c.comment_id ASC
+    </select>
+
+    <!-- 댓글 번호로 댓글 하나 조회 -->
+    <select id="findCommentById"
+            resultType="com.example.forguide.community.dto.CommunityCommentResponse">
+        SELECT
+            c.comment_id AS commentId,
+            c.post_id AS postId,
+            c.member_id AS memberId,
+            m.nickname AS nickname,
+            m.profile_image_url AS profileImageUrl,
+            c.content AS content,
+            c.content_version AS contentVersion,
+            c.created_at AS createdAt,
+            c.updated_at AS updatedAt
+        FROM community_comments c
+        INNER JOIN members m
+            ON c.member_id = m.member_id
+        WHERE c.comment_id = #{commentId}
     </select>
 
     <!-- 게시글 작성 -->
@@ -109,6 +147,17 @@
         )
     </insert>
 
+    <!-- 게시글 작성자 본인만 본문 수정 -->
+    <update id="updatePost">
+        UPDATE community_posts
+        SET
+            content = #{content},
+            content_version = content_version + 1,
+            updated_at = NOW()
+        WHERE post_id = #{postId}
+          AND member_id = #{memberId}
+    </update>
+
     <!-- 게시글 사진 한 장의 저장 주소와 표시 순서를 연결 -->
     <insert id="insertPostImage">
         INSERT INTO community_post_images (
@@ -125,11 +174,61 @@
         )
     </insert>
 
+    <!-- 게시글에 실제로 속한 사진 행만 삭제 -->
+    <delete id="deletePostImage">
+        DELETE FROM community_post_images
+        WHERE post_id = #{postId}
+          AND image_id = #{imageId}
+    </delete>
+
+    <!-- 댓글 작성 -->
+    <insert id="insertComment">
+        INSERT INTO community_comments (
+            post_id,
+            member_id,
+            content,
+            content_version,
+            created_at,
+            updated_at
+        )
+        VALUES (
+            #{postId},
+            #{memberId},
+            #{content},
+            1,
+            NOW(),
+            NOW()
+        )
+    </insert>
+
+    <!-- 댓글 작성자 본인만 수정 -->
+    <update id="updateComment">
+        UPDATE community_comments
+        SET
+            content = #{content},
+            content_version = content_version + 1,
+            updated_at = NOW()
+        WHERE comment_id = #{commentId}
+         AND member_id = #{memberId}
+    </update>
+
     <!-- 작성자 번호가 같은 게시글만 삭제 -->
     <delete id="deletePost">
         DELETE FROM community_posts
         WHERE post_id = #{postId}
           AND member_id = #{memberId}
+    </delete>
+
+    <!-- 삭제 권한은 Service에서 확인한 뒤 실행 -->
+    <delete id="deleteComment">
+        DELETE FROM community_comments
+        WHERE comment_id = #{commentId}
+    </delete>
+
+    <!-- 게시글 삭제 시 외래키 제약에 걸리지 않도록 연결 댓글을 먼저 삭제 -->
+    <delete id="deleteCommentsByPostId">
+        DELETE FROM community_comments
+        WHERE post_id = #{postId}
     </delete>
 
 

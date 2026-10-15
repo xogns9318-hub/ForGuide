@@ -37,3 +37,30 @@ export async function createCommunityPost(postData) {
 export async function deleteCommunityPost(postId) {
     return client.delete(`/community/posts/${postId}`);
 }
+
+// 게시글 본문과 사진을 multipart/form-data로 수정
+export async function updateCommunityPost(postId, formData) {
+    return client.patch(`/community/posts/${postId}`, formData);
+}
+
+// 게시글의 댓글 목록 조회
+export async function getCommunityComments(postId) {
+    return client.get(`/community/posts/${postId}/comments`);
+}
+
+// 로그인한 사용자의 댓글 작성
+export async function createCommunityComment(postId, content) {
+    return client.post(`/community/posts/${postId}/comments`, {content});
+}
+
+// 댓글 작성자 본인의 댓글 수정
+export async function updateCommunityComment(postId, commentId, content) {
+    return client.patch(`/community/posts/${postId}/comments/${commentId}`, {
+        content,
+    });
+}
+
+// 댓글 작성자 또는 게시글 작성자의 댓글 삭제
+export async function deleteCommunityComment(postId, commentId) {
+    return client.delete(`/community/posts/${postId}/comments/${commentId}`);
+}
