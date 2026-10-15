@@ -68,9 +68,7 @@ CREATE TABLE regions (
         FOREIGN KEY (parent_region_id) REFERENCES regions (region_id),
     CONSTRAINT chk_region_level
         CHECK ((region_level = 'province' AND parent_region_id IS NULL)
-            OR (region_level = 'district' AND parent_region_id IS NOT NULL)),
-    CONSTRAINT chk_region_parent
-        CHECK (parent_region_id IS NULL OR parent_region_id <> region_id)
+            OR (region_level = 'district' AND parent_region_id IS NOT NULL))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 금융상품과 상담·취업 안내가 공통으로 연결하는 준비 목록입니다.
