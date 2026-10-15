@@ -108,10 +108,9 @@ class SecurityConfigTest {
     }
 
     @Test
-    void 잠그지_않은_주소는_토큰_없이_열리고_회원_번호는_없다() throws Exception {
+    void 공개로_등록하지_않은_주소는_토큰_없이_401이다() throws Exception {
         mockMvc.perform(get("/api/v1/test-open/me"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.loggedIn").value(false));
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
