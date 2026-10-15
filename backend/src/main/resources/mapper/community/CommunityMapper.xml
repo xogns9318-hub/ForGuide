@@ -71,9 +71,26 @@
 
     </select>
 
+    <!-- 피드에 표시할 게시글 사진을 게시글 번호 목록으로 한 번에 조회 -->
+    <select id="findImagesByPostIds"
+            resultType="com.example.forguide.community.dto.CommunityPostImageResponse">
+
+        SELECT
+            image_id AS imageId,
+            post_id AS postId,
+            image_url AS imageUrl,
+            display_order AS displayOrder
+        FROM community_post_images
+        WHERE post_id IN
+        <foreach collection="postIds" item="postId" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+        ORDER BY post_id ASC, display_order ASC
+
+    </select>
 
     <!-- 게시글 작성 -->
-    <insert id="insertPost">
+    <insert id="insertPost" useGeneratedKeys="true" keyProperty="postId">
         INSERT INTO community_posts (
             member_id,
             content,
@@ -88,6 +105,22 @@
             #{language},
             1,
             NOW(),
+            NOW()
+        )
+    </insert>
+
+    <!-- 게시글 사진 한 장의 저장 주소와 표시 순서를 연결 -->
+    <insert id="insertPostImage">
+        INSERT INTO community_post_images (
+            post_id,
+            image_url,
+            display_order,
+            created_at
+        )
+        VALUES (
+            #{postId},
+            #{imageUrl},
+            #{displayOrder},
             NOW()
         )
     </insert>

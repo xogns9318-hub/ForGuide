@@ -4,17 +4,25 @@ import {
     deleteCommunityPost,
     getCommunityPostsByCursor,
 } from "../../api/communityApi.js";
+import Banner from "../Banner/Banner.jsx";
 import "../../styles/community.css";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import ProfileAvatar from "../../auth/components/ProfileAvatar.jsx";
 
-
+const MAX_IMAGE_COUNT = 4;
+const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 
 function PostCard({ post, currentMemberId, onDelete, isDeleting, }) {
     return (
         <article className="community-post-card">
             <div className="community-author">
-                <div className="community-avatar" aria-hidden="true">♙</div>
+                <ProfileAvatar
+                    imageUrl={post.profileImageUrl}
+                    name={post.nickname}
+                    size={38}
+                />
                 <div>
                     <strong>{post.nickname}</strong>
                     <p>
@@ -27,11 +35,24 @@ function PostCard({ post, currentMemberId, onDelete, isDeleting, }) {
 
             {/* 서버에서 실제로 조회한 게시글 내용만 표시 */}
             <p className="community-post-content">{post.content}</p>
+            {post.images?.length > 0 && (
+                <div className="community-post-images">
+                    {post.images.map((image) => (
+                        <img
+                        key={image.imageId}
+                        className="community-post-image"
+                        src={image.imageUrl}
+                        alt="게시글 첨부 사진"
+                        />
+                    ))}
+                </div>
+            )}
 
 
             {post.memberId === currentMemberId && (
                 <button
                     type="button"
+                    className="button community-delete-button"
                     onClick={() => onDelete(post.postId)}
                     disabled={isDeleting}
                 >
@@ -50,6 +71,7 @@ export default function Community() {
     const [error, setError] = useState(null);
     const [hasMore, setHasMore] = useState(true);
     const [content, setContent] = useState("");
+    const [images, setImages] = useState([]);
     const [writeError, setWriteError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [deletingPostId, setDeletingPostId] = useState(null);
@@ -72,6 +94,8 @@ export default function Community() {
 
     const { i18n } = useTranslation();
 
+    const navigate = useNavigate();
+
     // 로그인 정보가 준비되었는지 확인
     const initialized = useAuthStore((state) => state.initialized);
 
@@ -81,6 +105,39 @@ export default function Community() {
     //삭제 버튼을 본인 게시글에만 표시하기 위한 로그인 회원 정보
     const member = useAuthStore((state) => state.member);
 
+    // 사진은 JPG/PNG만, 게시글당 최대 4장/ 한 장 최대 20MB로 제한
+    function handleImageChange(event) {
+        const selectedImages = Array.from(event.target.files ?? []);
+
+        const invalidImage = selectedImages.find(
+            (image) =>
+                !["image/jpeg", "image/png"].includes(image.type) ||
+                image.size > MAX_IMAGE_BYTES,
+        );
+
+        if (invalidImage) {
+            setWriteError("JPG 또는 PNG 사진만, 한 장당 20MB 이하로 올릴 수 있습니다.");
+            event.target.value = "";
+            return;
+        }
+
+        if (images.length + selectedImages.length > MAX_IMAGE_COUNT) {
+            setWriteError("게시글 사진은 최대 4장까지 올릴 수 있습니다.");
+            event.target.value = "";
+            return;
+        }
+
+        setImages((currentImages) => [...currentImages, ...selectedImages]);
+        setWriteError("");
+        event.target.value = "";
+    }
+
+    // 작성 전 선택한 사진 한 장을 목록에서 제거한다
+    function handleRemoveImage(imageIndex) {
+        setImages((currentImages) =>
+            currentImages.filter((_, index) => index !== imageIndex),
+        );
+    }
 
     // 커뮤니티 화면 안에서 바로 게시글을 작성
     async function handleSubmit(event) {
@@ -95,6 +152,12 @@ export default function Community() {
 
         if (!accessToken) {
             setWriteError("게시글을 작성하려면 로그인이 필요합니다.");
+
+            // 안내 문구를 잠시 보여 준 뒤 로그인 화면으로 이동
+            window.setTimeout(() => {
+                navigate("/login");
+            }, 1000);
+
             return;
         }
 
@@ -106,14 +169,28 @@ export default function Community() {
         setWriteError("");
 
         try {
-            await createCommunityPost({
-                content: trimmedContent,
-                // 작성 언어는 사용자가 고르지 않고 현재 서비스 언어를 사용
-                language: i18n.language,
-            });
+           const formData = new FormData();
+           formData.append("content", trimmedContent);
+           formData.append("language", i18n.language);
+
+           images.forEach((image) => {
+               formData.append("images", image);
+           });
+
+           await createCommunityPost(formData);
 
             setContent("");
-            window.location.reload();
+            setImages([]);
+            // 새 글이 포함된 첫 페이지를 다시 조회하기 위해 피드 상태 초기화
+            cursorRef.current = null;
+            hasMoreRef.current = true;
+            errorRef.current = false;
+
+            setPosts([]);
+            setHasMore(true);
+
+            await loadMorePosts();
+
         } catch (requestError) {
             setWriteError(
                 requestError.message || "게시글을 저장하지 못했습니다. 다시 시도해주세요.",
@@ -266,16 +343,16 @@ export default function Community() {
 
 
     return (
-        <div className="community-page">
-            <section className="community-hero" aria-labelledby="community-title">
-                <div>
-                    <h1 id="community-title">커뮤니티</h1>
-                    <p>한국 생활의 경험과 정보를 나누고, 서로의 이야기를 만나보세요.</p>
-                </div>
-                <div className="community-hero-arch" aria-hidden="true" />
-            </section>
+        <div className="page-stack community-page">
+            <Banner
+                title="커뮤니티"
+                description="한국 생활의 경험과 정보를 나누고, 서로의 이야기를 만나보세요."
+            />
 
-            <section className="community-board" aria-labelledby="community-board-title">
+            <section
+                className="community-board panel"
+                aria-labelledby="community-board-title"
+            >
                 <div className="community-board-title">
                     <h2 id="community-board-title">커뮤니티</h2>
                     <p>한국 생활의 질문과 경험을 함께 나누는 공간</p>
@@ -299,11 +376,43 @@ export default function Community() {
                         />
                         {writeError && <p role="alert">{writeError}</p>}
                     </div>
-                    <button type="submit" disabled={!initialized || isSubmitting}>
+                    <button
+                        type="submit"
+                        className="button button-primary"
+                        disabled={!initialized || isSubmitting}
+                    >
                         {isSubmitting ? "작성 중..." : "작성"}
                     </button>
                 </form>
 
+                <div className="community-image-picker">
+                    <label htmlFor="community-images">사진</label>
+                    <input
+                        id="community-images"
+                        type="file"
+                        accept="image/jpeg,image/png"
+                        multiple
+                        onChange={handleImageChange}
+                        disabled={!initialized || isSubmitting}
+                    />
+
+                    {images.length > 0 && (
+                        <ul>
+                            {images.map((image, index) => (
+                                <li key={`${image.name}-${index}`}>
+                                    {image.name}
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemoveImage(index)}
+                                        disabled={isSubmitting}
+                                    >
+                                        제거
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </div>
 
                 <div className="community-post-area">
                     {/* 이미 불러온 게시글은 추가 로딩 중에도 계속 표시 */}
@@ -333,7 +442,11 @@ export default function Community() {
                     {error && (
                         <div role="alert">
                             <p>{error}</p>
-                            <button type="button" onClick={loadMorePosts}>
+                            <button
+                                type="button"
+                                className="button"
+                                onClick={loadMorePosts}
+                            >
                                 다시 시도
                             </button>
                         </div>
@@ -354,7 +467,7 @@ export default function Community() {
 
 
                 <div className="community-notice-area">
-                    <button type="button" className="community-notice-button">
+                    <button type="button" className="button">
                         안내 확인하기
                     </button>
                 </div>

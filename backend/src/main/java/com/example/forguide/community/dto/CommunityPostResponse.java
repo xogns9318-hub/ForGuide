@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,4 +20,5 @@ public class CommunityPostResponse {
     private Integer contentVersion;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-        }
+    private List<CommunityPostImageResponse> images;
+}
