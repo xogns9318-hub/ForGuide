@@ -144,22 +144,32 @@ export default function Header({
         );
     }
 
+    // 커뮤니티에서만 숲·도시 배경을 공통 헤더에 적용한다.
+    const isCommunityPage = pathname === "/service/community";
+
     return (
         <header
-            className="site-header"
+            className={`site-header${isCommunityPage ? " site-header-community" : ""}`}
             onKeyDown={handleMobileKeyDown}
         >
             <div className="site-header-inner">
                 {/* 첫 번째 줄: 로고와 회원·언어 메뉴 */}
                 <div className="site-header-top">
-                    {/* 로고를 누르면 홈으로 이동 */}
-                    <Link
-                        to="/"
-                        className="site-logo"
-                        aria-label="ForGuide 홈"
-                    >
-                        <img src="/ForGuide_Logo.png" alt="ForGuide" />
-                    </Link>
+                    <div className="site-brand">
+                        {/* 로고를 누르면 홈으로 이동 */}
+                        <Link
+                            to="/"
+                            className="site-logo"
+                            aria-label="ForGuide 홈"
+                        >
+                            <img src="/ForGuide_Logo.png" alt="ForGuide" />
+                        </Link>
+                        {isCommunityPage && (
+                            <span className="site-header-community-title">
+                                커뮤니티
+                            </span>
+                        )}
+                    </div>
 
                     {/* 회원 메뉴와 언어 선택을 같은 영역에 표시 */}
                     <div className="header-actions">

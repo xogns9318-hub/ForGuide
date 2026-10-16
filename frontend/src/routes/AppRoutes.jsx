@@ -1,4 +1,4 @@
-import { Link, Outlet, Route, Routes } from "react-router-dom";
+import { Link, Outlet, Route, Routes, Navigate } from "react-router-dom";
 import { categories, accountRoutes } from "./routeConfig";
 import { useTranslation } from "react-i18next";
 import Home from "../components/Home/Home.jsx";
@@ -7,7 +7,6 @@ import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import StatusPage from "../components/StatusPage/StatusPage.jsx";
 import Community from "../components/Community/Community.jsx";
-import CommunityWrite from "../components/Community/CommunityWrite.jsx";
 import { authPaths, authRoutes } from "../auth/authRoutes.jsx";
 import "../styles/home.css";
 import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
@@ -217,7 +216,7 @@ export default function AppRoutes({
                 {/* 게시글 작성 전용 페이지 */}
                 <Route
                     path="/service/community/write"
-                    element={<CommunityWrite />}
+                    element={<Navigate to="/service/community" replace />}
                 />
 
                 {/* 도움 기관 안내는 선택 화면으로 연결 */}

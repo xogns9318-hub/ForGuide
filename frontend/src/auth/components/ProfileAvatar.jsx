@@ -12,7 +12,7 @@ export default function ProfileAvatar({ imageUrl, name = "", size = 48 }) {
         setFailed(false);
     }, [imageUrl]);
 
-    const initial = Array.from(name.trim())[0] ?? "?";
+    const initial = Array.from((name ?? "").trim())[0] ?? "?";
     const style = { width: size, height: size, fontSize: Math.round(size * 0.4) };
 
     if (!imageUrl || failed) {

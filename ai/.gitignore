@@ -5,3 +5,6 @@ models/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
 !models/.gitkeep
+
+.env
+__pycache__/

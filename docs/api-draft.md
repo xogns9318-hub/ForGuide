@@ -137,7 +137,11 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 
 기본 주소: `/api/v1/community`
 
-현재 보안 설정에서는 모든 커뮤니티 API에 로그인이 필요하다.
+### `GET /api/v1/community/members/{memberId}/preview`
+
+게시글·댓글 작성자 아바타에 표시할 공개 프로필 요약을 조회한다. 로그인 없이 조회할 수 있으며, `memberId`, `nickname`, `profileImageUrl`, `postCount`, `receivedLikeCount`를 반환한다.
+
+게시글 조회(GET)는 로그인 없이 가능하며, 작성(POST)과 삭제(DELETE)는 로그인해야 한다.
 
 ### 게시글 API
 
@@ -147,6 +151,8 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | GET | `/posts/{postId}` | 게시글 상세 조회 |
 | GET | `/posts/scroll` | 커서 기반 게시글 목록 조회 |
 | POST | `/posts` | 게시글 작성 |
+| PATCH | `/posts/{postId}` | 작성자 본인 게시글 본문·사진 수정 |
+| DELETE | `/posts/{postId}` | 작성자 본인 게시글 삭제 |
 
 ### 무한 스크롤 조회
 
@@ -172,20 +178,51 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 
 `POST /api/v1/community/posts`
 
-요청 JSON 예시:
+요청 형식: `multipart/form-data`
 
-```json
-{
-  "content": "한국 생활에 대해 궁금한 점이 있습니다.",
-  "language": "ko"
-}
-```
+| 항목 | 필수 여부 | 설명 |
+| --- | --- | --- |
+| `content` | 필수 | 게시글 본문 |
+| `language` | 필수 | 현재 서비스 언어 |
+| `images` | 선택 | 게시글 사진. 같은 이름으로 최대 4장 전송 |
 
 입력 검증:
 - `content`: 필수, 공백만 입력 불가, 최대 5000자
 - `language`: 필수, 공백만 입력 불가
+- `images`: JPG·PNG만 허용, 한 장당 20MB 이하, 최대 4장. 서버는 파일 시그니처와 실제 이미지 여부·가로세로 4096px 이하를 함께 확인한다.
+
+사진은 서버 폴더(`forguide.community-image.dir`, 기본 `uploads/community-images`)에 무작위 이름으로 저장한다. 주소는 `/api/v1/community-images/{파일이름}`이며, 피드 표시를 위해 **조회(GET)만 로그인 없이 공개**한다.
 
 게시글 작성자는 클라이언트 요청값이 아닌 로그인 인증 정보로 확인한다.
+
+### 게시글 삭제
+
+`DELETE /api/v1/community/posts/{postId}`
+
+로그인한 작성자 본인만 삭제할 수 있다. 성공 시 응답 `data`는 없다. 게시글 DB 삭제 시 연결된 사진 행은 함께 삭제되며, 서버 폴더의 실제 사진 파일도 정리한다.
+
+### 게시글 수정
+
+`PATCH /api/v1/community/posts/{postId}`는 `multipart/form-data`로 받는다. 로그인한 게시글 작성자 본인만 수정할 수 있고, 다른 회원은 `FORBIDDEN`, 없는 게시글은 `NOT_FOUND`다.
+
+| 항목 | 필수 여부 | 설명 |
+| --- | --- | --- |
+| `content` | 필수 | 공백 제외 최대 5,000자 본문 |
+| `removeImageIds` | 선택 | 삭제할 기존 사진 번호. 여러 개 전달 가능 |
+| `images` | 선택 | 새로 추가할 JPG·PNG 사진 |
+
+기존 사진은 유지하거나 개별 삭제할 수 있고, 새 사진을 추가할 수 있다. 최종 사진 수는 최대 4장이고 새 사진 한 장은 20MB 이하여야 한다. 성공 시 수정된 게시글 전체를 반환한다.
+
+### 댓글 API
+
+| 메서드 | 주소 | 권한 | 설명 |
+| --- | --- | --- | --- |
+| GET | `/posts/{postId}/comments` | 공개 | 게시글 댓글을 작성 시간 오름차순으로 조회 |
+| POST | `/posts/{postId}/comments` | 로그인 | 댓글 작성 |
+| PATCH | `/posts/{postId}/comments/{commentId}` | 댓글 작성자 | 댓글 본문 수정 |
+| DELETE | `/posts/{postId}/comments/{commentId}` | 댓글 작성자 또는 게시글 작성자 | 댓글 삭제 |
+
+댓글 본문은 공백만 입력할 수 없고 최대 1,000자다. 수정 API도 같은 검증 규칙을 사용한다. URL의 게시글과 실제 댓글의 게시글이 다르면 `NOT_FOUND`를 반환한다.
 
 ### 공통 응답 및 오류
 
@@ -208,6 +245,8 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | --- | --- | --- |
 | 400 | `INVALID_INPUT` | 필수값 누락, 길이 제한 위반, 잘못된 요청값 |
 | 401 | `AUTH_REQUIRED` | 로그인하지 않은 사용자의 보호된 API 요청 |
+| 403 | `FORBIDDEN` | 다른 회원이 작성한 게시글 삭제 요청 |
+| 404 | `NOT_FOUND` | 없는 게시글 조회 또는 삭제 요청 |
 
 커뮤니티의 요청 검증 예외는
 `CommunityExceptionHandler`에서 공통 응답 형식으로 처리한다.
@@ -226,4 +265,8 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 - 현재 mock JSON을 읽으며 500ms 지연을 적용한다.
 - 반환 구조: `{ topics, regions, languages, methods }`
 - 실제 서버 API 주소와 DB 구조는 미정이다.
+<<<<<<< HEAD
 - 안내받기는 선택 조건만 확인하며 기관 검색을 요청하지 않는다.
+=======
+- 안내받기는 선택 조건만 확인하며 기관 검색을 요청하지 않는다.
+>>>>>>> 87d88c6908c69c11fd220541b196e66144a52889

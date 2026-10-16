@@ -6,6 +6,37 @@
     border-bottom: 1px solid var(--line);
 }
 
+/* 커뮤니티에서는 별도 배너 대신 공통 헤더에 숲·도시 배경을 사용한다. */
+.site-header.site-header-community {
+    background-color: #f5fcf8;
+    background-image: linear-gradient(rgb(255 255 255 / 52%), rgb(255 255 255 / 52%)), url("../assets/community-scene-banner.png");
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-bottom-color: #d6ebe3;
+}
+
+/* 배경 그림 위에서도 기존 헤더의 정보가 또렷하게 읽히도록 구분한다. */
+.site-header-community .site-header-top {
+    height: 64px;
+}
+
+.site-header-community .header-actions {
+    color: #1d5547;
+    font-weight: 600;
+    text-shadow: 0 1px 1px rgb(255 255 255 / 76%);
+}
+
+/* 서비스 메뉴는 기존 공통 헤더의 얇은 구분선 구조를 그대로 유지한다. */
+.site-header-community .site-navigation {
+    background: rgb(255 255 255 / 48%);
+}
+
+.site-header-community .nav-link {
+    color: #1d5144;
+    text-shadow: 0 1px 1px rgb(255 255 255 / 76%);
+}
+
 /* 공통 본문 너비 안에서 헤더를 두 줄로 배치 */
 .site-header-inner {
     /* 자식 요소의 배치 방식 지정 */
@@ -41,6 +72,14 @@
     height: 56px;
 }
 
+/* 로고와 커뮤니티 이름을 같은 시작점에 붙여 표시한다. */
+.site-brand {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 18px;
+}
+
 /* 로고 영역 */
 .site-logo {
     /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
@@ -53,6 +92,17 @@
 .site-logo img {
     /* 가로 크기 지정 */
     width: 100%;
+}
+
+.site-header-community-title {
+    padding-left: 18px;
+    border-left: 1px solid #9dcdc0;
+    color: #164f42;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    white-space: nowrap;
+    text-shadow: 0 1px 1px rgb(255 255 255 / 76%);
 }
 
 /* 회원 메뉴와 언어 선택창은 같은 줄에 배치 */
@@ -236,9 +286,10 @@
     color: var(--primary);
 }
 
+/* 강조된 카테고리는 기존 둥근 영역에 테두리만 표시 */
 .nav-link.is-active::before {
-    /* 배경색 또는 배경 무늬 지정 */
-    background: var(--mint-soft);
+    background: var(--surface);
+    border: 1px solid var(--primary);
 }
 
 /* 카테고리 중심을 기준으로 세부 메뉴 배치 */
@@ -309,7 +360,7 @@
 }
 
 /* 첫 항목을 제외하고 항목 사이에 가로 구분선 표시 */
-.nav-dropdown-link + .nav-dropdown-link::before {
+.nav-dropdown-link+.nav-dropdown-link::before {
     /* 가상 요소에 표시할 내용 지정 */
     content: "";
     /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
@@ -328,15 +379,15 @@
     pointer-events: none;
 }
 
-/* 마우스를 올린 항목만 강조 */
-/* 가리키는 항목이 없으면 현재 페이지 항목 강조 */
+/* 마우스를 올린 항목만 강조하고, 없으면 현재 페이지 항목 강조 */
 .nav-dropdown-link:hover,
-.nav-dropdown:not(:has(.nav-dropdown-link:hover))
-    .nav-dropdown-link[aria-current="page"] {
-    /* 배경색 또는 배경 무늬 지정 */
-    background: var(--mint-soft);
-    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+.nav-dropdown:not(:has(.nav-dropdown-link:hover)) .nav-dropdown-link[aria-current="page"] {
+    /* 민트 배경을 없애고 글씨 색상으로 선택 상태 표시 */
+    background: var(--surface);
     color: var(--primary);
+
+    /* 항목 크기와 간격을 유지하면서 안쪽 테두리 표시 */
+    box-shadow: inset 0 0 0 1px var(--primary);
 }
 
 /* 넓은 화면에서는 작은 화면용 버튼과 메뉴 숨김 */
@@ -379,6 +430,15 @@
     .site-logo {
         /* 가로 크기 지정 */
         width: 160px;
+    }
+
+    .site-header-community-title {
+        padding-left: 12px;
+        font-size: 20px;
+    }
+
+    .site-header-community .site-header-top {
+        height: 56px;
     }
 
     /* 기존 회원 메뉴와 카테고리 6칸은 숨김 */
@@ -521,7 +581,7 @@
         /* 테두리 안쪽 여백 지정 */
         padding: 8px var(--page-padding) 16px;
         /* 배경색 또는 배경 무늬 지정 */
-        background: var(--mint-soft);
+        background: var(--surface);
     }
 
     .mobile-submenu a {
@@ -537,12 +597,12 @@
         font-size: 15px;
     }
 
+    /* 모바일에서도 가리킨 항목 하나만 테두리로 강조 */
     .mobile-submenu a:hover,
-    .mobile-submenu a[aria-current="page"] {
-        /* 배경색 또는 배경 무늬 지정 */
-        background: var(--mint);
-        /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    .mobile-submenu:not(:has(a:hover)) a[aria-current="page"] {
+        background: var(--surface);
         color: var(--primary);
+        box-shadow: inset 0 0 0 1px var(--primary);
     }
 
     /* 회원 메뉴와 언어 선택은 펼친 메뉴 아래에 표시 */
@@ -575,7 +635,7 @@
     }
 }
 
-/* '언어' 글씨는 화면에서 숨기고, 음성 안내용 이름으로 유지 */
+/* '언어' 글씨는 화면에서 숨기고 음성 안내용 이름으로 유지 */
 .header-language-label {
     /* 숨긴 글씨가 메뉴 배치에 영향을 주지 않도록 분리 */
     position: absolute;
@@ -586,11 +646,9 @@
     padding: 0;
     margin: -1px;
 
-    /* 영역 밖 내용과 글씨를 화면에서 숨김 */
+    /* 내용이 화면에 보이지 않도록 처리 */
     overflow: hidden;
     clip-path: inset(50%);
-
-    /* 숨긴 글씨의 줄바꿈과 테두리 제거 */
     white-space: nowrap;
     border: 0;
 }

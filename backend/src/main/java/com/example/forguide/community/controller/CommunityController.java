@@ -2,7 +2,13 @@ package com.example.forguide.community.controller;
 
 import com.example.forguide.community.dto.CommunityPostCreateRequest;
 import com.example.forguide.community.dto.CommunityPostResponse;
+import com.example.forguide.community.dto.CommunityPostUpdateRequest;
 import com.example.forguide.community.service.CommunityService;
+import com.example.forguide.community.dto.CommunityCommentCreateRequest;
+import com.example.forguide.community.dto.CommunityCommentResponse;
+import com.example.forguide.community.dto.CommunityPostLikeResponse;
+import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
+import com.example.forguide.community.dto.CommunityPostRepostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -13,6 +19,9 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -47,21 +56,177 @@ public class CommunityController {
     ) {
         return ApiResponse.ok(
                 communityService.getPostsByCursor(
-                cursorCreatedAt,
-                cursorPostId,
-                size
-            )
+                        cursorCreatedAt,
+                        cursorPostId,
+                        size
+                )
         );
     }
 
-    // 게시글 작성
-    @PostMapping("/posts")
+    // 게시글 작성: 본문과 선택 사진(최대 4장)을 multipart/form-data로 받는다
+    @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<Integer> createPost(
             @AuthenticationPrincipal Long memberId,
-            @Valid @RequestBody CommunityPostCreateRequest request
+            @Valid @ModelAttribute CommunityPostCreateRequest request,
+            @RequestParam(value = "images", required = false)
+            @Size(max = 4, message = "게시글 사진은 최대 4장까지 올릴 수 있습니다.")
+            List<MultipartFile> images
     ) {
         return ApiResponse.ok(
-                communityService.createPost(memberId, request)
+                communityService.createPost(memberId, request, images)
+        );
+    }
+
+    // 로그인한 작성자 본인만 본문·사진을 수정한다.
+    @PatchMapping(value = "/posts/{postId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ApiResponse<CommunityPostResponse> updatePost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId,
+            @Valid @ModelAttribute CommunityPostUpdateRequest request,
+            @RequestParam(value = "removeImageIds", required = false)
+            List<Long> removeImageIds,
+            @RequestParam(value = "images", required = false)
+            @Size(max = 4, message = "한 번에 추가할 사진은 최대 4장까지입니다.")
+            List<MultipartFile> images
+    ) {
+        return ApiResponse.ok(
+                communityService.updatePost(
+                        postId,
+                        memberId,
+                        request,
+                        removeImageIds,
+                        images
+                )
+        );
+    }
+
+    // 로그인한 작성자 본인만 게시글 삭제
+    @DeleteMapping("/posts/{postId}")
+    public ApiResponse<Void> deletePost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        communityService.deletePost(postId, memberId);
+        return ApiResponse.ok();
+    }
+
+    // 비로그인 사용자도 게시글의 댓글 목록을 볼 수 있다
+    @GetMapping("/posts/{postId}/comments")
+    public ApiResponse<List<CommunityCommentResponse>> getCommentsByPostId(
+            @PathVariable Long postId
+    ) {
+        return ApiResponse.ok(
+                communityService.getCommentsByPostId(postId)
+        );
+    }
+
+    // 로그인한 회원만 댓글 작성 가능
+    @PostMapping("/posts/{postId}/comments")
+    public ApiResponse<Void> createComment(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId,
+            @Valid @RequestBody CommunityCommentCreateRequest request
+    ) {
+        communityService.createComment(postId, memberId, request);
+        return ApiResponse.ok();
+    }
+
+    // 댓글 작성자 본인만 수정할 수 있다.
+    @PatchMapping("/posts/{postId}/comments/{commentId}")
+    public ApiResponse<Void> updateComment(
+            @PathVariable Long postId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal Long memberId,
+            @Valid @RequestBody CommunityCommentCreateRequest request
+    ) {
+        communityService.updateComment(postId, commentId, memberId, request);
+        return ApiResponse.ok();
+    }
+
+    // 댓글 작성자 또는 게시글 작성자만 삭제할 수 있다.
+    @DeleteMapping("/posts/{postId}/comments/{commentId}")
+    public ApiResponse<Void> deleteComment(
+            @PathVariable Long postId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        communityService.deleteComment(postId, commentId, memberId);
+        return ApiResponse.ok();
+    }
+
+    // 비로그인 사용자도 좋아요 수는 볼 수 있고,
+    // 로그인 상태면 내가 좋아요를 눌렀는지도 함께 반환한다.
+    @GetMapping("/posts/{postId}/likes")
+    public ApiResponse<CommunityPostLikeResponse> getPostLikeStatus(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.getPostLikeStatus(postId, memberId)
+        );
+    }
+
+    // 로그인 회원이 게시글에 좋아요를 추가
+    @PostMapping("/posts/{postId}/likes")
+    public ApiResponse<CommunityPostLikeResponse> likePost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.likePost(postId, memberId)
+        );
+    }
+
+    // 로그인 회원이 자신의 좋아요를 취소
+    @DeleteMapping("/posts/{postId}/likes")
+    public ApiResponse<CommunityPostLikeResponse> unlikePost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.unlikePost(postId, memberId)
+        );
+    }
+
+    // 게시글·댓글 작성자에 마우스를 올렸을 때 표시할 공개 프로필 요약
+    @GetMapping("/members/{memberId}/preview")
+    public ApiResponse<CommunityMemberPreviewResponse> getMemberPreview(
+            @PathVariable Long memberId
+    ) {
+        return ApiResponse.ok(communityService.getMemberPreview(memberId));
+    }
+
+    // 비로그인 사용자도 리포스트 수 볼 수 있고,
+    // 로그인 상태면 내가 리포스트했는지도 함께 반환
+    @GetMapping("/posts/{postId}/reposts")
+    public ApiResponse<CommunityPostRepostResponse> getPostRepostStatus(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.getPostRepostStatus(postId, memberId)
+        );
+    }
+
+    // 로그인 회원이 게시글을 리포스트한다.
+    @PostMapping("/posts/{postId}/reposts")
+    public ApiResponse<CommunityPostRepostResponse> repostPost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.repostPost(postId, memberId)
+        );
+    }
+
+    // 로그인 회원이 자신의 리포스트를 취소한다.
+    @DeleteMapping("/posts/{postId}/reposts")
+    public ApiResponse<CommunityPostRepostResponse> unrepostPost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.unrepostPost(postId, memberId)
         );
     }
 }
