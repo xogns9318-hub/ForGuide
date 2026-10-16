@@ -6,6 +6,9 @@ import com.example.forguide.community.dto.CommunityPostUpdateRequest;
 import com.example.forguide.community.service.CommunityService;
 import com.example.forguide.community.dto.CommunityCommentCreateRequest;
 import com.example.forguide.community.dto.CommunityCommentResponse;
+import com.example.forguide.community.dto.CommunityPostLikeResponse;
+import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
+import com.example.forguide.community.dto.CommunityPostRepostResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,10 +56,10 @@ public class CommunityController {
     ) {
         return ApiResponse.ok(
                 communityService.getPostsByCursor(
-                cursorCreatedAt,
-                cursorPostId,
-                size
-            )
+                        cursorCreatedAt,
+                        cursorPostId,
+                        size
+                )
         );
     }
 
@@ -111,7 +114,7 @@ public class CommunityController {
     @GetMapping("/posts/{postId}/comments")
     public ApiResponse<List<CommunityCommentResponse>> getCommentsByPostId(
             @PathVariable Long postId
-    )   {
+    ) {
         return ApiResponse.ok(
                 communityService.getCommentsByPostId(postId)
         );
@@ -149,5 +152,81 @@ public class CommunityController {
     ) {
         communityService.deleteComment(postId, commentId, memberId);
         return ApiResponse.ok();
+    }
+
+    // 비로그인 사용자도 좋아요 수는 볼 수 있고,
+    // 로그인 상태면 내가 좋아요를 눌렀는지도 함께 반환한다.
+    @GetMapping("/posts/{postId}/likes")
+    public ApiResponse<CommunityPostLikeResponse> getPostLikeStatus(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.getPostLikeStatus(postId, memberId)
+        );
+    }
+
+    // 로그인 회원이 게시글에 좋아요를 추가
+    @PostMapping("/posts/{postId}/likes")
+    public ApiResponse<CommunityPostLikeResponse> likePost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.likePost(postId, memberId)
+        );
+    }
+
+    // 로그인 회원이 자신의 좋아요를 취소
+    @DeleteMapping("/posts/{postId}/likes")
+    public ApiResponse<CommunityPostLikeResponse> unlikePost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.unlikePost(postId, memberId)
+        );
+    }
+
+    // 게시글·댓글 작성자에 마우스를 올렸을 때 표시할 공개 프로필 요약
+    @GetMapping("/members/{memberId}/preview")
+    public ApiResponse<CommunityMemberPreviewResponse> getMemberPreview(
+            @PathVariable Long memberId
+    ) {
+        return ApiResponse.ok(communityService.getMemberPreview(memberId));
+    }
+
+    // 비로그인 사용자도 리포스트 수 볼 수 있고,
+    // 로그인 상태면 내가 리포스트했는지도 함께 반환
+    @GetMapping("/posts/{postId}/reposts")
+    public ApiResponse<CommunityPostRepostResponse> getPostRepostStatus(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.getPostRepostStatus(postId, memberId)
+        );
+    }
+
+    // 로그인 회원이 게시글을 리포스트한다.
+    @PostMapping("/posts/{postId}/reposts")
+    public ApiResponse<CommunityPostRepostResponse> repostPost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.repostPost(postId, memberId)
+        );
+    }
+
+    // 로그인 회원이 자신의 리포스트를 취소한다.
+    @DeleteMapping("/posts/{postId}/reposts")
+    public ApiResponse<CommunityPostRepostResponse> unrepostPost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.unrepostPost(postId, memberId)
+        );
     }
 }

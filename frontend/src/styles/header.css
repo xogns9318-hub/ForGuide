@@ -6,6 +6,37 @@
     border-bottom: 1px solid var(--line);
 }
 
+/* 커뮤니티에서는 별도 배너 대신 공통 헤더에 숲·도시 배경을 사용한다. */
+.site-header.site-header-community {
+    background-color: #f5fcf8;
+    background-image: linear-gradient(rgb(255 255 255 / 52%), rgb(255 255 255 / 52%)), url("../assets/community-scene-banner.png");
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-bottom-color: #d6ebe3;
+}
+
+/* 배경 그림 위에서도 기존 헤더의 정보가 또렷하게 읽히도록 구분한다. */
+.site-header-community .site-header-top {
+    height: 64px;
+}
+
+.site-header-community .header-actions {
+    color: #1d5547;
+    font-weight: 600;
+    text-shadow: 0 1px 1px rgb(255 255 255 / 76%);
+}
+
+/* 서비스 메뉴는 기존 공통 헤더의 얇은 구분선 구조를 그대로 유지한다. */
+.site-header-community .site-navigation {
+    background: rgb(255 255 255 / 48%);
+}
+
+.site-header-community .nav-link {
+    color: #1d5144;
+    text-shadow: 0 1px 1px rgb(255 255 255 / 76%);
+}
+
 /* 공통 본문 너비 안에서 헤더를 두 줄로 배치 */
 .site-header-inner {
     /* 자식 요소의 배치 방식 지정 */
@@ -41,6 +72,14 @@
     height: 56px;
 }
 
+/* 로고와 커뮤니티 이름을 같은 시작점에 붙여 표시한다. */
+.site-brand {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 18px;
+}
+
 /* 로고 영역 */
 .site-logo {
     /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
@@ -53,6 +92,17 @@
 .site-logo img {
     /* 가로 크기 지정 */
     width: 100%;
+}
+
+.site-header-community-title {
+    padding-left: 18px;
+    border-left: 1px solid #9dcdc0;
+    color: #164f42;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    white-space: nowrap;
+    text-shadow: 0 1px 1px rgb(255 255 255 / 76%);
 }
 
 /* 회원 메뉴와 언어 선택창은 같은 줄에 배치 */
@@ -379,6 +429,15 @@
     .site-logo {
         /* 가로 크기 지정 */
         width: 160px;
+    }
+
+    .site-header-community-title {
+        padding-left: 12px;
+        font-size: 20px;
+    }
+
+    .site-header-community .site-header-top {
+        height: 56px;
     }
 
     /* 기존 회원 메뉴와 카테고리 6칸은 숨김 */

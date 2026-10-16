@@ -12,6 +12,9 @@ import com.example.forguide.community.dto.CommunityPostImageResponse;
 import com.example.forguide.community.image.CommunityImageStorage;
 import com.example.forguide.community.dto.CommunityCommentCreateRequest;
 import com.example.forguide.community.dto.CommunityCommentResponse;
+import com.example.forguide.community.dto.CommunityPostLikeResponse;
+import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
+import com.example.forguide.community.dto.CommunityPostRepostResponse;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -227,6 +230,101 @@ public class CommunityService {
         images.forEach(image ->
                 communityImageStorage.deleteIfOwned(image.getImageUrl())
         );
+    }
+
+    // 게시글 좋아요 수와 현재 로그인 회원의 좋아요 여부를 조사한다.
+    // memberId가 null 이면 비로그인 조회이므로 LikeByME는 false
+    public CommunityPostLikeResponse getPostLikeStatus(Long postId, Long memberId) {
+        validatePostExists(postId);
+
+        CommunityPostLikeResponse response = new CommunityPostLikeResponse();
+        response.setPostId(postId);
+        response.setLikeCount(communityMapper.countLikesByPostId(postId));
+        response.setLikedByMe(
+                memberId != null
+                        && communityMapper.existsPostLike(postId, memberId)
+        );
+
+        return response;
+    }
+
+    // 이미 좋아요를 누른 경우에는 중복 저장하지 않고 현재 상태만 돌려줌.
+    @Transactional
+    public CommunityPostLikeResponse likePost(Long postId, Long memberId) {
+        validatePostExists(postId);
+
+        if(!communityMapper.existsPostLike(postId, memberId)) {
+            communityMapper.insertPostLike(postId, memberId);
+        }
+
+        return getPostLikeStatus(postId, memberId);
+    }
+
+    // 좋아요 없는 상태에서 취소 요청이 와도 오류 없이 현재 상태 돌려준다.
+    @Transactional
+    public CommunityPostLikeResponse unlikePost(Long postId, Long memberId) {
+        validatePostExists(postId);
+
+        communityMapper.deletePostLike(postId, memberId);
+
+        return getPostLikeStatus(postId, memberId);
+    }
+
+    // 게시글 리포스트 수와 현재 로그인 회원의 리포스트 여부 조회
+    public CommunityPostRepostResponse getPostRepostStatus(
+            Long postId, Long memberId
+    ) {
+        validatePostExists(postId);
+
+        CommunityPostRepostResponse response = new CommunityPostRepostResponse();
+
+        response.setPostId(postId);
+        response.setRepostCount(communityMapper.countRepostsByPostId(postId)
+        );
+        response.setRepostedByMe(
+                memberId != null
+                    && communityMapper.existsPostRepost(postId, memberId)
+        );
+
+        return response;
+    }
+
+    // 이미 리포스트한 게시글이면 중복 저장하지 않고 현재 상태 돌려줌
+    @Transactional
+    public CommunityPostRepostResponse repostPost(
+            Long postId, Long memberId
+    ) {
+        validatePostExists(postId);
+
+        if(!communityMapper.existsPostRepost(postId, memberId)) {
+            communityMapper.insertPostRepost(postId, memberId);
+        }
+
+        return getPostRepostStatus(postId, memberId);
+    }
+
+    // 리포스트하지 않은 상태에서 취소해도 오류 없이 현재 상태를 돌려줌
+    @Transactional
+    public CommunityPostRepostResponse unrepostPost(
+            Long postId, Long memberId
+    ) {
+        validatePostExists(postId);
+
+        communityMapper.deletePostRepost(postId, memberId);
+
+        return  getPostRepostStatus(postId, memberId);
+    }
+
+    // 비로그인 사용자도 작성자의 공개 요약 정보를 확인할 수 있다.
+    public CommunityMemberPreviewResponse getMemberPreview(Long memberId) {
+        CommunityMemberPreviewResponse preview =
+                communityMapper.findMemberPreviewById(memberId);
+
+        if (preview == null) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "회원을 찾을 수 없습니다.");
+        }
+
+        return preview;
     }
 
     // 조회한 게시글들에 사진 목록을 한 번의 DB 조회로 연결한다

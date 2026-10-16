@@ -60,6 +60,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, CommunityImageStorage.URL_PREFIX + "**").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/posts/**").permitAll()
+                        // 게시글·댓글 작성자의 공개 프로필 미리보기는 로그인 없이도 조회 가능
+                        .requestMatchers(HttpMethod.GET, "/api/v1/community/members/*/preview").permitAll()
                         // ── 그 밖의 모든 주소는 로그인 필요 ──
                         .anyRequest().authenticated())
 

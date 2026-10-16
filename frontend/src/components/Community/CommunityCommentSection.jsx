@@ -7,10 +7,14 @@ import {
 } from "../../api/communityApi.js";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import { useNavigate } from "react-router-dom";
-import ProfileAvatar from "../../auth/components/ProfileAvatar.jsx";
+import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 
 // 게시글 하나에 연결되는 댓글 목록·작성 영역
-export default function CommunityCommentSection({ postId, postMemberId }) {
+export default function CommunityCommentSection({
+    postId,
+    postMemberId,
+    onCommentCountChange,
+}) {
     const [comments, setComments] = useState([]);
     const [content, setContent] = useState("");
     const [isLoading, setIsLoading] = useState(true);
@@ -33,6 +37,8 @@ export default function CommunityCommentSection({ postId, postMemberId }) {
         try {
             const nextComments = await getCommunityComments(postId);
             setComments(nextComments);
+            // 댓글을 열었을 때도 서버의 실제 개수로 게시글 카드 숫자를 맞춘다.
+            onCommentCountChange?.(postId, nextComments.length);
         } catch (requestError) {
             setError(
                 requestError.message
@@ -151,6 +157,7 @@ export default function CommunityCommentSection({ postId, postMemberId }) {
                     (comment) => comment.commentId !== commentId,
                 ),
             );
+            onCommentCountChange?.(postId, Math.max(comments.length - 1, 0));
         } catch (requestError) {
             setWriteError(
                 requestError.message || "댓글을 삭제하지 못했습니다.",
@@ -181,9 +188,10 @@ export default function CommunityCommentSection({ postId, postMemberId }) {
                             key={comment.commentId}
                             className="community-comment-item"
                         >
-                            <ProfileAvatar
+                            <CommunityMemberPreview
+                                memberId={comment.memberId}
                                 imageUrl={comment.profileImageUrl}
-                                name={comment.nickname}
+                                nickname={comment.nickname}
                                 size={30}
                             />
 
