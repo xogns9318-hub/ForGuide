@@ -137,6 +137,10 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 
 기본 주소: `/api/v1/community`
 
+### `GET /api/v1/community/members/{memberId}/preview`
+
+게시글·댓글 작성자 아바타에 표시할 공개 프로필 요약을 조회한다. 로그인 없이 조회할 수 있으며, `memberId`, `nickname`, `profileImageUrl`, `postCount`, `receivedLikeCount`를 반환한다.
+
 게시글 조회(GET)는 로그인 없이 가능하며, 작성(POST)과 삭제(DELETE)는 로그인해야 한다.
 
 ### 게시글 API

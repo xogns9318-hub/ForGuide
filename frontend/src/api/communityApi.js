@@ -64,3 +64,38 @@ export async function updateCommunityComment(postId, commentId, content) {
 export async function deleteCommunityComment(postId, commentId) {
     return client.delete(`/community/posts/${postId}/comments/${commentId}`);
 }
+
+// 게시글의 좋아요 수와 현재 로그인 회원의 좋아요 여부 조회
+export async function getCommunityPostLike(postId) {
+    return client.get(`/community/posts/${postId}/likes`);
+}
+
+// 로그인 회원의 좋아요 추가
+export async function likeCommunityPost(postId) {
+    return client.post(`/community/posts/${postId}/likes`);
+}
+
+// 로그인 회원의 좋아요 취소
+export async function unlikeCommunityPost(postId) {
+    return client.delete(`/community/posts/${postId}/likes`);
+}
+
+// 게시글·댓글 작성자의 프로필 미리보기 정보 조회
+export async function getCommunityMemberPreview(memberId) {
+    return client.get(`/community/members/${memberId}/preview`);
+}
+
+// 게시글의 리포스트 수와 현재 로그인 회원의 리포스트 여부 조회
+export async function getCommunityPostRepost(postId) {
+    return client.get(`/community/posts/${postId}/reposts`);
+}
+
+// 로그인 회원의 리포스트 추가
+export async function repostCommunityPost(postId) {
+    return client.post(`/community/posts/${postId}/reposts`);
+}
+
+// 로그인 회원의 리포스트 취소
+export async function unrepostCommunityPost(postId) {
+    return client.delete(`/community/posts/${postId}/reposts`);
+}

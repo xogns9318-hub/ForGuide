@@ -403,3 +403,563 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* 기존 규칙보다 뒤에 두어 작성자 조작 버튼을 브라우저 기본 모양으로 되돌리지 않는다. */
+.community-post-owner-actions button {
+    min-height: 30px;
+    padding: 0 10px;
+    border: 1px solid #d5e8e0;
+    border-radius: 8px;
+    background: #fff;
+    color: #50746a;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.community-post-owner-actions .community-edit-button:hover {
+    border-color: #91cdbb;
+    background: #eff9f4;
+    color: var(--primary);
+}
+
+.community-post-owner-actions .community-delete-button:hover:not(:disabled) {
+    border-color: #f3c9c5;
+    background: #fff5f4;
+    color: #b42318 !important;
+}
+
+/* X형 피드 흐름을 현재 ForGuide의 민트 톤으로 재구성한다. */
+.community-board {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: visible;
+    border-color: #d6ebe3;
+    background: var(--surface);
+}
+
+/* 커뮤니티 바깥 여백까지 흰색으로 이어지도록 처리한다. */
+.app-layout:has(.community-page),
+.app-layout:has(.community-page) .page-main,
+.app-layout:has(.community-page) .site-footer {
+    background: #fff;
+}
+
+.community-page {
+    gap: 22px;
+    padding: 20px 0 42px;
+    background: #fff;
+    box-shadow: 0 0 0 100vmax #fff;
+    clip-path: inset(0 -100vmax);
+}
+
+.community-board-title {
+    padding: 28px 32px 18px;
+}
+
+.community-write-area {
+    align-items: flex-start;
+    gap: 14px;
+    padding: 22px 32px;
+    border-top: 1px solid #e0f0e9;
+    border-bottom: 1px solid #dceee7;
+    background: #f7fcf9;
+}
+
+.community-write-form {
+    min-width: 0;
+}
+
+.community-write-form textarea {
+    min-height: 90px;
+    padding: 14px 2px;
+    border: 0;
+    border-bottom: 1px solid #d9ebe4;
+    border-radius: 0;
+    background: transparent;
+    font-size: 15px;
+    resize: vertical;
+}
+
+.community-write-form textarea:focus {
+    outline: 0;
+    border-bottom-color: var(--primary);
+}
+
+.community-write-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.community-image-picker {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    padding: 8px 12px;
+    border: 1px solid #cfe7dd;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+.community-image-picker:hover {
+    border-color: #91cdbb;
+    background: #eff9f4;
+    transform: translateY(-1px);
+}
+
+.community-image-picker svg {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    vertical-align: -3px;
+}
+
+.community-image-picker input {
+    width: 0;
+    max-width: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+
+/* 작성·수정·삭제·안내 동작을 한 가지 민트 톤 버튼 체계로 맞춘다. */
+.community-write-toolbar > button,
+.community-notice-area > button {
+    min-height: 38px;
+    padding: 0 17px;
+    border: 1px solid var(--primary);
+    border-radius: 10px;
+    background: var(--primary);
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 5px 12px rgb(23 108 83 / 16%);
+    transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.community-write-toolbar > button:hover:not(:disabled),
+.community-notice-area > button:hover {
+    background: #155b47;
+    box-shadow: 0 7px 16px rgb(23 108 83 / 22%);
+    transform: translateY(-1px);
+}
+
+.community-write-toolbar > button:disabled {
+    cursor: not-allowed;
+    opacity: .62;
+    box-shadow: none;
+}
+
+.community-post-owner-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.community-post-owner-actions button {
+    min-height: 30px;
+    padding: 0 10px;
+    border: 1px solid #d5e8e0;
+    border-radius: 8px;
+    background: #fff;
+    color: #50746a;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.community-post-owner-actions .community-edit-button:hover {
+    border-color: #91cdbb;
+    background: #eff9f4;
+    color: var(--primary);
+}
+
+.community-post-owner-actions .community-delete-button:hover:not(:disabled) {
+    border-color: #f3c9c5;
+    background: #fff5f4;
+    color: #b42318 !important;
+}
+
+.community-selected-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.community-selected-images li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    padding: 6px 9px;
+    border: 1px solid #d4e9e0;
+    border-radius: 8px;
+    background: #fff;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.community-selected-images button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #b42318;
+    cursor: pointer;
+}
+
+.community-post-area {
+    padding: 0;
+    background: var(--surface);
+}
+
+.community-post-list {
+    display: block;
+}
+
+.community-post-card {
+    min-height: 0;
+    padding: 24px 32px 18px;
+    border: 0;
+    border-bottom: 1px solid #dceee7;
+    border-radius: 0;
+    background: transparent;
+    transition: background-color 160ms ease;
+}
+
+.community-post-card:hover {
+    background: #fbfefd;
+}
+
+.community-post-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.community-author {
+    gap: 11px;
+}
+
+.community-author strong {
+    color: var(--ink);
+    font-size: 15px;
+}
+
+.community-author p {
+    display: inline;
+    margin-left: 7px;
+}
+
+.community-author p::before {
+    margin-right: 7px;
+    content: "·";
+}
+
+.community-post-owner-actions {
+    display: flex;
+    gap: 12px;
+    margin: 0;
+}
+
+.community-post-owner-actions button,
+.community-comment-actions button,
+.community-comment-edit-form button {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.community-post-owner-actions button:hover,
+.community-comment-actions button:hover {
+    color: var(--primary);
+}
+
+.community-delete-button:hover {
+    color: #b42318 !important;
+}
+
+.community-post-content {
+    min-height: 0;
+    margin: 15px 0 16px 49px;
+    color: #213a35;
+    font-size: 15px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.community-post-images {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 6px;
+    margin: 0 0 16px 49px;
+}
+
+.community-post-image {
+    aspect-ratio: 4 / 3;
+    border: 1px solid #deeee8;
+    border-radius: 12px;
+}
+
+.community-post-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: 49px;
+    padding-top: 11px;
+    border-top: 1px solid #e4f0eb;
+}
+
+.community-post-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    padding: 5px 9px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.community-post-actions button:hover:not(:disabled),
+.community-post-actions button[aria-pressed="true"] {
+    background: #e7f5ef;
+    color: var(--primary);
+}
+
+.community-post-actions button span {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.community-post-actions strong {
+    font-weight: 700;
+}
+
+.community-like-error {
+    margin: 7px 0 0 49px;
+    color: #b42318;
+    font-size: 12px;
+}
+
+.community-comments {
+    margin: 14px 0 0 49px;
+    padding: 16px;
+    border: 1px solid #dceee7;
+    border-radius: 14px;
+    background: #f6fbf8;
+}
+
+.community-comments h3 {
+    margin-bottom: 12px;
+    color: var(--ink);
+}
+
+.community-comment-list {
+    gap: 16px;
+}
+
+.community-comment-item {
+    gap: 9px;
+}
+
+.community-comment-body {
+    padding: 1px 0;
+}
+
+.community-comment-item p {
+    margin: 5px 0 0;
+    color: #29423d;
+    line-height: 1.55;
+}
+
+.community-comment-form {
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.community-comment-form textarea,
+.community-comment-edit-form textarea {
+    min-height: 50px;
+    padding: 11px 12px;
+    border-color: #d2e7de;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.community-comment-form .button {
+    align-self: end;
+    min-height: 42px;
+}
+
+.community-post-edit-form {
+    margin: 16px 0 0 49px;
+    padding: 16px;
+    border: 1px solid #d7ebe3;
+    border-radius: 14px;
+    background: #f7fcf9;
+}
+
+.community-post-edit-actions {
+    justify-content: flex-end;
+}
+
+/* 게시글·댓글의 작성자 아바타 위에 뜨는 공개 프로필 카드 */
+.community-member-preview {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 auto;
+}
+
+.community-member-preview-trigger {
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    line-height: 0;
+}
+
+.community-member-preview-trigger:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+
+.community-member-preview-card {
+    position: absolute;
+    z-index: 30;
+    top: calc(100% + 10px);
+    left: 0;
+    width: min(284px, calc(100vw - 32px));
+    padding: 16px;
+    border: 1px solid #cfe8df;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 14px 32px rgb(22 79 66 / 18%);
+    color: var(--ink);
+    line-height: 1.5;
+}
+
+.community-member-preview-head {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.community-member-preview-head strong {
+    font-size: 16px;
+}
+
+.community-member-preview-intro,
+.community-member-preview-loading,
+.community-member-preview-error {
+    margin: 14px 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.community-member-preview-error {
+    color: var(--error);
+}
+
+.community-member-preview-stats {
+    display: flex;
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #e1f0ea;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.community-member-preview-stats b {
+    margin-right: 4px;
+    color: var(--ink);
+    font-size: 15px;
+}
+
+@media (max-width: 768px) {
+    .community-page {
+        padding-top: 12px;
+    }
+
+    .community-board-title,
+    .community-write-area,
+    .community-post-card {
+        padding-right: 18px;
+        padding-left: 18px;
+    }
+
+    .community-write-area {
+        gap: 10px;
+    }
+
+    .community-post-content,
+    .community-post-images,
+    .community-post-actions,
+    .community-like-error,
+    .community-comments,
+    .community-post-edit-form {
+        margin-left: 0;
+    }
+
+    .community-post-images {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .community-comments {
+        padding: 13px;
+    }
+}
+
+/* 파일 하단에서 확정해 작성자 버튼의 이전 투명 규칙을 덮어쓴다. */
+.community-post-owner-actions button {
+    min-height: 30px;
+    padding: 0 10px;
+    border: 1px solid #d5e8e0;
+    border-radius: 8px;
+    background: #fff;
+    color: #50746a;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.community-post-owner-actions .community-edit-button:hover {
+    border-color: #91cdbb;
+    background: #eff9f4;
+    color: var(--primary);
+}
+
+.community-post-owner-actions .community-delete-button:hover:not(:disabled) {
+    border-color: #f3c9c5;
+    background: #fff5f4;
+    color: #b42318 !important;
+}
