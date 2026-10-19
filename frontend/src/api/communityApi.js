@@ -48,9 +48,12 @@ export async function getCommunityComments(postId) {
     return client.get(`/community/posts/${postId}/comments`);
 }
 
-// 로그인한 사용자의 댓글 작성
-export async function createCommunityComment(postId, content) {
-    return client.post(`/community/posts/${postId}/comments`, {content});
+// 로그인한 사용자의 댓글·답글 작성. parentCommentId가 없으면 일반 댓글이다.
+export async function createCommunityComment(postId, content, parentCommentId = null) {
+    return client.post(`/community/posts/${postId}/comments`, {
+        content,
+        parentCommentId,
+    });
 }
 
 // 댓글 작성자 본인의 댓글 수정
@@ -98,4 +101,9 @@ export async function repostCommunityPost(postId) {
 // 로그인 회원의 리포스트 취소
 export async function unrepostCommunityPost(postId) {
     return client.delete(`/community/posts/${postId}/reposts`);
+}
+
+// 로그인 회원이 리포스트한 원본 게시글 목록 조회
+export async function getMyRepostedCommunityPosts() {
+    return client.get("/community/my-reposts");
 }

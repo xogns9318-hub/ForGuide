@@ -23,6 +23,11 @@ public interface CommunityMapper {
             @Param("size") int size
     );
 
+    // 로그인 회원이 리포스트한 원본 게시글 목록
+    List<CommunityPostResponse> findRepostedPostsByMemberId(
+            @Param("memberId") Long memberId
+    );
+
     int insertPost(CommunityPostCreateRequest request);
 
     int updatePost(
@@ -57,8 +62,11 @@ public interface CommunityMapper {
     int insertComment(
             @Param("postId") Long postId,
             @Param("memberId") Long memberId,
+            @Param("parentCommentId") Long parentCommentId,
             @Param("content") String content
     );
+
+    boolean hasChildComments(@Param("commentId") Long commentId);
 
     int updateComment(
             @Param("commentId") Long commentId,
@@ -67,6 +75,8 @@ public interface CommunityMapper {
     );
 
     int deleteComment(@Param("commentId") Long commentId);
+
+    int markCommentDeleted(@Param("commentId") Long commentId);
 
     int deleteCommentsByPostId(@Param("postId") Long postId);
 

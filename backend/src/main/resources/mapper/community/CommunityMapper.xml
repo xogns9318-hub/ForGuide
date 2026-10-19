@@ -45,6 +45,18 @@
 
     </select>
 
+    <!-- 로그인 회원이 리포스트한 원본 게시글을 리포스트한 최신 순으로 조회 -->
+    <select id="findRepostedPostsByMemberId"
+            resultType="com.example.forguide.community.dto.CommunityPostResponse">
+        SELECT
+        <include refid="columns"/>
+        <include refid="postFrom"/>
+        INNER JOIN post_reposts r
+        ON r.post_id = p.post_id
+        WHERE r.member_id = #{memberId}
+        ORDER BY r.created_at DESC, r.repost_id DESC
+    </select>
+
     <!-- 게시글 번호로 특정 게시글 하나를 조회 -->
     <select id="findPostById"
             resultType="com.example.forguide.community.dto.CommunityPostResponse">
@@ -173,11 +185,13 @@
         SELECT
             c.comment_id AS commentId,
             c.post_id AS postId,
+            c.parent_comment_id AS parentCommentId,
             c.member_id AS memberId,
             m.nickname AS nickname,
             m.profile_image_url AS profileImageUrl,
             c.content AS content,
             c.content_version AS contentVersion,
+            c.is_deleted AS deleted,
             c.created_at AS createdAt,
             c.updated_at AS updatedAt
         FROM community_comments c
@@ -193,11 +207,13 @@
         SELECT
             c.comment_id AS commentId,
             c.post_id AS postId,
+            c.parent_comment_id AS parentCommentId,
             c.member_id AS memberId,
             m.nickname AS nickname,
             m.profile_image_url AS profileImageUrl,
             c.content AS content,
             c.content_version AS contentVersion,
+            c.is_deleted AS deleted,
             c.created_at AS createdAt,
             c.updated_at AS updatedAt
         FROM community_comments c
@@ -211,6 +227,7 @@
         INSERT INTO community_comments (
             post_id,
             member_id,
+            parent_comment_id,
             content,
             content_version,
             created_at,
@@ -219,6 +236,7 @@
         VALUES (
             #{postId},
             #{memberId},
+            #{parentCommentId},
             #{content},
             1,
             NOW(),
@@ -235,13 +253,33 @@
             updated_at = NOW()
         WHERE comment_id = #{commentId}
           AND member_id = #{memberId}
+          AND is_deleted = 0
     </update>
+
+    <!-- 삭제 전에 자식 답글 존재 여부를 확인해 답글이 사라지지 않게 한다. -->
+    <select id="hasChildComments" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1
+            FROM community_comments
+            WHERE parent_comment_id = #{commentId}
+        )
+    </select>
 
     <!-- 삭제: 권한 확인은 Service가 끝낸 뒤 실행한다. -->
     <delete id="deleteComment">
         DELETE FROM community_comments
         WHERE comment_id = #{commentId}
     </delete>
+
+    <!-- 답글이 달린 댓글은 본문만 삭제 표시로 바꾸고 연결된 답글은 유지한다. -->
+    <update id="markCommentDeleted">
+        UPDATE community_comments
+        SET
+            content = '삭제된 댓글입니다.',
+            is_deleted = 1,
+            updated_at = NOW()
+        WHERE comment_id = #{commentId}
+    </update>
 
     <!-- 삭제: 게시글 삭제 전에 연결된 댓글을 먼저 정리한다. -->
     <delete id="deleteCommentsByPostId">

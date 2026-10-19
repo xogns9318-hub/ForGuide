@@ -47,7 +47,7 @@
     color: var(--ink);
     font-size: 14px;
     line-height: 1.6;
-    resize: vertical;
+    resize: none;
 }
 
 .community-write-form textarea::placeholder {
@@ -480,7 +480,7 @@
     border-radius: 0;
     background: transparent;
     font-size: 15px;
-    resize: vertical;
+    resize: none;
 }
 
 .community-write-form textarea:focus {
@@ -609,29 +609,96 @@
 }
 
 .community-selected-images li {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    max-width: 100%;
-    padding: 6px 9px;
+    position: relative;
+    width: 72px;
+    height: 72px;
+    overflow: hidden;
     border: 1px solid #d4e9e0;
-    border-radius: 8px;
-    background: #fff;
-    color: var(--muted);
-    font-size: 12px;
+    border-radius: 10px;
+    background: #edf7f2;
+}
+
+.community-selected-images img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .community-selected-images button {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: grid;
+    width: 20px;
+    height: 20px;
     padding: 0;
+    place-items: center;
     border: 0;
-    background: transparent;
-    color: #b42318;
+    border-radius: 50%;
+    background: rgb(25 50 43 / 72%);
+    color: #fff;
+    font-size: 17px;
+    line-height: 1;
     cursor: pointer;
+}
+
+.community-selected-images button:hover {
+    background: #b42318;
 }
 
 .community-post-area {
     padding: 0;
     background: var(--surface);
+}
+
+/* 전체 피드와 내가 리포스트한 글을 같은 화면에서 전환한다. */
+.community-feed-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4px;
+    margin: 18px 32px 0;
+    padding: 4px;
+    border: 1px solid #d7ebe3;
+    border-radius: 12px;
+    background: #f7fcf9;
+}
+
+.community-feed-tabs button {
+    min-height: 38px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+}
+
+.community-feed-tabs button:hover {
+    color: var(--primary);
+}
+
+.community-feed-tabs button.is-selected {
+    background: #fff;
+    color: var(--primary);
+    box-shadow: 0 2px 8px rgb(22 79 66 / 10%);
+}
+
+.community-repost-context {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0 0 12px 49px;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.community-repost-context span {
+    font-size: 16px;
 }
 
 .community-post-list {
@@ -685,7 +752,6 @@
 }
 
 .community-post-owner-actions button,
-.community-comment-actions button,
 .community-comment-edit-form button {
     padding: 0;
     border: 0;
@@ -693,6 +759,27 @@
     color: var(--muted);
     font-size: 12px;
     cursor: pointer;
+}
+
+/* 댓글의 수정·삭제는 작은 텍스트 링크 대신 충분한 클릭 영역으로 제공한다. */
+.community-comment-actions button,
+.community-comment-edit-form > div button {
+    min-height: 30px;
+    padding: 5px 9px;
+    border: 1px solid #d5e8e0;
+    border-radius: 8px;
+    background: #fff;
+    color: #4e7168;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.community-comment-actions button:hover {
+    border-color: #9fcdbd;
+    background: #edf8f3;
+    color: var(--primary);
 }
 
 .community-post-owner-actions button:hover,
@@ -788,6 +875,8 @@
 
 .community-comment-item {
     gap: 9px;
+    /* 답글은 깊이별로 들여쓰되, 3단계 이후에는 폭을 더 줄이지 않는다. */
+    margin-left: calc(var(--comment-depth, 0) * 28px);
 }
 
 .community-comment-body {
@@ -818,6 +907,56 @@
 .community-comment-form .button {
     align-self: end;
     min-height: 42px;
+}
+
+.community-reply-form {
+    display: grid;
+    gap: 7px;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #d7ebe3;
+    border-radius: 10px;
+    background: #fff;
+}
+
+.community-reply-form textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 9px 10px;
+    border: 1px solid #d2e7de;
+    border-radius: 8px;
+    color: var(--ink);
+    font: inherit;
+    resize: none;
+}
+
+.community-reply-form > div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.community-reply-form button {
+    min-height: 30px;
+    padding: 5px 10px;
+    border: 1px solid #cfe5dc;
+    border-radius: 8px;
+    background: #fff;
+    color: #416b60;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.community-reply-form button[type="submit"] {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #fff;
+}
+
+.community-comment-deleted {
+    color: #8b9d97 !important;
+    font-style: italic;
 }
 
 .community-post-edit-form {

@@ -63,6 +63,14 @@ public class CommunityController {
         );
     }
 
+    // 로그인 회원이 리포스트한 게시글만 조회한다.
+    @GetMapping("/my-reposts")
+    public ApiResponse<List<CommunityPostResponse>> getMyRepostedPosts(
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(communityService.getRepostedPostsByMemberId(memberId));
+    }
+
     // 게시글 작성: 본문과 선택 사진(최대 4장)을 multipart/form-data로 받는다
     @PostMapping(value = "/posts", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ApiResponse<Integer> createPost(

@@ -63,11 +63,34 @@ public class CommunityService {
                 cursorCreatedAt, cursorPostId, size
         ));
     }
+
+    // 내 리포스트 탭에는 내가 리포스트한 원본 게시글만 최신 리포스트 순으로 보여 준다.
+    public List<CommunityPostResponse> getRepostedPostsByMemberId(Long memberId) {
+        return attachImages(communityMapper.findRepostedPostsByMemberId(memberId));
+    }
     // 게시글을 저장한 뒤 사진 파일과 DB 사진 정보 함께 저장
     @Transactional
     public int createPost(Long memberId, CommunityPostCreateRequest request,
                           List<MultipartFile> images
     ) {
+        List<MultipartFile> imageFiles = images == null
+                ? List.of()
+                : images.stream().filter(image -> !image.isEmpty()).toList();
+
+        // 사진만 올리는 게시글은 허용하되, 글과 사진이 모두 비어 있는 요청은 막는다.
+        if ((request.getContent() == null || request.getContent().isBlank())
+                && imageFiles.isEmpty()) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "게시글 내용 또는 사진을 추가해주세요."
+            );
+        }
+
+        // 사진만 올린 경우 DB에는 빈 본문으로 저장한다.
+        if (request.getContent() == null) {
+            request.setContent("");
+        }
+
         // memberId는 요청값을 믿지 않고 로그인 정보로 항상 덮어쓴다.
         request.setMemberId(memberId);
 
@@ -77,7 +100,6 @@ public class CommunityService {
             throw new IllegalStateException("게시글을 저장하지 못했습니다.");
         }
 
-        List<MultipartFile> imageFiles = images == null ? List.of() : images;
         List<String> savedImageUrls = new ArrayList<>();
 
         try {
@@ -371,9 +393,22 @@ public class CommunityService {
     {
         validatePostExists(postId);
 
+        if (request.getParentCommentId() != null) {
+            CommunityCommentResponse parentComment = getCommentByPostId(
+                    postId,
+                    request.getParentCommentId()
+            );
+
+            // 삭제된 댓글에는 새 답글을 달 수 없게 해 대화 흐름을 명확히 한다.
+            if (parentComment.isDeleted()) {
+                throw new ApiException(ErrorCode.INVALID_INPUT, "삭제된 댓글에는 답글을 작성할 수 없습니다.");
+            }
+        }
+
         int insertedCount = communityMapper.insertComment(
                 postId,
                 memberId,
+                request.getParentCommentId(),
                 request.getContent()
         );
 
@@ -429,6 +464,9 @@ public class CommunityService {
         }
 
         CommunityCommentResponse comment = getCommentByPostId(postId, commentId);
+        if (comment.isDeleted()) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, "이미 삭제된 댓글입니다.");
+        }
         boolean isCommentAuthor = comment.getMemberId().equals(memberId);
         boolean isPostAuthor = post.getMemberId().equals(memberId);
 
@@ -439,7 +477,12 @@ public class CommunityService {
             );
         }
 
-        if (communityMapper.deleteComment(commentId) != 1) {
+        // 자식 답글이 있으면 본문만 삭제 표시로 바꿔 대화와 다른 회원의 답글을 보존한다.
+        int changedCount = communityMapper.hasChildComments(commentId)
+                ? communityMapper.markCommentDeleted(commentId)
+                : communityMapper.deleteComment(commentId);
+
+        if (changedCount != 1) {
             throw new IllegalStateException("댓글을 삭제하지 못했습니다.");
         }
     }
