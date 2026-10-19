@@ -1,7 +1,7 @@
 import { useAuthStore } from "../auth/store/useAuthStore.js";
 import { API_BASE, parseResponse, toNetworkError } from "./client.js";
 
-// 진행 중인 재발급 요청 상태를 저장함. refresh token은 쓸 때마다 바뀐다. 
+// 진행 중인 재발급 요청 상태를 저장함. refresh token은 쓸 때마다 바뀐다.
 // 같은 쿠키로 두 번 보내면 두 번째가 실패해 로그아웃되고, 여러 곳에서 동시에 불려도 요청은 한 번만 > 모두 같은 결과를 기다린다.
 
 let refreshing = null;
@@ -26,8 +26,7 @@ async function requestRefresh() {
     const isStale = () => useAuthStore.getState().accessToken !== tokenAtStart;
 
     try {
-
-        // 재발급 실패가 다시 재발급을 부르는 상황을 방지하기 위해 client.request를 쓰지 않는다. 
+        // 재발급 실패가 다시 재발급을 부르는 상황을 방지하기 위해 client.request를 쓰지 않는다.
         // refresh token은 HttpOnly 쿠키라 JavaScript로 읽지 않는다. 브라우저에서 자동으로 전송한다.
         let response;
         try {
@@ -43,7 +42,7 @@ async function requestRefresh() {
             throw toNetworkError(error);
         }
 
-        // 응답 데이터를 받는다. 
+        // 응답 데이터를 받는다.
         const data = await parseResponse(response);
 
         // 응답에 토큰이 없거나, 문자열이 아니거나, 빈 문자열은 성공으로 취급하지 않는다
@@ -62,7 +61,6 @@ async function requestRefresh() {
             member: data.member ?? null, //member가 null이나 undefined이면 null로 한다.
         });
         return data.accessToken;
-        
     } catch (error) {
         // 네트워크 오류, 응답 처리 오류, 토큰 누락은 여기서 한번에 받는다.
         // 단, 기다리는 사이 새로 로그인했다면 그 로그인 상태는 지우지 않는다.
