@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import AppRoutes from "./routes/AppRoutes.jsx";
 import { useAuthSession } from "./auth/useAuthSession.js";
+import ModalHost from "./components/Modal/Modal.jsx";
 
 // 공통 상태를 관리하고 페이지 경로 연결
 export default function App() {
@@ -9,11 +10,15 @@ export default function App() {
     const { isLoggedIn, logout } = useAuthSession();
 
     return (
-        <AppRoutes
-            language={i18n.resolvedLanguage || i18n.language}
-            isLoggedIn={isLoggedIn}
-            onLanguageChange={(language) => i18n.changeLanguage(language)}
-            onLogout={logout}
-        />
+        <>
+            <AppRoutes
+                language={i18n.resolvedLanguage || i18n.language}
+                isLoggedIn={isLoggedIn}
+                onLanguageChange={(language) => i18n.changeLanguage(language)}
+                onLogout={logout}
+            />
+            {/* 공통 확인창·알림 자리 (confirm()·alert()로 연다) */}
+            <ModalHost />
+        </>
     );
 }

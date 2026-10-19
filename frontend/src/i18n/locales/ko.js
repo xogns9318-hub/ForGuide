@@ -222,6 +222,12 @@ const ko = {
             requiredError: "필수 입력 항목입니다.",
         },
     },
+
+    // 공통 확인창·알림 버튼 (components/Modal)
+    modal: {
+        confirm: "확인",
+        cancel: "취소",
+    },
 };
 
 export default ko;
