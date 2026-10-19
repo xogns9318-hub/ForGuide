@@ -5,7 +5,7 @@ import ExampleBadge from "../../components/ExampleBadge/ExampleBadge.jsx";
 import FieldError from "../../components/FieldError/FieldError.jsx";
 import ProfileAvatar from "../components/ProfileAvatar.jsx";
 import { updateProfileImage } from "../api/memberApi.js";
-import { ApiError } from "../api/apiError.js";
+import { ApiError } from "../../api/apiError.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import {
     PROFILE_IMAGE_ACCEPT,

@@ -1,4 +1,4 @@
-package com.example.forguide.member.common;
+package com.example.forguide.common.exception;
 
 import java.util.Map;
 

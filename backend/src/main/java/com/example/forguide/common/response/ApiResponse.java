@@ -1,4 +1,4 @@
-package com.example.forguide.member.common;
+package com.example.forguide.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.Map;

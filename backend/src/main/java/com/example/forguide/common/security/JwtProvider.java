@@ -1,7 +1,7 @@
-package com.example.forguide.member.jwt;
+package com.example.forguide.common.security;
 
-import com.example.forguide.member.common.ApiException;
-import com.example.forguide.member.common.ErrorCode;
+import com.example.forguide.common.exception.ApiException;
+import com.example.forguide.common.exception.ErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

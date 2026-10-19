@@ -1,7 +1,7 @@
 package com.example.forguide.member.service;
 
-import com.example.forguide.member.common.ApiException;
-import com.example.forguide.member.common.ErrorCode;
+import com.example.forguide.common.exception.ApiException;
+import com.example.forguide.common.exception.ErrorCode;
 import com.example.forguide.member.dto.MemberResponse;
 import com.example.forguide.member.image.ProfileImageStorage;
 import com.example.forguide.member.mapper.MemberMapper;

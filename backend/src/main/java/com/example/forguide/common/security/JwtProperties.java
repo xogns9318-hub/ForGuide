@@ -1,4 +1,4 @@
-package com.example.forguide.member.jwt;
+package com.example.forguide.common.security;
 
 import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;

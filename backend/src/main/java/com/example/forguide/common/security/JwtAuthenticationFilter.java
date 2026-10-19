@@ -1,7 +1,6 @@
-package com.example.forguide.member.security;
+package com.example.forguide.common.security;
 
-import com.example.forguide.member.common.ApiException;
-import com.example.forguide.member.jwt.JwtProvider;
+import com.example.forguide.common.exception.ApiException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

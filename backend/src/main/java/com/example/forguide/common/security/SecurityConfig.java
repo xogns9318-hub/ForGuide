@@ -1,8 +1,6 @@
-package com.example.forguide.member.security;
+package com.example.forguide.common.security;
 
 import com.example.forguide.member.image.ProfileImageStorage;
-import com.example.forguide.member.jwt.JwtProperties;
-import com.example.forguide.member.jwt.JwtProvider;
 import jakarta.servlet.DispatcherType;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

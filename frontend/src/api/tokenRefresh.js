@@ -1,4 +1,4 @@
-import { useAuthStore } from "../store/useAuthStore.js";
+import { useAuthStore } from "../auth/store/useAuthStore.js";
 import { API_BASE, parseResponse, toNetworkError } from "./client.js";
 
 // 진행 중인 재발급 요청 상태를 저장함. refresh token은 쓸 때마다 바뀐다. 

@@ -1,12 +1,12 @@
 package com.example.forguide.member.controller;
 
-import com.example.forguide.member.common.ApiResponse;
+import com.example.forguide.common.response.ApiResponse;
+import com.example.forguide.common.security.JwtProperties;
 import com.example.forguide.member.dto.AuthResponse;
 import com.example.forguide.member.dto.LoginIdCheckResponse;
 import com.example.forguide.member.dto.LoginRequest;
 import com.example.forguide.member.dto.MemberResponse;
 import com.example.forguide.member.dto.SignupRequest;
-import com.example.forguide.member.jwt.JwtProperties;
 import com.example.forguide.member.service.AuthService;
 import com.example.forguide.member.service.AuthTokens;
 import jakarta.validation.Valid;
