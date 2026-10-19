@@ -19,6 +19,7 @@ public class CommunityPostResponse {
     private String language;
     private Integer contentVersion;
     private Long commentCount;
+    private Long viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<CommunityPostImageResponse> images;

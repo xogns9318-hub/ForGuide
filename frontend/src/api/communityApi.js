@@ -5,6 +5,12 @@ export async function getCommunityPosts() {
     return client.get("/community/posts");
 }
 
+// 게시글 상세 화면을 열 때 사용한다.
+// 이 요청에서만 서버가 24시간 중복 규칙으로 조회수를 집계한다.
+export async function getCommunityPost(postId) {
+    return client.get(`/community/posts/${postId}`);
+}
+
 // 무한 스크롤에 사용할 게시글 목록을 가져온다.
 // 첫 요청에는 커서 없이 size만 보내고, 다음 요청부터 마지막 게시글
 // 작성 시간과 번호를 함께 보내자
@@ -86,6 +92,11 @@ export async function unlikeCommunityPost(postId) {
 // 게시글·댓글 작성자의 프로필 미리보기 정보 조회
 export async function getCommunityMemberPreview(memberId) {
     return client.get(`/community/members/${memberId}/preview`);
+}
+
+// 프로필 미리보기에서 특정 회원이 작성한 게시글 목록 조회
+export async function getCommunityMemberPosts(memberId) {
+    return client.get(`/community/members/${memberId}/posts`);
 }
 
 // 게시글의 리포스트 수와 현재 로그인 회원의 리포스트 여부 조회

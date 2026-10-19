@@ -23,6 +23,11 @@ public interface CommunityMapper {
             @Param("size") int size
     );
 
+    // 프로필 미리보기의 작성글 목록 모달에 표시할 게시글 조회
+    List<CommunityPostResponse> findPostsByMemberId(
+            @Param("memberId") Long memberId
+    );
+
     // 로그인 회원이 리포스트한 원본 게시글 목록
     List<CommunityPostResponse> findRepostedPostsByMemberId(
             @Param("memberId") Long memberId
@@ -37,6 +42,25 @@ public interface CommunityMapper {
     );
 
     int deletePost(@Param("postId") Long postId, @Param("memberId") Long memberId);
+
+    // 게시글 조회수 : 로그인 회원의 최근 24시간 조회 기록 확인
+    boolean existsPostViewByMember(
+            @Param("postId") Long postId,
+            @Param("memberId") Long memberId
+    );
+
+    // 게시글 조회수: 비회원 브라우저의 최근 24시간 조회 기록 확인
+    boolean existsPostViewByVisitor(
+            @Param("postId") Long postId,
+            @Param("visitorToken") String visitorToken
+    );
+
+    // 게시글 조회수: 로그인 회원 또는 비회원의 조회 기록 저장
+    int insertPostViewRecord(
+            @Param("postId") Long postId,
+            @Param("memberId") Long memberId,
+            @Param("visitorToken") String visitorToken
+    );
 
     // 게시글 사진
     List<CommunityPostImageResponse> findImagesByPostIds(
