@@ -53,6 +53,39 @@ public class CommunityService {
         return attachImages(List.of(post)).get(0);
     }
 
+    // 게시글 상세 화면을 열 때만 조회 기록을 남긴다.
+    @Transactional
+    public CommunityPostResponse getPostByIdAndRecordView(
+            Long postId,
+            Long viewerMemberId,
+            String visitorToken
+    ) {
+        CommunityPostResponse post = communityMapper.findPostById(postId);
+
+        if (post == null) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "게시글을 찾을 수 없습니다.");
+        }
+
+        // 로그인 회원은 본인 게시글을 봐도 조회수에 포함하지 않는다.
+        if (viewerMemberId != null) {
+            boolean isPostAuthor = post.getMemberId().equals(viewerMemberId);
+
+            if (!isPostAuthor
+                    && !communityMapper.existsPostViewByMember(postId, viewerMemberId)) {
+                communityMapper.insertPostViewRecord(postId, viewerMemberId, null);
+            }
+        }
+
+        // 비로그인 사용자는 브라우저 쿠키 토큰으로 24시간 중복을 판단
+        else if (visitorToken != null && !visitorToken.isBlank()
+                && !communityMapper.existsPostViewByVisitor(postId, visitorToken)) {
+            communityMapper.insertPostViewRecord(postId, null, visitorToken);
+        }
+
+        return getPostById(postId);
+    }
+
+
     // 무한 스크롤용 게시글 조회
     public List<CommunityPostResponse> getPostsByCursor(
             LocalDateTime cursorCreatedAt,
@@ -62,6 +95,13 @@ public class CommunityService {
         return attachImages(communityMapper.findPostsByCursor(
                 cursorCreatedAt, cursorPostId, size
         ));
+    }
+
+    // 프로필 카드에서 회원이 작성한 게시글 목록을 보여준다.
+    public List<CommunityPostResponse> getPostsByMemberId(Long memberId) {
+        // 존재하지 않는 회원과 게시글이 없는 회원을 구분한다.
+        getMemberPreview(memberId);
+        return attachImages(communityMapper.findPostsByMemberId(memberId));
     }
 
     // 내 리포스트 탭에는 내가 리포스트한 원본 게시글만 최신 리포스트 순으로 보여 준다.

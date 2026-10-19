@@ -7,11 +7,13 @@ import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import StatusPage from "../components/StatusPage/StatusPage.jsx";
 import Community from "../components/Community/Community.jsx";
+import CommunityPostDetail from "../components/Community/CommunityPostDetail.jsx";
 import { authPaths, authRoutes } from "../auth/authRoutes.jsx";
 import "../styles/home.css";
 import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
 import TotalInterest from "../components/TotalInterest/TotalInterest.jsx";
 import Consultation from "../components/Consultation/Consultation.jsx";
+
 
 // 배너와 세부 기능을 연결할 서비스 주소 목록
 const serviceRoutes = categories.flatMap((category) => [
@@ -211,6 +213,11 @@ export default function AppRoutes({
                 <Route
                     path="/service/community"
                     element={<Community />}
+                />
+
+                <Route
+                    path="/service/community/posts/:postId"
+                    element={<CommunityPostDetail />}
                 />
 
                 {/* 게시글 작성 전용 페이지 */}

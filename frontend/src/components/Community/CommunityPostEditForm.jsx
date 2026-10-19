@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { updateCommunityPost } from "../../api/communityApi.js";
+import { useTranslation } from "react-i18next";
 
 const MAX_IMAGE_COUNT = 4;
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
@@ -11,6 +12,7 @@ export default function CommunityPostEditForm({ post, onCancel, onUpdated }) {
     const [newImages, setNewImages] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
+    const { t } = useTranslation();
 
     const existingImages = post.images ?? [];
 
@@ -34,7 +36,7 @@ export default function CommunityPostEditForm({ post, onCancel, onUpdated }) {
         );
 
         if (invalidImage) {
-            setError("JPG 또는 PNG 사진만, 한 장당 20MB 이하로 올릴 수 있습니다.");
+            setError(t("community.postEdit.invalidImage"));
             event.target.value = "";
             return;
         }
@@ -44,7 +46,7 @@ export default function CommunityPostEditForm({ post, onCancel, onUpdated }) {
         ).length;
 
         if (activeExistingCount + newImages.length + selectedImages.length > MAX_IMAGE_COUNT) {
-            setError("게시글 사진은 최대 4장까지 올릴 수 있습니다.");
+            setError(t("community.postEdit.maxImageCount"));
             event.target.value = "";
             return;
         }
@@ -66,7 +68,7 @@ export default function CommunityPostEditForm({ post, onCancel, onUpdated }) {
         const trimmedContent = content.trim();
 
         if (!trimmedContent) {
-            setError("게시글 내용을 입력해주세요.");
+            setError(t("community.postEdit.contentRequired"));
             return;
         }
 
@@ -84,7 +86,8 @@ export default function CommunityPostEditForm({ post, onCancel, onUpdated }) {
             const updatedPost = await updateCommunityPost(post.postId, formData);
             onUpdated(updatedPost);
         } catch (requestError) {
-            setError(requestError.message || "게시글을 수정하지 못했습니다.");
+            setError(requestError.message || t("community.postEdit.updateError"),
+                );
         } finally {
             setIsSubmitting(false);
         }
@@ -98,7 +101,7 @@ export default function CommunityPostEditForm({ post, onCancel, onUpdated }) {
                 maxLength={5000}
                 rows={6}
                 disabled={isSubmitting}
-                aria-label="게시글 내용 수정"
+                aria-label={t("community.postEdit.contentAria")}
             />
 
             {existingImages.length > 0 && (
@@ -111,13 +114,15 @@ export default function CommunityPostEditForm({ post, onCancel, onUpdated }) {
                                 key={image.imageId}
                                 className={removed ? "is-removed" : ""}
                             >
-                                <img src={image.imageUrl} alt="기존 게시글 사진" />
+                                <img src={image.imageUrl} alt={t("community.postEdit.imageAlt")} />
                                 <button
                                     type="button"
                                     onClick={() => toggleExistingImage(image.imageId)}
                                     disabled={isSubmitting}
                                 >
-                                    {removed ? "삭제 취소" : "사진 삭제"}
+                                    {removed
+                                        ? t("community.postEdit.removeCancel")
+                                        : t("community.postEdit.removeImage")}
                                 </button>
                             </figure>
                         );
@@ -127,7 +132,7 @@ export default function CommunityPostEditForm({ post, onCancel, onUpdated }) {
 
             <div className="community-edit-image-picker">
                 <label htmlFor={`edit-images-${post.postId}`}>
-                    사진 추가
+                    {t("community.postEdit.addImage")}
                 </label>
                 <input
                     id={`edit-images-${post.postId}`}
@@ -148,7 +153,7 @@ export default function CommunityPostEditForm({ post, onCancel, onUpdated }) {
                                     onClick={() => removeNewImage(index)}
                                     disabled={isSubmitting}
                                 >
-                                    제거
+                                    {t("community.postEdit.removeNewImage")}
                                 </button>
                             </li>
                         ))}
@@ -160,10 +165,12 @@ export default function CommunityPostEditForm({ post, onCancel, onUpdated }) {
 
             <div className="community-post-edit-actions">
                 <button type="button" onClick={onCancel} disabled={isSubmitting}>
-                    취소
+                    {t("community.postEdit.cancel")}
                 </button>
                 <button type="submit" className="button" disabled={isSubmitting}>
-                    {isSubmitting ? "수정 중..." : "수정 완료"}
+                    {isSubmitting
+                        ? t("community.postEdit.submitting")
+                        : t("community.postEdit.submit")}
                 </button>
             </div>
         </form>
