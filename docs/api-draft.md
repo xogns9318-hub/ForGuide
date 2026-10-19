@@ -150,6 +150,7 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | GET | `/posts` | 게시글 전체 목록 조회 |
 | GET | `/posts/{postId}` | 게시글 상세 조회 |
 | GET | `/posts/scroll` | 커서 기반 게시글 목록 조회 |
+| GET | `/my-reposts` | 로그인 회원이 리포스트한 원본 게시글 목록 조회 |
 | POST | `/posts` | 게시글 작성 |
 | PATCH | `/posts/{postId}` | 작성자 본인 게시글 본문·사진 수정 |
 | DELETE | `/posts/{postId}` | 작성자 본인 게시글 삭제 |
@@ -173,6 +174,12 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 정렬 기준:
 1. `created_at DESC`
 2. `post_id DESC`
+
+### 내 리포스트 목록 조회
+
+`GET /api/v1/community/my-reposts`
+
+로그인이 필요하다. 현재 회원이 리포스트한 원본 게시글을 **리포스트한 최신 순**으로 반환한다. 프론트의 `내 리포스트` 탭에서 사용하며, 리포스트를 취소하면 해당 카드는 목록에서 즉시 제거한다.
 
 ### 게시글 작성
 
@@ -217,12 +224,12 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 
 | 메서드 | 주소 | 권한 | 설명 |
 | --- | --- | --- | --- |
-| GET | `/posts/{postId}/comments` | 공개 | 게시글 댓글을 작성 시간 오름차순으로 조회 |
-| POST | `/posts/{postId}/comments` | 로그인 | 댓글 작성 |
+| GET | `/posts/{postId}/comments` | 공개 | 게시글 댓글·답글을 작성 시간 순으로 조회 |
+| POST | `/posts/{postId}/comments` | 로그인 | 댓글 또는 답글 작성 |
 | PATCH | `/posts/{postId}/comments/{commentId}` | 댓글 작성자 | 댓글 본문 수정 |
 | DELETE | `/posts/{postId}/comments/{commentId}` | 댓글 작성자 또는 게시글 작성자 | 댓글 삭제 |
 
-댓글 본문은 공백만 입력할 수 없고 최대 1,000자다. 수정 API도 같은 검증 규칙을 사용한다. URL의 게시글과 실제 댓글의 게시글이 다르면 `NOT_FOUND`를 반환한다.
+댓글 본문은 공백만 입력할 수 없고 최대 1,000자다. POST 본문의 `parentCommentId`가 없으면 일반 댓글이고, 있으면 해당 댓글의 답글이다. 답글에도 다시 `parentCommentId`를 넣어 계속 이어서 작성할 수 있다. 수정 API도 같은 검증 규칙을 사용한다. URL의 게시글과 실제 댓글의 게시글이 다르면 `NOT_FOUND`를 반환한다. 자식 답글이 있는 댓글을 삭제하면 본문만 삭제 표시로 바꿔 답글은 유지한다.
 
 ### 공통 응답 및 오류
 

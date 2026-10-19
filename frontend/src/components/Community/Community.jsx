@@ -4,6 +4,7 @@ import {
     deleteCommunityPost,
     getCommunityPostLike,
     getCommunityPostRepost,
+    getMyRepostedCommunityPosts,
     getCommunityPostsByCursor,
     likeCommunityPost,
     repostCommunityPost,
@@ -28,6 +29,8 @@ function PostCard({
     onDelete,
     onUpdate,
     onCommentCountChange,
+    onRepostChanged,
+    isRepostFeed,
     isDeleting,
 }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -121,6 +124,7 @@ function PostCard({
                 ? await unrepostCommunityPost(post.postId)
                 : await repostCommunityPost(post.postId);
             setRepostInfo(response);
+            onRepostChanged?.(post.postId, response);
         } catch (error) {
             setRepostError(error?.message || "리포스트 처리에 실패했습니다.");
         } finally {
@@ -135,6 +139,11 @@ function PostCard({
 
     return (
         <article className="community-post-card">
+            {isRepostFeed && (
+                <p className="community-repost-context">
+                    <span aria-hidden="true">↻</span> 내가 리포스트함
+                </p>
+            )}
             <header className="community-post-header">
                 <div className="community-author">
                     <CommunityMemberPreview
@@ -175,10 +184,14 @@ function PostCard({
             ) : (
                 <>
                     <p className="community-post-content">{post.content}</p>
-                    {post.imageUrls?.length > 0 && (
+                    {post.images?.length > 0 && (
                         <div className="community-post-images">
-                            {post.imageUrls.map((imageUrl, index) => (
-                                <img key={`${imageUrl}-${index}`} src={imageUrl} alt={`게시글 사진 ${index + 1}`} />
+                            {post.images.map((image, index) => (
+                                <img
+                                    key={image.imageId ?? `${image.imageUrl}-${index}`}
+                                    src={image.imageUrl}
+                                    alt={`게시글 사진 ${index + 1}`}
+                                />
                             ))}
                         </div>
                     )}
@@ -215,7 +228,8 @@ function PostCard({
                             aria-expanded={isCommentsOpen}
                         >
                             <span aria-hidden="true">▱</span>
-                            {isCommentsOpen ? "댓글 닫기" : `댓글 보기 ${post.commentCount ?? 0}`}
+                            {isCommentsOpen ? "댓글 닫기" : "댓글 작성"}
+                            {!isCommentsOpen && <strong>{post.commentCount ?? 0}</strong>}
                         </button>
                     </div>
 
@@ -240,11 +254,13 @@ export default function Community() {
     const { accessToken, member } = useAuthStore();
     const currentMemberId = member?.memberId;
     const [posts, setPosts] = useState([]);
+    const [feedType, setFeedType] = useState("all");
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [hasMore, setHasMore] = useState(true);
     const [content, setContent] = useState("");
     const [images, setImages] = useState([]);
+    const [imagePreviews, setImagePreviews] = useState([]);
     const [writeError, setWriteError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [deletingPostId, setDeletingPostId] = useState(null);
@@ -254,6 +270,12 @@ export default function Community() {
     const cursorCreatedAtRef = useRef(null);
     const cursorPostIdRef = useRef(null);
     const hasMoreRef = useRef(true);
+    const previewUrlsRef = useRef(new Set());
+
+    useEffect(() => () => {
+        // 화면을 떠날 때 선택 사진의 브라우저 임시 주소를 정리한다.
+        previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    }, []);
 
     async function loadMorePosts() {
         if (loadingRef.current || !hasMoreRef.current) return;
@@ -262,11 +284,21 @@ export default function Community() {
         setIsLoading(true);
         setError("");
         try {
-            const response = await getCommunityPostsByCursor({
-                cursorCreatedAt: cursorCreatedAtRef.current,
-                cursorPostId: cursorPostIdRef.current,
-                size: 10,
-            });
+            if (feedType === "reposts" && !currentMemberId) {
+                setPosts([]);
+                hasMoreRef.current = false;
+                setHasMore(false);
+                setError("내 리포스트는 로그인 후 확인할 수 있습니다.");
+                return;
+            }
+
+            const response = feedType === "reposts"
+                ? await getMyRepostedCommunityPosts()
+                : await getCommunityPostsByCursor({
+                    cursorCreatedAt: cursorCreatedAtRef.current,
+                    cursorPostId: cursorPostIdRef.current,
+                    size: 10,
+                });
             const receivedPosts = Array.isArray(response) ? response : [];
 
             // 무한 스크롤에서 같은 게시글이 두 번 보이지 않도록 ID 기준으로 걸러낸다.
@@ -278,7 +310,8 @@ export default function Community() {
             const lastPost = receivedPosts.at(-1);
             cursorCreatedAtRef.current = lastPost?.createdAt ?? cursorCreatedAtRef.current;
             cursorPostIdRef.current = lastPost?.postId ?? cursorPostIdRef.current;
-            const nextHasMore = receivedPosts.length === 10;
+            // 내 리포스트는 한 번에 전부 가져오므로 추가 스크롤 요청을 하지 않는다.
+            const nextHasMore = feedType === "all" && receivedPosts.length === 10;
             hasMoreRef.current = nextHasMore;
             setHasMore(nextHasMore);
         } catch (requestError) {
@@ -290,8 +323,13 @@ export default function Community() {
     }
 
     useEffect(() => {
+        cursorCreatedAtRef.current = null;
+        cursorPostIdRef.current = null;
+        hasMoreRef.current = true;
+        setHasMore(true);
+        setPosts([]);
         loadMorePosts();
-    }, []);
+    }, [feedType]);
 
     useEffect(() => {
         const target = observerTarget.current;
@@ -308,6 +346,12 @@ export default function Community() {
     }, [hasMore]);
 
     function handleImageChange(event) {
+        if (!accessToken || !currentMemberId) {
+            event.target.value = "";
+            navigate("/login");
+            return;
+        }
+
         const selectedImages = Array.from(event.target.files || []);
         const totalImages = images.length + selectedImages.length;
 
@@ -328,11 +372,38 @@ export default function Community() {
 
         setWriteError("");
         setImages((previous) => [...previous, ...selectedImages]);
+        const previews = selectedImages.map((image) => {
+            const url = URL.createObjectURL(image);
+            previewUrlsRef.current.add(url);
+            return { url, name: image.name };
+        });
+        setImagePreviews((previous) => [...previous, ...previews]);
         event.target.value = "";
     }
 
     function removeImage(index) {
         setImages((previous) => previous.filter((_, imageIndex) => imageIndex !== index));
+        const preview = imagePreviews[index];
+        if (preview) {
+            URL.revokeObjectURL(preview.url);
+            previewUrlsRef.current.delete(preview.url);
+        }
+        setImagePreviews((previous) => previous.filter((_, imageIndex) => imageIndex !== index));
+    }
+
+    function clearSelectedImages() {
+        previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+        previewUrlsRef.current.clear();
+        setImages([]);
+        setImagePreviews([]);
+    }
+
+    // 비회원은 입력을 시작하거나 사진을 고르는 순간 로그인 화면으로 안내한다.
+    function handleWriteAttempt(event) {
+        if (accessToken && currentMemberId) return;
+
+        event?.preventDefault();
+        navigate("/login");
     }
 
     async function handleSubmit(event) {
@@ -344,8 +415,9 @@ export default function Community() {
             window.setTimeout(() => navigate("/login"), 900);
             return;
         }
-        if (!trimmedContent) {
-            setWriteError("게시글 내용을 입력해주세요.");
+        // 글 또는 사진 중 하나는 있어야 게시글을 작성할 수 있다.
+        if (!trimmedContent && images.length === 0) {
+            setWriteError("게시글 내용 또는 사진을 추가해주세요.");
             return;
         }
 
@@ -359,7 +431,7 @@ export default function Community() {
             await createCommunityPost(formData);
 
             setContent("");
-            setImages([]);
+            clearSelectedImages();
             cursorCreatedAtRef.current = null;
             cursorPostIdRef.current = null;
             hasMoreRef.current = true;
@@ -401,6 +473,13 @@ export default function Community() {
         )));
     }
 
+    // 리포스트 탭에서 취소하면 해당 카드가 내 목록에서 즉시 사라진다.
+    function handleRepostChanged(postId, repostStatus) {
+        if (feedType === "reposts" && !repostStatus.repostedByMe) {
+            setPosts((previous) => previous.filter((post) => post.postId !== postId));
+        }
+    }
+
     return (
         <div className="page-stack community-page">
             <section className="community-board panel" aria-label="커뮤니티 게시판">
@@ -410,12 +489,13 @@ export default function Community() {
                         <textarea
                             value={content}
                             onChange={(event) => setContent(event.target.value)}
+                            onFocus={handleWriteAttempt}
                             placeholder="한국 생활에 필요한 정보를 함께 나누고 싶어요."
                             maxLength={5000}
                             aria-label="게시글 내용"
                         />
                         <div className="community-write-toolbar">
-                            <label className="community-image-picker">
+                            <label className="community-image-picker" onClick={handleWriteAttempt}>
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
                                     <rect x="3" y="4" width="18" height="16" rx="3" />
                                     <circle cx="9" cy="10" r="1.5" />
@@ -432,8 +512,17 @@ export default function Community() {
                             <ul className="community-selected-images">
                                 {images.map((image, index) => (
                                     <li key={`${image.name}-${index}`}>
-                                        <span>{image.name}</span>
-                                        <button type="button" onClick={() => removeImage(index)}>삭제</button>
+                                        <img
+                                            src={imagePreviews[index]?.url}
+                                            alt={`선택한 사진: ${image.name}`}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeImage(index)}
+                                            aria-label={`${image.name} 삭제`}
+                                        >
+                                            <span aria-hidden="true">×</span>
+                                        </button>
                                     </li>
                                 ))}
                             </ul>
@@ -441,6 +530,27 @@ export default function Community() {
                         {writeError && <p className="community-write-error" role="alert">{writeError}</p>}
                     </div>
                 </form>
+
+                <div className="community-feed-tabs" role="tablist" aria-label="커뮤니티 피드 선택">
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={feedType === "all"}
+                        className={feedType === "all" ? "is-selected" : ""}
+                        onClick={() => setFeedType("all")}
+                    >
+                        전체 게시글
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        aria-selected={feedType === "reposts"}
+                        className={feedType === "reposts" ? "is-selected" : ""}
+                        onClick={() => setFeedType("reposts")}
+                    >
+                        내 리포스트
+                    </button>
+                </div>
 
                 <div className="community-post-area">
                     <div className="community-post-list">
@@ -452,6 +562,8 @@ export default function Community() {
                                 onDelete={handleDelete}
                                 onUpdate={handleUpdatePost}
                                 onCommentCountChange={handleCommentCountChange}
+                                onRepostChanged={handleRepostChanged}
+                                isRepostFeed={feedType === "reposts"}
                                 isDeleting={deletingPostId === post.postId}
                             />
                         ))}
