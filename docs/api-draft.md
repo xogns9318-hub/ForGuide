@@ -38,9 +38,14 @@
 | `common/security/JwtAuthenticationEntryPoint` | 잠긴 주소에 인증 없음 → 401 (`AUTH_REQUIRED`·`TOKEN_EXPIRED`·`TOKEN_INVALID`) |
 | `common/security/SecurityConfig` | 세션 없음(STATELESS), BCrypt, 접근 규칙 |
 
-접근 규칙: **기본 열림.** 로그인이 필요한 주소만 잠근다. 현재 잠긴 주소는 `/api/v1/members/me/**`(본인 닉네임·프로필 이미지 저장)뿐이다.
-토큰이 실려 오면 어느 주소에서든 `@AuthenticationPrincipal Long memberId`로 회원 번호를 받는다(토큰이 없으면 `null`).
-다른 기능에서 로그인이 필요한 주소는 해당 담당자가 `SecurityConfig`의 "로그인 필요 주소" 구역에 한 줄 추가한다. 잊으면 로그인 없이 열린다.
+접근 규칙: **기본 잠금.** 공개할 주소만 열고 나머지는 모두 로그인이 필요하다(`anyRequest().authenticated()`).
+현재 공개 주소: `/api/v1/auth/**`, 프로필·커뮤니티 이미지 조회(GET), 커뮤니티 게시글 조회(GET `/api/v1/community/posts/**`), 작성자 미리보기·작성 글 목록(GET `/api/v1/community/members/*/preview`, `/posts`).
+토큰이 실려 오면 `@AuthenticationPrincipal Long memberId`로 회원 번호를 받는다(공개 주소에서 토큰이 없으면 `null`).
+로그인 없이 써야 하는 새 API는 해당 담당자가 `common/security/SecurityConfig`의 "공개 주소" 구역에 한 줄 추가한다. 잊으면 401이 난다.
+
+```java
+.requestMatchers(HttpMethod.GET, "/api/v1/기능주소/**").permitAll()
+```
 
 실행 전 준비: 비밀키는 저장소에 넣지 않는다. 각자 환경변수 `JWT_SECRET`(Base64, 32바이트 이상)을 설정해야 백엔드가 켜진다.
 
