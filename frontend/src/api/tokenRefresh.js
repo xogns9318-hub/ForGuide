@@ -7,6 +7,7 @@ import { API_BASE, parseResponse, toNetworkError } from "./client.js";
 let refreshing = null;
 
 // 토큰 재발급 중복 방지용 함수.
+// 결과: 새 access token(문자열), 비로그인이면 null. 만료·위조 쿠키나 네트워크 오류는 오류를 던진다.
 export function refreshAccessToken() {
     // 진행중인 재발급 요청이 없을 때 : 재발급 요청하고 Promise를 저장
     if (!refreshing) {
@@ -45,8 +46,18 @@ async function requestRefresh() {
         // 응답 데이터를 받는다.
         const data = await parseResponse(response);
 
+        // data 없음 = refresh token 쿠키가 없는 비로그인 상태 (서버가 200으로 알려 준다)
+        // 오류가 아니므로 던지지 않고 null을 돌려준다. 호출한 쪽은 null을 "로그인 안 됨"으로 처리한다.
+        if (data === null) {
+            if (isStale()) {
+                return useAuthStore.getState().accessToken;
+            }
+            useAuthStore.getState().clearAuth();
+            return null;
+        }
+
         // 응답에 토큰이 없거나, 문자열이 아니거나, 빈 문자열은 성공으로 취급하지 않는다
-        if (!data || typeof data.accessToken !== "string" || !data.accessToken) {
+        if (typeof data.accessToken !== "string" || !data.accessToken) {
             throw new Error("재발급 응답에 access token이 없습니다.");
         }
 
