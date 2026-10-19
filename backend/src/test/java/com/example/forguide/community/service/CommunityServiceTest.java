@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 
 import com.example.forguide.community.dto.CommunityPostResponse;
 import com.example.forguide.community.mapper.CommunityMapper;
-import com.example.forguide.member.common.ApiException;
-import com.example.forguide.member.common.ErrorCode;
+import com.example.forguide.common.exception.ApiException;
+import com.example.forguide.common.exception.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

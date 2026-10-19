@@ -4,7 +4,7 @@ import Banner from "../../components/Banner/Banner.jsx";
 import ExampleBadge from "../../components/ExampleBadge/ExampleBadge.jsx";
 import FieldError from "../../components/FieldError/FieldError.jsx";
 import { checkLoginId, signup } from "../api/authApi.js";
-import { ApiError } from "../api/apiError.js";
+import { ApiError } from "../../api/apiError.js";
 import {
     validateLoginId,
     validatePassword,

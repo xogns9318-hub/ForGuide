@@ -1,4 +1,4 @@
-import { useAuthStore } from "../store/useAuthStore.js";
+import { useAuthStore } from "../auth/store/useAuthStore.js";
 import { ApiError } from "./apiError.js";
 import { refreshAccessToken } from "./tokenRefresh.js";
 

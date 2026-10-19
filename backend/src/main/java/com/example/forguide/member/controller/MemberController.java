@@ -1,6 +1,6 @@
 package com.example.forguide.member.controller;
 
-import com.example.forguide.member.common.ApiResponse;
+import com.example.forguide.common.response.ApiResponse;
 import com.example.forguide.member.dto.MemberResponse;
 import com.example.forguide.member.dto.NicknameRequest;
 import com.example.forguide.member.service.MemberService;

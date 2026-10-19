@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDateTime;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import com.example.forguide.member.common.ApiResponse;
+import com.example.forguide.common.response.ApiResponse;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
 import org.springframework.validation.annotation.Validated;

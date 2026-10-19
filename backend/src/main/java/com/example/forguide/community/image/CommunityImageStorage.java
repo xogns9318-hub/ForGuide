@@ -1,7 +1,7 @@
 package com.example.forguide.community.image;
 
-import com.example.forguide.member.common.ApiException;
-import com.example.forguide.member.common.ErrorCode;
+import com.example.forguide.common.exception.ApiException;
+import com.example.forguide.common.exception.ErrorCode;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;

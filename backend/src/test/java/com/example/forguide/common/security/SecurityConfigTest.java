@@ -1,12 +1,11 @@
-package com.example.forguide.member.security;
+package com.example.forguide.common.security;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.forguide.member.common.ApiResponse;
-import com.example.forguide.member.jwt.JwtProvider;
+import com.example.forguide.common.response.ApiResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

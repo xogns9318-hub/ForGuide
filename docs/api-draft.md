@@ -6,15 +6,15 @@
 
 실제 조회 실패 화면에서는 onRetry로 조회 함수를 전달한다.
 독립 /failure 화면의 재시도 버튼은 페이지를 새로고침한다.
-## 인증 응답·예외 (백엔드 `member/common`)
+## 인증 응답·예외 (백엔드 `common/response`, `common/exception`)
 
-회원(member) 컨트롤러는 `ApiResponse`로 응답하고, 실패는 `ApiException(ErrorCode)`를 던진다. 프론트 `src/auth/api/client.js`와 같은 형식이다. 예외 처리기는 `member` 패키지에만 적용된다.
+회원(member) 컨트롤러는 `ApiResponse`로 응답하고, 실패는 `ApiException(ErrorCode)`를 던진다. 프론트 `src/api/client.js`와 같은 형식이다. 예외 처리기는 `member` 패키지에만 적용된다.
 
 | 위치 | 역할 |
 | --- | --- |
-| `member/common/ApiResponse` | `ApiResponse.ok(data)`, `ApiResponse.ok()`, `ApiResponse.fail(code, message, fieldErrors)` |
-| `member/common/ErrorCode` | 인증·회원 오류 코드·HTTP 상태·기본 문구 목록 |
-| `member/common/ApiException` | `throw new ApiException(ErrorCode.EMAIL_DUPLICATED, Map.of("email", "..."))` |
+| `common/response/ApiResponse` | `ApiResponse.ok(data)`, `ApiResponse.ok()`, `ApiResponse.fail(code, message, fieldErrors)` |
+| `common/exception/ErrorCode` | 인증·회원 오류 코드·HTTP 상태·기본 문구 목록 |
+| `common/exception/ApiException` | `throw new ApiException(ErrorCode.EMAIL_DUPLICATED, Map.of("email", "..."))` |
 | `member/common/AuthExceptionHandler` | member 컨트롤러 단계 예외 → 실패 응답. `@Valid` 실패는 `INVALID_INPUT` + 항목별 `fieldErrors`, 예상 못 한 오류는 `INTERNAL_ERROR`(원인은 서버 로그에만) |
 
 | 코드 | 상태 | 용도 |
@@ -28,15 +28,15 @@
 | `LOGIN_ID_DUPLICATED` · `EMAIL_DUPLICATED` | 409 | 회원 중복 |
 | `INVALID_IMAGE` | 400 | 프로필 이미지 형식·용량 |
 
-## 인증 설정 (백엔드 `member/jwt`, `member/security`)
+## 인증 설정 (백엔드 `common/security`)
 
 | 위치 | 역할 |
 | --- | --- |
-| `member/jwt/JwtProperties` | `jwt.*` 설정값. 수명 기본값 access 30분, refresh 14일 |
-| `member/jwt/JwtProvider` | access token 발급·검증. 만료 `TOKEN_EXPIRED`, 위조·형식 오류 `TOKEN_INVALID` |
-| `member/security/JwtAuthenticationFilter` | `Authorization: Bearer {토큰}` 검증 → 컨트롤러에서 `@AuthenticationPrincipal Long memberId` |
-| `member/security/JwtAuthenticationEntryPoint` | 잠긴 주소에 인증 없음 → 401 (`AUTH_REQUIRED`·`TOKEN_EXPIRED`·`TOKEN_INVALID`) |
-| `member/security/SecurityConfig` | 세션 없음(STATELESS), BCrypt, 접근 규칙 |
+| `common/security/JwtProperties` | `jwt.*` 설정값. 수명 기본값 access 30분, refresh 14일 |
+| `common/security/JwtProvider` | access token 발급·검증. 만료 `TOKEN_EXPIRED`, 위조·형식 오류 `TOKEN_INVALID` |
+| `common/security/JwtAuthenticationFilter` | `Authorization: Bearer {토큰}` 검증 → 컨트롤러에서 `@AuthenticationPrincipal Long memberId` |
+| `common/security/JwtAuthenticationEntryPoint` | 잠긴 주소에 인증 없음 → 401 (`AUTH_REQUIRED`·`TOKEN_EXPIRED`·`TOKEN_INVALID`) |
+| `common/security/SecurityConfig` | 세션 없음(STATELESS), BCrypt, 접근 규칙 |
 
 접근 규칙: **기본 열림.** 로그인이 필요한 주소만 잠근다. 현재 잠긴 주소는 `/api/v1/members/me/**`(본인 닉네임·프로필 이미지 저장)뿐이다.
 토큰이 실려 오면 어느 주소에서든 `@AuthenticationPrincipal Long memberId`로 회원 번호를 받는다(토큰이 없으면 `null`).
@@ -52,7 +52,7 @@ PowerShell에서 키 만들기:
 
 IntelliJ 실행 설정의 Environment variables에 `JWT_SECRET=만든값`을 넣는다. 없거나 짧으면 서버가 이유를 출력하고 시작하지 않는다.
 
-## 공통 요청 클라이언트 (`src/auth/api/client.js`)
+## 공통 요청 클라이언트 (`src/api/client.js`)
 
 auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한다. 화면에서 `fetch`를 직접 쓰지 않는다.
 
@@ -68,7 +68,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | 시간 초과 | 10초. `TIMEOUT` 오류 |
 | 네트워크 오류 | `NETWORK_ERROR` 오류 |
 
-재발급(`src/auth/api/tokenRefresh.js`): `POST /api/v1/auth/refresh`, refresh token은 HttpOnly 쿠키로 자동 전송.
+재발급(`src/api/tokenRefresh.js`): `POST /api/v1/auth/refresh`, refresh token은 HttpOnly 쿠키로 자동 전송.
 응답 `{ accessToken, member }`. 동시에 여러 번 불려도 요청은 한 번만 보낸다. 실패하면 로그인 정보를 지운다.
 
 ## 인증 (`src/auth/api/authApi.js`)
@@ -105,7 +105,7 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 
 ## 회원 (`src/auth/api/memberApi.js`)
 
-로그인 필요(access token). 성공하면 스토어의 회원 정보도 갱신한다. 백엔드: `member/controller/MemberController`, `member/service/MemberService`, `member/image/`. 회원 번호는 토큰에서만 꺼낸다.
+로그인 필요(access token). 성공하면 스토어의 회원 정보도 갱신한다. 백엔드: `member/controller/MemberController`, `member/service/MemberService`, `member/image/`(저장·삭제), `common/image/ImageFileValidator`(형식·용량·크기 검사). 회원 번호는 토큰에서만 꺼낸다.
 
 | 함수 | 실제 API | 요청 | 응답 `data` | 실패 코드 |
 | --- | --- | --- | --- | --- |

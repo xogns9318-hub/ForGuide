@@ -1,12 +1,12 @@
 package com.example.forguide.member.service;
 
-import com.example.forguide.member.common.ApiException;
-import com.example.forguide.member.common.ErrorCode;
+import com.example.forguide.common.exception.ApiException;
+import com.example.forguide.common.exception.ErrorCode;
+import com.example.forguide.common.security.JwtProvider;
 import com.example.forguide.member.dto.AuthResponse;
 import com.example.forguide.member.dto.LoginRequest;
 import com.example.forguide.member.dto.MemberResponse;
 import com.example.forguide.member.dto.SignupRequest;
-import com.example.forguide.member.jwt.JwtProvider;
 import com.example.forguide.member.mapper.MemberMapper;
 import com.example.forguide.member.mapper.MemberRow;
 import com.example.forguide.member.mapper.RefreshTokenMapper;

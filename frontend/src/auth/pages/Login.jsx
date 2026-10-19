@@ -4,7 +4,7 @@ import Banner from "../../components/Banner/Banner.jsx";
 import ExampleBadge from "../../components/ExampleBadge/ExampleBadge.jsx";
 import FieldError from "../../components/FieldError/FieldError.jsx";
 import { login } from "../api/authApi.js";
-import { ApiError } from "../api/apiError.js";
+import { ApiError } from "../../api/apiError.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { getSafeNextPath } from "../utils/safeRedirect.js";
 import "../auth.css";
