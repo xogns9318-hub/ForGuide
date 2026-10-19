@@ -28,6 +28,23 @@ def top_reasons(contributions, limit=3):
     return [name for name, value in ordered if value != 0][:limit]
 
 
+def compare_features(a, b, directions):
+    a_better = b_better = False
+    for name, direction in directions.items():
+        diff = (a[name] - b[name]) * direction
+        if diff > 0:
+            a_better = True
+        elif diff < 0:
+            b_better = True
+    if a_better and b_better:
+        return None
+    if a_better:
+        return "A"
+    if b_better:
+        return "B"
+    return "같음"
+
+
 def sort_results(results):
     return sorted(
         results,
