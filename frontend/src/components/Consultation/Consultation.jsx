@@ -156,9 +156,8 @@ export default function Consultation() {
                     실제 기관 조회는 아직 연결하지 않았습니다.
                 </p>
 
-                {isLoading ? (
-                    <p role="status">선택 항목을 불러오는 중입니다.</p>
-                ) : loadError ? (
+                {/* 선택 목록을 불러오는 동안에는 로딩 문구를 표시하지 않는다. */}
+                {isLoading ? null : loadError ? (
                     <div>
                         {/* 목록을 불러오지 못하면 재시도 제공 */}
                         <p className="form-error" role="alert">
