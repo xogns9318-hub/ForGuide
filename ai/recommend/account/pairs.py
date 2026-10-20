@@ -9,22 +9,27 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from engine import GROUP_MISMATCH, compare_features
-from baseline import comparison_term, load_options, recommend_fast
+from baseline import load_options, recommend_fast
 
 AI_DIR = Path(__file__).resolve().parent.parent.parent
 PROCESSED_DIR = AI_DIR / "data" / "processed"
 
 SEED = 20261019
-DIRECTIONS = {"rate": 1, "check_count": -1, "visit_required": -1}
-AUTO_PAIRS_PER_GROUP = 200
-JUDGE_PAIRS_PER_GROUP = 7
+DIRECTIONS = {"rate": 1, "check_count": -1, "visit_required": -1, "non_preferred_institution": -1}
+FEATURE_LABELS = {"rate": "금리", "check_count": "확인 필요", "visit_required": "방문", "non_preferred_institution": "금융기관"}
+AUTO_PAIRS_PER_GROUP = 50
+JUDGE_PAIRS_PER_GROUP = 3
 RATE_GAP_BINS = [0.2, 0.4, 0.6, 0.8, 1.0]
 MAX_APPEARANCE = 2
-EVAL_RATIO = 0.25
+EVAL_RATIO = 0.3
 
-SIDE_FIELDS = ["product_id", "kor_co_nm", "fin_prdt_nm", "effective_rate", "rate", "check_count", "visit_required", "baseline"]
+CONTEXT_FIELDS = ["purpose", "save_trm", "visit", "institution"]
+SIDE_FIELDS = [
+    "product_id", "kor_co_nm", "fin_prdt_nm", "institution_type", "effective_rate",
+    "rate", "check_count", "visit_required", "non_preferred_institution", "baseline",
+]
 PAIR_COLUMNS = (
-    ["pair_id", "context_id", "purpose", "save_trm", "visit", "user_count", "weight_sum", "group"]
+    ["pair_id", "context_id"] + CONTEXT_FIELDS + ["user_count", "weight_sum", "group", "tradeoff"]
     + [f"a_{name}" for name in SIDE_FIELDS]
     + [f"b_{name}" for name in SIDE_FIELDS]
     + ["source", "split", "judge", "label"]
@@ -41,27 +46,24 @@ def load_users(path=None):
 def build_contexts(users):
     contexts = {}
     for user in users:
-        term = comparison_term(user["residence_status"])
-        key = (user["account_purpose"], term, user["visit"])
+        key = (user["account_purpose"], int(user["account_term"]), user["visit"], user["institution"])
         if key not in contexts:
-            contexts[key] = {
-                "purpose": key[0],
-                "save_trm": term,
-                "visit": key[2],
-                "residence_status": user["residence_status"],
-                "user_count": 0,
-                "weight_sum": 0.0,
-            }
+            contexts[key] = dict(zip(CONTEXT_FIELDS, key), user_count=0, weight_sum=0.0)
         contexts[key]["user_count"] += 1
         contexts[key]["weight_sum"] += float(user["eval_weight"])
-    ordered = sorted(contexts.values(), key=lambda c: (c["purpose"], c["save_trm"], c["visit"]))
+    ordered = sorted(contexts.values(), key=lambda c: tuple(c[name] for name in CONTEXT_FIELDS))
     for index, context in enumerate(ordered, start=1):
         context["context_id"] = f"C{index:02d}"
     return ordered
 
 
 def candidates_by_group(options, context):
-    user = {"residence_status": context["residence_status"], "purpose": context["purpose"], "visit": context["visit"]}
+    user = {
+        "purpose": context["purpose"],
+        "term": context["save_trm"],
+        "visit": context["visit"],
+        "institution": context["institution"],
+    }
     _, results = recommend_fast(options, user)
     groups = defaultdict(list)
     for r in results:
@@ -71,19 +73,25 @@ def candidates_by_group(options, context):
 
 
 def side_values(result):
-    values = {name: result[name] for name in ["product_id", "kor_co_nm", "fin_prdt_nm", "effective_rate"]}
+    values = {name: result[name] for name in ["product_id", "kor_co_nm", "fin_prdt_nm", "institution_type", "effective_rate"]}
     values.update(result["features"])
     values["baseline"] = round(result["score"], 4)
     return values
+
+
+def tradeoff_kind(a, b):
+    changed = [FEATURE_LABELS[name] for name in DIRECTIONS if a["features"][name] != b["features"][name]]
+    return "·".join(changed)
 
 
 def make_row(context, group, a, b, source, label, rng):
     if rng.random() < 0.5:
         a, b = b, a
         label = {"A": "B", "B": "A"}.get(label, label)
-    row = {name: context[name] for name in ["context_id", "purpose", "save_trm", "visit", "user_count"]}
+    row = {name: context[name] for name in ["context_id"] + CONTEXT_FIELDS + ["user_count"]}
     row["weight_sum"] = round(context["weight_sum"], 4)
     row["group"] = group
+    row["tradeoff"] = tradeoff_kind(a, b)
     for prefix, side in (("a", a), ("b", b)):
         for name, value in side_values(side).items():
             row[f"{prefix}_{name}"] = value
@@ -145,24 +153,28 @@ def pick_tradeoffs(tradeoffs, limit):
 def build_pairs(options, contexts, rng):
     auto_rows, judge_rows, stats = [], [], []
     for context in contexts:
-        for group, group_results in candidates_by_group(options, context).items():
+        for group, group_results in sorted(candidates_by_group(options, context).items()):
             dominated, tradeoffs = split_pairs(group_results)
             sampled = rng.sample(dominated, min(len(dominated), AUTO_PAIRS_PER_GROUP))
             auto_rows += [make_row(context, group, a, b, "auto", label, rng) for a, b, label in sampled]
-            close = pick_tradeoffs(tradeoffs, JUDGE_PAIRS_PER_GROUP)
-            judge_rows += [make_row(context, group, a, b, "human", "", rng) for a, b in close]
-            stats.append((context["context_id"], group, len(group_results), len(dominated), len(tradeoffs), len(close)))
+            picked = pick_tradeoffs(tradeoffs, JUDGE_PAIRS_PER_GROUP)
+            judge_rows += [make_row(context, group, a, b, "human", "", rng) for a, b in picked]
+            stats.append((context["context_id"], group, len(group_results), len(dominated), len(tradeoffs), len(picked)))
     return auto_rows, judge_rows, stats
 
 
 def assign_splits(auto_rows, judge_rows, rng):
     for row in auto_rows:
         row["split"] = "train"
-    order = list(range(len(judge_rows)))
-    rng.shuffle(order)
-    eval_count = round(len(judge_rows) * EVAL_RATIO)
-    for rank, index in enumerate(order):
-        judge_rows[index]["split"] = "eval" if rank < eval_count else "train"
+    by_context = defaultdict(list)
+    for row in judge_rows:
+        row["split"] = "train"
+        by_context[row["context_id"]].append(row)
+    for rows in by_context.values():
+        rng.shuffle(rows)
+        eval_count = max(1, round(len(rows) * EVAL_RATIO)) if len(rows) >= 2 else 0
+        for row in rows[:eval_count]:
+            row["split"] = "eval"
 
 
 def save_rows(rows, prefix, path):
@@ -188,7 +200,7 @@ def main():
     save_rows(judge_rows, "AH", judge_path)
 
     for c in contexts:
-        print(f"{c['context_id']} {c['purpose']} {c['save_trm']}개월 방문 {c['visit']}: 사용자 {c['user_count']}명")
+        print(f"{c['context_id']} {c['purpose']} {c['save_trm']}개월, 방문 {c['visit']}, 금융기관 {c['institution']}: 사용자 {c['user_count']}명")
     print("\n맥락 | 그룹 | 후보 | 우열 쌍 | 장단점 쌍 | 판정 후보")
     for row in stats:
         print(" | ".join(str(v) for v in row))
