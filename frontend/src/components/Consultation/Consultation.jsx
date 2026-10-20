@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import Banner from "../Banner/Banner.jsx";
 import SelectBox from "../SelectBox/SelectBox.jsx";
 import { categories } from "../../routes/routeConfig.js";
-import { getConsultationOptions } from "../../api/consultationApi.js";
-import "../../styles/consultation.css";
+import {
+    initialConsultationOptions,
+    getConsultationOptions,
+} from "../../api/consultationApi.js"; import "../../styles/consultation.css";
 
 // 기존 경로 설정에서 배너 제목과 설명을 가져옴
 const consultationRoute = categories
@@ -20,8 +22,11 @@ function makeOptions(values = []) {
 
 export default function Consultation() {
     // 선택 목록을 불러오는 상태와 재시도 횟수 관리
-    const [options, setOptions] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
+    // 첫 화면부터 선택창을 표시하도록 준비된 목록으로 시작한다.
+    // 화면마다 복사본을 사용해 공통 원본 데이터를 보호한다.
+    const [options, setOptions] = useState(() =>
+        structuredClone(initialConsultationOptions),
+    ); const [isLoading, setIsLoading] = useState(true);
     const [loadError, setLoadError] = useState("");
     const [retryCount, setRetryCount] = useState(0);
 
@@ -156,8 +161,8 @@ export default function Consultation() {
                     실제 기관 조회는 아직 연결하지 않았습니다.
                 </p>
 
-                {/* 선택 목록을 불러오는 동안에는 로딩 문구를 표시하지 않는다. */}
-                {isLoading ? null : loadError ? (
+                {/* 표시할 목록이 이미 있으면 조회 중에도 선택창을 계속 보여준다. */}
+                {isLoading && !options ? null : loadError ? (
                     <div>
                         {/* 목록을 불러오지 못하면 재시도 제공 */}
                         <p className="form-error" role="alert">
