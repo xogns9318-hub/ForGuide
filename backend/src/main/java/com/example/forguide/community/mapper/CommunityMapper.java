@@ -90,6 +90,7 @@ public interface CommunityMapper {
             @Param("postId") Long postId,
             @Param("memberId") Long memberId,
             @Param("parentCommentId") Long parentCommentId,
+            @Param("mentionedMemberId") Long mentionedMemberId,
             @Param("content") String content
     );
 
@@ -146,6 +147,10 @@ public interface CommunityMapper {
     // ── 작성자 프로필 미리보기: 조회 전용 ──
     CommunityMemberPreviewResponse findMemberPreviewById(
             @Param("memberId") Long memberId
+    );
+
+    CommunityMemberPreviewResponse findMemberPreviewByLoginId(
+            @Param("loginId") String loginId
     );
 
     // 게시글의 전체 리포스트 수 조회

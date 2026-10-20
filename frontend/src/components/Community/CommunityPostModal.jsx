@@ -201,10 +201,11 @@ export default function CommunityPostModal({
                                     memberId={post.memberId}
                                     imageUrl={post.profileImageUrl}
                                     nickname={post.nickname}
+                                    loginId={post.loginId}
                                     size={42}
                                 />
                                 <div>
-                                    <strong>{post.nickname}</strong>
+                                    <strong>{post.loginId}</strong>
                                     <p>{formattedDate}</p>
                                 </div>
                             </div>

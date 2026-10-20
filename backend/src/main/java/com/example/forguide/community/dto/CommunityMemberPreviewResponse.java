@@ -9,6 +9,7 @@ import lombok.Setter;
 public class CommunityMemberPreviewResponse {
 
     private Long memberId;
+    private String loginId;
     private String nickname;
     private String profileImageUrl;
     private Long postCount;

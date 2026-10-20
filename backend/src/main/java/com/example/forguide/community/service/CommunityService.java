@@ -434,6 +434,8 @@ public class CommunityService {
     {
         validatePostExists(postId);
 
+        Long mentionedMemberId = null;
+
         if (request.getParentCommentId() != null) {
             CommunityCommentResponse parentComment = getCommentByPostId(
                     postId,
@@ -449,12 +451,27 @@ public class CommunityService {
             if (parentComment.getParentCommentId() != null) {
                 throw new ApiException(ErrorCode.INVALID_INPUT, "답글에는 다시 답글을 작성할 수 없습니다.");
             }
+
+            // 화면의 @아이디 문자열을 믿지 않고 서버에서 실제 회원인지 확인해 태그 대상을 저장한다.
+            if (request.getMentionLoginId() != null && !request.getMentionLoginId().isBlank()) {
+                CommunityMemberPreviewResponse mentionedMember = communityMapper
+                        .findMemberPreviewByLoginId(request.getMentionLoginId());
+
+                if (mentionedMember == null) {
+                    throw new ApiException(ErrorCode.INVALID_INPUT, "존재하지 않는 아이디는 태그할 수 없습니다.");
+                }
+
+                mentionedMemberId = mentionedMember.getMemberId();
+            }
+        } else if (request.getMentionLoginId() != null && !request.getMentionLoginId().isBlank()) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, "태그는 답글에서만 사용할 수 있습니다.");
         }
 
         int insertedCount = communityMapper.insertComment(
                 postId,
                 memberId,
                 request.getParentCommentId(),
+                mentionedMemberId,
                 request.getContent()
         );
 

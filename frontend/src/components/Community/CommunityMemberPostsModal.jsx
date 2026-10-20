@@ -87,11 +87,11 @@ export default function CommunityMemberPostsModal({
                                             <span className="community-member-post-list-author">
                                                 <ProfileAvatar
                                                     imageUrl={post.profileImageUrl}
-                                                    name={post.nickname}
+                                                    name={post.nickname || post.loginId}
                                                     size={32}
                                                 />
                                                 <span>
-                                                    <strong>{post.nickname}</strong>
+                                                    <strong>{post.loginId || post.nickname}</strong>
                                                     <small>
                                                         {post.createdAt
                                                             ? new Date(post.createdAt).toLocaleDateString("ko-KR")

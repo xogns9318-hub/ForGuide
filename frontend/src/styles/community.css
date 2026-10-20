@@ -961,8 +961,11 @@
     width: 100%;
     min-height: 48px;
     padding: 9px 10px;
-    border: 1px solid #d2e7de;
-    border-radius: 8px;
+    /* 답글 입력 영역은 바깥 폼 테두리만 사용해 한 겹으로 보이게 한다. */
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    outline: 0;
     color: var(--ink);
     font: inherit;
     resize: none;
@@ -1095,6 +1098,30 @@
 .community-member-preview-trigger:focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 3px;
+}
+
+.community-member-preview-trigger.is-mention {
+    padding: 0;
+    border-radius: 4px;
+    color: #267756;
+    font: inherit;
+    font-weight: 700;
+    line-height: inherit;
+    text-decoration: underline;
+    text-decoration-style: dotted;
+}
+
+.community-member-preview-trigger.is-mention:hover {
+    background: #e7f5ef;
+}
+
+.community-comment-text {
+    margin: 5px 0 0;
+    color: #29423d;
+    font-size: 13px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
 }
 
 .community-member-preview-card {
