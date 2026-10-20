@@ -8,9 +8,10 @@ import {
     updateCommunityComment,
 } from "../../api/communityApi.js";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 import { useTranslation } from "react-i18next";
+import { confirm } from "../Modal/modal.js";
 
 // 서버가 반환한 평면 댓글 목록을 부모-답글 순서의 화면 목록으로 바꾼다.
 function buildCommentRows(comments) {
@@ -60,8 +61,15 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     const accessToken = useAuthStore((state) => state.accessToken);
     const member = useAuthStore((state) => state.member);
     const navigate = useNavigate();
+    const location = useLocation();
     const { t } = useTranslation();
     const commentRows = useMemo(() => buildCommentRows(comments), [comments]);
+
+    function moveToLogin() {
+        const next = `${location.pathname}${location.search}${location.hash}`;
+
+        navigate(`/login?next=${encodeURIComponent(next)}`);
+    }
 
     // 댓글·답글 작성 뒤에도 재사용해 목록과 게시글의 댓글 수를 즉시 최신 상태로 맞춘다.
     async function loadComments() {
@@ -106,13 +114,29 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         return trimmedContent;
     }
 
+    function validateReplyContent(value) {
+        const trimmedContent = value.trim();
+
+        // @닉네임을 제외한 실제 답글 내용 있는지 검사
+        const contentWithoutMention = trimmedContent
+            .replace(/^@\S+\s*/, "")
+            .trim();
+
+        if (!contentWithoutMention) {
+            setWriteError(t("community.comments.contentRequired"));
+            return null;
+        }
+
+        return trimmedContent;
+    }
+
     async function submitComment(value, parentCommentId = null) {
         const trimmedContent = validateCommentContent(value);
         if (!trimmedContent) return false;
 
         if (!accessToken) {
             setWriteError(t("community.comments.loginRequired"));
-            navigate("/login");
+            moveToLogin();
             return false;
         }
         if (isSubmitting) return false;
@@ -140,12 +164,24 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
 
     async function handleSubmit(event) {
         event.preventDefault();
-        if (await submitComment(content)) setContent("");
+
+        const validReplyContent = validateReplyContent(replyContent);
+
+        if (!validReplyContent) {
+            return;
+        }
+
+        if (await submitComment(
+            validReplyContent,
+            replyTarget?.parentCommentId,
+        ))  {
+            closeReply();
+        }
     }
 
     function openReply(comment) {
         if (!accessToken) {
-            navigate("/login");
+            moveToLogin();
             return;
         }
 
@@ -159,17 +195,22 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         setWriteError("");
     }
 
+    function closeReply() {
+        setReplyTarget(null);
+        setReplyContent("");
+        setWriteError("");
+    }
+
     async function handleReplySubmit(event) {
         event.preventDefault();
         if (await submitComment(replyContent, replyTarget?.parentCommentId)) {
-            setReplyTarget(null);
-            setReplyContent("");
+            closeReply();
         }
     }
 
     async function handleCommentLike(comment) {
         if (!accessToken) {
-            navigate("/login");
+            moveToLogin();
             return;
         }
 
@@ -228,7 +269,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     }
 
     async function handleDelete(commentId) {
-        if (!window.confirm(t("community.comments.deleteConfirm"))) return;
+        if (!(await confirm(t("community.comments.deleteConfirm")))) return;
         setDeletingCommentId(commentId);
         setWriteError("");
         try {
@@ -413,7 +454,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                                 </button>
                                                 <button
                                                     type="button"
-                                                    onClick={() => setReplyTarget(null)}
+                                                    onClick={closeReply}
                                                     disabled={isSubmitting}
                                                 >
                                                     {t("community.comments.cancel")}
