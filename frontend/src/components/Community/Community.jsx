@@ -11,6 +11,7 @@ import {
     unlikeCommunityPost,
     unrepostCommunityPost,
 } from "../../api/communityApi.js";
+import { confirm } from "../Modal/modal.js";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import ProfileAvatar from "../../auth/components/ProfileAvatar.jsx";
 import { useTranslation } from "react-i18next";
@@ -20,6 +21,7 @@ import CommunityCommentSection from "./CommunityCommentSection.jsx";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 import CommunityPostEditForm from "./CommunityPostEditForm.jsx";
 import CommunityPostModal from "./CommunityPostModal.jsx";
+
 
 const MAX_IMAGE_COUNT = 4;
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
@@ -478,7 +480,7 @@ export default function Community() {
     }
 
     async function handleDelete(postId) {
-        if (!window.confirm("이 게시글을 삭제할까요?")) return;
+        if (!(await confirm("이 게시글을 삭제할까요?"))) return;
 
         setDeletingPostId(postId);
         setDeleteError("");
