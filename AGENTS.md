@@ -10,9 +10,17 @@
 
 ## Stack
 - Vite + React, JavaScript(.jsx)만 사용
-- react-router-dom, zustand(+persist), styled-components, recharts(차트 전용)
+- react-router-dom, zustand(+persist), recharts(차트 전용), i18next·react-i18next(다국어)
+- 스타일: 일반 CSS + CSS Modules(`*.module.css`). styled-components는 쓰지 않는다.
+- 개발 도구: Prettier (`frontend/.prettierrc`)
 - 금지: TypeScript, Tailwind·CSS 프레임워크, UI 라이브러리(MUI, antd 등), Redux, Context API 기반 전역 상태, Next.js, axios
 - 목록에 없는 패키지는 설치 전 사용자 승인 필요
+- localStorage 예외: 언어 선택(`forguide-language`)은 localStorage에 저장한다. 로그인 토큰은 저장하지 않는다(access token은 메모리, refresh token은 HttpOnly 쿠키).
+
+## Code style
+- 스타일: 공통 규격(button, panel, form-*, 색상 변수)은 `src/styles/common.css`에 전역으로 둔다. 기능 전용 스타일만 `*.module.css`로 만든다. 기존 CSS는 그 컴포넌트를 크게 고칠 때 옮긴다.
+- 문구: 화면에 새로 넣는 문구는 `t()`로 쓴다. `ko.js`에 먼저 넣고, 다른 언어는 한국어로 대체 표시(`fallbackLng: "ko"`)한 뒤 나중에 모아서 채운다.
+- 포맷: Prettier는 새 파일과 수정하는 파일에만 적용한다(`npm run format -- 파일경로`). 기존 파일을 처음 손댈 때는 '포맷만' 커밋을 먼저 하고 기능 커밋을 따로 한다.
 
 ## Scope
 구현 순서:
@@ -20,7 +28,8 @@
 2. 결과 화면: 결과값, 결과 근거, recharts 시각화 1개 이상, 사용자의 다음 행동
 3. (선택) 관리자 화면: 모델 성능 지표, 데이터 현황
 
-구현하지 않음: 로그인·회원가입·마이페이지, 게시판·댓글·Q&A·알림·채팅, 파일 업로드 처리, 결제, 애니메이션·반응형 세부 조정.
+구현하지 않음: Q&A·알림·채팅, 결제, 애니메이션 세부 조정.
+(로그인·회원가입·마이페이지, 커뮤니티 게시판·댓글, 이미지 업로드, 반응형은 팀에서 범위에 넣기로 했다.)
 요청받으면 범위 밖임을 알리고 진행 여부를 확인한다. 공통 레이아웃은 최소한으로.
 
 ## Before coding
