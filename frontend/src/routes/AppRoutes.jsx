@@ -13,6 +13,7 @@ import "../styles/home.css";
 import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
 import TotalInterest from "../components/TotalInterest/TotalInterest.jsx";
 import Consultation from "../components/Consultation/Consultation.jsx";
+import EmploymentResume from "../components/Employment/EmploymentResume.jsx";
 
 
 // 배너와 세부 기능을 연결할 서비스 주소 목록
@@ -262,6 +263,8 @@ export default function AppRoutes({
                                     >
                                         <TotalInterest />
                                     </CalculatorPage>
+                                ) : route.path === "/service/employment" ? (
+                                    <EmploymentResume />
                                 ) : (
                                     <PlaceholderPage
                                         title={route.label}

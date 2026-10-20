@@ -57,9 +57,17 @@ public class AuthController {
         return withRefreshCookie(authService.login(request));
     }
 
+    /**
+     * 재발급.
+     * 쿠키가 아예 없음 → 로그인한 적 없는 방문자다. 오류가 아니므로 200 + data 없음 (처음 접속한 비로그인 사용자에게 401이 보이지 않게)
+     * 쿠키가 있는데 만료·위조·이미 사용됨 → 지금처럼 401 REFRESH_INVALID
+     */
     @PostMapping("/refresh")
     public ResponseEntity<ApiResponse<AuthResponse>> refresh(
             @CookieValue(name = REFRESH_COOKIE, required = false) String refreshToken) {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            return ResponseEntity.ok(ApiResponse.<AuthResponse>ok(null));
+        }
         return withRefreshCookie(authService.refresh(refreshToken));
     }
 

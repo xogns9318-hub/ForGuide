@@ -74,6 +74,16 @@ export async function deleteCommunityComment(postId, commentId) {
     return client.delete(`/community/posts/${postId}/comments/${commentId}`);
 }
 
+// 로그인 회원의 댓글 공감 추가
+export async function likeCommunityComment(postId, commentId) {
+    return client.post(`/community/posts/${postId}/comments/${commentId}/likes`);
+}
+
+// 로그인 회원의 댓글 공감 취소
+export async function unlikeCommunityComment(postId, commentId) {
+    return client.delete(`/community/posts/${postId}/comments/${commentId}/likes`);
+}
+
 // 게시글의 좋아요 수와 현재 로그인 회원의 좋아요 여부 조회
 export async function getCommunityPostLike(postId) {
     return client.get(`/community/posts/${postId}/likes`);

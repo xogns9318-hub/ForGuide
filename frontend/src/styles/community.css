@@ -968,6 +968,74 @@
     resize: none;
 }
 
+.community-comment-mention {
+    color: #267756;
+    font-weight: 700;
+}
+
+/* 댓글 공감은 게시글 하단의 공감처럼 아이콘과 숫자만 간결하게 표시한다. */
+.community-comment-actions .community-comment-like-button,
+.community-comment-actions .community-comment-reply-button {
+    min-height: auto;
+    padding: 5px 8px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #4e7168;
+}
+
+.community-comment-actions .community-comment-like-button:hover,
+.community-comment-actions .community-comment-like-button[aria-pressed="true"],
+.community-comment-actions .community-comment-reply-button:hover {
+    border: 0;
+    background: #e7f5ef;
+    color: var(--primary);
+}
+
+.community-comment-like-button span {
+    font-size: 17px;
+    line-height: 1;
+}
+
+/* 댓글의 공감·답글·수정·삭제를 같은 크기의 텍스트 동작으로 정렬한다. */
+.community-comment-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 3px;
+    margin: 7px 0 3px;
+}
+
+.community-comment-actions button,
+.community-comment-actions .community-comment-like-button,
+.community-comment-actions .community-comment-reply-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 30px;
+    padding: 5px 8px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #4e7168;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.community-comment-actions button:hover,
+.community-comment-actions .community-comment-like-button[aria-pressed="true"] {
+    border: 0;
+    background: #e7f5ef;
+    color: var(--primary);
+}
+
+.community-comment-item small {
+    display: block;
+    margin-top: 3px;
+}
+
 .community-reply-form > div {
     display: flex;
     justify-content: flex-end;

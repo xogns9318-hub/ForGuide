@@ -1,14 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
     createCommunityComment,
     deleteCommunityComment,
     getCommunityComments,
+    likeCommunityComment,
+    unlikeCommunityComment,
     updateCommunityComment,
 } from "../../api/communityApi.js";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 import { useTranslation } from "react-i18next";
+import { confirm } from "../Modal/modal.js";
 
 // 서버가 반환한 평면 댓글 목록을 부모-답글 순서의 화면 목록으로 바꾼다.
 function buildCommentRows(comments) {
@@ -47,17 +50,26 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     const [replyContent, setReplyContent] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [likingCommentId, setLikingCommentId] = useState(null);
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingContent, setEditingContent] = useState("");
     const [deletingCommentId, setDeletingCommentId] = useState(null);
     const [error, setError] = useState("");
     const [writeError, setWriteError] = useState("");
+    const replyTextareaRef = useRef(null);
 
     const accessToken = useAuthStore((state) => state.accessToken);
     const member = useAuthStore((state) => state.member);
     const navigate = useNavigate();
+    const location = useLocation();
     const { t } = useTranslation();
     const commentRows = useMemo(() => buildCommentRows(comments), [comments]);
+
+    function moveToLogin() {
+        const next = `${location.pathname}${location.search}${location.hash}`;
+
+        navigate(`/login?next=${encodeURIComponent(next)}`);
+    }
 
     // 댓글·답글 작성 뒤에도 재사용해 목록과 게시글의 댓글 수를 즉시 최신 상태로 맞춘다.
     async function loadComments() {
@@ -80,6 +92,15 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         loadComments();
     }, [postId]);
 
+    useEffect(() => {
+        if (!replyTarget || !replyTextareaRef.current) return;
+
+        // 답글 폼이 열린 뒤 멘션 마지막 글자 바로 뒤에 커서를 놓는다.
+        const cursorPosition = replyTextareaRef.current.value.length;
+        replyTextareaRef.current.focus();
+        replyTextareaRef.current.setSelectionRange(cursorPosition, cursorPosition);
+    }, [replyTarget]);
+
     function validateCommentContent(value) {
         const trimmedContent = value.trim();
         if (!trimmedContent) {
@@ -93,13 +114,29 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         return trimmedContent;
     }
 
+    function validateReplyContent(value) {
+        const trimmedContent = value.trim();
+
+        // @닉네임을 제외한 실제 답글 내용 있는지 검사
+        const contentWithoutMention = trimmedContent
+            .replace(/^@\S+\s*/, "")
+            .trim();
+
+        if (!contentWithoutMention) {
+            setWriteError(t("community.comments.contentRequired"));
+            return null;
+        }
+
+        return trimmedContent;
+    }
+
     async function submitComment(value, parentCommentId = null) {
         const trimmedContent = validateCommentContent(value);
         if (!trimmedContent) return false;
 
         if (!accessToken) {
             setWriteError(t("community.comments.loginRequired"));
-            navigate("/login");
+            moveToLogin();
             return false;
         }
         if (isSubmitting) return false;
@@ -107,7 +144,11 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         setIsSubmitting(true);
         setWriteError("");
         try {
-            await createCommunityComment(postId, trimmedContent, parentCommentId);
+            await createCommunityComment(
+                postId,
+                trimmedContent,
+                parentCommentId,
+            );
             await loadComments();
             return true;
         } catch (requestError) {
@@ -123,31 +164,77 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
 
     async function handleSubmit(event) {
         event.preventDefault();
-        if (await submitComment(content)) setContent("");
-    }
 
-    function openReply(comment, threadRoot) {
-        if (!accessToken) {
-            navigate("/login");
+        const validReplyContent = validateReplyContent(replyContent);
+
+        if (!validReplyContent) {
             return;
         }
 
-        // 답글의 댓글도 최상위 댓글에 연결해 두 단계 이상 깊어지지 않게 한다.
+        if (await submitComment(
+            validReplyContent,
+            replyTarget?.parentCommentId,
+        ))  {
+            closeReply();
+        }
+    }
+
+    function openReply(comment) {
+        if (!accessToken) {
+            moveToLogin();
+            return;
+        }
+
+        // 원댓글에만 답글을 연결해 대댓글이 더 깊어지지 않게 한다.
         setReplyTarget({
             commentId: comment.commentId,
-            parentCommentId: threadRoot.deleted
-                ? comment.commentId
-                : threadRoot.commentId,
+            parentCommentId: comment.commentId,
         });
+        // 멘션은 기본으로 채우되 일반 텍스트라 답글 작성자가 자유롭게 바꿀 수 있다.
         setReplyContent(`@${comment.nickname} `);
+        setWriteError("");
+    }
+
+    function closeReply() {
+        setReplyTarget(null);
+        setReplyContent("");
         setWriteError("");
     }
 
     async function handleReplySubmit(event) {
         event.preventDefault();
         if (await submitComment(replyContent, replyTarget?.parentCommentId)) {
-            setReplyTarget(null);
-            setReplyContent("");
+            closeReply();
+        }
+    }
+
+    async function handleCommentLike(comment) {
+        if (!accessToken) {
+            moveToLogin();
+            return;
+        }
+
+        setLikingCommentId(comment.commentId);
+        setWriteError("");
+        try {
+            const response = comment.likedByMe
+                ? await unlikeCommunityComment(postId, comment.commentId)
+                : await likeCommunityComment(postId, comment.commentId);
+
+            // 서버가 돌려준 수치로 해당 댓글의 공감 상태만 즉시 갱신한다.
+            setComments((previousComments) => previousComments.map((previousComment) => (
+                previousComment.commentId === comment.commentId
+                    ? {
+                        ...previousComment,
+                        likeCount: response.likeCount,
+                        likedByMe: response.likedByMe,
+                    }
+                    : previousComment
+            )));
+        } catch (requestError) {
+            setWriteError(requestError.message || t("community.comments.likeError"));
+        } finally {
+            setLikingCommentId(null);
         }
     }
 
@@ -182,7 +269,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     }
 
     async function handleDelete(commentId) {
-        if (!window.confirm(t("community.comments.deleteConfirm"))) return;
+        if (!(await confirm(t("community.comments.deleteConfirm")))) return;
         setDeletingCommentId(commentId);
         setWriteError("");
         try {
@@ -216,7 +303,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
             )}
             {!isLoading && !error && comments.length > 0 && (
                 <ul className="community-comment-list">
-                    {commentRows.map(({ comment, depth, threadRoot }) => {
+                    {commentRows.map(({ comment, depth }) => {
                         const isCommentAuthor = comment.memberId === member?.memberId;
                         const canDelete = isCommentAuthor || postMemberId === member?.memberId;
                         const isEditing = editingCommentId === comment.commentId;
@@ -279,7 +366,18 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                                     </div>
                                                 </form>
                                             ) : (
-                                                <p>{comment.content}</p>
+                                                <p>
+                                                    {comment.parentCommentId != null
+                                                        && comment.content.startsWith("@") ? (
+                                                            <>
+                                                                <span className="community-comment-mention">
+                                                                    {comment.content.split(" ")[0]}
+                                                                </span>
+                                                                {" "}
+                                                                {comment.content.split(" ").slice(1).join(" ")}
+                                                            </>
+                                                        ) : comment.content}
+                                                </p>
                                             )}
                                         </>
                                     )}
@@ -288,10 +386,29 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                         <div className="community-comment-actions">
                                             <button
                                                 type="button"
-                                                onClick={() => openReply(comment, threadRoot)}
+                                                className="community-comment-like-button"
+                                                onClick={() => handleCommentLike(comment)}
+                                                disabled={likingCommentId === comment.commentId}
+                                                aria-pressed={comment.likedByMe}
                                             >
-                                                {t("community.comments.reply")}
+                                                <span aria-hidden="true">
+                                                    {comment.likedByMe ? "♥" : "♡"}
+                                                </span>
+                                                {" "}
+                                                {t("community.comments.like")}
+                                                {" "}
+                                                {comment.likeCount ?? 0}
                                             </button>
+
+                                            {comment.parentCommentId == null && (
+                                                <button
+                                                    type="button"
+                                                    className="community-comment-reply-button"
+                                                    onClick={() => openReply(comment)}
+                                                >
+                                                    {t("community.comments.reply")}
+                                                </button>
+                                            )}
 
                                             {isCommentAuthor && (
                                                 <button
@@ -323,15 +440,13 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                             onSubmit={handleReplySubmit}
                                         >
                                             <textarea
+                                                ref={replyTextareaRef}
                                                 value={replyContent}
                                                 onChange={(event) => setReplyContent(event.target.value)}
                                                 maxLength={1000}
                                                 rows={2}
-                                                placeholder={t("community.comments.replyPlaceholder", {
-                                                    nickname: comment.nickname,
-                                                })}
+                                                placeholder={t("community.comments.writePlaceholder")}
                                                 disabled={isSubmitting}
-                                                autoFocus
                                             />
                                             <div>
                                                 <button type="submit" disabled={isSubmitting}>
@@ -339,7 +454,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                                 </button>
                                                 <button
                                                     type="button"
-                                                    onClick={() => setReplyTarget(null)}
+                                                    onClick={closeReply}
                                                     disabled={isSubmitting}
                                                 >
                                                     {t("community.comments.cancel")}

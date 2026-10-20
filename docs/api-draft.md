@@ -38,9 +38,14 @@
 | `common/security/JwtAuthenticationEntryPoint` | 잠긴 주소에 인증 없음 → 401 (`AUTH_REQUIRED`·`TOKEN_EXPIRED`·`TOKEN_INVALID`) |
 | `common/security/SecurityConfig` | 세션 없음(STATELESS), BCrypt, 접근 규칙 |
 
-접근 규칙: **기본 열림.** 로그인이 필요한 주소만 잠근다. 현재 잠긴 주소는 `/api/v1/members/me/**`(본인 닉네임·프로필 이미지 저장)뿐이다.
-토큰이 실려 오면 어느 주소에서든 `@AuthenticationPrincipal Long memberId`로 회원 번호를 받는다(토큰이 없으면 `null`).
-다른 기능에서 로그인이 필요한 주소는 해당 담당자가 `SecurityConfig`의 "로그인 필요 주소" 구역에 한 줄 추가한다. 잊으면 로그인 없이 열린다.
+접근 규칙: **기본 잠금.** 공개할 주소만 열고 나머지는 모두 로그인이 필요하다(`anyRequest().authenticated()`).
+현재 공개 주소: `/api/v1/auth/**`, 프로필·커뮤니티 이미지 조회(GET), 커뮤니티 게시글 조회(GET `/api/v1/community/posts/**`), 작성자 미리보기·작성 글 목록(GET `/api/v1/community/members/*/preview`, `/posts`).
+토큰이 실려 오면 `@AuthenticationPrincipal Long memberId`로 회원 번호를 받는다(공개 주소에서 토큰이 없으면 `null`).
+로그인 없이 써야 하는 새 API는 해당 담당자가 `common/security/SecurityConfig`의 "공개 주소" 구역에 한 줄 추가한다. 잊으면 401이 난다.
+
+```java
+.requestMatchers(HttpMethod.GET, "/api/v1/기능주소/**").permitAll()
+```
 
 실행 전 준비: 비밀키는 저장소에 넣지 않는다. 각자 환경변수 `JWT_SECRET`(Base64, 32바이트 이상)을 설정해야 백엔드가 켜진다.
 
@@ -62,14 +67,20 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | 성공 응답 | `{ success: true, data }` → `data`를 돌려준다 |
 | 실패 응답 | `{ success: false, error: { code, message, fieldErrors? } }` → `ApiError(code, message, { status, fieldErrors })`를 던진다 |
 | 인증 | 로그인 상태면 `Authorization: Bearer {accessToken}`을 붙인다 |
-| 토큰 만료 | `TOKEN_EXPIRED`면 재발급 후 원래 요청을 한 번만 다시 보낸다 |
+| 토큰 만료 | `TOKEN_EXPIRED`면 재발급 후 원래 요청을 한 번만 다시 보낸다. 재발급 결과가 비로그인(null)이면 다시 보내지 않고 `AUTH_REQUIRED` 오류 |
 | 위조 토큰 | `TOKEN_INVALID`면 로그인 정보를 지운다 |
 | 쿠키 | 같은 출처에만 보낸다 (`credentials: same-origin`) |
 | 시간 초과 | 10초. `TIMEOUT` 오류 |
 | 네트워크 오류 | `NETWORK_ERROR` 오류 |
 
 재발급(`src/api/tokenRefresh.js`): `POST /api/v1/auth/refresh`, refresh token은 HttpOnly 쿠키로 자동 전송.
-응답 `{ accessToken, member }`. 동시에 여러 번 불려도 요청은 한 번만 보낸다. 실패하면 로그인 정보를 지운다.
+응답은 세 가지다. 동시에 여러 번 불려도 요청은 한 번만 보낸다.
+
+| 상황 | 서버 응답 | `refreshAccessToken()` 결과 |
+| --- | --- | --- |
+| 쿠키 정상 | 200 `{ success: true, data: { accessToken, member } }` + 새 쿠키 | 새 access token, 스토어 저장 |
+| 쿠키 없음 (처음 접속한 비로그인) | 200 `{ success: true }` (`data` 없음, 쿠키 변경 없음) | `null`, 로그인 정보 지움 (오류 아님) |
+| 쿠키 만료·위조·이미 사용됨 | 401 `REFRESH_INVALID` | 오류, 로그인 정보 지움 |
 
 ## 인증 (`src/auth/api/authApi.js`)
 
@@ -83,7 +94,7 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | `checkLoginId(loginId)` | `GET /auth/check-login-id?loginId=` | 아이디 | `{ available }` | `INVALID_INPUT` |
 | `signup({ loginId, password, name, email })` | `POST /auth/signup` | 아래 입력 규칙 | `{ memberId, loginId, name, email }` | `INVALID_INPUT`, `LOGIN_ID_DUPLICATED`, `EMAIL_DUPLICATED` |
 | `login({ loginId, password })` | `POST /auth/login` | 아이디·비밀번호 | `{ accessToken, member }` + refresh token 쿠키 | `INVALID_INPUT`, `LOGIN_FAILED` |
-| `restoreSession()` | `POST /auth/refresh` | 없음 (refresh token 쿠키) | `{ accessToken, member }` → 스토어 저장 | 실패 = 로그아웃 상태로 시작 (정상). mock에서는 서버를 부르지 않는다 |
+| `restoreSession()` | `POST /auth/refresh` | 없음 (refresh token 쿠키) | `{ accessToken, member }` → 스토어 저장. 쿠키가 없으면 `data` 없음(200) | 쿠키 없음·실패 = 로그아웃 상태로 시작 (정상). mock에서는 서버를 부르지 않는다 |
 | `logout()` | `POST /auth/logout` | 없음 (refresh token 쿠키) | 없음 | 실패해도 화면의 로그인 상태는 지운다 |
 
 - `member`: `{ memberId, loginId, name, email, nickname, profileImageUrl }`. 비밀번호는 어떤 응답에도 넣지 않는다.

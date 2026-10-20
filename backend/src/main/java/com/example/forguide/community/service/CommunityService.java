@@ -11,6 +11,7 @@ import com.example.forguide.common.exception.ErrorCode;
 import com.example.forguide.community.dto.CommunityPostImageResponse;
 import com.example.forguide.community.image.CommunityImageStorage;
 import com.example.forguide.community.dto.CommunityCommentCreateRequest;
+import com.example.forguide.community.dto.CommunityCommentLikeResponse;
 import com.example.forguide.community.dto.CommunityCommentResponse;
 import com.example.forguide.community.dto.CommunityPostLikeResponse;
 import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
@@ -422,9 +423,9 @@ public class CommunityService {
     }
 
     // 게시글 댓글 목록 조회
-    public List<CommunityCommentResponse> getCommentsByPostId(Long postId) {
+    public List<CommunityCommentResponse> getCommentsByPostId(Long postId, Long memberId) {
         validatePostExists(postId);
-        return communityMapper.findCommentsByPostId(postId);
+        return communityMapper.findCommentsByPostId(postId, memberId);
     }
 
     // 로그인 회원 댓글 작성
@@ -442,6 +443,11 @@ public class CommunityService {
             // 삭제된 댓글에는 새 답글을 달 수 없게 해 대화 흐름을 명확히 한다.
             if (parentComment.isDeleted()) {
                 throw new ApiException(ErrorCode.INVALID_INPUT, "삭제된 댓글에는 답글을 작성할 수 없습니다.");
+            }
+
+            // 답글의 답글은 서버에서도 막아 화면 규칙과 저장 규칙을 일치시킨다.
+            if (parentComment.getParentCommentId() != null) {
+                throw new ApiException(ErrorCode.INVALID_INPUT, "답글에는 다시 답글을 작성할 수 없습니다.");
             }
         }
 
@@ -466,6 +472,48 @@ public class CommunityService {
         }
 
         return comment;
+    }
+
+    // 댓글 공감 수와 현재 로그인 회원의 공감 여부를 함께 반환한다.
+    public CommunityCommentLikeResponse getCommentLikeStatus(
+            Long postId, Long commentId, Long memberId
+    ) {
+        validatePostExists(postId);
+        getCommentByPostId(postId, commentId);
+
+        CommunityCommentLikeResponse response = new CommunityCommentLikeResponse();
+        response.setCommentId(commentId);
+        response.setLikeCount(communityMapper.countLikesByCommentId(commentId));
+        response.setLikedByMe(
+                memberId != null
+                        && communityMapper.existsCommentLike(commentId, memberId)
+        );
+        return response;
+    }
+
+    // 같은 회원의 중복 공감은 저장하지 않고 현재 상태를 돌려준다.
+    @Transactional
+    public CommunityCommentLikeResponse likeComment(
+            Long postId, Long commentId, Long memberId
+    ) {
+        CommunityCommentResponse comment = getCommentByPostId(postId, commentId);
+        if (comment.isDeleted()) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, "삭제된 댓글에는 공감할 수 없습니다.");
+        }
+        if (!communityMapper.existsCommentLike(commentId, memberId)) {
+            communityMapper.insertCommentLike(commentId, memberId);
+        }
+        return getCommentLikeStatus(postId, commentId, memberId);
+    }
+
+    // 아직 공감하지 않은 상태에서 취소해도 현재 상태를 그대로 돌려준다.
+    @Transactional
+    public CommunityCommentLikeResponse unlikeComment(
+            Long postId, Long commentId, Long memberId
+    ) {
+        getCommentByPostId(postId, commentId);
+        communityMapper.deleteCommentLike(commentId, memberId);
+        return getCommentLikeStatus(postId, commentId, memberId);
     }
 
     // 댓글 작성자 본인만 수정할 수 있다.

@@ -79,9 +79,13 @@ verify 프로필을 활성화하면 검증용 DB 연결 설정을 사용한다.
 - DB: forguide_verify
 - 계정: forguide_verify_user
 
-현재 검증용 설정 파일에는 DB 비밀번호가 직접 설정되어 있다.
+검증용 DB 비밀번호는 설정 파일에 넣지 않는다. 기본값 없이 환경변수 `DB_PASSWORD`로 받는다.
+`JWT_SECRET`(Base64, 32바이트 이상)도 함께 필요하다.
 
-JWT_SECRET 등 백엔드에서 별도로 요구하는 실행 환경 설정도 필요하다.
+IntelliJ로 실행할 때: 실행 구성 ForGuideApplication → 활성화된 프로필 `verify`,
+환경 변수 `JWT_SECRET=...;DB_PASSWORD=...`. "프로젝트 파일로 저장"은 체크하지 않는다(비밀번호가 파일로 남지 않게).
+
+2026-10-19 현재 공용 DB는 V2(금융상품 테이블) 마이그레이션이 실패로 남아 기본 프로필로는 서버가 켜지지 않는다. 정리(repair) 전까지는 verify 프로필로 실행한다.
 
 ## 6. 파악된 테이블
 
