@@ -79,7 +79,10 @@ public interface CommunityMapper {
     );
 
     // 댓글
-    List<CommunityCommentResponse> findCommentsByPostId(Long postId);
+    List<CommunityCommentResponse> findCommentsByPostId(
+            @Param("postId") Long postId,
+            @Param("memberId") Long memberId
+    );
 
     CommunityCommentResponse findCommentById(Long commentId);
 
@@ -103,6 +106,24 @@ public interface CommunityMapper {
     int markCommentDeleted(@Param("commentId") Long commentId);
 
     int deleteCommentsByPostId(@Param("postId") Long postId);
+
+    // 댓글 공감
+    long countLikesByCommentId(@Param("commentId") Long commentId);
+
+    boolean existsCommentLike(
+            @Param("commentId") Long commentId,
+            @Param("memberId") Long memberId
+    );
+
+    int insertCommentLike(
+            @Param("commentId") Long commentId,
+            @Param("memberId") Long memberId
+    );
+
+    int deleteCommentLike(
+            @Param("commentId") Long commentId,
+            @Param("memberId") Long memberId
+    );
 
     //  공감
     long countLikesByPostId(@Param("postId") Long postId);

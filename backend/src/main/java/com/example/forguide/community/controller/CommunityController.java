@@ -6,6 +6,7 @@ import com.example.forguide.community.dto.CommunityPostUpdateRequest;
 import com.example.forguide.community.service.CommunityService;
 import com.example.forguide.community.dto.CommunityCommentCreateRequest;
 import com.example.forguide.community.dto.CommunityCommentResponse;
+import com.example.forguide.community.dto.CommunityCommentLikeResponse;
 import com.example.forguide.community.dto.CommunityPostLikeResponse;
 import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
 import com.example.forguide.community.dto.CommunityPostRepostResponse;
@@ -142,10 +143,11 @@ public class CommunityController {
     // 비로그인 사용자도 게시글의 댓글 목록을 볼 수 있다
     @GetMapping("/posts/{postId}/comments")
     public ApiResponse<List<CommunityCommentResponse>> getCommentsByPostId(
-            @PathVariable Long postId
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
     ) {
         return ApiResponse.ok(
-                communityService.getCommentsByPostId(postId)
+                communityService.getCommentsByPostId(postId, memberId)
         );
     }
 
@@ -181,6 +183,30 @@ public class CommunityController {
     ) {
         communityService.deleteComment(postId, commentId, memberId);
         return ApiResponse.ok();
+    }
+
+    // 로그인 회원의 댓글 공감 추가
+    @PostMapping("/posts/{postId}/comments/{commentId}/likes")
+    public ApiResponse<CommunityCommentLikeResponse> likeComment(
+            @PathVariable Long postId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.likeComment(postId, commentId, memberId)
+        );
+    }
+
+    // 로그인 회원의 댓글 공감 취소
+    @DeleteMapping("/posts/{postId}/comments/{commentId}/likes")
+    public ApiResponse<CommunityCommentLikeResponse> unlikeComment(
+            @PathVariable Long postId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.unlikeComment(postId, commentId, memberId)
+        );
     }
 
     // 비로그인 사용자도 좋아요 수는 볼 수 있고,
