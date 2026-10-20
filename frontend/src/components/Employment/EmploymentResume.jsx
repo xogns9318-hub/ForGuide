@@ -1,5 +1,11 @@
 import { useState } from "react";
 import Banner from "../Banner/Banner.jsx";
+import {
+    getResumeDraft,
+    getResumeDrafts,
+    saveResumeDraft
+} from "../../api/resumeApi.js";
+import ResumeLoadModal from "./ResumeLoadModal.jsx";
 import "../../styles/employment-resume.css";
 
 const EMPTY_ROWS = Array.from({ length: 4 });
@@ -179,23 +185,35 @@ function ResumeTable({ title, columns, fields, rows, onChange, })
     );
 }
 
-function BasicPersonalInfo({personal, onChange}) {
+function BasicPersonalInfo({personal, photoPreviewUrl, onChange, onPhotoChange,}) {
     return (
     <section className="resume-personal-section">
         <h3>인적사항</h3>
 
         <div className="resume-personal-grid">
-            <div
-                className="resume-photo-slot"
-                aria-label="증명사진 영역"
-            >
-                <div
-                    className="resume-photo-frame"
-                    aria-hidden="true"
-                />
-                <span>사진</span>
-                <small>3 × 4cm</small>
+        <label className="resume-photo-slot">
+            <input
+                className="resume-photo-input"
+                type="file"
+                accept="image/*"
+                onChange={onPhotoChange}
+            />
+
+            <div className="resume-photo-frame">
+                {photoPreviewUrl && (
+                    <img
+                        src={photoPreviewUrl}
+                        alt="선택한 사진 미리보기"
+                    />
+
+                )}
             </div>
+
+            <span>
+                {photoPreviewUrl ? "사진 변경" : "사진 선택"}
+            </span>
+            <small>3 * 4cm</small>
+        </label>
 
             <div className="resume-personal-fields">
                 <label className="resume-name-field">
@@ -328,6 +346,11 @@ function BlindPersonalInfo({ personal, onChange }) {
 // 저장·불러오기·인쇄는 다음 작업에서 연결하고, 여기서는 양식과 탭만 제공한다.
 export default function EmploymentResume() {
     const [resumeType, setResumeType] = useState("basic");
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveMessage, setSaveMessage] = useState("");
+    const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+    const [isLoadingDrafts, setIsLoadingDrafts] = useState(false);
+    const [savedDrafts, setSavedDrafts] = useState([]);
 
     // 기본,블라인드 이력서의 입력값을 화면이 열려 있는 동안 보관
     const [basicResume, setBasicResume] = useState(
@@ -345,6 +368,22 @@ export default function EmploymentResume() {
                 ...previousResume.personal,
                 [field]: value,
             },
+        }));
+    }
+
+    function handleBasicPhotoChange(event) {
+        const selectedFile = event.target.files?.[0];
+
+        if (!selectedFile) {
+            return;
+        }
+
+        // 선택한 사진은 서버 업로드 전까지 브라우저에서만 미리보기로 사용
+        const previewUrl = URL.createObjectURL(selectedFile);
+
+        setBasicResume((previousResume) => ({
+            ...previousResume,
+            photoPreviewUrl: previewUrl,
         }));
     }
 
@@ -377,6 +416,81 @@ export default function EmploymentResume() {
         }));
     }
 
+    async function handleSave() {
+        setIsSaving(true);
+        setSaveMessage("");
+
+        try{
+            await saveResumeDraft({
+                resumeType,
+                resume: activeResume,
+            });
+
+            const resumeName = isBlind
+                ? "블라인드 채용 이력서"
+                : "기본 이력서";
+
+            setSaveMessage(`${resumeName}를 저장했습니다.`);
+        } catch {
+            setSaveMessage("저장하지 못했습니다. 다시 시도해주세요.");
+        } finally {
+            setIsSaving(false);
+        }
+    }
+
+    async function handleOpenLibrary() {
+        setIsLibraryOpen(true);
+        setIsLoadingDrafts(true);
+        setSaveMessage("");
+
+        try {
+            const drafts = await getResumeDrafts();
+
+            setSavedDrafts(drafts);
+        } catch {
+            setIsLibraryOpen(false);
+            setSaveMessage(
+                "저장한 이력서 목록을 불러오지 못했습니다.",
+            );
+        } finally {
+            setIsLoadingDrafts(false);
+        }
+    }
+
+    async function handleSelectDraft(draftId) {
+        setIsLoadingDrafts(true);
+
+        try {
+            const selectedDraft = await getResumeDraft(draftId);
+
+            if(!selectedDraft) {
+                throw new Error("저장한 이력서를 찾을 수 없습니다.");
+            }
+
+            if(selectedDraft.resumeType === "blind") {
+                setBlindResume(selectedDraft.resume);
+                setResumeType("blind");
+            } else {
+                setBasicResume(selectedDraft.resume);
+                setResumeType("basic");
+            }
+
+            setIsLibraryOpen(false);
+            setSaveMessage("저장한 이력서를 불러왔습니다.");
+        } catch {
+            setSaveMessage(
+                "저장한 이력서를 불러오지 못했습니다.",
+            );
+        } finally {
+            setIsLoadingDrafts(false);
+        }
+    }
+
+    function handlePrint() {
+        // 현재 화면에 선택된 이력서 양식만 A4 인쇄 미리보기로 보낸다.
+        window.print();
+    }
+
     return <div className="page-stack employment-resume-page">
         <Banner title="취업 준비자료" description="지원 방식에 맞는 A4 이력서를 작성하고 저장하거나 출력하세요." />
         <div className="employment-resume-tabs" role="tablist" aria-label="이력서 양식 선택">
@@ -399,8 +513,14 @@ export default function EmploymentResume() {
                     onChange={handleBlindPersonalChange}
                 />
         ) : (
-            <BasicPersonalInfo personal={basicResume.personal}
-                                                                                onChange={handleBasicPersonalChange} /> )}
+            <BasicPersonalInfo
+                personal={basicResume.personal}
+                photoPreviewUrl={basicResume.photoPreviewUrl}
+                onChange={handleBasicPersonalChange}
+                onPhotoChange={handleBasicPhotoChange}
+            />
+        )}
+
             {sections.map(({ key, title, columns, fields }) => (
                 <ResumeTable
                     key={key}
@@ -416,11 +536,44 @@ export default function EmploymentResume() {
         </article>
         <div className="employment-resume-actions">
             <div>
-                <button type="button" className="button button-primary">저장</button>
-                <button type="button" className="button">불러오기</button>
-                <button type="button" className="button">인쇄/출력</button>
+                <button
+                    type="button"
+                    className="button button-primary"
+                    onClick={handleSave}
+                    disabled={isSaving}
+                >
+                    {isSaving ? "저장 중..." : "저장"}
+                </button>
+                <button
+                    type="button"
+                    className="button"
+                    onClick={handleOpenLibrary}
+                >
+                    불러오기
+                </button>
+                <button
+                    type="button"
+                    className="button"
+                    onClick={handlePrint}
+                >
+                    인쇄/출력
+                </button>
             </div>
             <button type="button" className="button">한국어로 변환</button>
         </div>
+
+        <ResumeLoadModal
+            isOpen={isLibraryOpen}
+            drafts={savedDrafts}
+            isLoading={isLoadingDrafts}
+            onClose={() => setIsLibraryOpen(false)}
+            onSelect={handleSelectDraft}
+        />
+        {saveMessage && (
+            <p className="employment-resume-save-message">
+                {saveMessage}
+            </p>
+        )}
     </div>;
+
 }

@@ -13,6 +13,7 @@ public class CommunityPostResponse {
 
     private Long postId;
     private Long memberId;
+    private String loginId;
     private String nickname;
     private String profileImageUrl;
     private String content;

@@ -130,7 +130,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         return trimmedContent;
     }
 
-    async function submitComment(value, parentCommentId = null) {
+    async function submitComment(value, parentCommentId = null, mentionLoginId = null) {
         const trimmedContent = validateCommentContent(value);
         if (!trimmedContent) return false;
 
@@ -148,6 +148,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                 postId,
                 trimmedContent,
                 parentCommentId,
+                mentionLoginId,
             );
             await loadComments();
             return true;
@@ -165,17 +166,9 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     async function handleSubmit(event) {
         event.preventDefault();
 
-        const validReplyContent = validateReplyContent(replyContent);
-
-        if (!validReplyContent) {
-            return;
-        }
-
-        if (await submitComment(
-            validReplyContent,
-            replyTarget?.parentCommentId,
-        ))  {
-            closeReply();
+        if (await submitComment(content)) {
+            setContent("");
+            setWriteError("");
         }
     }
 
@@ -190,8 +183,8 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
             commentId: comment.commentId,
             parentCommentId: comment.commentId,
         });
-        // 멘션은 기본으로 채우되 일반 텍스트라 답글 작성자가 자유롭게 바꿀 수 있다.
-        setReplyContent(`@${comment.nickname} `);
+        // 답글 대상은 닉네임이 아닌 고유 로그인 아이디로 시작한다.
+        setReplyContent(`@${comment.loginId} `);
         setWriteError("");
     }
 
@@ -203,8 +196,32 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
 
     async function handleReplySubmit(event) {
         event.preventDefault();
-        if (await submitComment(replyContent, replyTarget?.parentCommentId)) {
+
+        const validReplyContent = validateReplyContent(replyContent);
+        if (!validReplyContent) return;
+
+        const mentionMatch = validReplyContent.match(/^@(\S+)\s+([\s\S]+)$/);
+        const mentionLoginId = mentionMatch?.[1] ?? null;
+        const replyText = mentionMatch?.[2]?.trim() ?? validReplyContent;
+
+        if (await submitComment(
+            replyText,
+            replyTarget?.parentCommentId,
+            mentionLoginId,
+        )) {
             closeReply();
+        }
+    }
+
+    function handleReplyKeyDown(event) {
+        const mentionPrefix = replyContent.match(/^@\S+\s+/)?.[0];
+        const cursorAtMentionEnd = event.currentTarget.selectionStart === mentionPrefix?.length
+            && event.currentTarget.selectionEnd === mentionPrefix?.length;
+
+        // 멘션 끝에서 Backspace를 한 번 누르면 @아이디와 뒤 공백을 한 번에 지운다.
+        if (event.key === "Backspace" && mentionPrefix && cursorAtMentionEnd) {
+            event.preventDefault();
+            setReplyContent((previousContent) => previousContent.slice(mentionPrefix.length));
         }
     }
 
@@ -320,6 +337,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                         memberId={comment.memberId}
                                         imageUrl={comment.profileImageUrl}
                                         nickname={comment.nickname}
+                                        loginId={comment.loginId}
                                         size={30}
                                     />
                                 )}
@@ -330,7 +348,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                         </p>
                                     ) : (
                                         <>
-                                            <strong>{comment.nickname}</strong>
+                                            <strong>{comment.loginId}</strong>
                                             {isEditing ? (
                                                 <form
                                                     className="community-comment-edit-form"
@@ -366,18 +384,21 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                                     </div>
                                                 </form>
                                             ) : (
-                                                <p>
-                                                    {comment.parentCommentId != null
-                                                        && comment.content.startsWith("@") ? (
-                                                            <>
-                                                                <span className="community-comment-mention">
-                                                                    {comment.content.split(" ")[0]}
-                                                                </span>
-                                                                {" "}
-                                                                {comment.content.split(" ").slice(1).join(" ")}
-                                                            </>
-                                                        ) : comment.content}
-                                                </p>
+                                                comment.mentionedMemberId ? (
+                                                    <div className="community-comment-text">
+                                                        <CommunityMemberPreview
+                                                            memberId={comment.mentionedMemberId}
+                                                            imageUrl={comment.mentionedProfileImageUrl}
+                                                            loginId={comment.mentionedLoginId}
+                                                            nickname={comment.mentionedLoginId}
+                                                            variant="mention"
+                                                        />
+                                                        {" "}
+                                                        {comment.content}
+                                                    </div>
+                                                ) : (
+                                                    <p>{comment.content}</p>
+                                                )
                                             )}
                                         </>
                                     )}
@@ -442,7 +463,11 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                             <textarea
                                                 ref={replyTextareaRef}
                                                 value={replyContent}
-                                                onChange={(event) => setReplyContent(event.target.value)}
+                                                onChange={(event) => {
+                                                    setReplyContent(event.target.value);
+                                                    setWriteError("");
+                                                }}
+                                                onKeyDown={handleReplyKeyDown}
                                                 maxLength={1000}
                                                 rows={2}
                                                 placeholder={t("community.comments.writePlaceholder")}
@@ -475,7 +500,10 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
             <form className="community-comment-form" onSubmit={handleSubmit}>
                 <textarea
                     value={content}
-                    onChange={(event) => setContent(event.target.value)}
+                    onChange={(event) => {
+                        setContent(event.target.value);
+                        setWriteError("");
+                    }}
                     maxLength={1000}
                     rows={3}
                     placeholder={t("community.comments.writePlaceholder")}
