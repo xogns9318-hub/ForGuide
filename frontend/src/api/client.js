@@ -107,7 +107,11 @@ export async function request(path, { method = "GET", body, headers } = {}) {
         // 만료: 재발급 → 한 번만 다시 요청 (다시 실패하면 그대로 오류)
         // 재발급이 실패하면 tokenRefresh가 로그인 정보를 지우고 오류를 던진다
         if (error.code === "TOKEN_EXPIRED") {
-            await refreshAccessToken();
+            const newToken = await refreshAccessToken();
+            // 재발급 결과가 null(refresh token 쿠키 없음 = 비로그인)이면 다시 보내지 않고 "로그인 필요"로 끝낸다
+            if (!newToken) {
+                throw new ApiError("AUTH_REQUIRED", "로그인이 필요합니다.", { status: 401 });
+            }
             return send(path, { method, body, headers });
         }
 

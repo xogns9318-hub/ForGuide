@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -163,8 +164,18 @@ class AuthControllerTest {
     }
 
     @Test
-    void 쿠키_없이_재발급은_401() throws Exception {
+    void 쿠키_없이_재발급은_200이고_data가_없다() throws Exception {
+        // 처음 접속한 비로그인 사용자: 오류가 아니라 "로그인 정보 없음"으로 응답한다 (쿠키도 새로 만들지 않는다)
         mockMvc.perform(post("/api/v1/auth/refresh"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.success").value(true))
+                .andExpect(jsonPath("$.data").doesNotExist())
+                .andExpect(header().doesNotExist(HttpHeaders.SET_COOKIE));
+    }
+
+    @Test
+    void 잘못된_refresh_token은_401() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/refresh").cookie(new Cookie("refreshToken", "forged-token")))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error.code").value("REFRESH_INVALID"));
     }
