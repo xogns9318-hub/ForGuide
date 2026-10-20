@@ -1,0 +1,42 @@
+/* 공통 Modal (확인창·알림). 버튼은 common.css의 .button·.button-primary를 쓴다 */
+
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(32, 59, 51, 0.45);
+}
+
+.dialog {
+    width: min(420px, 100%);
+    padding: 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--panel-radius);
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 12px 32px rgba(32, 59, 51, 0.18);
+}
+
+.title {
+    margin: 0 0 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.message {
+    margin: 0;
+    line-height: 1.6;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 24px;
+}

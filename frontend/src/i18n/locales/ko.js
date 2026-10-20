@@ -28,37 +28,29 @@ const ko = {
         services: {
             eyebrow: "ForGuide 서비스",
             title: "어떤 도움이 필요하세요?",
-            description:
-                "한국 생활에 필요한 여섯 가지 서비스를 한눈에 살펴보세요.",
+            description: "한국 생활에 필요한 여섯 가지 서비스를 한눈에 살펴보세요.",
         },
 
         categories: {
             counseling: {
-                description:
-                    "내 상황에 맞는 상담을 찾고, 상담에 필요한 준비와 설명을 정리하세요.",
+                description: "내 상황에 맞는 상담을 찾고, 상담에 필요한 준비와 설명을 정리하세요.",
             },
             recommendation: {
-                description:
-                    "대출·보험·계좌를 비교하고, 목적에 맞는 금융 서비스를 살펴보세요.",
+                description: "대출·보험·계좌를 비교하고, 목적에 맞는 금융 서비스를 살펴보세요.",
             },
             repayment: {
-                description:
-                    "월 상환액과 총이자, 상환 일정을 확인하며 자금 계획을 세워보세요.",
+                description: "월 상환액과 총이자, 상환 일정을 확인하며 자금 계획을 세워보세요.",
             },
             employment: {
-                description:
-                    "취업 준비자료와 일자리 정보를 살펴보고, 다음 단계를 준비하세요.",
+                description: "취업 준비자료와 일자리 정보를 살펴보고, 다음 단계를 준비하세요.",
             },
             simulator: {
-                description:
-                    "상환일과 수입·지출을 달력에 정리하고 하루 지출 계획을 세워보세요.",
+                description: "상환일과 수입·지출을 달력에 정리하고 하루 지출 계획을 세워보세요.",
             },
             community: {
-                description:
-                    "한국 생활의 경험과 정보를 나누고, 서로의 이야기를 만나보세요.",
+                description: "한국 생활의 경험과 정보를 나누고, 서로의 이야기를 만나보세요.",
             },
         },
-
 
         features: {
             counseling: {
@@ -161,40 +153,32 @@ const ko = {
 
     service: {
         consultation: {
-            description:
-                "도움이 필요한 문제를 고르고, 상황에 맞는 도움 기관을 찾아보세요.",
+            description: "도움이 필요한 문제를 고르고, 상황에 맞는 도움 기관을 찾아보세요.",
         },
         preparationCard: {
             description:
                 "정확한 구비서류와 본인 확인 지참물(신분증 등)을 미리 확인하는 데 도움을 드립니다.",
         },
         loan: {
-            description:
-                "대출 이용 정보를 입력하고, 목적에 맞는 상품을 살펴보세요.",
+            description: "대출 이용 정보를 입력하고, 목적에 맞는 상품을 살펴보세요.",
         },
         insurance: {
-            description:
-                "기본 정보와 필요한 보장을 바탕으로 보험 상품을 살펴보세요.",
+            description: "기본 정보와 필요한 보장을 바탕으로 보험 상품을 살펴보세요.",
         },
         account: {
-            description:
-                "급여 수령과 송금 등 이용 목적에 맞는 계좌를 살펴보세요.",
+            description: "급여 수령과 송금 등 이용 목적에 맞는 계좌를 살펴보세요.",
         },
         monthlyPayment: {
-            description:
-                "대출금액과 금리, 기간을 입력하고 예상 월 상환액을 확인하세요.",
+            description: "대출금액과 금리, 기간을 입력하고 예상 월 상환액을 확인하세요.",
         },
         totalInterest: {
-            description:
-                "상환 기간 동안 발생하는 예상 총 이자와 총 상환액을 확인하세요.",
+            description: "상환 기간 동안 발생하는 예상 총 이자와 총 상환액을 확인하세요.",
         },
         jobListings: {
-            description:
-                "나에게 맞는 일자리를 살펴보세요.",
+            description: "나에게 맞는 일자리를 살펴보세요.",
         },
         employment: {
-            description:
-                "지원 방식에 맞는 이력서를 작성하고 저장하거나 출력하세요.",
+            description: "지원 방식에 맞는 이력서를 작성하고 저장하거나 출력하세요.",
         },
     },
 
@@ -237,6 +221,12 @@ const ko = {
             success: "필수 입력 검증을 통과했습니다.",
             requiredError: "필수 입력 항목입니다.",
         },
+    },
+
+    // 공통 확인창·알림 버튼 (components/Modal)
+    modal: {
+        confirm: "확인",
+        cancel: "취소",
     },
 };
 
