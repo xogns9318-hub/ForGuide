@@ -82,7 +82,7 @@ def recommend_fast(options, user):
 
     results = []
     for product, mismatch, check, group in judged:
-        score, reasons = None, []
+        score, reasons, features = None, [], None
         if group != GROUP_MISMATCH:
             features = {
                 "rate": absolute_score(best_rate_by_group[group], float(product["effective_rate"]), RATE_FULL_GAP),
@@ -92,6 +92,7 @@ def recommend_fast(options, user):
             score, contributions = weighted_score(features, WEIGHTS)
             reasons = top_reasons(contributions)
         results.append({
+            "product_id": f"{product['fin_co_no']}-{product['fin_prdt_cd']}",
             "kor_co_nm": product["kor_co_nm"],
             "fin_prdt_nm": product["fin_prdt_nm"],
             "institution_type": product["institution_type"],
@@ -100,6 +101,7 @@ def recommend_fast(options, user):
             "effective_rate": float(product["effective_rate"]),
             "group": group,
             "score": score,
+            "features": features,
             "reasons": reasons,
             "check_reasons": check,
             "mismatch_reasons": mismatch,
