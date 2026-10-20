@@ -68,13 +68,18 @@ def recommend_fast(options, user):
     products = best_option_per_product(options, user["purpose"], term)
     judged = []
     best_rate_by_group = {}
+    best_with_outliers = {}
     for product in products:
         mismatch, check = judge(product, user)
         group = decide_group(mismatch, check)
         judged.append((product, mismatch, check, group))
         if group != GROUP_MISMATCH:
             rate = float(product["effective_rate"])
-            best_rate_by_group[group] = max(rate, best_rate_by_group.get(group, rate))
+            best_with_outliers[group] = max(rate, best_with_outliers.get(group, rate))
+            if product.get("rate_outlier") != "1":
+                best_rate_by_group[group] = max(rate, best_rate_by_group.get(group, rate))
+    for group, rate in best_with_outliers.items():
+        best_rate_by_group.setdefault(group, rate)
 
     results = []
     for product, mismatch, check, group in judged:
