@@ -20,6 +20,8 @@ public class CommunityCommentResponse {
    private String content;
    private Integer contentVersion;
    private boolean deleted;
+   private Long likeCount;
+   private boolean likedByMe;
    private LocalDateTime createdAt;
    private LocalDateTime updatedAt;
 }
