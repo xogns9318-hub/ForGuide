@@ -9,10 +9,13 @@ export default function CommunityMemberPreview({
     memberId,
     imageUrl,
     nickname,
+    loginId,
     size = 38,
+    variant = "avatar",
 }) {
     const { t } = useTranslation();
     const unnamedMember = t("community.memberPreview.unnamedMember");
+    const displayName = loginId || nickname || unnamedMember;
     const [isOpen, setIsOpen] = useState(false);
     const [preview, setPreview] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -55,6 +58,7 @@ export default function CommunityMemberPreview({
     }
 
     const profile = preview ?? {
+        loginId,
         nickname,
         profileImageUrl: imageUrl,
         postCount: 0,
@@ -75,14 +79,20 @@ export default function CommunityMemberPreview({
         >
             <button
                 type="button"
-                className="community-member-preview-trigger"
+                className={`community-member-preview-trigger ${
+                    variant === "mention" ? "is-mention" : ""
+                }`}
                 aria-label={t("community.memberPreview.triggerAria", {
-                    nickname: nickname || unnamedMember,
+                    nickname: displayName,
                 })}
                 aria-expanded={isOpen}
                 onClick={() => (isOpen ? setIsOpen(false) : openPreview())}
             >
-                <ProfileAvatar imageUrl={imageUrl} name={nickname} size={size} />
+                {variant === "mention" ? (
+                    `@${displayName}`
+                ) : (
+                    <ProfileAvatar imageUrl={imageUrl} name={nickname || loginId} size={size} />
+                )}
             </button>
 
             {isOpen && (
@@ -90,10 +100,10 @@ export default function CommunityMemberPreview({
                     <div className="community-member-preview-head">
                         <ProfileAvatar
                             imageUrl={profile.profileImageUrl}
-                            name={profile.nickname}
+                            name={profile.nickname || profile.loginId}
                             size={54}
                         />
-                        <strong>{profile.nickname || unnamedMember}</strong>
+                        <strong>{profile.loginId || profile.nickname || unnamedMember}</strong>
                     </div>
 
                     {isLoading ? (
@@ -111,7 +121,7 @@ export default function CommunityMemberPreview({
                                     className="community-member-post-count"
                                     onClick={openMemberPosts}
                                     aria-label={t("community.memberPreview.postsButtonAria", {
-                                        nickname: profile.nickname || unnamedMember,
+                                        nickname: profile.loginId || profile.nickname || unnamedMember,
                                         count: profile.postCount ?? 0,
                                     })}
                                 >
@@ -132,7 +142,7 @@ export default function CommunityMemberPreview({
 
             <CommunityMemberPostsModal
                 memberId={memberId}
-                nickname={profile.nickname || unnamedMember}
+                nickname={profile.loginId || profile.nickname || unnamedMember}
                 isOpen={isMemberPostsOpen}
                 onClose={() => setIsMemberPostsOpen(false)}
             />

@@ -55,10 +55,16 @@ export async function getCommunityComments(postId) {
 }
 
 // 로그인한 사용자의 댓글·답글 작성. parentCommentId가 없으면 일반 댓글이다.
-export async function createCommunityComment(postId, content, parentCommentId = null) {
+export async function createCommunityComment(
+    postId,
+    content,
+    parentCommentId = null,
+    mentionLoginId = null,
+) {
     return client.post(`/community/posts/${postId}/comments`, {
         content,
         parentCommentId,
+        mentionLoginId,
     });
 }
 

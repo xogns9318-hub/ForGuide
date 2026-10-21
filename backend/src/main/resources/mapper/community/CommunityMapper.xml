@@ -13,6 +13,7 @@
     <sql id="columns">
         p.post_id AS postId,
         p.member_id AS memberId,
+        m.login_id AS loginId,
         m.nickname AS nickname,
         m.profile_image_url AS profileImageUrl,
         p.content AS content,
@@ -22,6 +23,7 @@
             SELECT COUNT(*)
             FROM community_comments c
             WHERE c.post_id = p.post_id
+                AND c.is_deleted = 0
         ) AS commentCount,
         (
             SELECT COUNT(*)
@@ -245,8 +247,12 @@
             c.post_id AS postId,
             c.parent_comment_id AS parentCommentId,
             c.member_id AS memberId,
+            m.login_id AS loginId,
             m.nickname AS nickname,
             m.profile_image_url AS profileImageUrl,
+            mentioned.member_id AS mentionedMemberId,
+            mentioned.login_id AS mentionedLoginId,
+            mentioned.profile_image_url AS mentionedProfileImageUrl,
             c.content AS content,
             c.content_version AS contentVersion,
             c.is_deleted AS deleted,
@@ -269,6 +275,8 @@
         FROM community_comments c
         INNER JOIN members m
             ON c.member_id = m.member_id
+        LEFT JOIN members mentioned
+            ON c.mentioned_member_id = mentioned.member_id
         WHERE c.post_id = #{postId}
         ORDER BY c.created_at ASC, c.comment_id ASC
     </select>
@@ -281,8 +289,12 @@
             c.post_id AS postId,
             c.parent_comment_id AS parentCommentId,
             c.member_id AS memberId,
+            m.login_id AS loginId,
             m.nickname AS nickname,
             m.profile_image_url AS profileImageUrl,
+            mentioned.member_id AS mentionedMemberId,
+            mentioned.login_id AS mentionedLoginId,
+            mentioned.profile_image_url AS mentionedProfileImageUrl,
             c.content AS content,
             c.content_version AS contentVersion,
             c.is_deleted AS deleted,
@@ -291,6 +303,8 @@
         FROM community_comments c
         INNER JOIN members m
             ON c.member_id = m.member_id
+        LEFT JOIN members mentioned
+            ON c.mentioned_member_id = mentioned.member_id
         WHERE c.comment_id = #{commentId}
     </select>
 
@@ -300,6 +314,7 @@
             post_id,
             member_id,
             parent_comment_id,
+            mentioned_member_id,
             content,
             content_version,
             created_at,
@@ -309,6 +324,7 @@
             #{postId},
             #{memberId},
             #{parentCommentId},
+            #{mentionedMemberId},
             #{content},
             1,
             NOW(),
@@ -441,6 +457,7 @@
             resultType="com.example.forguide.community.dto.CommunityMemberPreviewResponse">
         SELECT
             m.member_id AS memberId,
+            m.login_id AS loginId,
             m.nickname AS nickname,
             m.profile_image_url AS profileImageUrl,
             COUNT(DISTINCT p.post_id) AS postCount,
@@ -451,7 +468,25 @@
         LEFT JOIN post_likes pl
             ON pl.post_id = p.post_id
         WHERE m.member_id = #{memberId}
-        GROUP BY m.member_id, m.nickname, m.profile_image_url
+        GROUP BY m.member_id, m.login_id, m.nickname, m.profile_image_url
+    </select>
+
+    <select id="findMemberPreviewByLoginId"
+            resultType="com.example.forguide.community.dto.CommunityMemberPreviewResponse">
+        SELECT
+            m.member_id AS memberId,
+            m.login_id AS loginId,
+            m.nickname AS nickname,
+            m.profile_image_url AS profileImageUrl,
+            COUNT(DISTINCT p.post_id) AS postCount,
+            COUNT(pl.like_id) AS receivedLikeCount
+        FROM members m
+        LEFT JOIN community_posts p
+            ON p.member_id = m.member_id
+        LEFT JOIN post_likes pl
+            ON pl.post_id = p.post_id
+        WHERE m.login_id = #{loginId}
+        GROUP BY m.member_id, m.login_id, m.nickname, m.profile_image_url
     </select>
 
     <!-- ================================================================

@@ -137,6 +137,22 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | 업로드 준비 | 전송 전 `prepareProfileImage(file)`를 거친다. 지금은 그대로 보내고, 나중에 JPG 자동 변환을 이 함수 안에 추가한다 |
 
 
+## 이력서 초안 mock (`src/api/resumeApi.js`)
+
+서버 저장 전 화면 확인용 mock API다. 모든 함수는 500ms 지연 후 브라우저 `localStorage`를 사용한다.
+
+| 함수 | 역할 | 반환 |
+| --- | --- | --- |
+| `saveResumeDraft({ resumeType, resume })` | 현재 기본/블라인드 이력서 초안 저장 | 저장한 초안 |
+| `getResumeDrafts()` | 저장한 초안 목록 조회 | 기본·블라인드별 최신 초안 목록 |
+| `getResumeDraft(resumeId)` | 선택한 초안 한 건 조회 | 해당 초안 또는 `undefined` |
+
+- 기본 이력서와 블라인드 채용 이력서는 각각 최신 초안 1개만 유지한다.
+- 저장 목록을 불러올 때 예전에 쌓인 같은 양식의 중복 초안도 최신 1개로 정리한다.
+- 사진은 현재 브라우저 미리보기 전용이라 저장·불러오기 대상에서 제외한다.
+- 실제 서버 API 주소와 DB 저장 방식은 미정이다.
+
+
 ## 커뮤니티 API
 
 백엔드 위치:
@@ -150,7 +166,7 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 
 ### `GET /api/v1/community/members/{memberId}/preview`
 
-게시글·댓글 작성자 아바타에 표시할 공개 프로필 요약을 조회한다. 로그인 없이 조회할 수 있으며, `memberId`, `nickname`, `profileImageUrl`, `postCount`, `receivedLikeCount`를 반환한다.
+게시글·댓글 작성자 아바타와 `@로그인아이디` 멘션에 표시할 공개 프로필 요약을 조회한다. 로그인 없이 조회할 수 있으며, `memberId`, `loginId`, `nickname`, `profileImageUrl`, `postCount`, `receivedLikeCount`를 반환한다.
 
 게시글 조회(GET)는 로그인 없이 가능하며, 작성(POST)과 삭제(DELETE)는 로그인해야 한다.
 
@@ -240,7 +256,7 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | PATCH | `/posts/{postId}/comments/{commentId}` | 댓글 작성자 | 댓글 본문 수정 |
 | DELETE | `/posts/{postId}/comments/{commentId}` | 댓글 작성자 또는 게시글 작성자 | 댓글 삭제 |
 
-댓글 본문은 공백만 입력할 수 없고 최대 1,000자다. POST 본문의 `parentCommentId`가 없으면 일반 댓글이고, 있으면 해당 댓글의 답글이다. 답글에도 다시 `parentCommentId`를 넣어 계속 이어서 작성할 수 있다. 수정 API도 같은 검증 규칙을 사용한다. URL의 게시글과 실제 댓글의 게시글이 다르면 `NOT_FOUND`를 반환한다. 자식 답글이 있는 댓글을 삭제하면 본문만 삭제 표시로 바꿔 답글은 유지한다.
+댓글 본문은 공백만 입력할 수 없고 최대 1,000자다. POST 본문의 `parentCommentId`가 없으면 일반 댓글이고, 있으면 해당 댓글의 답글이다. 답글에는 `mentionLoginId`를 선택적으로 보낼 수 있으며 서버는 실제 회원의 로그인 아이디인지 확인한 뒤 태그 대상 회원 번호를 저장한다. 존재하지 않는 아이디면 `INVALID_INPUT`으로 저장하지 않는다. 답글에는 다시 `parentCommentId`를 넣어 계속 이어서 작성할 수 없다. 수정 API도 같은 검증 규칙을 사용한다. URL의 게시글과 실제 댓글의 게시글이 다르면 `NOT_FOUND`를 반환한다. 자식 답글이 있는 댓글을 삭제하면 본문만 삭제 표시로 바꿔 답글은 유지한다.
 
 ### 공통 응답 및 오류
 
@@ -284,3 +300,4 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 - 반환 구조: `{ topics, regions, languages, methods }`
 - 실제 서버 API 주소와 DB 구조는 미정이다.
 - 안내받기는 선택 조건만 확인하며 기관 검색을 요청하지 않는다.
+
