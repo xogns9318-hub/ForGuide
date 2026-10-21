@@ -15,6 +15,7 @@ import TotalInterest from "../components/TotalInterest/TotalInterest.jsx";
 import Consultation from "../components/Consultation/Consultation.jsx";
 import EmploymentResume from "../components/Employment/EmploymentResume.jsx";
 import UnderConstruction from "../components/UnderConstruction/UnderConstruction.jsx";
+import JobListings from "../components/JobListings/JobListings.jsx";
 
 // 제작 중 화면을 표시할 서비스 주소만 지정
 const constructionPaths = new Set([
@@ -257,6 +258,8 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                                     </CalculatorPage>
                                 ) : route.path === "/service/employment" ? (
                                     <EmploymentResume />
+                                ) : route.path === "/service/jobListings" ? (
+                                    <JobListings />
                                 ) : (
                                     <PlaceholderPage
                                         title={route.label}
