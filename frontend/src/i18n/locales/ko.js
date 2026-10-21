@@ -92,6 +92,12 @@ const ko = {
                 jobListings: "일자리 찾기",
                 employment: "취업 준비 자료",
             },
+            simulator: {
+                simulator: "시뮬레이터",
+            },
+            community: {
+                community: "커뮤니티",
+            },
         },
     },
 
@@ -246,6 +252,13 @@ const ko = {
             success: "필수 입력 검증을 통과했습니다.",
             requiredError: "필수 입력 항목입니다.",
         },
+    },
+
+    // 미구현 서비스의 제작 중 안내
+    underConstruction: {
+        title: "현재 페이지는 제작중입니다.",
+        description: "빠른 시일 내에 완성하겠습니다.",
+        duckLabel: "고개를 숙여 인사하는 픽셀 오리",
     },
 
     // 공통 확인창·알림 버튼 (components/Modal)

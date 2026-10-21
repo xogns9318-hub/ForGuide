@@ -1,0 +1,167 @@
+/* 이 화면이 있는 main만 남은 높이를 제작 중 화면에 전달 */
+:global(.page-main):has(> .page) {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 배너나 테두리 없이 메인 영역 가운데에 배치 */
+.page {
+    flex: 1;
+    width: 100%;
+    min-height: 360px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 32px 16px;
+    text-align: center;
+}
+
+/* 작은 사각형의 픽셀 느낌 유지 */
+.duck {
+    display: block;
+    flex-shrink: 0;
+    width: 200px;
+    height: auto;
+    image-rendering: pixelated;
+}
+
+/* 목 부근을 기준으로 머리를 숙였다가 다시 들기 */
+.head {
+    transform-box: view-box;
+    transform-origin: 20px 27px;
+    animation: duckHeadBow 3.2s steps(6, end) infinite;
+}
+
+/* 몸통도 발 위에서 약간 낮아지도록 처리 */
+.body {
+    transform-box: view-box;
+    transform-origin: 20px 40px;
+    animation: duckBodyBow 3.2s steps(6, end) infinite;
+}
+
+/* 머리 동작에 맞춰 정면 표정을 교체 */
+.faceUp {
+    animation: duckFaceUp 3.2s steps(1, end) infinite;
+}
+
+.faceDown {
+    opacity: 0;
+    animation: duckFaceDown 3.2s steps(1, end) infinite;
+}
+
+/* 요청한 두 문구 사이의 간격 */
+.message {
+    display: grid;
+    gap: 8px;
+}
+
+.title {
+    color: var(--ink);
+    font-size: clamp(20px, 2.4vw, 26px);
+    line-height: 1.5;
+    word-break: keep-all;
+}
+
+.description {
+    color: var(--muted);
+    font-size: clamp(14px, 1.6vw, 17px);
+    line-height: 1.7;
+    word-break: keep-all;
+}
+
+/* 정면 → 고개 숙이기 → 잠시 멈춤 → 정면으로 복귀 */
+@keyframes duckHeadBow {
+
+    0%,
+    18%,
+    82%,
+    100% {
+        transform: translateY(0) scaleY(1);
+    }
+
+    38%,
+    62% {
+        transform: translateY(7px) scaleY(0.8);
+    }
+}
+
+/* 머리 움직임과 같은 주기로 몸통도 조금 숙임 */
+@keyframes duckBodyBow {
+
+    0%,
+    18%,
+    82%,
+    100% {
+        transform: scaleY(1);
+    }
+
+    38%,
+    62% {
+        transform: scaleY(0.94);
+    }
+}
+
+/* 고개를 숙이는 중에는 뜬 눈을 숨김 */
+@keyframes duckFaceUp {
+
+    0%,
+    28%,
+    76%,
+    100% {
+        opacity: 1;
+    }
+
+    29%,
+    75% {
+        opacity: 0;
+    }
+}
+
+/* 같은 시점에 감은 눈을 표시 */
+@keyframes duckFaceDown {
+
+    0%,
+    28%,
+    76%,
+    100% {
+        opacity: 0;
+    }
+
+    29%,
+    75% {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .page {
+        min-height: 320px;
+        gap: 20px;
+        padding: 24px 0;
+    }
+
+    .duck {
+        width: 160px;
+    }
+}
+
+/* 움직임 줄이기 설정을 사용하면 정면 자세로 고정 */
+@media (prefers-reduced-motion: reduce) {
+
+    .head,
+    .body,
+    .faceUp,
+    .faceDown {
+        animation: none;
+    }
+
+    .faceUp {
+        opacity: 1;
+    }
+
+    .faceDown {
+        opacity: 0;
+    }
+}
