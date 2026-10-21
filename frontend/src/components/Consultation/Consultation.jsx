@@ -42,6 +42,13 @@ export default function Consultation() {
 
     // 안내받기를 눌러 확정한 조건을 별도로 보관
     const [confirmed, setConfirmed] = useState(null);
+    // 입력 조건이 달라지면 이전 조회 결과는 더 이상 유효하지 않다.
+    // 현재 화면에서는 confirmed가 결과 표시 여부를 결정한다.
+    // 값을 null로 바꾸면 이전 조건 확인 영역이 즉시 사라진다.
+    function clearPreviousResult() {
+        // 사용자가 안내받기를 다시 누를 때까지 이전 결과를 숨긴다.
+        setConfirmed(null);
+    }
 
     useEffect(() => {
         // 화면을 떠난 뒤 완료된 요청이 상태를 바꾸지 않도록 처리
@@ -98,25 +105,93 @@ export default function Consultation() {
     const canSubmit = Boolean(selectedTopic && keywords.length > 0);
 
     function handleTopicChange(value) {
-        // 분야가 바뀌면 이전 분야의 키워드와 확인 내용 초기화
+        // 현재 선택과 같은 분야라면 조건이 바뀐 것이 아니다.
+        // 불필요하게 키워드와 결과를 초기화하지 않는다.
+        if (topic === value) {
+            return;
+        }
+
+        // 새 분야를 현재 선택값으로 반영한다.
         setTopic(value);
+
+        // 이전 분야에서 선택한 키워드를 새 분야에 그대로 사용하지 않는다.
+        // 분야마다 선택할 수 있는 키워드가 다르기 때문이다.
         setKeywords([]);
+
+        // 이전 결과는 이전 분야와 키워드로 만든 결과다.
+        // 새 조건으로 다시 안내받기 전까지 숨긴다.
+        clearPreviousResult();
     }
 
     function handleKeywordChange(keyword) {
-        // 선택한 키워드를 다시 누르면 해제하고, 없으면 추가
+        // 현재 선택 목록을 기준으로 다음 선택 목록을 만든다.
+        // 이미 선택한 키워드를 다시 누르면 선택을 해제한다.
+        // 선택하지 않은 키워드라면 기존 목록에 추가한다.
         setKeywords((previous) =>
             previous.includes(keyword)
                 ? previous.filter((item) => item !== keyword)
                 : [...previous, keyword],
         );
 
+        // 키워드를 추가하거나 해제하면 검색 조건이 달라진다.
+        // 이전 조건으로 표시한 결과는 바로 숨긴다.
+        clearPreviousResult();
     }
 
     function handleProvinceChange(value) {
-        // 시·도가 바뀌면 이전 시·군·구 선택을 전체로 초기화
+        // 같은 시·도를 다시 선택한 경우에는 기존 상태를 유지한다.
+        if (province === value) {
+            return;
+        }
+
+        // 새 시·도를 현재 선택값으로 반영한다.
         setProvince(value);
+
+        // 이전 시·도에 속한 시·군·구가 남지 않도록 초기화한다.
+        // 빈 문자열은 기존 선택창에서 '전체'를 의미한다.
         setDistrict("");
+
+        // 지역이 달라졌으므로 이전 결과를 숨긴다.
+        clearPreviousResult();
+    }
+
+    function handleDistrictChange(value) {
+        // 같은 시·군·구를 다시 선택하면 기존 결과를 유지한다.
+        if (district === value) {
+            return;
+        }
+
+        // 변경한 하위 지역을 반영한다.
+        setDistrict(value);
+
+        // 이전 지역 조건의 결과를 숨긴다.
+        clearPreviousResult();
+    }
+
+    function handleLanguageChange(value) {
+        // 같은 언어를 다시 선택하면 조건이 바뀌지 않은 것이다.
+        if (language === value) {
+            return;
+        }
+
+        // 새 상담 언어를 반영한다.
+        setLanguage(value);
+
+        // 다른 언어 조건으로 조회한 이전 결과를 숨긴다.
+        clearPreviousResult();
+    }
+
+    function handleMethodChange(value) {
+        // 같은 상담 방식을 다시 선택하면 기존 상태를 유지한다.
+        if (method === value) {
+            return;
+        }
+
+        // 새 상담 방식을 반영한다.
+        setMethod(value);
+
+        // 이전 상담 방식으로 만든 결과를 숨긴다.
+        clearPreviousResult();
     }
 
     function handleSubmit(event) {
@@ -270,9 +345,8 @@ export default function Consultation() {
                                     labelledBy="consultation-district-label"
                                     value={district}
                                     options={districtOptions}
-                                    onChange={(value) => {
-                                        setDistrict(value);
-                                    }}
+                                    // 지역 변경과 이전 결과 숨김을 함께 처리한다.
+                                    onChange={handleDistrictChange}
                                 />
                             </div>
 
@@ -285,9 +359,8 @@ export default function Consultation() {
                                     labelledBy="consultation-language-label"
                                     value={language}
                                     options={languageOptions}
-                                    onChange={(value) => {
-                                        setLanguage(value);
-                                    }}
+                                    // 언어 변경과 이전 결과 숨김을 함께 처리한다.
+                                    onChange={handleLanguageChange}
                                 />
                             </div>
 
@@ -300,9 +373,8 @@ export default function Consultation() {
                                     labelledBy="consultation-method-label"
                                     value={method}
                                     options={methodOptions}
-                                    onChange={(value) => {
-                                        setMethod(value);
-                                    }}
+                                    // 상담 방식 변경과 이전 결과 숨김을 함께 처리한다.
+                                    onChange={handleMethodChange}
                                 />
                             </div>
                         </div>
@@ -335,8 +407,8 @@ export default function Consultation() {
                                 <section className="consultation-summary">
                                     <h3>선택한 상담 조건</h3>
                                     <p className="form-help">
-                                        조건을 변경하고 다시 안내받기를
-                                        누를 수 있습니다.
+                                        조건을 변경하면 이전 결과가 숨겨집니다.
+                                        안내받기를 눌러 다시 확인해주세요.
                                     </p>
 
                                     <dl>
