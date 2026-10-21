@@ -92,6 +92,12 @@ const ko = {
                 jobListings: "일자리 찾기",
                 employment: "취업 준비 자료",
             },
+            simulator: {
+                simulator: "시뮬레이터",
+            },
+            community: {
+                community: "커뮤니티",
+            },
         },
     },
 
