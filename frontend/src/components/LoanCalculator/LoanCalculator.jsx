@@ -178,8 +178,8 @@ export default function LoanCalculator({ mode = "monthly" }) {
                         className="loan-calculator-title"
                     >
                         {isInterestPage
-                            ? "총 이자 계산기"
-                            : "월 상환액 계산기"}
+                            ? "총 이자"
+                            : "월 상환액"}
                     </h2>
 
                     <form

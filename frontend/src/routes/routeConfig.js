@@ -2,7 +2,7 @@
 export const categories = [
     {
         id: "counseling",
-        label: "상담",
+        label: "상담 가이드",
         path: "/categories/counseling",
         description:
             "내 상황에 맞는 상담을 찾고, 상담에 필요한 준비와 설명을 정리하세요.",
@@ -25,28 +25,28 @@ export const categories = [
     },
     {
         id: "recommendation",
-        label: "추천",
+        label: "추천 가이드",
         path: "/categories/recommendation",
         description:
             "대출·보험·계좌를 비교하고, 목적에 맞는 금융 서비스를 살펴보세요.",
         children: [
             {
                 id: "loan",
-                label: "대출 상품 추천",
+                label: "대출 상품",
                 path: "/service/loan",
                 description:
                     "대출 이용 정보를 입력하고, 목적에 맞는 상품을 살펴보세요.",
             },
             {
                 id: "insurance",
-                label: "보험 상품 추천",
+                label: "보험 상품",
                 path: "/service/insurance",
                 description:
                     "기본 정보와 필요한 보장을 바탕으로 보험 상품을 살펴보세요.",
             },
             {
                 id: "account",
-                label: "계좌 추천",
+                label: "계좌 개설",
                 path: "/service/account",
                 description:
                     "급여 수령과 송금 등 이용 목적에 맞는 계좌를 살펴보세요.",
@@ -55,21 +55,21 @@ export const categories = [
     },
     {
         id: "repayment",
-        label: "계산 도우미",
+        label: "계산 가이드",
         path: "/categories/repayment",
         description:
             "월 상환액과 총이자, 상환 일정을 확인하며 자금 계획을 세워보세요.",
         children: [
             {
                 id: "monthlyPayment",
-                label: "월 상환액 계산기",
+                label: "월 상환액",
                 path: "/service/monthlyPayment",
                 description:
                     "대출금액과 금리, 기간을 입력하고 예상 월 상환액을 확인하세요.",
             },
             {
                 id: "totalInterest",
-                label: "총 이자 계산기",
+                label: "총 이자",
                 path: "/service/totalInterest",
                 description:
                     "상환 기간 동안 발생하는 예상 총 이자와 총 상환액을 확인하세요.",
@@ -78,21 +78,21 @@ export const categories = [
     },
     {
         id: "employment",
-        label: "취업 도우미",
+        label: "취업 가이드",
         path: "/categories/employment",
         description:
             "취업 준비자료와 일자리 정보를 살펴보고, 다음 단계를 준비하세요.",
         children: [
             {
                 id: "jobListings",
-                label: "일자리 목록",
+                label: "일자리 찾기",
                 path: "/service/jobListings",
                 description:
                     "나에게 맞는 일자리를 살펴보세요.",
             },
             {
                 id: "employment",
-                label: "취업 준비자료",
+                label: "취업 준비 자료",
                 path: "/service/employment",
                 description:
                     "지원 방식에 맞는 이력서를 작성하고 저장하거나 출력하세요.",
