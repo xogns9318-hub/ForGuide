@@ -1,7 +1,10 @@
 import { createPortal } from "react-dom";
+import { useTranslation } from "react-i18next";
 import styles from "../Modal/Modal.module.css";
 
+
 export default function JobListingDetailModal({ listing, onClose }) {
+    const { t } = useTranslation();
     // 선택한 카드가 없으면 모달 그리지 않는다.
     if  (!listing) {
         return null;
@@ -29,7 +32,7 @@ export default function JobListingDetailModal({ listing, onClose }) {
                     type="button"
                     className="job-listing-detail-close"
                     onClick={onClose}
-                    aria-label="상세 안내 닫기"
+                    aria-label={t("jobListings.detailModal.closeAria")}
                 >
                     ×
                 </button>
@@ -42,14 +45,14 @@ export default function JobListingDetailModal({ listing, onClose }) {
 
                 {listing.detail && (
                     <section className="job-listing-detail-section">
-                        <h3>어떤 곳인가요?</h3>
+                        <h3>{t("jobListings.detailModal.about")}</h3>
                         <p>{listing.detail}</p>
                     </section>
                 )}
 
                 {listing.recommendedFor?.length > 0 && (
                     <section className="job-listing-detail-section">
-                        <h3>이런 분들이 이용하면 좋아요</h3>
+                        <h3>{t("jobListings.detailModal.recommendedFor")}</h3>
 
                         <ul className="job-listing-detail-recommendations">
                             {listing.recommendedFor.map((recommendation) => (
@@ -63,7 +66,7 @@ export default function JobListingDetailModal({ listing, onClose }) {
 
                 {listing.caution && (
                     <section className="job-listing-detail-section">
-                        <h3>이용 전 확인</h3>
+                        <h3>{t("jobListings.detailModal.caution")}</h3>
 
                         <p className="job-listing-detail-caution">
                             {listing.caution}
@@ -72,9 +75,11 @@ export default function JobListingDetailModal({ listing, onClose }) {
                 )}
 
                 <p className="job-listing-detail-source">
-                    정보 출처: {listing.sourceName ?? "확인 필요"}
+                    {t("jobListings.detailModal.source")}:{" "}
+                    {listing.sourceName ?? t("jobListings.detailModal.unknown")}
                     {" · "}
-                    확인일: {listing.verifiedAt ?? "확인 필요"}
+                    {t("jobListings.detailModal.verifiedAt")}:{" "}
+                    {listing.verifiedAt ?? t("jobListings.detailModal.unknown")}
                 </p>
 
 
@@ -85,7 +90,8 @@ export default function JobListingDetailModal({ listing, onClose }) {
                         target="_blank"
                         rel="noopener noreferrer"
                     >
-                        공식 사이트 바로가기 ↗
+                        {t("jobListings.actions.openOfficialSite")}{" "}
+                        <span aria-hidden="true">↗</span>
                     </a>
 
                     <button
@@ -93,7 +99,7 @@ export default function JobListingDetailModal({ listing, onClose }) {
                         className="button"
                         onClick={onClose}
                     >
-                        닫기
+                        {t("jobListings.actions.close")}
                     </button>
                 </div>
             </section>

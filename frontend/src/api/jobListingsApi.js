@@ -5,6 +5,9 @@ const EPS_REGION_GUIDE_URL = "https://www.eps.go.kr/eo/main.eo?langCD=kr";
 function createEmploymentCenterListing({ region, centerName, centerUrl }) {
     return {
         id: `${region}-employment-center`,
+        // 화면 언어가 바뀌어도 실제 센터 주소와 지역 필터 값은 유지한다.
+        translationKey: "employmentCenter",
+        translationValues: { region, centerName },
         icon: "building",
         title: `${centerName}`,
         summary: `${region} 지역의 구직·취업 지원과 고용 관련 상담 정보를 확인할 수 있습니다.`,
@@ -30,6 +33,8 @@ function createEmploymentCenterListing({ region, centerName, centerUrl }) {
 function createEpsRegionalListing(region) {
     return {
         id: `${region}-eps-guide`,
+        translationKey: "epsRegional",
+        translationValues: { region },
         icon: "people",
         title: "고용허가제(EPS) 지역 안내",
         summary: `${region} 지역 외국인근로자의 고용 절차와 관할 고용센터 정보를 확인할 수 있습니다.`,

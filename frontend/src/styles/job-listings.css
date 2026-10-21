@@ -1,12 +1,6 @@
 .job-listings-page {
     gap: 36px;
 }
-.job-listings-external-notice {
-    align-self: flex-start;
-    margin: -26px 0 0;
-    color: var(--muted);
-    font-size: 14px;
-}
 .job-listings-section {
     display: flex;
     flex-direction: column;
@@ -233,9 +227,6 @@
 @media (max-width: 768px) {
     .job-listings-page {
         gap: 28px;
-    }
-    .job-listings-external-notice {
-        margin-top: -18px;
     }
     .job-listings-grid {
         grid-template-columns: 1fr;

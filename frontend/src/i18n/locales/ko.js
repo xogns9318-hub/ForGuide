@@ -207,6 +207,37 @@ const ko = {
         },
     },
 
+    jobListings: {
+        page: {
+            title : "일자리 목록",
+            description: "나에게 맞는 취업 정보와 지원 기관을 찾아보세요.",
+        },
+        actions: {
+            details: "자세히 보기",
+            openSite: "사이트 바로가기",
+            openOfficialSite: "공식 사이트 바로가기",
+            close: "닫기",
+        },
+        labels: {
+            target: "대상",
+            language: "언어",
+            region: "지역 선택",
+        },
+        detailModal: {
+            about: "어떤 곳인가요?",
+            recommendedFor: "이런 분들이 이용하면 좋아요",
+            caution: "이용 전 확인",
+            source: "정보 출처",
+            verifiedAt: "확인일",
+            unknown: "확인 필요",
+            closeAria: "상세 안내 닫기",
+        },
+        status: {
+            loading: "기관 정보를 불러오는 중입니다.",
+            error: "기관 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.",
+        },
+    },
+
     status: {
         loading: {
             title: "이동중입니다! 잠시만 기다려주세요",
