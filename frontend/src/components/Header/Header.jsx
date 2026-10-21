@@ -19,9 +19,9 @@ const guideGroups = categories.map((category) => ({
     titleKey: `navigation.${category.id}`,
     items: category.children.length
         ? category.children.map((child) => ({
-              ...child,
-              labelKey: `home.features.${category.id}.${child.id}`,
-          }))
+            ...child,
+            labelKey: `home.features.${category.id}.${child.id}`,
+        }))
         : introductionItems.filter((item) => item.id === category.id),
 }));
 
@@ -101,9 +101,6 @@ export default function Header({ isLoggedIn = false, onLogout }) {
     const closeTimerRef = useRef(null);
     const mobileButtonRef = useRef(null);
     const titleRefs = useRef({});
-
-    // 현재 적용 중인 커뮤니티 전용 헤더 배경 유지
-    const isCommunityPage = pathname === "/service/community";
 
     const isDesktopMenuOpen = !isMobile && openMenu !== null;
 
@@ -323,9 +320,8 @@ export default function Header({ isLoggedIn = false, onLogout }) {
     function renderGroups(menu) {
         return (
             <div
-                className={`${styles.groups} ${
-                    menu.id !== "guides" ? styles.singleGroup : ""
-                }`}
+                className={`${styles.groups} ${menu.id !== "guides" ? styles.singleGroup : ""
+                    }`}
             >
                 {menu.groups.map((group) => (
                     <section key={group.id} className={styles.group}>
@@ -394,7 +390,6 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                 ref={headerRef}
                 className={[
                     styles.header,
-                    isCommunityPage ? styles.community : "",
                     isDesktopMenuOpen ? styles.expanded : "",
                 ].join(" ")}
                 style={{ "--header-height": `${headerHeight}px` }}
@@ -432,12 +427,6 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                                     alt="ForGuide"
                                 />
                             </Link>
-
-                            {isCommunityPage && (
-                                <span className={styles.communityTitle}>
-                                    {t("navigation.community")}
-                                </span>
-                            )}
                         </div>
 
                         {renderActions(styles.desktopActions)}
