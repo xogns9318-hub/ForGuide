@@ -254,6 +254,13 @@ const ko = {
         },
     },
 
+    // 미구현 서비스의 제작 중 안내
+    underConstruction: {
+        title: "현재 페이지는 제작중입니다.",
+        description: "빠른 시일 내에 완성하겠습니다.",
+        duckLabel: "고개를 숙여 인사하는 픽셀 오리",
+    },
+
     // 공통 확인창·알림 버튼 (components/Modal)
     modal: {
         confirm: "확인",

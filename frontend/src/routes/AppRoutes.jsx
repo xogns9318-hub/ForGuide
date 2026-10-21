@@ -14,6 +14,16 @@ import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
 import TotalInterest from "../components/TotalInterest/TotalInterest.jsx";
 import Consultation from "../components/Consultation/Consultation.jsx";
 import EmploymentResume from "../components/Employment/EmploymentResume.jsx";
+import UnderConstruction from "../components/UnderConstruction/UnderConstruction.jsx";
+
+// 제작 중 화면을 표시할 서비스 주소만 지정
+const constructionPaths = new Set([
+    "/service/preparationCard",
+    "/service/loan",
+    "/service/insurance",
+    "/service/account",
+    "/service/simulator",
+]);
 
 // 배너와 세부 기능을 연결할 서비스 주소 목록
 const serviceRoutes = categories.flatMap((category) => [
@@ -74,24 +84,24 @@ function PlaceholderPage({ title, description, categoryId, serviceId, children =
     // 세부 서비스 이름과 주 기능 이름은 기존 번역키를 사용
     const translatedTitle = serviceId
         ? t(`home.features.${categoryId}.${serviceId}`, {
-              defaultValue: title,
-          })
+            defaultValue: title,
+        })
         : categoryId
-          ? t(`navigation.${categoryId}`, {
+            ? t(`navigation.${categoryId}`, {
                 defaultValue: title,
             })
-          : title;
+            : title;
 
     // 번역된 설명이 없으면 경로 설정의 문구로 표시
     const translatedDescription = serviceId
         ? t(`service.${serviceId}.description`, {
-              defaultValue: description,
-          })
+            defaultValue: description,
+        })
         : categoryId
-          ? t(`home.categories.${categoryId}.description`, {
+            ? t(`home.categories.${categoryId}.description`, {
                 defaultValue: description,
             })
-          : description;
+            : description;
 
     // 본문이 없는 서비스·회원 임시 화면의 제목 표시 여부
     const showPlainHeading = children.length === 0 && (!categoryId || Boolean(serviceId));
@@ -225,7 +235,9 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                             key={route.path}
                             path={route.path}
                             element={
-                                route.path === "/service/monthlyPayment" ? (
+                                constructionPaths.has(route.path) ? (
+                                    <UnderConstruction />
+                                ) : route.path === "/service/monthlyPayment" ? (
                                     <CalculatorPage
                                         categoryId={route.categoryId}
                                         serviceId={route.id}
