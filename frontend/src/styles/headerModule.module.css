@@ -15,14 +15,15 @@
     position: fixed;
     inset: 0;
     z-index: 299;
-    background: rgb(0 0 0 / 50%);
+    background: rgb(0 0 0 / 8%);
 }
 
 /* 기존 커뮤니티 전용 이미지 배경 유지 */
 .community {
     background-color: #f5fcf8;
     background-image:
-        linear-gradient(rgb(255 255 255 / 52%), rgb(255 255 255 / 52%)),
+        linear-gradient(rgb(255 255 255 / 52%),
+            rgb(255 255 255 / 52%)),
         url("/community-scene-banner2.png");
     background-position: center bottom;
     background-repeat: no-repeat;
@@ -99,12 +100,12 @@
 }
 
 /* 회원 메뉴 사이의 세로 구분선 유지 */
-.actions > * + * {
+.actions>*+* {
     position: relative;
     padding-left: 12px;
 }
 
-.actions > * + *::before {
+.actions>*+*::before {
     content: "";
     position: absolute;
     left: 0;
@@ -116,7 +117,7 @@
     pointer-events: none;
 }
 
-.actions > a:hover,
+.actions>a:hover,
 .logout:hover {
     color: var(--primary);
 }
@@ -183,8 +184,8 @@
 }
 
 /* 글씨에서 8px 떨어진 밑줄을 준비 */
-.menuTitle > span,
-.menuLink > span {
+.menuTitle>span,
+.menuLink>span {
     text-decoration-line: underline;
     text-decoration-color: transparent;
     text-decoration-thickness: 2px;
@@ -200,11 +201,11 @@
     color: var(--primary);
 }
 
-.menuTitle[data-open="true"] > span,
-.menuTitle:focus-visible > span,
-.menuLink:hover > span,
-.menuLink:focus-visible > span,
-.menuLink[aria-current="page"] > span {
+.menuTitle[data-open="true"]>span,
+.menuTitle:focus-visible>span,
+.menuLink:hover>span,
+.menuLink:focus-visible>span,
+.menuLink[aria-current="page"]>span {
     text-decoration-color: currentColor;
 }
 
@@ -354,7 +355,7 @@
         background: var(--surface);
     }
 
-    .mobileSection + .mobileSection {
+    .mobileSection+.mobileSection {
         border-top: 1px solid var(--line);
     }
 
@@ -385,13 +386,13 @@
         font-size: 14px;
     }
 
-    .mobileActions > :global(.header-language) {
+    .mobileActions> :global(.header-language) {
         flex-basis: 100%;
         justify-content: center;
         padding-left: 0;
     }
 
-    .mobileActions > :global(.header-language)::before {
+    .mobileActions> :global(.header-language)::before {
         display: none;
     }
 }
@@ -413,5 +414,390 @@
     /* 휴대폰의 좁은 화면에서는 한 열로 표시 */
     .mobilePanel .groups {
         grid-template-columns: 1fr;
+    }
+}
+
+/* 드롭다운을 열면 본문만 어둡게 하고 뒤쪽 화면을 흐리게 표시 */
+.backdrop {
+    /* 본문을 어둡게 표시하는 정도 */
+    background: rgb(0 0 0 / 18%);
+
+    /* Safari 브라우저에서도 블러 효과를 적용 */
+    -webkit-backdrop-filter: blur(5px);
+
+    /* 뒤쪽 본문에 블러 효과 적용 */
+    backdrop-filter: blur(5px);
+
+    /* 기본 상태에서는 보이지 않도록 설정 */
+    opacity: 0;
+
+    /* 기본 상태에서는 화면에서 숨김 */
+    visibility: hidden;
+
+    /* 닫힌 상태에서는 마우스 동작을 방해하지 않음 */
+    pointer-events: none;
+
+    /* 어두운 배경이 자연스럽게 나타나고 사라지도록 설정 */
+    transition:
+        opacity 300ms ease,
+        visibility 0s linear 300ms;
+}
+
+
+/* 카테고리에 마우스를 올리면 어두운 배경도 서서히 나타남 */
+.backdrop[data-open="true"] {
+    /* 어두운 배경을 표시 */
+    opacity: 1;
+
+    /* 화면에 보이도록 설정 */
+    visibility: visible;
+
+    /* 배경을 클릭하면 드롭다운을 닫을 수 있도록 설정 */
+    pointer-events: auto;
+
+    /* 어두운 배경이 나타날 때 부드럽게 전환 */
+    transition:
+        opacity 300ms ease,
+        visibility 0s linear 0s;
+}
+
+
+/* 모바일에는 데스크톱용 어두운 배경이 나타나지 않도록 처리 */
+@media (max-width: 1024px) {
+    .backdrop {
+        display: none;
+    }
+}
+
+
+/* 큰 화면에서만 카테고리 3칸의 꾸밈과 드롭다운 효과를 적용 */
+@media (min-width: 1025px) {
+
+    /* 아래로 스크롤해도 로고와 카테고리 메뉴를 화면 맨 위에 고정 */
+    .header {
+        /* 스크롤 중에도 지정한 위치에 고정 */
+        position: sticky;
+
+        /* 화면 최상단에 위치 */
+        top: 0;
+
+        /* 일반 본문보다 앞쪽에 표시 */
+        z-index: 100;
+    }
+
+
+    /* 메뉴가 열리면 어두운 배경보다 헤더를 앞쪽에 표시 */
+    .expanded {
+        /* 어두운 배경의 z-index는 299 */
+        z-index: 300;
+    }
+
+
+    /* 기존 카테고리 3칸의 너비는 그대로 두고 경계선만 추가 */
+    .navItem {
+        /* 각 카테고리 왼쪽에 세로 구분선 표시 */
+        border-left: 1px solid var(--line);
+    }
+
+
+    /* 세 번째 카테고리의 오른쪽 선까지 표시 */
+    .navItem:last-child {
+        /* 마지막 카테고리 오른쪽에 세로 구분선 표시 */
+        border-right: 1px solid var(--line);
+    }
+
+
+    /* 가이드 소개 / 가이드 목록 / 문의하기 글씨를 칸 정중앙에 정렬 */
+    .menuTitle {
+        /* 내부 글씨의 배치 방식을 flex로 변경 */
+        display: flex;
+
+        /* 글씨의 세로 위치를 가운데로 정렬 */
+        align-items: center;
+
+        /* 글씨의 가로 위치를 가운데로 정렬 */
+        justify-content: center;
+    }
+
+
+    /* 펼침 창 하나를 유지하며 높이·투명도·위치를 천천히 전환 */
+    .dropdown {
+        /* 실제 높이는 Header.jsx에서 측정해서 전달 */
+        height: 0;
+
+        /* 기존 최대 높이 제한은 내부 콘텐츠에서 처리 */
+        max-height: none;
+
+        /* 애니메이션 중 넘치는 내용은 숨김 */
+        overflow: hidden;
+
+        /* 내부 스크롤은 dropdownContent에서 관리 */
+        overscroll-behavior: auto;
+
+        /* 기존 상단 테두리는 내부 콘텐츠에서 처리 */
+        border-top: 0;
+
+        /* 기본 상태에서는 투명하게 표시 */
+        opacity: 0;
+
+        /* 기본 상태에서는 화면에서 숨김 */
+        visibility: hidden;
+
+        /* 처음 열릴 때 위에서 아래로 내려오는 효과 준비 */
+        transform: translateY(-10px);
+
+        /* 닫힌 상태에서는 마우스 동작을 받지 않음 */
+        pointer-events: none;
+
+        /* 드롭다운 높이와 위치가 부드럽게 변경되도록 설정 */
+        transition:
+            height 420ms cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 300ms ease,
+            transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+            visibility 0s linear 420ms;
+    }
+
+
+    /* 처음 열릴 때 위에서 아래로 내려오며 자연스럽게 나타남 */
+    .dropdown[data-open="true"] {
+        /* 펼쳐진 목록을 표시 */
+        opacity: 1;
+
+        /* 화면에 보이도록 설정 */
+        visibility: visible;
+
+        /* 기존 위치로 내려와 표시 */
+        transform: translateY(0);
+
+        /* 목록의 링크와 버튼을 사용할 수 있도록 설정 */
+        pointer-events: auto;
+
+        /* 열리는 과정과 카테고리 높이 변경에 애니메이션 적용 */
+        transition:
+            height 420ms cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 300ms ease,
+            transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+            visibility 0s linear 0s;
+    }
+
+
+    /* 화면이 낮을 때는 이 영역 내부에서만 목록을 스크롤 */
+    .dropdownContent {
+        /* 헤더를 제외한 화면 높이만큼 목록을 표시 */
+        max-height: calc(100dvh - var(--header-height));
+
+        /* 목록이 길어지면 내부에서 세로 스크롤 */
+        overflow-y: auto;
+
+        /* 스크롤이 바깥 본문으로 전달되는 현상 방지 */
+        overscroll-behavior: contain;
+
+        /* 드롭다운 상단에 구분선 표시 */
+        border-top: 1px solid var(--line);
+
+        /* 목록 배경색은 기존 흰색 유지 */
+        background: var(--surface);
+    }
+
+
+    /* 다른 카테고리에 마우스를 올릴 때 글씨도 부드럽게 등장 */
+    .dropdownBody {
+        /* 새로운 목록이 나타나는 애니메이션 적용 */
+        animation: dropdownContentEnter 300ms ease both;
+    }
+
+
+    /* 가이드 목록 6개 그룹 각각을 자기 칸의 정중앙에 배치 */
+    .group {
+        /* 그룹 안의 제목과 글씨 가운데 정렬 */
+        text-align: center;
+    }
+
+
+    /* 소개 목록과 문의 목록은 한 그룹 전체를 사이트 정중앙에 배치 */
+    .singleGroup {
+        /* 하나의 그룹을 가로 중앙에 배치 */
+        justify-content: center;
+    }
+
+
+    /* 목록 안의 항목들을 그룹의 중앙으로 모음 */
+    .linkList {
+        /* 목록의 각 항목을 가로 중앙에 정렬 */
+        align-items: center;
+    }
+
+
+    /* 각 링크와 버튼에 표시된 문구도 가운데 정렬 */
+    .menuLink {
+        /* 링크 안에 있는 글씨를 가운데 정렬 */
+        text-align: center;
+    }
+}
+
+
+/* 바뀐 카테고리의 목록이 살짝 내려오며 나타나는 효과 */
+@keyframes dropdownContentEnter {
+
+    /* 목록이 처음 나타나는 상태 */
+    from {
+        /* 처음에는 투명하게 표시 */
+        opacity: 0;
+
+        /* 원래 위치보다 7px 위에서 시작 */
+        transform: translateY(-7px);
+    }
+
+    /* 목록이 완전히 나타나는 상태 */
+    to {
+        /* 완전히 보이도록 설정 */
+        opacity: 1;
+
+        /* 원래 위치로 이동 */
+        transform: translateY(0);
+    }
+}
+
+/* 움직임 줄이기를 설정한 이용자에게는 애니메이션을 생략 */
+@media (prefers-reduced-motion: reduce) {
+
+    .dropdown,
+    .dropdown[data-open="true"],
+    .backdrop,
+    .backdrop[data-open="true"] {
+        transition: none;
+    }
+
+    .dropdownBody {
+        animation: none;
+    }
+}
+
+@media (min-width: 1025px) {
+
+    /* 드롭다운 목록 전체를 기준으로 세로선 위치 설정 */
+    .dropdownContent .groups {
+        /* 세로선의 위치를 잡기 위한 기준 */
+        position: relative;
+    }
+
+
+    /* 각 메뉴 그룹을 기준으로 세로선 위치 설정 */
+    .dropdownContent .group {
+        /* 그룹별 세로선의 위치를 잡기 위한 기준 */
+        position: relative;
+    }
+
+    /* 6개 그룹 전체의 가장 왼쪽과 오른쪽 세로선 */
+    .dropdownContent .groups:not(.singleGroup)::before,
+    .dropdownContent .groups:not(.singleGroup)::after {
+        /* 세로선 생성 */
+        content: "";
+
+        /* 전체 목록을 기준으로 위치 지정 */
+        position: absolute;
+
+        /* 위쪽 여백 24px */
+        top: 24px;
+
+        /* 아래쪽 여백 24px */
+        bottom: 24px;
+
+        /* 세로선 두께 */
+        width: 1px;
+
+        /* 기존 카테고리 구분선과 동일한 색상 */
+        background: var(--line);
+
+        /* 마우스 동작을 방해하지 않도록 설정 */
+        pointer-events: none;
+    }
+
+
+    /* 가이드 목록 가장 왼쪽 세로선 */
+    .dropdownContent .groups:not(.singleGroup)::before {
+        /* 왼쪽 여백에 맞춰 표시 */
+        left: var(--page-padding);
+    }
+
+
+    /* 가이드 목록 가장 오른쪽 세로선 */
+    .dropdownContent .groups:not(.singleGroup)::after {
+        /* 오른쪽 여백에 맞춰 표시 */
+        right: var(--page-padding);
+    }
+
+    /* 마지막 그룹을 제외한 각 그룹 오른쪽에 구분선 추가 */
+    .dropdownContent .groups:not(.singleGroup) .group:not(:last-child)::after {
+        /* 세로선 생성 */
+        content: "";
+
+        /* 각 그룹을 기준으로 위치 지정 */
+        position: absolute;
+
+        /* 전체 세로선과 위쪽 시작 위치를 맞춤 */
+        top: -8px;
+
+        /* 전체 세로선과 아래쪽 끝 위치를 맞춤 */
+        bottom: -16px;
+
+        /* 그룹 사이 간격 24px의 정중앙에 표시 */
+        right: -12px;
+
+        /* 세로선 두께 */
+        width: 1px;
+
+        /* 기존 카테고리 구분선과 동일한 색상 */
+        background: var(--line);
+
+        /* 마우스 동작을 방해하지 않도록 설정 */
+        pointer-events: none;
+    }
+
+    /* 기존에 전체 영역 양쪽에 표시되던 세로선 제거 */
+    .dropdownContent .groups.singleGroup::before,
+    .dropdownContent .groups.singleGroup::after {
+        /* 소개와 문의에서는 전체 양쪽 선을 사용하지 않음 */
+        display: none;
+    }
+
+
+    /* 중앙에 배치된 소개·문의 목록의 양쪽에 구분선 추가 */
+    .dropdownContent .groups.singleGroup .group::before,
+    .dropdownContent .groups.singleGroup .group::after {
+        /* 세로선 생성 */
+        content: "";
+
+        /* 중앙 목록을 기준으로 위치 지정 */
+        position: absolute;
+
+        /* 위쪽 여백을 기존 세로선과 동일하게 설정 */
+        top: -8px;
+
+        /* 아래쪽 여백을 기존 세로선과 동일하게 설정 */
+        bottom: -16px;
+
+        /* 세로선 두께 */
+        width: 1px;
+
+        /* 기존 카테고리 구분선과 동일한 색상 */
+        background: var(--line);
+
+        /* 마우스 동작을 방해하지 않도록 설정 */
+        pointer-events: none;
+    }
+
+
+    /* 소개·문의 목록 왼쪽 세로선 */
+    .dropdownContent .groups.singleGroup .group::before {
+        /* 중앙 목록의 왼쪽 경계에 표시 */
+        left: 0;
+    }
+
+
+    /* 소개·문의 목록 오른쪽 세로선 */
+    .dropdownContent .groups.singleGroup .group::after {
+        /* 중앙 목록의 오른쪽 경계에 표시 */
+        right: 0;
     }
 }

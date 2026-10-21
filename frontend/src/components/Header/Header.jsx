@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { categories } from "../../routes/routeConfig.js";
@@ -79,8 +79,15 @@ export default function Header({ isLoggedIn = false, onLogout }) {
     // 넓은 화면에서는 한 메뉴만 펼침
     const [openMenu, setOpenMenu] = useState(null);
 
+    // 닫힐 때도 마지막 목록을 남겨 두어 부드럽게 접히도록 함
+    const [visibleMenu, setVisibleMenu] = useState(menus[0]);
+
+    // 목록 길이에 따라 드롭다운 높이를 부드럽게 변경
+    const [dropdownHeight, setDropdownHeight] = useState(0);
+
     // 모바일 전체 메뉴의 열림 상태는 별도로 관리
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
     const [isMobile, setIsMobile] = useState(
         () => window.matchMedia("(max-width: 1024px)").matches,
     );
@@ -90,14 +97,47 @@ export default function Header({ isLoggedIn = false, onLogout }) {
 
     // 높이 측정과 키보드 포커스 복원에 사용할 요소 보관
     const headerRef = useRef(null);
+    const dropdownContentRef = useRef(null);
+    const closeTimerRef = useRef(null);
     const mobileButtonRef = useRef(null);
     const titleRefs = useRef({});
 
     // 현재 적용 중인 커뮤니티 전용 헤더 배경 유지
     const isCommunityPage = pathname === "/service/community";
+
     const isDesktopMenuOpen = !isMobile && openMenu !== null;
 
+    // 다른 카테고리로 이동할 때 내용과 높이를 함께 변경
+    function openDesktopMenu(menu) {
+        window.clearTimeout(closeTimerRef.current);
+
+        if (isMobile) return;
+
+        // 변경할 카테고리의 내용을 저장
+        setVisibleMenu(menu);
+
+        // 선택한 카테고리를 펼친 상태로 변경
+        setOpenMenu(menu.id);
+    }
+
+    // 마우스가 빠르게 움직여도 드롭다운이 갑자기 닫히지 않게 처리
+    function scheduleMenuClose() {
+        window.clearTimeout(closeTimerRef.current);
+
+        // 마우스가 메뉴에서 벗어나면 120ms 후 닫기
+        closeTimerRef.current = window.setTimeout(() => {
+            setOpenMenu(null);
+        }, 120);
+    }
+
+    // 다시 헤더 위에 올라오면 닫기 예약 취소
+    function cancelMenuClose() {
+        window.clearTimeout(closeTimerRef.current);
+    }
+
     function closeMenus() {
+        cancelMenuClose();
+
         // 페이지 이동이나 메뉴 종료 시 펼침 상태 초기화
         setOpenMenu(null);
         setIsMobileMenuOpen(false);
@@ -105,9 +145,15 @@ export default function Header({ isLoggedIn = false, onLogout }) {
 
     // 다른 페이지로 이동하면 이전 메뉴를 닫음
     useEffect(() => {
+        cancelMenuClose();
         setOpenMenu(null);
         setIsMobileMenuOpen(false);
     }, [pathname]);
+
+    // 화면에서 헤더가 사라질 때 예약된 타이머 정리
+    useEffect(() => {
+        return () => window.clearTimeout(closeTimerRef.current);
+    }, []);
 
     // 화면 구간이 바뀌면 이전 화면의 메뉴 상태 초기화
     useEffect(() => {
@@ -141,11 +187,40 @@ export default function Header({ isLoggedIn = false, onLogout }) {
         };
     }, []);
 
+    // 열려 있는 메뉴의 실제 높이를 측정해서 CSS 높이 애니메이션에 전달
+    useLayoutEffect(() => {
+        // 모바일이거나 메뉴가 닫혔다면 높이를 0으로 변경
+        if (isMobile || openMenu === null) {
+            setDropdownHeight(0);
+            return;
+        }
+
+        const content = dropdownContentRef.current;
+
+        if (!content) return;
+
+        function updateHeight() {
+            // 최대 화면 높이 제한까지 반영한 실제 높이를 가져옴
+            setDropdownHeight(content.getBoundingClientRect().height);
+        }
+
+        // 현재 선택한 카테고리의 목록 높이를 계산
+        updateHeight();
+
+        // 번역 문구가 길어지거나 브라우저 너비가 바뀌어도 자동 재계산
+        const observer = new ResizeObserver(updateHeight);
+
+        observer.observe(content);
+
+        return () => observer.disconnect();
+    }, [isMobile, openMenu, visibleMenu]);
+
     // 모바일 전체 메뉴를 열었을 때 뒤쪽 본문의 스크롤 차단
     useEffect(() => {
         if (!isMobileMenuOpen) return;
 
         const previousOverflow = document.body.style.overflow;
+
         document.body.style.overflow = "hidden";
 
         return () => {
@@ -178,7 +253,9 @@ export default function Header({ isLoggedIn = false, onLogout }) {
         if (!isMobileMenuOpen || event.key !== "Tab") return;
 
         const elements = Array.from(
-            headerRef.current.querySelectorAll('a[href], button:not(:disabled), [tabindex="0"]'),
+            headerRef.current.querySelectorAll(
+                'a[href], button:not(:disabled), [tabindex="0"]',
+            ),
         ).filter((element) => element.getClientRects().length > 0);
 
         const first = elements[0];
@@ -245,11 +322,17 @@ export default function Header({ isLoggedIn = false, onLogout }) {
 
     function renderGroups(menu) {
         return (
-            <div className={`${styles.groups} ${menu.id !== "guides" ? styles.singleGroup : ""}`}>
+            <div
+                className={`${styles.groups} ${
+                    menu.id !== "guides" ? styles.singleGroup : ""
+                }`}
+            >
                 {menu.groups.map((group) => (
                     <section key={group.id} className={styles.group}>
                         {/* 연한 제목은 클릭할 수 없는 p 태그 */}
-                        <p className={styles.groupTitle}>{t(group.titleKey)}</p>
+                        <p className={styles.groupTitle}>
+                            {t(group.titleKey)}
+                        </p>
 
                         <ul className={styles.linkList}>
                             {group.items.map((item) => {
@@ -269,14 +352,21 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                                             <Link
                                                 to={item.path}
                                                 className={styles.menuLink}
-                                                aria-current={isCurrent ? "page" : undefined}
+                                                aria-current={
+                                                    isCurrent
+                                                        ? "page"
+                                                        : undefined
+                                                }
                                                 onClick={closeMenus}
                                             >
                                                 <span>{label}</span>
                                             </Link>
                                         ) : (
                                             // 문의는 버튼만 표시하고 페이지는 연결하지 않음
-                                            <button type="button" className={styles.menuLink}>
+                                            <button
+                                                type="button"
+                                                className={styles.menuLink}
+                                            >
                                                 <span>{label}</span>
                                             </button>
                                         )}
@@ -292,8 +382,13 @@ export default function Header({ isLoggedIn = false, onLogout }) {
 
     return (
         <>
-            {/* 헤더 뒤의 본문만 검정색 8%로 어둡게 표시 */}
-            {isDesktopMenuOpen && <div className={styles.backdrop} aria-hidden="true" />}
+            {/* 메뉴가 열리면 본문에 반투명 검정색과 블러를 부드럽게 표시 */}
+            <div
+                className={styles.backdrop}
+                data-open={isDesktopMenuOpen}
+                aria-hidden="true"
+                onClick={() => setOpenMenu(null)}
+            />
 
             <header
                 ref={headerRef}
@@ -303,13 +398,17 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                     isDesktopMenuOpen ? styles.expanded : "",
                 ].join(" ")}
                 style={{ "--header-height": `${headerHeight}px` }}
+                onMouseEnter={cancelMenuClose}
                 onMouseLeave={() => {
-                    // 펼친 목록까지 벗어나면 넓은 화면의 메뉴 닫기
-                    if (!isMobile) setOpenMenu(null);
+                    // 빠른 마우스 이동 중 목록이 깜빡이지 않도록 약간 늦게 닫기
+                    if (!isMobile) scheduleMenuClose();
                 }}
                 onBlur={(event) => {
                     // 키보드 포커스가 헤더 밖으로 나가면 닫기
-                    if (!isMobile && !event.currentTarget.contains(event.relatedTarget)) {
+                    if (
+                        !isMobile &&
+                        !event.currentTarget.contains(event.relatedTarget)
+                    ) {
                         setOpenMenu(null);
                     }
                 }}
@@ -328,7 +427,10 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                                 aria-label={t("header.mega.home")}
                                 onClick={closeMenus}
                             >
-                                <img src="/ForGuide_Logo.png" alt="ForGuide" />
+                                <img
+                                    src="/ForGuide_Logo.png"
+                                    alt="ForGuide"
+                                />
                             </Link>
 
                             {isCommunityPage && (
@@ -346,13 +448,21 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                             type="button"
                             className={styles.mobileToggle}
                             aria-label={t(
-                                isMobileMenuOpen ? "header.mega.close" : "header.mega.open",
+                                isMobileMenuOpen
+                                    ? "header.mega.close"
+                                    : "header.mega.open",
                             )}
                             aria-expanded={isMobileMenuOpen}
-                            aria-controls={isMobileMenuOpen ? navigationId : undefined}
+                            aria-controls={
+                                isMobileMenuOpen
+                                    ? navigationId
+                                    : undefined
+                            }
                             onClick={() => {
                                 setOpenMenu(null);
-                                setIsMobileMenuOpen((previous) => !previous);
+                                setIsMobileMenuOpen(
+                                    (previous) => !previous,
+                                );
                             }}
                         >
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -368,9 +478,15 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                     </div>
 
                     {/* 상단 제목은 이동 링크나 클릭 버튼으로 만들지 않음 */}
-                    <nav className={styles.navigation} aria-label={t("header.mega.navigation")}>
+                    <nav
+                        className={styles.navigation}
+                        aria-label={t("header.mega.navigation")}
+                    >
                         {menus.map((menu) => (
-                            <div key={menu.id} className={styles.navItem}>
+                            <div
+                                key={menu.id}
+                                className={styles.navItem}
+                            >
                                 <p
                                     ref={(element) => {
                                         titleRefs.current[menu.id] = element;
@@ -383,39 +499,60 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                                             ? `${navigationId}-${menu.id}`
                                             : undefined
                                     }
-                                    onMouseEnter={() => setOpenMenu(menu.id)}
-                                    onFocus={() => setOpenMenu(menu.id)}
+                                    onMouseEnter={() =>
+                                        openDesktopMenu(menu)
+                                    }
+                                    onFocus={() => openDesktopMenu(menu)}
                                     onKeyDown={(event) => {
                                         // 아래 방향키로 목록의 첫 항목에 이동
                                         if (event.key !== "ArrowDown") return;
 
                                         event.preventDefault();
-                                        setOpenMenu(menu.id);
+
+                                        openDesktopMenu(menu);
 
                                         requestAnimationFrame(() => {
                                             document
-                                                .getElementById(`${navigationId}-${menu.id}`)
-                                                ?.querySelector("a[href], button")
+                                                .getElementById(
+                                                    `${navigationId}-${menu.id}`,
+                                                )
+                                                ?.querySelector(
+                                                    "a[href], button",
+                                                )
                                                 ?.focus();
                                         });
                                     }}
                                 >
                                     <span>{t(menu.titleKey)}</span>
                                 </p>
-
-                                {/* 너비 제한이 없는 바깥 header를 기준으로 펼침 */}
-                                {isDesktopMenuOpen && openMenu === menu.id && (
-                                    <div
-                                        id={`${navigationId}-${menu.id}`}
-                                        className={styles.dropdown}
-                                    >
-                                        {renderGroups(menu)}
-                                    </div>
-                                )}
                             </div>
                         ))}
                     </nav>
                 </div>
+
+                {/* 데스크톱 공용 목록: 메뉴가 바뀔 때 높이를 스르륵 변경 */}
+                {!isMobile && (
+                    <div
+                        id={`${navigationId}-${visibleMenu.id}`}
+                        className={styles.dropdown}
+                        data-open={isDesktopMenuOpen}
+                        style={{ height: `${dropdownHeight}px` }}
+                        aria-hidden={!isDesktopMenuOpen}
+                        inert={!isDesktopMenuOpen}
+                    >
+                        <div
+                            ref={dropdownContentRef}
+                            className={styles.dropdownContent}
+                        >
+                            <div
+                                key={visibleMenu.id}
+                                className={styles.dropdownBody}
+                            >
+                                {renderGroups(visibleMenu)}
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* 모바일은 세 메뉴의 목록을 스크롤해서 확인 */}
                 {isMobile && isMobileMenuOpen && (
@@ -425,8 +562,13 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                         aria-label={t("header.mega.navigation")}
                     >
                         {menus.map((menu) => (
-                            <section key={menu.id} className={styles.mobileSection}>
-                                <p className={styles.mobileTitle}>{t(menu.titleKey)}</p>
+                            <section
+                                key={menu.id}
+                                className={styles.mobileSection}
+                            >
+                                <p className={styles.mobileTitle}>
+                                    {t(menu.titleKey)}
+                                </p>
 
                                 {renderGroups(menu)}
                             </section>
