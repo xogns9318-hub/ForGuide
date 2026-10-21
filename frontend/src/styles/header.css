@@ -27,9 +27,9 @@
     text-shadow: 0 1px 1px rgb(255 255 255 / 76%);
 }
 
-/* 서비스 메뉴는 기존 공통 헤더의 얇은 구분선 구조를 그대로 유지한다. */
+/* 카테고리 영역에도 바깥 헤더 배경이 그대로 비치도록 표시 */
 .site-header-community .site-navigation {
-    background: rgb(255 255 255 / 48%);
+    background: transparent;
 }
 
 .site-header-community .nav-link {
