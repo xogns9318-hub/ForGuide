@@ -1,0 +1,417 @@
+/* 기존 공통 색상과 너비 변수를 사용 */
+.header {
+    position: relative;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+}
+
+/* 메뉴가 열렸을 때만 본문과 어두운 배경 위로 올림 */
+.expanded {
+    z-index: 300;
+}
+
+/* 본문을 아주 옅게 어둡게 표시: 블러는 사용하지 않음 */
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 299;
+    background: rgb(0 0 0 / 50%);
+}
+
+/* 기존 커뮤니티 전용 이미지 배경 유지 */
+.community {
+    background-color: #f5fcf8;
+    background-image:
+        linear-gradient(rgb(255 255 255 / 52%), rgb(255 255 255 / 52%)),
+        url("/community-scene-banner2.png");
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* 헤더 내용에만 본문과 같은 최대 너비 적용 */
+.inner {
+    width: 100%;
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 16px var(--page-padding);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* 로고와 회원 메뉴를 양쪽에 배치 */
+.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    height: 56px;
+    min-width: 0;
+}
+
+.community .top {
+    height: 64px;
+}
+
+/* 배경 그림 위 회원 메뉴의 기존 가독성 유지 */
+.community .actions {
+    color: #1d5547;
+    font-weight: 600;
+    text-shadow: 0 1px 1px rgb(255 255 255 / 76%);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
+}
+
+.logo {
+    flex-shrink: 0;
+    width: 192px;
+}
+
+.logo img {
+    width: 100%;
+}
+
+/* 커뮤니티에서 로고 옆에 표시하던 제목 유지 */
+.communityTitle {
+    padding-left: 18px;
+    border-left: 1px solid var(--line);
+    color: var(--primary);
+    font-size: 24px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* 회원 메뉴와 언어 선택을 한 줄에 배치 */
+.actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* 회원 메뉴 사이의 세로 구분선 유지 */
+.actions > * + * {
+    position: relative;
+    padding-left: 12px;
+}
+
+.actions > * + *::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 1px;
+    height: 16px;
+    transform: translateY(-50%);
+    background: var(--line);
+    pointer-events: none;
+}
+
+.actions > a:hover,
+.logout:hover {
+    color: var(--primary);
+}
+
+.logout {
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+}
+
+/* 기존 LanguageSelector의 전역 클래스를 연결 */
+.actions :global(.header-language) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.actions :global(.select-box.is-compact) {
+    flex-shrink: 0;
+    width: 132px;
+}
+
+.actions :global(.select-box-trigger > span) {
+    min-width: 0;
+    white-space: nowrap;
+}
+
+/* '언어' 글씨는 숨기고 음성 안내 이름으로 유지 */
+.actions :global(.header-language-label) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* 상단 제목 세 개를 같은 너비로 배치 */
+.navigation {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.navItem {
+    min-width: 0;
+}
+
+/* 상단 제목은 페이지로 이동하지 않는 문단 */
+.menuTitle {
+    min-height: 40px;
+    padding: 8px 12px;
+    color: var(--ink);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    cursor: default;
+}
+
+/* 글씨에서 8px 떨어진 밑줄을 준비 */
+.menuTitle > span,
+.menuLink > span {
+    text-decoration-line: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 8px;
+}
+
+/* 테두리 대신 글씨와 밑줄만 초록색으로 변경 */
+.menuTitle[data-open="true"],
+.menuTitle:focus-visible,
+.menuLink:hover,
+.menuLink:focus-visible,
+.menuLink[aria-current="page"] {
+    color: var(--primary);
+}
+
+.menuTitle[data-open="true"] > span,
+.menuTitle:focus-visible > span,
+.menuLink:hover > span,
+.menuLink:focus-visible > span,
+.menuLink[aria-current="page"] > span {
+    text-decoration-color: currentColor;
+}
+
+/* 바깥 header를 기준으로 사이트 전체 너비에 펼침 */
+.dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+
+    /* 낮은 화면에서는 메뉴 자체를 스크롤 */
+    max-height: calc(100dvh - var(--header-height));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: 0 12px 20px rgb(32 59 51 / 5%);
+}
+
+/* 배경은 전체 너비, 목록 내용은 가운데 정렬 */
+.groups {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+    max-width: var(--page-width);
+    min-height: 240px;
+    margin: 0 auto;
+    padding: 32px var(--page-padding) 40px;
+}
+
+/* 소개와 문의는 제목 하나 아래에 세로 목록으로 표시 */
+.singleGroup {
+    grid-template-columns: minmax(0, 280px);
+}
+
+.group {
+    min-width: 0;
+}
+
+/* 연한 제목에는 클릭 동작을 넣지 않음 */
+.groupTitle {
+    margin-bottom: 14px;
+    color: var(--muted);
+    opacity: 0.7;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: default;
+}
+
+/* 브라우저 기본 목록 기호와 여백 제거 */
+.linkList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* 서비스 링크와 문의 버튼에 같은 모양 적용 */
+.menuLink {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    padding: 6px 0;
+
+    /* 기존의 네모 테두리 강조 제거 */
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.7;
+    text-align: left;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+}
+
+/* 넓은 화면에서는 모바일 메뉴 버튼 숨김 */
+.mobileToggle {
+    display: none;
+}
+
+/* 모바일 구간은 기존과 같은 1024px 기준 */
+@media (max-width: 1024px) {
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .top,
+    .community .top {
+        height: 56px;
+    }
+
+    .logo {
+        width: 160px;
+    }
+
+    .communityTitle {
+        padding-left: 12px;
+        font-size: 20px;
+    }
+
+    /* 모바일에서는 회원 메뉴와 가로 제목을 펼친 목록으로 이동 */
+    .desktopActions,
+    .navigation {
+        display: none;
+    }
+
+    .mobileToggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        padding: 8px;
+        border: 0;
+        background: transparent;
+        color: var(--primary);
+    }
+
+    .mobileToggle svg {
+        width: 28px;
+        height: 28px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+    }
+
+    /* 실제 헤더 바로 아래부터 모바일 목록 표시 */
+    .mobilePanel {
+        position: fixed;
+        top: var(--header-height);
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        background: var(--surface);
+    }
+
+    .mobileSection + .mobileSection {
+        border-top: 1px solid var(--line);
+    }
+
+    .mobileTitle {
+        padding: 24px var(--page-padding) 0;
+        color: var(--primary);
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    /* 작은 화면에서는 여섯 그룹을 두 열로 나눔 */
+    .mobilePanel .groups {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        min-height: 0;
+        padding: 24px var(--page-padding);
+    }
+
+    .mobilePanel .singleGroup {
+        grid-template-columns: 1fr;
+    }
+
+    /* 목록 아래에 회원 메뉴와 언어 선택 표시 */
+    .mobileActions {
+        flex-wrap: wrap;
+        justify-content: center;
+        row-gap: 20px;
+        padding: 24px var(--page-padding) 40px;
+        font-size: 14px;
+    }
+
+    .mobileActions > :global(.header-language) {
+        flex-basis: 100%;
+        justify-content: center;
+        padding-left: 0;
+    }
+
+    .mobileActions > :global(.header-language)::before {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .brand {
+        gap: 10px;
+    }
+
+    .logo {
+        width: 128px;
+    }
+
+    .communityTitle {
+        padding-left: 10px;
+        font-size: 18px;
+    }
+
+    /* 휴대폰의 좁은 화면에서는 한 열로 표시 */
+    .mobilePanel .groups {
+        grid-template-columns: 1fr;
+    }
+}

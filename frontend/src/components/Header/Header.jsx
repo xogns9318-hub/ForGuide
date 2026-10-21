@@ -1,545 +1,441 @@
-// 화면 상태와 생명주기를 관리하는 React 기능 사용
 import { useEffect, useId, useRef, useState } from "react";
-// 주소 이동과 현재 경로를 확인하는 라우터 기능 사용
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-// 메뉴 이름과 주소를 공통 경로 설정에서 사용
-import { categories } from "../../routes/routeConfig";
+import { categories } from "../../routes/routeConfig.js";
 import LanguageSelector from "../LanguageSelector/LanguageSelector.jsx";
-// 이 화면에서 사용할 스타일 연결
-import "../../styles/header.css";
+import styles from "../../styles/headerModule.module.css";
 
-export default function Header({
-    isLoggedIn = false,
-    onLogout,
-}) {
+// 주 기능 이름과 기존 주소를 소개 메뉴에서 재사용
+const introductionItems = categories.map((category) => ({
+    id: category.id,
+    path: category.path,
+    labelKey: `navigation.${category.id}`,
+    label: category.label,
+}));
+
+// 하위 기능이 없으면 기존 서비스 주소를 그대로 사용
+const guideGroups = categories.map((category) => ({
+    id: category.id,
+    titleKey: `navigation.${category.id}`,
+    items: category.children.length
+        ? category.children.map((child) => ({
+              ...child,
+              labelKey: `home.features.${category.id}.${child.id}`,
+          }))
+        : introductionItems.filter((item) => item.id === category.id),
+}));
+
+// 상단 제목은 이동 주소 없이 펼칠 목록만 구분
+const menus = [
+    {
+        id: "introduction",
+        titleKey: "header.mega.introduction",
+        groups: [
+            {
+                id: "introduction",
+                titleKey: "header.mega.introductionList",
+                items: introductionItems,
+            },
+        ],
+    },
+    {
+        id: "guides",
+        titleKey: "header.mega.guides",
+        groups: guideGroups,
+    },
+    {
+        id: "contact",
+        titleKey: "header.mega.contact",
+        groups: [
+            {
+                id: "contact",
+                titleKey: "header.mega.contactGroup",
+
+                // 문의 페이지가 없으므로 주소 없이 버튼으로 표시
+                items: [
+                    {
+                        id: "myInquiries",
+                        labelKey: "header.mega.myInquiries",
+                    },
+                    {
+                        id: "privateInquiry",
+                        labelKey: "header.mega.privateInquiry",
+                    },
+                    {
+                        id: "faq",
+                        labelKey: "header.mega.faq",
+                    },
+                ],
+            },
+        ],
+    },
+];
+
+export default function Header({ isLoggedIn = false, onLogout }) {
     const { pathname } = useLocation();
     const { t } = useTranslation();
-    // 넓은 화면에서 강조하고 펼칠 카테고리 관리
+    const navigationId = useId();
+
+    // 넓은 화면에서는 한 메뉴만 펼침
     const [openMenu, setOpenMenu] = useState(null);
 
-    // 작은 화면의 전체 메뉴 열림 상태 관리
+    // 모바일 전체 메뉴의 열림 상태는 별도로 관리
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    // 작은 화면에서 펼친 카테고리 하나를 관리
-    const [mobileCategory, setMobileCategory] = useState(null);
+    const [isMobile, setIsMobile] = useState(
+        () => window.matchMedia("(max-width: 1024px)").matches,
+    );
 
-    // 메뉴 버튼과 펼침 영역을 연결할 식별자 생성
-    const mobileMenuId = useId();
-    // 메뉴를 닫은 뒤 버튼으로 포커스를 돌려줄 참조
-    const menuButtonRef = useRef(null);
+    // 펼친 목록의 최대 높이를 계산할 실제 헤더 높이
+    const [headerHeight, setHeaderHeight] = useState(133);
 
-    // 전체 메뉴와 펼친 항목을 닫고 버튼으로 포커스 복원
-    function closeMobileMenu() {
-        // 작은 화면의 전체 메뉴 닫기
+    // 높이 측정과 키보드 포커스 복원에 사용할 요소 보관
+    const headerRef = useRef(null);
+    const mobileButtonRef = useRef(null);
+    const titleRefs = useRef({});
+
+    // 현재 적용 중인 커뮤니티 전용 헤더 배경 유지
+    const isCommunityPage = pathname === "/service/community";
+    const isDesktopMenuOpen = !isMobile && openMenu !== null;
+
+    function closeMenus() {
+        // 페이지 이동이나 메뉴 종료 시 펼침 상태 초기화
+        setOpenMenu(null);
         setIsMobileMenuOpen(false);
-        // 이전에 펼친 세부 카테고리 초기화
-        setMobileCategory(null);
-        menuButtonRef.current?.focus();
     }
 
-    // 열린 메뉴 뒤의 본문이 스크롤되지 않도록 처리
+    // 다른 페이지로 이동하면 이전 메뉴를 닫음
     useEffect(() => {
-        // 전체 메뉴가 닫혀 있으면 스크롤 차단을 적용하지 않음
-        if (!isMobileMenuOpen) {
-            return;
+        setOpenMenu(null);
+        setIsMobileMenuOpen(false);
+    }, [pathname]);
+
+    // 화면 구간이 바뀌면 이전 화면의 메뉴 상태 초기화
+    useEffect(() => {
+        const media = window.matchMedia("(max-width: 1024px)");
+
+        function handleChange(event) {
+            setIsMobile(event.matches);
+            setOpenMenu(null);
+            setIsMobileMenuOpen(false);
         }
 
-        // 메뉴 종료 시 복원할 기존 본문 스크롤 설정 보관
+        media.addEventListener("change", handleChange);
+
+        return () => {
+            media.removeEventListener("change", handleChange);
+        };
+    }, []);
+
+    // 실제 헤더 높이를 CSS에 전달
+    useEffect(() => {
+        const element = headerRef.current;
+
+        const observer = new ResizeObserver(() => {
+            setHeaderHeight(element.getBoundingClientRect().height);
+        });
+
+        observer.observe(element);
+
+        return () => {
+            observer.disconnect();
+        };
+    }, []);
+
+    // 모바일 전체 메뉴를 열었을 때 뒤쪽 본문의 스크롤 차단
+    useEffect(() => {
+        if (!isMobileMenuOpen) return;
+
         const previousOverflow = document.body.style.overflow;
-        // 전체 메뉴를 보는 동안 뒤쪽 본문의 스크롤 차단
         document.body.style.overflow = "hidden";
 
         return () => {
-            // 메뉴 종료 시 원래 본문 스크롤 설정 복원
+            // 메뉴를 닫으면 기존 스크롤 설정 복원
             document.body.style.overflow = previousOverflow;
         };
     }, [isMobileMenuOpen]);
 
-    // 주소가 바뀌면 이전 메뉴 상태 초기화
-    useEffect(() => {
-        // 작은 화면의 전체 메뉴 닫기
-        setIsMobileMenuOpen(false);
-        // 이전에 펼친 세부 카테고리 초기화
-        setMobileCategory(null);
-        // 넓은 화면의 세부 메뉴와 임시 강조 초기화
-        setOpenMenu(null);
-    }, [pathname]);
+    function handleHeaderKeyDown(event) {
+        // 언어 선택창에서 처리한 키 입력은 다시 처리하지 않음
+        if (event.defaultPrevented) return;
 
-    // 화면 크기가 전환되면 남아 있는 메뉴 상태 초기화
-    useEffect(() => {
-        // CSS와 같은 너비 기준으로 화면 전환 감지
-        const media = window.matchMedia("(max-width: 1024px)");
-
-        // 화면 구간 전환 시 이전 메뉴 상태 초기화
-        function handleScreenChange() {
-            // 작은 화면의 전체 메뉴 닫기
-            setIsMobileMenuOpen(false);
-            // 이전에 펼친 세부 카테고리 초기화
-            setMobileCategory(null);
-            // 넓은 화면의 세부 메뉴와 임시 강조 초기화
-            setOpenMenu(null);
-        }
-
-        // 화면 너비 구간의 변경 감시 시작
-        media.addEventListener("change", handleScreenChange);
-
-        return () => {
-            // 화면을 벗어나면 등록한 감시 제거
-            media.removeEventListener("change", handleScreenChange);
-        };
-    }, []);
-
-    // Escape로 메뉴를 닫고 Tab 이동을 열린 헤더 안에서 처리
-    function handleMobileKeyDown(event) {
-        // 닫힌 메뉴나 이미 처리한 키 입력은 다시 처리하지 않음
-        if (!isMobileMenuOpen || event.defaultPrevented) {
-            return;
-        }
-
-        // Escape로 전체 메뉴를 닫고 버튼에 포커스 복원
         if (event.key === "Escape") {
-            // 페이지 새로고침이나 브라우저 기본 키 동작 방지
+            if (!isMobileMenuOpen && openMenu === null) return;
+
             event.preventDefault();
-            closeMobileMenu();
+
+            // 포커스를 먼저 복원한 뒤 닫아서 재열림 방지
+            if (isMobileMenuOpen) {
+                mobileButtonRef.current?.focus();
+            } else {
+                titleRefs.current[openMenu]?.focus();
+            }
+
+            closeMenus();
             return;
         }
 
-        // Tab 이외의 키는 포커스 순환 처리에서 제외
-        if (event.key !== "Tab") {
-            return;
-        }
+        // 모바일 메뉴가 열려 있으면 Tab 이동을 헤더 안에서 순환
+        if (!isMobileMenuOpen || event.key !== "Tab") return;
 
-        // 열린 메뉴 뒤의 본문으로 키보드 포커스가 넘어가지 않도록 처리
-        const focusableElements = Array.from(
-            event.currentTarget.querySelectorAll(
-                'a[href], button:not(:disabled), [tabindex="0"]',
-            ),
+        const elements = Array.from(
+            headerRef.current.querySelectorAll('a[href], button:not(:disabled), [tabindex="0"]'),
         ).filter((element) => element.getClientRects().length > 0);
 
-        // 열린 메뉴에서 처음 포커스를 받을 요소
-        const first = focusableElements[0];
-        // 열린 메뉴에서 마지막으로 포커스를 받을 요소
-        const last = focusableElements[focusableElements.length - 1];
+        const first = elements[0];
+        const last = elements[elements.length - 1];
 
-        // 첫 요소에서 역방향으로 이동하면 마지막 요소로 연결
+        // 포커스가 밖으로 빠졌다면 첫 요소로 복원
+        if (!headerRef.current.contains(document.activeElement)) {
+            event.preventDefault();
+            first?.focus();
+            return;
+        }
+
         if (event.shiftKey && document.activeElement === first) {
-            // 페이지 새로고침이나 브라우저 기본 키 동작 방지
             event.preventDefault();
             last?.focus();
-        } else if (
-            !event.shiftKey &&
-            document.activeElement === last
-        ) {
-            // 페이지 새로고침이나 브라우저 기본 키 동작 방지
+        } else if (!event.shiftKey && document.activeElement === last) {
             event.preventDefault();
             first?.focus();
         }
     }
 
-    // 주 기능 또는 해당 세부 기능 경로에 있는지 확인
-    function isCategoryActive(category) {
+    function renderActions(extraClass) {
         return (
-            pathname === category.path ||
-            category.children.some((child) => pathname === child.path)
+            <div className={`${styles.actions} ${extraClass}`}>
+                {/* 기존 회원 메뉴와 로그아웃 동작 유지 */}
+                {isLoggedIn ? (
+                    <>
+                        <Link to="/mypage" onClick={closeMenus}>
+                            {t("header.myPage")}
+                        </Link>
+
+                        <Link to="/my-finance" onClick={closeMenus}>
+                            {t("header.myFinance")}
+                        </Link>
+
+                        <button
+                            type="button"
+                            className={styles.logout}
+                            onClick={() => {
+                                closeMenus();
+                                onLogout?.();
+                            }}
+                        >
+                            {t("header.logout")}
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <Link to="/login" onClick={closeMenus}>
+                            {t("header.login")}
+                        </Link>
+
+                        <Link to="/signup" onClick={closeMenus}>
+                            {t("header.signup")}
+                        </Link>
+                    </>
+                )}
+
+                {/* 언어 변경과 저장은 기존 컴포넌트에서 처리 */}
+                <LanguageSelector />
+            </div>
         );
     }
 
-    // 커뮤니티에서만 숲·도시 배경을 공통 헤더에 적용한다.
-    const isCommunityPage = pathname === "/service/community";
+    function renderGroups(menu) {
+        return (
+            <div className={`${styles.groups} ${menu.id !== "guides" ? styles.singleGroup : ""}`}>
+                {menu.groups.map((group) => (
+                    <section key={group.id} className={styles.group}>
+                        {/* 연한 제목은 클릭할 수 없는 p 태그 */}
+                        <p className={styles.groupTitle}>{t(group.titleKey)}</p>
 
-    return (
-        <header
-            className={`site-header${isCommunityPage ? " site-header-community" : ""}`}
-            onKeyDown={handleMobileKeyDown}
-        >
-            <div className="site-header-inner">
-                {/* 첫 번째 줄: 로고와 회원·언어 메뉴 */}
-                <div className="site-header-top">
-                    <div className="site-brand">
-                        {/* 로고를 누르면 홈으로 이동 */}
-                        <Link
-                            to="/"
-                            className="site-logo"
-                            aria-label="ForGuide 홈"
-                        >
-                            <img src="/ForGuide_Logo.png" alt="ForGuide" />
-                        </Link>
-                        {isCommunityPage && (
-                            <span className="site-header-community-title">
-                                커뮤니티
-                            </span>
-                        )}
-                    </div>
+                        <ul className={styles.linkList}>
+                            {group.items.map((item) => {
+                                const label = t(item.labelKey, {
+                                    defaultValue: item.label,
+                                });
 
-                    {/* 회원 메뉴와 언어 선택을 같은 영역에 표시 */}
-                    <div className="header-actions">
-                        {/* 로그인 여부에 따라 회원 메뉴 선택 */}
-                        {isLoggedIn ? (
-                            <>
-                                {/* 연결된 안내 또는 서비스 페이지로 이동 */}
-                                <Link to="/mypage">
-                                    {t("header.myPage")}
-                                </Link>
+                                // 서비스의 상세 주소에서도 현재 항목 표시
+                                const isCurrent =
+                                    item.path &&
+                                    (pathname === item.path ||
+                                        pathname.startsWith(`${item.path}/`));
 
-                                {/* 연결된 안내 또는 서비스 페이지로 이동 */}
-                                <Link to="/my-finance">
-                                    {t("header.myFinance")}
-                                </Link>
-
-                                {/* 기존 로그아웃 동작을 실행하는 버튼 */}
-                                <button
-                                    type="button"
-                                    className="header-logout"
-                                    onClick={onLogout}
-                                >
-                                    {t("header.logout")}
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                {/* 연결된 안내 또는 서비스 페이지로 이동 */}
-                                <Link to="/login">
-                                    {t("header.login")}
-                                </Link>
-
-                                {/* 연결된 안내 또는 서비스 페이지로 이동 */}
-                                <Link to="/signup">
-                                    {t("header.signup")}
-                                </Link>
-                            </>
-                        )}
-
-                        {/* 기존 언어 변경 기능을 헤더에서 사용 */}
-                        <LanguageSelector />
-                    </div>
-                    {/* 작은 화면에서만 표시하는 메뉴 버튼 */}
-                    <button
-                        ref={menuButtonRef}
-                        type="button"
-                        className="mobile-menu-toggle"
-                        aria-label={
-                            isMobileMenuOpen ? "메뉴 닫기" : "메뉴 열기"
-                        }
-                        aria-expanded={isMobileMenuOpen}
-                        aria-controls={
-                            isMobileMenuOpen ? mobileMenuId : undefined
-                        }
-                        onClick={() => {
-                            if (isMobileMenuOpen) {
-                                closeMobileMenu();
-                            } else {
-                                // 전체 메뉴를 열 때 이전 펼침 상태 초기화
-                                setMobileCategory(null);
-                                // 넓은 화면의 세부 메뉴와 임시 강조 초기화
-                                setOpenMenu(null);
-                                // 작은 화면의 전체 메뉴 표시
-                                setIsMobileMenuOpen(true);
-                            }
-                        }}
-                    >
-                        {/* 이미지 파일 대신 SVG 선으로 아이콘 표시 */}
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            aria-hidden="true"
-                        >
-                            <path
-                                d={
-                                    isMobileMenuOpen
-                                        ? "M6 6l12 12 M18 6L6 18"
-                                        : "M4 6h16 M4 12h16 M4 18h16"
-                                }
-                            />
-                        </svg>
-                    </button>
-                </div>
-
-                {/* 두 번째 줄: 같은 너비의 카테고리 6칸 */}
-                <nav
-                    className="site-navigation"
-                    aria-label="주요 서비스"
-                    onMouseLeave={() => setOpenMenu(null)}
-                    onBlur={(event) => {
-                        // 키보드 포커스가 메뉴 밖으로 이동하면 닫기
-                        if (
-                            !event.currentTarget.contains(
-                                event.relatedTarget,
-                            )
-                        ) {
-                            // 넓은 화면의 세부 메뉴와 임시 강조 초기화
-                            setOpenMenu(null);
-                        }
-                    }}
-                    onKeyDown={(event) => {
-                        // Escape로 전체 메뉴를 닫고 버튼에 포커스 복원
-                        if (event.key === "Escape") {
-                            // 넓은 화면의 세부 메뉴와 임시 강조 초기화
-                            setOpenMenu(null);
-                        }
-                    }}
-                >
-                    {/* 공통 카테고리 목록으로 메뉴 또는 카드 생성 */}
-                    {categories.map((category) => {
-                        // 메뉴를 가리키는 동안에는 해당 메뉴만 강조
-                        const isActive =
-                            openMenu !== null
-                                ? openMenu === category.id
-                                : isCategoryActive(category);
-
-                        return (
-                            <div
-                                className="nav-item"
-                                key={category.id}
-                                onMouseEnter={() =>
-                                    setOpenMenu(category.id)
-                                }
-                            >
-                                {/* 연결된 안내 또는 서비스 페이지로 이동 */}
-                                <Link
-                                    to={category.path}
-                                    className={`nav-link ${isActive ? "is-active" : ""
-                                        }`}
-                                    aria-current={
-                                        pathname === category.path
-                                            ? "page"
-                                            : undefined
-                                    }
-                                    onFocus={() =>
-                                        setOpenMenu(category.id)
-                                    }
-                                    onClick={() => setOpenMenu(null)}
-                                >
-                                    {t(`navigation.${category.id}`, {
-                                        defaultValue: category.label,
-                                    })}
-                                </Link>
-
-                                {category.children.length > 0 &&
-                                    openMenu === category.id && (
-                                        <div className="nav-dropdown">
-                                            {category.children.map(
-                                                (child) => (
-                                                    <Link
-                                                        key={child.path}
-                                                        to={child.path}
-                                                        className="nav-dropdown-link"
-                                                        aria-current={
-                                                            pathname ===
-                                                                child.path
-                                                                ? "page"
-                                                                : undefined
-                                                        }
-                                                        onClick={() =>
-                                                            setOpenMenu(null)
-                                                        }
-                                                    >
-                                                        {t(
-                                                            `home.features.${category.id}.${child.id}`,
-                                                            { defaultValue: child.label },
-                                                        )}
-                                                    </Link>
-                                                ),
-                                            )}
-                                        </div>
-                                    )}
-                            </div>
-                        );
-                    })}
-                </nav>
-            </div>
-            {/* 작은 화면에서는 버튼을 눌렀을 때만 메뉴 표시 */}
-            {isMobileMenuOpen && (
-                <div
-                    id={mobileMenuId}
-                    className="mobile-menu-panel"
-                >
-                    <nav
-                        className="mobile-navigation"
-                        aria-label="주요 서비스"
-                    >
-                        {/* 공통 카테고리 목록으로 메뉴 또는 카드 생성 */}
-                        {categories.map((category) => {
-                            // 현재 언어의 카테고리 이름을 표시하고 기본 이름으로 보완
-                            const label = t(
-                                `navigation.${category.id}`,
-                                { defaultValue: category.label },
-                            );
-
-                            // 세부 기능이 있는 카테고리인지 확인
-                            const hasChildren =
-                                category.children.length > 0;
-
-                            // 현재 카테고리의 펼침 여부 확인
-                            const isExpanded =
-                                mobileCategory === category.id;
-
-                            // 카테고리 버튼과 세부 목록을 연결할 식별자 생성
-                            const submenuId =
-                                `${mobileMenuId}-${category.id}`;
-
-                            return (
-                                <div
-                                    key={category.id}
-                                    className="mobile-category"
-                                >
-                                    {hasChildren ? (
-                                        <>
-                                            {/* 버튼의 펼침 상태와 연결된 세부 목록을 함께 관리 */}
-                                            <button
-                                                type="button"
-                                                className="mobile-category-toggle"
-                                                aria-expanded={isExpanded}
-                                                aria-controls={submenuId}
-                                                onClick={() => {
-                                                    // 같은 항목은 닫고 다른 항목은 펼치기
-                                                    setMobileCategory(
-                                                        (previous) =>
-                                                            previous === category.id
-                                                                ? null
-                                                                : category.id,
-                                                    );
-                                                }}
+                                return (
+                                    <li key={item.id}>
+                                        {item.path ? (
+                                            <Link
+                                                to={item.path}
+                                                className={styles.menuLink}
+                                                aria-current={isCurrent ? "page" : undefined}
+                                                onClick={closeMenus}
                                             >
                                                 <span>{label}</span>
-
-                                                {/* 이미지 파일 대신 SVG 선으로 아이콘 표시 */}
-                                                <svg
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2"
-                                                    aria-hidden="true"
-                                                >
-                                                    <path
-                                                        d={
-                                                            isExpanded
-                                                                ? "M6 15l6-6 6 6"
-                                                                : "M6 9l6 6 6-6"
-                                                        }
-                                                    />
-                                                </svg>
+                                            </Link>
+                                        ) : (
+                                            // 문의는 버튼만 표시하고 페이지는 연결하지 않음
+                                            <button type="button" className={styles.menuLink}>
+                                                <span>{label}</span>
                                             </button>
+                                        )}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </section>
+                ))}
+            </div>
+        );
+    }
 
-                                            {isExpanded && (
-                                                <div
-                                                    id={submenuId}
-                                                    className="mobile-submenu"
-                                                >
-                                                    {/* 주 기능 안내 페이지도 이동 가능 */}
-                                                    <Link
-                                                        to={category.path}
-                                                        aria-current={
-                                                            pathname === category.path
-                                                                ? "page"
-                                                                : undefined
-                                                        }
-                                                        onClick={closeMobileMenu}
-                                                    >
-                                                        {label} 안내
-                                                    </Link>
+    return (
+        <>
+            {/* 헤더 뒤의 본문만 검정색 8%로 어둡게 표시 */}
+            {isDesktopMenuOpen && <div className={styles.backdrop} aria-hidden="true" />}
 
-                                                    {category.children.map(
-                                                        (child) => (
-                                                            <Link
-                                                                key={child.path}
-                                                                to={child.path}
-                                                                aria-current={
-                                                                    pathname === child.path
-                                                                        ? "page"
-                                                                        : undefined
-                                                                }
-                                                                onClick={closeMobileMenu}
-                                                            >
-                                                                {t(
-                                                                    `home.features.${category.id}.${child.id}`,
-                                                                    { defaultValue: child.label },
-                                                                )}
-                                                            </Link>
-                                                        ),
-                                                    )}
-                                                </div>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <Link
-                                            to={category.path}
-                                            className="mobile-category-link"
-                                            aria-current={
-                                                pathname === category.path
-                                                    ? "page"
-                                                    : undefined
-                                            }
-                                            onClick={closeMobileMenu}
-                                        >
-                                            {label}
-                                        </Link>
-                                    )}
-                                </div>
-                            );
-                        })}
-                    </nav>
+            <header
+                ref={headerRef}
+                className={[
+                    styles.header,
+                    isCommunityPage ? styles.community : "",
+                    isDesktopMenuOpen ? styles.expanded : "",
+                ].join(" ")}
+                style={{ "--header-height": `${headerHeight}px` }}
+                onMouseLeave={() => {
+                    // 펼친 목록까지 벗어나면 넓은 화면의 메뉴 닫기
+                    if (!isMobile) setOpenMenu(null);
+                }}
+                onBlur={(event) => {
+                    // 키보드 포커스가 헤더 밖으로 나가면 닫기
+                    if (!isMobile && !event.currentTarget.contains(event.relatedTarget)) {
+                        setOpenMenu(null);
+                    }
+                }}
+                onKeyDown={handleHeaderKeyDown}
+            >
+                <div className={styles.inner}>
+                    <div
+                        className={styles.top}
+                        onMouseEnter={() => setOpenMenu(null)}
+                        onFocus={() => setOpenMenu(null)}
+                    >
+                        <div className={styles.brand}>
+                            <Link
+                                to="/"
+                                className={styles.logo}
+                                aria-label={t("header.mega.home")}
+                                onClick={closeMenus}
+                            >
+                                <img src="/ForGuide_Logo.png" alt="ForGuide" />
+                            </Link>
 
-                    {/* 작은 화면의 회원 메뉴와 언어 선택 */}
-                    <div className="header-actions mobile-header-actions">
-                        {/* 로그인 여부에 따라 회원 메뉴 선택 */}
-                        {isLoggedIn ? (
-                            <>
-                                {/* 연결된 안내 또는 서비스 페이지로 이동 */}
-                                <Link
-                                    to="/mypage"
-                                    onClick={closeMobileMenu}
-                                >
-                                    {t("header.myPage")}
-                                </Link>
+                            {isCommunityPage && (
+                                <span className={styles.communityTitle}>
+                                    {t("navigation.community")}
+                                </span>
+                            )}
+                        </div>
 
-                                {/* 연결된 안내 또는 서비스 페이지로 이동 */}
-                                <Link
-                                    to="/my-finance"
-                                    onClick={closeMobileMenu}
-                                >
-                                    {t("header.myFinance")}
-                                </Link>
+                        {renderActions(styles.desktopActions)}
 
-                                {/* 기존 로그아웃 동작을 실행하는 버튼 */}
-                                <button
-                                    type="button"
-                                    className="header-logout"
-                                    onClick={() => {
-                                        onLogout?.();
-                                        closeMobileMenu();
+                        {/* 모바일에서는 버튼으로 전체 목록을 열고 닫음 */}
+                        <button
+                            ref={mobileButtonRef}
+                            type="button"
+                            className={styles.mobileToggle}
+                            aria-label={t(
+                                isMobileMenuOpen ? "header.mega.close" : "header.mega.open",
+                            )}
+                            aria-expanded={isMobileMenuOpen}
+                            aria-controls={isMobileMenuOpen ? navigationId : undefined}
+                            onClick={() => {
+                                setOpenMenu(null);
+                                setIsMobileMenuOpen((previous) => !previous);
+                            }}
+                        >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path
+                                    d={
+                                        isMobileMenuOpen
+                                            ? "M6 6l12 12 M18 6L6 18"
+                                            : "M4 6h16 M4 12h16 M4 18h16"
+                                    }
+                                />
+                            </svg>
+                        </button>
+                    </div>
+
+                    {/* 상단 제목은 이동 링크나 클릭 버튼으로 만들지 않음 */}
+                    <nav className={styles.navigation} aria-label={t("header.mega.navigation")}>
+                        {menus.map((menu) => (
+                            <div key={menu.id} className={styles.navItem}>
+                                <p
+                                    ref={(element) => {
+                                        titleRefs.current[menu.id] = element;
+                                    }}
+                                    className={styles.menuTitle}
+                                    tabIndex={0}
+                                    data-open={openMenu === menu.id}
+                                    aria-controls={
+                                        openMenu === menu.id
+                                            ? `${navigationId}-${menu.id}`
+                                            : undefined
+                                    }
+                                    onMouseEnter={() => setOpenMenu(menu.id)}
+                                    onFocus={() => setOpenMenu(menu.id)}
+                                    onKeyDown={(event) => {
+                                        // 아래 방향키로 목록의 첫 항목에 이동
+                                        if (event.key !== "ArrowDown") return;
+
+                                        event.preventDefault();
+                                        setOpenMenu(menu.id);
+
+                                        requestAnimationFrame(() => {
+                                            document
+                                                .getElementById(`${navigationId}-${menu.id}`)
+                                                ?.querySelector("a[href], button")
+                                                ?.focus();
+                                        });
                                     }}
                                 >
-                                    {t("header.logout")}
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                {/* 연결된 안내 또는 서비스 페이지로 이동 */}
-                                <Link
-                                    to="/login"
-                                    onClick={closeMobileMenu}
-                                >
-                                    {t("header.login")}
-                                </Link>
+                                    <span>{t(menu.titleKey)}</span>
+                                </p>
 
-                                {/* 연결된 안내 또는 서비스 페이지로 이동 */}
-                                <Link
-                                    to="/signup"
-                                    onClick={closeMobileMenu}
-                                >
-                                    {t("header.signup")}
-                                </Link>
-                            </>
-                        )}
-
-                        {/* 기존 언어 변경 기능을 헤더에서 사용 */}
-                        <LanguageSelector />
-                    </div>
+                                {/* 너비 제한이 없는 바깥 header를 기준으로 펼침 */}
+                                {isDesktopMenuOpen && openMenu === menu.id && (
+                                    <div
+                                        id={`${navigationId}-${menu.id}`}
+                                        className={styles.dropdown}
+                                    >
+                                        {renderGroups(menu)}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </nav>
                 </div>
-            )}
-        </header>
+
+                {/* 모바일은 세 메뉴의 목록을 스크롤해서 확인 */}
+                {isMobile && isMobileMenuOpen && (
+                    <nav
+                        id={navigationId}
+                        className={styles.mobilePanel}
+                        aria-label={t("header.mega.navigation")}
+                    >
+                        {menus.map((menu) => (
+                            <section key={menu.id} className={styles.mobileSection}>
+                                <p className={styles.mobileTitle}>{t(menu.titleKey)}</p>
+
+                                {renderGroups(menu)}
+                            </section>
+                        ))}
+
+                        {renderActions(styles.mobileActions)}
+                    </nav>
+                )}
+            </header>
+        </>
     );
 }

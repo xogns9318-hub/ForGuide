@@ -9,7 +9,7 @@
 /* 커뮤니티에서는 별도 배너 대신 공통 헤더에 숲·도시 배경을 사용한다. */
 .site-header.site-header-community {
     background-color: #f5fcf8;
-    background-image: linear-gradient(rgb(255 255 255 / 52%), rgb(255 255 255 / 52%)), url("../assets/community-scene-banner.jpg");
+    background-image: linear-gradient(rgb(255 255 255 / 52%), rgb(255 255 255 / 52%)), url("/community-scene-banner2.png");
     background-position: center bottom;
     background-repeat: no-repeat;
     background-size: cover;

@@ -6,13 +6,35 @@ const ko = {
         myPage: "마이페이지",
         myFinance: "내 금융 정보",
         language: "언어",
+
+        // 새 헤더 메뉴에서 사용할 한국어 문구
+        mega: {
+            introduction: "가이드 소개",
+            guides: "가이드 목록",
+            contact: "문의하기",
+
+            // 클릭할 수 없는 연한 제목
+            introductionList: "소개 목록",
+            contactGroup: "문의",
+
+            // 아직 페이지를 연결하지 않은 문의 버튼
+            myInquiries: "내 문의",
+            privateInquiry: "1:1 문의",
+            faq: "자주하는 질문",
+
+            // 화면 읽기와 모바일 메뉴용 이름
+            home: "ForGuide 홈",
+            navigation: "가이드 메뉴",
+            open: "메뉴 열기",
+            close: "메뉴 닫기",
+        },
     },
 
     navigation: {
-        counseling: "상담",
-        recommendation: "추천",
-        repayment: "계산 도우미",
-        employment: "취업 도우미",
+        counseling: "상담 가이드",
+        recommendation: "추천 가이드",
+        repayment: "계산 가이드",
+        employment: "취업 가이드",
         simulator: "시뮬레이터",
         community: "커뮤니티",
     },
@@ -58,24 +80,24 @@ const ko = {
                 preparationCard: "상담 준비 카드 만들기",
             },
             recommendation: {
-                loan: "대출 상품 추천",
-                insurance: "보험 상품 추천",
-                account: "계좌 추천",
+                loan: "대출 상품",
+                insurance: "보험 상품",
+                account: "계좌 개설",
             },
             repayment: {
-                monthlyPayment: "월 상환액 계산기",
-                totalInterest: "총 이자 계산기",
+                monthlyPayment: "월 상환액",
+                totalInterest: "총 이자",
             },
             employment: {
-                jobListings: "일자리 목록",
-                employment: "취업 준비자료",
+                jobListings: "일자리 찾기",
+                employment: "취업 준비 자료",
             },
         },
     },
 
     footer: {
-        description: "이곳은 Footer입니다. 발냄새가 지독한 곳이죠.",
-        copyright: "© 이것이 최선입니까 휴먼?",
+        description: "빠른 시일 내에 변경될 예정인 Footer 입니다.",
+        copyright: "© ForGuide",
     },
 
     community: {
