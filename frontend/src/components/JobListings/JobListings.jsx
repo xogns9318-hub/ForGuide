@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Banner from "../Banner/Banner.jsx";
+import JobListingDetailModal from "./JobListingDetailModal.jsx";
 import { getJobListingSections } from "../../api/jobListingsApi.js";
 import "../../styles/job-listings.css";
+
 
 const iconPaths = {
     building: "M3 21h18 M5 21V9l7-5 7 5v12 M9 21v-5h6v5 M9 12h.01 M15 12h.01",
@@ -24,7 +26,7 @@ function ListingIcon({ type }) {
     );
 }
 
-function JobListingCard({ listing }) {
+function JobListingCard({ listing, onDetailOpen }) {
     return (
         <article className="job-listing-card">
             <div className="job-listing-card-heading">
@@ -35,21 +37,37 @@ function JobListingCard({ listing }) {
                 </div>
             </div>
 
-            <dl className="job-listing-info">
-                <div><dt>지원 언어</dt><dd>{listing.language}</dd></div>
-                <div><dt>대상</dt><dd>{listing.target}</dd></div>
-                <div><dt>제공 정보</dt><dd>{listing.information}</dd></div>
-            </dl>
+            {/* 목록에서는 비교에 필요한 대상·언어만 간단히 보여준다.
+                제공 정보와 상세 안내는 다음 단계의 자세히 보기 모달에서 사용한다. */}
+            <div className="job-listing-meta" aria-label="이용 정보 요약">
+                <div className="job-listing-meta-item">
+                    <span className="job-listing-meta-label">대상</span>
+                    <span className="job-listing-meta-value">{listing.target}</span>
+                </div>
+                <div className="job-listing-meta-item">
+                    <span className="job-listing-meta-label">언어</span>
+                    <span className="job-listing-meta-value">{listing.language}</span>
+                </div>
+            </div>
 
             <div className="job-listing-actions">
-                {/* 상세 모달 연결은 다음 단계에서 직접 추가합니다. */}
-                <button type="button" className="job-listing-action-button">
+                <button
+                    type="button"
+                    className="job-listing-action-button"
+                    onClick={() => onDetailOpen(listing)}
+                >
                     자세히 보기 <span aria-hidden="true">↗</span>
                 </button>
-                {/* 외부 공식 사이트 이동은 다음 단계에서 직접 추가합니다. */}
-                <button type="button" className="job-listing-action-button">
+
+                <a
+                    className="job-listing-action-button"
+                    href={listing.siteUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${listing.title} 공식 사이트 새 탭에서 열기`}
+                >
                     사이트 바로가기 <span aria-hidden="true">↗</span>
-                </button>
+                </a>
             </div>
         </article>
     );
@@ -59,6 +77,10 @@ export default function JobListings() {
     const [sections, setSections] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [loadError, setLoadError] = useState(false);
+    const [selectedRegion, setSelectedRegion] = useState("서울");
+    const [isRegionMenuOpen, setIsRegionMenuOpen] = useState(false);
+    const [selectedListing, setSelectedListing] = useState(null);
+    const regionMenuRef = useRef(null);
 
     useEffect(() => {
         async function loadJobListings() {
@@ -75,13 +97,32 @@ export default function JobListings() {
         loadJobListings();
     }, []);
 
+    useEffect(() => {
+        function closeRegionMenuWhenClickedOutside(event) {
+            if (!regionMenuRef.current?.contains(event.target)) {
+                setIsRegionMenuOpen(false);
+            }
+        }
+
+        document.addEventListener("mousedown", closeRegionMenuWhenClickedOutside);
+
+        return () => {
+            document.removeEventListener(
+                "mousedown",
+                closeRegionMenuWhenClickedOutside,
+            );
+        };
+    }, []);
+
     const regionalSection = sections.find((section) => section.id === "regional");
     const generalSections = sections.filter((section) => section.id !== "regional");
+    const regionalListings = regionalSection?.listingsByRegion?.[selectedRegion]
+        ?? regionalSection?.listings
+        ?? [];
 
     return (
         <div className="page-stack job-listings-page">
             <Banner title="일자리 목록" description="나에게 맞는 취업 정보와 지원 기관을 찾아보세요." />
-            <p className="job-listings-example-badge">예시 데이터</p>
 
             {isLoading && <p className="job-listings-state">기관 정보를 불러오는 중입니다.</p>}
             {loadError && <p className="job-listings-state">기관 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.</p>}
@@ -94,7 +135,13 @@ export default function JobListings() {
                             <p>{section.description}</p>
                         </div>
                         <div className="job-listings-grid">
-                            {section.listings.map((listing) => <JobListingCard key={listing.id} listing={listing} />)}
+                            {section.listings.map((listing) => (
+                                <JobListingCard
+                                    key={listing.id}
+                                    listing={listing}
+                                    onDetailOpen={setSelectedListing}
+                                />
+                            ))}
                         </div>
                     </section>
                 ))}
@@ -104,26 +151,63 @@ export default function JobListings() {
                         <h2 id="regional-title">{regionalSection.title}</h2>
                         <p>{regionalSection.description}</p>
                     </div>
-                    <div className="job-listings-region-control">
-                        <label htmlFor="job-listings-region">지역 선택</label>
-                        {/* 실제 지역별 카드 필터링은 다음 단계에서 직접 연결합니다. */}
-                        <select id="job-listings-region" defaultValue="서울">
-                            <option value="서울">서울</option>
-                            <option value="경기">경기</option>
-                            <option value="인천">인천</option>
-                            <option value="부산">부산</option>
-                            <option value="대구">대구</option>
-                            <option value="광주">광주</option>
-                            <option value="대전">대전</option>
-                            <option value="울산">울산</option>
-                        </select>
+                    <div
+                        ref={regionMenuRef}
+                        className="job-listings-region-control"
+                    >
+                        <span id="job-listings-region-label">지역 선택</span>
+                        <button
+                            type="button"
+                            className="job-listings-region-trigger"
+                            aria-labelledby="job-listings-region-label"
+                            aria-haspopup="listbox"
+                            aria-expanded={isRegionMenuOpen}
+                            onClick={() => setIsRegionMenuOpen((isOpen) => !isOpen)}
+                        >
+                            {selectedRegion}
+                            <span aria-hidden="true">⌄</span>
+                        </button>
+
+                        {isRegionMenuOpen && (
+                            <ul
+                                className="job-listings-region-menu"
+                                role="listbox"
+                                aria-label="지역 선택"
+                            >
+                                {regionalSection.regionOptions.map((region) => (
+                                    <li key={region}>
+                                        <button
+                                            type="button"
+                                            role="option"
+                                            aria-selected={region === selectedRegion}
+                                            onClick={() => {
+                                                setSelectedRegion(region);
+                                                setIsRegionMenuOpen(false);
+                                            }}
+                                        >
+                                            {region}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                     </div>
-                    <p className="job-listings-region-result">서울에서 이용할 수 있는 기관</p>
                     <div className="job-listings-grid">
-                        {regionalSection.listings.map((listing) => <JobListingCard key={listing.id} listing={listing} />)}
+                        {regionalListings.map((listing) => (
+                            <JobListingCard
+                                key={listing.id}
+                                listing={listing}
+                                onDetailOpen={setSelectedListing}
+                            />
+                        ))}
                     </div>
                 </section>}
             </>}
+
+            <JobListingDetailModal
+                listing={selectedListing}
+                onClose={() => setSelectedListing(null)}
+            />
         </div>
     );
 }

@@ -15,9 +15,9 @@
 | 외국인 공공 취업 지원 | 외국인 공공 고용 서비스 | 고용24 | 외국인 포함 구직자를 위한 구직·취업 지원 정보 | 확인 필요 | [고용24](https://www.work24.go.kr/) |
 | 외국인 공공 취업 지원 | 외국인 고용 지원 안내 | 고용허가제(EPS) | 외국인근로자와 고용 사업주의 고용 절차·체류 지원 정보 | 확인 필요 | [고용허가제 취업 절차](https://eps.hrdkorea.or.kr/e9/user/employment/employment.do?method=employProcessLabor) |
 | 외국인 근로자 채용 정보 | 외국인 전용 채용 플랫폼 | KOWORK | 한국 취업을 희망하는 외국인을 위한 채용 공고 플랫폼 | 확인 필요 | [KOWORK](https://www.kowork.kr/) |
-| 외국인 근로자 채용 정보 | 외국인 인재 채용 매칭 | KOTRA Global Talent Fair | 외국인투자기업·글로벌 기업 취업 정보와 채용 박람회·상담 | 행사별 확인 필요 | [KOTRA 안내](https://dl.kotra.or.kr/pyxis-api/2/digital-files/1fcbe1e0-3c84-4929-aafd-79e664401348) · [2026 행사 안내](https://global.seoul.go.kr/web/news/news/bordContDetail.do?brd_no=2&lang=KO&mode=W&post_no=52EBEC13259E00D4E063C0A8A0235339) |
+| 외국인 근로자 채용 정보 | 외국인 인재 채용 매칭 | K-WORK 플랫폼 | 외국인 유학생과 중소기업의 채용 공고·취업 매칭·상담 지원 | 공식 사이트에서 확인 | [K-WORK 소개](https://k-work.or.kr/bsnsIntrcn/kWorkInfo.do) · [K-WORK 메인](https://k-work.or.kr/main/main.do) |
 | 외국인 유학생 취업 지원 | 유학생 취업 지원 포털 | Study in Korea | 외국인 유학생의 취업 제도·직종·구직 준비 안내 | 한국어 · 영어 확인 | [Study in Korea 취업 안내](https://studyinkorea.go.kr/ko/work/aboutKoreaEmployment.do?tab=job-types) · [영문 취업 제도](https://online.studyinkorea.go.kr/en_US/work/aboutForeignerEmploymentSystem.do) |
-| 외국인 유학생 취업 지원 | 유학생 인턴십·취업 정보 | K-WORK | 외국인 유학생과 중소기업의 일자리 매칭, 이력서·취업 상담·채용 공고 | 확인 필요 | [K-WORK 소개](https://k-work.or.kr/bsnsIntrcn/kWorkInfo.do) · [채용 공고](https://k-work.or.kr/empmnInfo/empmn/list.do) |
+| 외국인 유학생 취업 지원 | 유학생 인턴십·취업 정보 | Study in Korea | 외국인 유학생 대상 채용 공고·인턴십·취업 정보 | 공식 사이트에서 확인 | [Study in Korea 채용정보](https://cdn.studyinkorea.go.kr/ko/work/workInfo.do) |
 
 ## 지역 외국인 취업·상담 지원
 
@@ -26,9 +26,9 @@
 | 지역 | 카드 이름 | 이용 대상·주요 기능 | 지원 언어 | 출처 |
 | --- | --- | --- | --- | --- |
 | 서울 | 서울글로벌유학생지원센터 | 서울의 외국인 유학생 대상 취업 상담, 이력서·자기소개서 컨설팅, 모의면접, 취업특강, 기업 매칭 프로그램 | 한국어 · 영어 · 중국어: 2026년 1:1 온라인 진로 상담 프로그램 기준. 다른 프로그램은 확인 필요 | [서울 취·창업 지원](https://global.seoul.go.kr/hmpg/finf/empl/prog/contPageDetail.do?conts_no=443920C8D70C46A4A616445B7AEEFADD) · [1:1 진로 상담](https://global.seoul.go.kr/web/news/news/bordContDetail.do?brd_no=2&lang=EN&mode=W&post_no=51345583F90E011AE063C0A8A0237B91) |
-| 서울 | 서울 외국인 주민 취업 상담 | 외국인 대상 취업·창업 상담, 이력서·자기소개서 컨설팅, 모의면접, 취업특강 | 지원 언어 확인 필요 | [서울 취·창업 지원](https://global.seoul.go.kr/hmpg/finf/empl/prog/contPageDetail.do?conts_no=443920C8D70C46A4A616445B7AEEFADD) |
-| 부산 | 부산외국인근로자지원센터 | 외국인근로자 대상 고용·법률·생활·언어 상담, 초기 정착 지원 | 다국어 상담·통역 20개국 언어 지원 | [부산광역시 외국인주민 지원](https://www.busan.go.kr/depart/family0407) |
-| 부산 | 부산외국인주민지원센터 | 부산 거주 외국인 주민 대상 노동·산재·의료·체류 상담과 정보 제공 | 한국어 · 영어 · 중국어 · 베트남어 · 미얀마어 · 힌디어 | [부산광역시 외국인주민 지원](https://www.busan.go.kr/depart/family0407) |
+| 서울 | 서울글로벌센터 외국인 주민 지원 | 서울 거주 외국인을 위한 정착·생활·행정·전문 상담 서비스 안내 | 지원 언어는 공식 사이트에서 확인 필요 | [서울글로벌센터 서비스 안내](https://global.seoul.go.kr/hmpg/ainf/ctrs/sgce/srvc/srvcListPage.do?cntr_no=557143B8FC944F7D8611F318B1B01D62) |
+| 부산 | 부산외국인근로자지원센터 | 외국인근로자 대상 고용·법률·생활·언어 상담, 초기 정착 지원 | 다국어 상담·통역 20개국 언어 지원 | [부산외국인근로자지원센터](https://www.bscfw.or.kr/) · [부산광역시 기관 안내](https://www.busan.go.kr/depart/family0407) |
+| 부산 | 부산외국인주민지원센터 | 부산 거주 외국인 주민 대상 노동·산재·의료·생활 상담과 정보 제공 | 한국어 · 영어 · 베트남어 · 중국어 · 미얀마어 · 필리핀어 · 네팔어 · 캄보디아어 · 파키스탄어 | [부산외국인주민지원센터](https://bfwc.or.kr/kr/) |
 
 ### 전국 지역 고용복지+센터 카드
 
