@@ -183,16 +183,39 @@
     cursor: default;
 }
 
-/* 글씨에서 8px 떨어진 밑줄을 준비 */
+/* 글씨 너비를 기준으로 밑줄 위치 설정 */
 .menuTitle>span,
 .menuLink>span {
-    text-decoration-line: underline;
-    text-decoration-color: transparent;
-    text-decoration-thickness: 2px;
-    text-underline-offset: 8px;
+    position: relative;
+    display: inline-block;
+
+    /* 기존 밑줄은 제거하고 가상 요소로 표시 */
+    text-decoration: none;
 }
 
-/* 선택하거나 마우스를 올리면 글씨와 밑줄을 진한 초록색으로 변경 */
+/* 기본 상태에서는 가운데로 접힌 밑줄 */
+.menuTitle>span::after,
+.menuLink>span::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 2px;
+
+    /* 현재 글씨 색상과 동일한 색 사용 */
+    background: currentColor;
+
+    /* 가운데를 기준으로 너비를 0으로 줄임 */
+    transform: scaleX(0);
+    transform-origin: center;
+
+    /* 펼쳐질 때와 접힐 때 모두 부드럽게 전환 */
+    transition: transform 260ms ease;
+    pointer-events: none;
+}
+
+/* 기존의 진한 초록색 강조 유지 */
 .menuTitle[data-open="true"],
 .menuTitle:focus-visible,
 .menuLink:hover,
@@ -201,12 +224,22 @@
     color: #145244;
 }
 
-.menuTitle[data-open="true"]>span,
-.menuTitle:focus-visible>span,
-.menuLink:hover>span,
-.menuLink:focus-visible>span,
-.menuLink[aria-current="page"]>span {
-    text-decoration-color: currentColor;
+/* 선택하면 가운데에서 양옆으로 밑줄이 펼쳐짐 */
+.menuTitle[data-open="true"]>span::after,
+.menuTitle:focus-visible>span::after,
+.menuLink:hover>span::after,
+.menuLink:focus-visible>span::after,
+.menuLink[aria-current="page"]>span::after {
+    transform: scaleX(1);
+}
+
+/* 움직임 줄이기 설정에서는 전환 효과 생략 */
+@media (prefers-reduced-motion: reduce) {
+
+    .menuTitle>span::after,
+    .menuLink>span::after {
+        transition: none;
+    }
 }
 
 /* 바깥 header를 기준으로 사이트 전체 너비에 펼침 */
