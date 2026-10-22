@@ -29,18 +29,18 @@ const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 
 // 현재는 화면 탐색을 위한 UI만 제공한다. 실제 카테고리 필터는 데이터 구조가 확정된 뒤 연결한다.
 const COMMUNITY_NAVIGATION_ITEMS = [
-    { icon: "▤", label: "전체 게시글", isActive: true },
-    { icon: "◌", label: "질문·답변" },
-    { icon: "☆", label: "후기·추천" },
-    { icon: "◫", label: "자유 이야기" },
+    { icon: "▤", label: "전체 게시글", value:"" },
+    { icon: "◌", label: "질문·답변", value: "QUESTION_ANSWER" },
+    { icon: "☆", label: "후기·추천", value: "REVIEW_RECOMMEND" },
+    { icon: "◫", label: "자유 이야기", value: "FREE_TALK" },
 ];
 
 const COMMUNITY_TOPIC_ITEMS = [
-    { icon: "⌂", label: "계좌 개설" },
-    { icon: "◉", label: "대출" },
-    { icon: "◇", label: "보험" },
-    { icon: "▣", label: "비자·체류" },
-    { icon: "◌", label: "한국 생활 팁" },
+    { icon: "⌂", label: "계좌 개설", value: "ACCOUNT" },
+    { icon: "◉", label: "대출", value: "LOAN" },
+    { icon: "◇", label: "보험", value: "INSURANCE" },
+    { icon: "▣", label: "비자·체류", value: "VISA_STAY" },
+    { icon: "◌", label: "한국 생활 팁", value: "LIFE_TIP" },
 ];
 
 function getPostPreview(post) {
@@ -70,7 +70,6 @@ function PostCard({
     const [isRepostLoading, setIsRepostLoading] = useState(true);
     const [isRepostSubmitting, setIsRepostSubmitting] = useState(false);
     const [repostError, setRepostError] = useState("");
-
     const isOwner = Number(post.memberId) === Number(currentMemberId);
     const formattedDate = post.createdAt
         ? new Date(post.createdAt).toLocaleDateString("ko-KR")
@@ -316,6 +315,9 @@ export default function Community() {
     const [popularError, setPopularError] = useState("");
     const [popularSort, setPopularSort] = useState("likes");
     const [feedType, setFeedType] = useState("all");
+    const [postCategory, setPostCategory] = useState("FREE_TALK");
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedTopic, setSelectedTopic] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [hasMore, setHasMore] = useState(true);
@@ -376,6 +378,8 @@ export default function Community() {
                 : await getCommunityPostsByCursor({
                     cursorCreatedAt: cursorCreatedAtRef.current,
                     cursorPostId: cursorPostIdRef.current,
+                    category: selectedCategory || null,
+                    topic: selectedTopic || null,
                     size: 10,
                 });
             const receivedPosts = Array.isArray(response) ? response : [];
@@ -408,7 +412,7 @@ export default function Community() {
         setHasMore(true);
         setPosts([]);
         loadMorePosts();
-    }, [feedType]);
+    }, [feedType, selectedCategory, selectedTopic]);
 
     useEffect(() => {
         const target = observerTarget.current;
@@ -422,7 +426,7 @@ export default function Community() {
         );
         observer.observe(target);
         return () => observer.disconnect();
-    }, [hasMore]);
+    }, [hasMore, feedType, selectedCategory, selectedTopic]);
 
     function handleImageChange(event) {
         if (!accessToken || !currentMemberId) {
@@ -505,6 +509,7 @@ export default function Community() {
         try {
             const formData = new FormData();
             formData.append("content", trimmedContent);
+            formData.append("category", postCategory);
             formData.append("language", i18n.language || "ko");
             images.forEach((image) => formData.append("images", image));
             await createCommunityPost(formData);
@@ -575,31 +580,62 @@ export default function Community() {
                 <aside className="community-sidebar" aria-label="커뮤니티 둘러보기">
                     <nav className="community-sidebar-navigation" aria-label="게시글 종류">
                         {COMMUNITY_NAVIGATION_ITEMS.map((item) => (
-                            <span
+                            <button
                                 key={item.label}
-                                className={`community-sidebar-item${item.isActive ? " is-active" : ""}`}
+                                type="button"
+                                className={`community-sidebar-item${
+                                    selectedCategory === item.value ? " is-active" : ""
+                                }`}
+                                onClick={() => {
+                                    setSelectedCategory(item.value);
+
+                                    if (item.value === "FREE_TALK") {
+                                        setSelectedTopic("");
+                                    }
+                            }}
                             >
                                 <span className="community-sidebar-icon" aria-hidden="true">
                                     {item.icon}
                                 </span>
                                 {item.label}
-                            </span>
+                            </button>
                         ))}
                     </nav>
 
-                    <section className="community-sidebar-topics" aria-labelledby="community-topic-title">
-                        <h2 id="community-topic-title">주요 주제</h2>
-                        <div className="community-topic-list">
-                            {COMMUNITY_TOPIC_ITEMS.map((topic) => (
-                                <span className="community-topic-item" key={topic.label}>
-                                    <span className="community-topic-icon" aria-hidden="true">
+                    {selectedCategory !== "FREE_TALK" && (
+                        <section
+                            className="community-sidebar-topics"
+                            aria-labelledby="community-topic-title"
+                        >
+                            <h2 id="community-topic-title">주요 주제</h2>
+
+                            <div className="community-topic-list">
+                                {COMMUNITY_TOPIC_ITEMS.map((topic) => (
+                                    <button
+                                        key={topic.value}
+                                        type="button"
+                                        className={`community-topic-item${
+                                            selectedTopic === topic.value ? " is-active" : ""
+                                        }`}
+                                        onClick={() => {
+                                            setSelectedTopic((previous) =>
+                                                previous === topic.value ? "" : topic.value,
+                                            );
+                                        }}
+                                        aria-pressed={selectedTopic === topic.value}
+                                    >
+                            <span
+                                className="community-topic-icon"
+                                aria-hidden="true"
+                            >
                                         {topic.icon}
-                                    </span>
-                                    {topic.label}
-                                </span>
-                            ))}
-                        </div>
-                    </section>
+                            </span>
+                                        {topic.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </section>
+                    )}
                 </aside>
 
                 <section className="community-board panel" aria-label="커뮤니티 게시판">
@@ -625,6 +661,18 @@ export default function Community() {
                             maxLength={5000}
                             aria-label="게시글 내용"
                         />
+                        <label>
+                            카테고리
+                            <select
+                                value={postCategory}
+                                onChange={(event) => setPostCategory(event.target.value)}
+                            >
+                                <option value="QUESTION_ANSWER">질문·답변</option>
+                                <option value="REVIEW_RECOMMEND">후기·추천</option>
+                                <option value="FREE_TALK">자유 이야기</option>
+                            </select>
+                        </label>
+
                         <div className="community-write-toolbar">
                             <label className="community-image-picker" onClick={handleWriteAttempt}>
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
