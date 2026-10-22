@@ -25,7 +25,7 @@ public class CommunityPostCreateRequest {
     private String category;
 
     @Pattern(
-            regexp = "|ACCOUNT_RECOMMEND|LOAN_RECOMMEND|INSURANCE_RECOMMEND",
+            regexp = "|ACCOUNT_RECOMMEND|LOAN_RECOMMEND|INSURANCE_RECOMMEND|EMPLOYMENT_GUIDE",
             message = "올바른 관련 서비스를 선택해주세요."
     )
     private String relatedService;

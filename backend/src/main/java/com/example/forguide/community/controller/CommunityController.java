@@ -20,6 +20,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.Pattern;
 import java.util.UUID;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
@@ -91,12 +92,19 @@ public class CommunityController {
         );
     }
 
-    // 전체 게시글을 공감순 또는 조회순으로 정렬해 인기 게시글을 보여준다.
+    // 오른쪽 인기 게시글: 공감순 또는 조회순 상위 10개를 반환한다.
     @GetMapping("/posts/popular")
     public ApiResponse<List<CommunityPostResponse>> getPopularPosts(
-            @RequestParam(defaultValue = "likes") String sort
+            @RequestParam(defaultValue = "likes")
+            @Pattern(
+                    regexp = "likes|views",
+                    message = "정렬 기준은 likes 또는 views만 가능합니다."
+            )
+            String sortBy
     ) {
-        return ApiResponse.ok(communityService.getPopularPosts(sort, 3));
+        return ApiResponse.ok(
+                communityService.getPopularPosts(sortBy)
+        );
     }
 
     // 로그인 회원이 리포스트한 게시글만 조회한다.

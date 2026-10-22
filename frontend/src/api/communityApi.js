@@ -42,8 +42,11 @@ export async function getCommunityPostsByCursor({
 }
 
 // 선택한 공감순 또는 조회순으로 정렬한 인기 게시글 목록
-export async function getPopularCommunityPosts(sortBy = "likes") {
-    return client.get(`/community/posts/popular?sort=${sortBy}`);
+export async function getPopularCommunityPosts(sort = "likes") {
+    const params = new URLSearchParams();
+    params.set("sort", sort);
+
+    return client.get(`/community/posts/popular?${params.toString()}`);
 }
 
 export async function createCommunityPost(postData) {

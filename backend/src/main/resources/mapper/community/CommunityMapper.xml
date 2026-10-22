@@ -597,4 +597,10 @@
           AND member_id = #{memberId}
     </delete>
 
+    <!-- 게시글 삭제 전에 연결된 공감 기록을 정리한다. -->
+    <delete id="deletePostLikesByPostId">
+        DELETE FROM post_likes
+        WHERE post_id = #{postId}
+    </delete>
+
 </mapper>
