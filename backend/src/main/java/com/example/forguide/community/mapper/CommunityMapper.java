@@ -20,6 +20,9 @@ public interface CommunityMapper {
     List<CommunityPostResponse> findPostsByCursor(
             @Param("cursorCreatedAt") LocalDateTime cursorCreatedAt,
             @Param("cursorPostId") Long cursorPostId,
+            @Param("category") String category,
+            @Param("keyword") String keyword,
+            @Param("topicKeywords") List<String> topicKeywords,
             @Param("size") int size
     );
 

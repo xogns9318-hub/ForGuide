@@ -74,12 +74,18 @@ public class CommunityController {
     public ApiResponse<List<CommunityPostResponse>> getPostsByCursor(
             @RequestParam(required = false) LocalDateTime cursorCreatedAt,
             @RequestParam(required = false) Long cursorPostId,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) @Size(max = 100) String keyword,
+            @RequestParam(required = false) String topic,
             @RequestParam @Min(1) @Max(50) int size
     ) {
         return ApiResponse.ok(
                 communityService.getPostsByCursor(
                         cursorCreatedAt,
                         cursorPostId,
+                        category,
+                        keyword,
+                        topic,
                         size
                 )
         );

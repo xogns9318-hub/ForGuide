@@ -24,6 +24,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
@@ -91,10 +92,19 @@ public class CommunityService {
     public List<CommunityPostResponse> getPostsByCursor(
             LocalDateTime cursorCreatedAt,
             Long cursorPostId,
+            String category,
+            String keyword,
+            String topic,
             int size
     ) {
+        validateCategory(category);
         return attachImages(communityMapper.findPostsByCursor(
-                cursorCreatedAt, cursorPostId, size
+                cursorCreatedAt,
+                cursorPostId,
+                category,
+                normalizeKeyword(keyword),
+                getTopicKeywords(topic),
+                size
         ));
     }
 
@@ -134,6 +144,7 @@ public class CommunityService {
 
         // memberId는 요청값을 믿지 않고 로그인 정보로 항상 덮어쓴다.
         request.setMemberId(memberId);
+        validateRelatedService(request);
 
         int insertedCount = communityMapper.insertPost(request);
 
@@ -262,6 +273,63 @@ public class CommunityService {
             newImageUrls.forEach(communityImageStorage::deleteIfOwned);
             throw exception;
         }
+    }
+
+    // 카테고리는 정해진 세 가지 값만 허용해 필터 조건과 저장 값이 어긋나지 않게 한다.
+    private void validateCategory(String category) {
+        if (category == null || category.isBlank()) {
+            return;
+        }
+
+        Set<String> categories = Set.of("QUESTION_ANSWER", "REVIEW_RECOMMEND", "FREE_TALK");
+        if (!categories.contains(category)) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, "올바른 카테고리를 선택해주세요.");
+        }
+    }
+
+    // 관련 서비스는 후기·추천 글에서만 선택할 수 있다.
+    private void validateRelatedService(CommunityPostCreateRequest request) {
+        String relatedService = request.getRelatedService();
+
+        if (relatedService == null || relatedService.isBlank()) {
+            request.setRelatedService(null);
+            return;
+        }
+
+        Set<String> services = Set.of(
+                "ACCOUNT_RECOMMEND", "LOAN_RECOMMEND", "INSURANCE_RECOMMEND"
+        );
+        if (!"REVIEW_RECOMMEND".equals(request.getCategory()) || !services.contains(relatedService)) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, "후기·추천 글에서만 관련 서비스를 연결할 수 있습니다.");
+        }
+    }
+
+    private String normalizeKeyword(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return null;
+        }
+        return keyword.trim();
+    }
+
+    // 주요 주제는 별도 분류로 저장하지 않고, 본문에 자연스럽게 등장한 단어를 찾는다.
+    private List<String> getTopicKeywords(String topic) {
+        if (topic == null || topic.isBlank()) {
+            return List.of();
+        }
+
+        Map<String, List<String>> keywordsByTopic = Map.of(
+                "ACCOUNT", List.of("계좌", "은행", "통장", "개설"),
+                "LOAN", List.of("대출", "금리", "상환", "보증"),
+                "INSURANCE", List.of("보험", "보장", "보험료", "가입"),
+                "VISA_STAY", List.of("비자", "체류", "외국인등록", "연장"),
+                "LIFE_TIP", List.of("교통", "병원", "휴대폰", "주거", "쓰레기")
+        );
+
+        List<String> keywords = keywordsByTopic.get(topic.toUpperCase(Locale.ROOT));
+        if (keywords == null) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, "올바른 주요 주제를 선택해주세요.");
+        }
+        return keywords;
     }
 
     // 작성자를 확인한 뒤 본인 게시글만 삭제

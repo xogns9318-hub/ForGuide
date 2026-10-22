@@ -26,6 +26,26 @@ import CommunityPostModal from "./CommunityPostModal.jsx";
 const MAX_IMAGE_COUNT = 4;
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 
+const CATEGORY_LABELS = {
+    QUESTION_ANSWER: "질문·답변",
+    REVIEW_RECOMMEND: "후기·추천",
+    FREE_TALK: "자유 이야기",
+};
+
+const RELATED_SERVICE_LINKS = {
+    ACCOUNT_RECOMMEND: { label: "계좌 개설 추천 보기", path: "/service/account" },
+    LOAN_RECOMMEND: { label: "대출 추천 보기", path: "/service/loan" },
+    INSURANCE_RECOMMEND: { label: "보험 추천 보기", path: "/service/insurance" },
+};
+
+const TOPICS = [
+    ["ACCOUNT", "계좌 개설"],
+    ["LOAN", "대출"],
+    ["INSURANCE", "보험"],
+    ["VISA_STAY", "비자·체류"],
+    ["LIFE_TIP", "한국 생활 팁"],
+];
+
 function PostCard({
     post,
     currentMemberId,
@@ -141,6 +161,8 @@ function PostCard({
         setIsEditing(false);
     }
 
+    const relatedService = RELATED_SERVICE_LINKS[post.relatedService];
+
     return (
         <article className="community-post-card">
             {isRepostFeed && (
@@ -158,6 +180,9 @@ function PostCard({
                         size={38}
                     />
                     <div>
+                        <span className="community-category-badge">
+                            {CATEGORY_LABELS[post.category] ?? "자유 이야기"}
+                        </span>
                         <strong>{post.loginId}</strong>
                         <p>{formattedDate}</p>
                     </div>
@@ -212,6 +237,15 @@ function PostCard({
                                     />
                                 ))}
                             </div>
+                        )}
+                        {relatedService && (
+                            <a
+                                className="community-related-service-link"
+                                href={relatedService.path}
+                                onClick={(event) => event.stopPropagation()}
+                            >
+                                {relatedService.label} <span aria-hidden="true">↗</span>
+                            </a>
                         )}
                     </div>
 
@@ -289,6 +323,12 @@ export default function Community() {
     const currentMemberId = member?.memberId;
     const [posts, setPosts] = useState([]);
     const [feedType, setFeedType] = useState("all");
+    const [category, setCategory] = useState("FREE_TALK");
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedTopic, setSelectedTopic] = useState("");
+    const [relatedService, setRelatedService] = useState("");
+    const [searchKeyword, setSearchKeyword] = useState("");
+    const [submittedKeyword, setSubmittedKeyword] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [hasMore, setHasMore] = useState(true);
@@ -332,6 +372,9 @@ export default function Community() {
                 : await getCommunityPostsByCursor({
                     cursorCreatedAt: cursorCreatedAtRef.current,
                     cursorPostId: cursorPostIdRef.current,
+                    category: selectedCategory || null,
+                    keyword: submittedKeyword || null,
+                    topic: selectedTopic || null,
                     size: 10,
                 });
             const receivedPosts = Array.isArray(response) ? response : [];
@@ -364,7 +407,7 @@ export default function Community() {
         setHasMore(true);
         setPosts([]);
         loadMorePosts();
-    }, [feedType]);
+    }, [feedType, selectedCategory, selectedTopic, submittedKeyword]);
 
     useEffect(() => {
         const target = observerTarget.current;
@@ -462,10 +505,13 @@ export default function Community() {
             const formData = new FormData();
             formData.append("content", trimmedContent);
             formData.append("language", i18n.language || "ko");
+            formData.append("category", category);
+            if (relatedService) formData.append("relatedService", relatedService);
             images.forEach((image) => formData.append("images", image));
             await createCommunityPost(formData);
 
             setContent("");
+            setRelatedService("");
             clearSelectedImages();
             cursorCreatedAtRef.current = null;
             cursorPostIdRef.current = null;
@@ -522,9 +568,73 @@ export default function Community() {
         }
     }
 
+    function handleSearchSubmit(event) {
+        event.preventDefault();
+        setSubmittedKeyword(searchKeyword.trim());
+    }
+
     return (
         <div className="page-stack community-page">
             <section className="community-board panel" aria-label="커뮤니티 게시판">
+                <header className="community-filter-header">
+                    <h1>커뮤니티</h1>
+                    <form className="community-search-form" onSubmit={handleSearchSubmit}>
+                        <label htmlFor="community-search">본문 검색</label>
+                        <input
+                            id="community-search"
+                            value={searchKeyword}
+                            onChange={(event) => setSearchKeyword(event.target.value)}
+                            placeholder="본문에서 궁금한 내용을 찾아보세요."
+                            maxLength={100}
+                        />
+                        <button type="submit">검색</button>
+                    </form>
+                    <nav className="community-category-filter" aria-label="게시글 카테고리">
+                        <button
+                            type="button"
+                            className={selectedCategory === "" ? "is-selected" : ""}
+                            onClick={() => setSelectedCategory("")}
+                        >
+                            전체 게시글
+                        </button>
+                        <button
+                            type="button"
+                            className={selectedCategory === "QUESTION_ANSWER" ? "is-selected" : ""}
+                            onClick={() => setSelectedCategory("QUESTION_ANSWER")}
+                        >
+                            질문·답변
+                        </button>
+                        <button
+                            type="button"
+                            className={selectedCategory === "REVIEW_RECOMMEND" ? "is-selected" : ""}
+                            onClick={() => setSelectedCategory("REVIEW_RECOMMEND")}
+                        >
+                            후기·추천
+                        </button>
+                        <button
+                            type="button"
+                            className={selectedCategory === "FREE_TALK" ? "is-selected" : ""}
+                            onClick={() => setSelectedCategory("FREE_TALK")}
+                        >
+                            자유 이야기
+                        </button>
+                    </nav>
+                    <nav className="community-topic-filter" aria-label="주요 주제">
+                        <span>주요 주제</span>
+                        {TOPICS.map(([value, label]) => (
+                            <button
+                                key={value}
+                                type="button"
+                                className={selectedTopic === value ? "is-selected" : ""}
+                                onClick={() => setSelectedTopic((previous) => (
+                                    previous === value ? "" : value
+                                ))}
+                            >
+                                {label}
+                            </button>
+                        ))}
+                    </nav>
+                </header>
                 <form className="community-write-area" onSubmit={handleSubmit}>
                     <ProfileAvatar imageUrl={member?.profileImageUrl} name={member?.nickname || ""} size={44} />
                     <div className="community-write-form">
@@ -536,6 +646,38 @@ export default function Community() {
                             maxLength={5000}
                             aria-label="게시글 내용"
                         />
+                        <div className="community-write-selects">
+                            <label>
+                                카테고리
+                                <select
+                                    value={category}
+                                    onChange={(event) => {
+                                        setCategory(event.target.value);
+                                        if (event.target.value !== "REVIEW_RECOMMEND") {
+                                            setRelatedService("");
+                                        }
+                                    }}
+                                >
+                                    <option value="QUESTION_ANSWER">질문·답변</option>
+                                    <option value="REVIEW_RECOMMEND">후기·추천</option>
+                                    <option value="FREE_TALK">자유 이야기</option>
+                                </select>
+                            </label>
+                            {category === "REVIEW_RECOMMEND" && (
+                                <label>
+                                    관련 서비스 연결 (선택)
+                                    <select
+                                        value={relatedService}
+                                        onChange={(event) => setRelatedService(event.target.value)}
+                                    >
+                                        <option value="">연결 안 함</option>
+                                        <option value="ACCOUNT_RECOMMEND">계좌 개설 추천</option>
+                                        <option value="LOAN_RECOMMEND">대출 추천</option>
+                                        <option value="INSURANCE_RECOMMEND">보험 추천</option>
+                                    </select>
+                                </label>
+                            )}
+                        </div>
                         <div className="community-write-toolbar">
                             <label className="community-image-picker" onClick={handleWriteAttempt}>
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -546,6 +688,7 @@ export default function Community() {
                                 사진 추가
                                 <input type="file" accept="image/jpeg,image/png" multiple onChange={handleImageChange} />
                             </label>
+                            <span className="community-image-guide">JPG/PNG · 최대 4장 · 장당 20MB</span>
                             <button type="submit" disabled={isSubmitting}>
                                 {isSubmitting ? "작성 중" : "작성"}
                             </button>

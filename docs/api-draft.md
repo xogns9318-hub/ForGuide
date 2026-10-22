@@ -208,6 +208,9 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | --- | --- | --- |
 | `cursorCreatedAt` | 선택 | 마지막으로 조회한 게시글의 작성 시간 |
 | `cursorPostId` | 선택 | 마지막으로 조회한 게시글 번호 |
+| `category` | 선택 | `QUESTION_ANSWER`, `REVIEW_RECOMMEND`, `FREE_TALK` 중 하나. 선택하면 해당 카테고리만 조회 |
+| `keyword` | 선택 | 본문 내용 부분 일치 검색어 (최대 100자) |
+| `topic` | 선택 | `ACCOUNT`, `LOAN`, `INSURANCE`, `VISA_STAY`, `LIFE_TIP` 중 하나. 정해진 본문 키워드 묶음으로 조회 |
 | `size` | 필수 | 조회할 게시글 수 (1~50) |
 
 첫 페이지에서는 커서 두 개를 전달하지 않는다.
@@ -233,8 +236,12 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | 항목 | 필수 여부 | 설명 |
 | --- | --- | --- |
 | `content` | 필수 | 게시글 본문 |
+| `category` | 필수 | 질문·답변, 후기·추천, 자유 이야기 중 작성자가 선택한 카테고리 |
+| `relatedService` | 선택 | 후기·추천 글에서만 선택 가능. `ACCOUNT_RECOMMEND`, `LOAN_RECOMMEND`, `INSURANCE_RECOMMEND` |
 | `language` | 필수 | 현재 서비스 언어 |
 | `images` | 선택 | 게시글 사진. 같은 이름으로 최대 4장 전송 |
+
+사진 안내 문구와 서버 규칙은 동일하다: **JPG/PNG, 최대 4장, 파일당 20MB**.
 
 입력 검증:
 - `content`: 필수, 공백만 입력 불가, 최대 5000자

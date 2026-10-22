@@ -577,6 +577,162 @@
     box-shadow: none;
 }
 
+/* 글 작성 조건과 탐색 조건은 한 줄의 가벼운 제어 영역으로 보여 준다. */
+.community-filter-header {
+    display: grid;
+    gap: 14px;
+    padding: 28px 32px 18px;
+}
+
+.community-filter-header h1 {
+    margin: 0;
+    color: #173d34;
+    font-size: clamp(28px, 4vw, 40px);
+}
+
+.community-search-form {
+    display: flex;
+    gap: 8px;
+}
+
+.community-search-form label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+}
+
+.community-search-form input {
+    min-width: 0;
+    flex: 1;
+    min-height: 42px;
+    border: 1px solid #d5e9e1;
+    border-radius: 10px;
+    padding: 0 13px;
+    color: #21453c;
+    font: inherit;
+}
+
+.community-search-form button,
+.community-category-filter button {
+    border: 0;
+    border-radius: 9px;
+    background: #edf7f2;
+    color: #286353;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.community-search-form button {
+    min-width: 60px;
+}
+
+.community-category-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.community-topic-filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+}
+
+.community-topic-filter > span {
+    margin-right: 2px;
+    color: #54756c;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.community-topic-filter button {
+    padding: 7px 10px;
+    border: 1px solid #d5e9e1;
+    border-radius: 999px;
+    background: #fff;
+    color: #4b7066;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.community-topic-filter button.is-selected {
+    border-color: #2a846b;
+    background: #e2f4ec;
+    color: #176c56;
+}
+
+.community-category-filter button {
+    padding: 8px 12px;
+}
+
+.community-category-filter button.is-selected {
+    background: var(--primary);
+    color: #fff;
+}
+
+.community-write-selects {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.community-write-selects label {
+    display: grid;
+    gap: 4px;
+    color: #52756b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.community-write-selects select {
+    min-height: 34px;
+    border: 1px solid #d5e9e1;
+    border-radius: 8px;
+    padding: 0 8px;
+    background: #fff;
+    color: #21453c;
+    font: inherit;
+    font-size: 13px;
+}
+
+.community-image-guide {
+    color: #718b83;
+    font-size: 12px;
+}
+
+.community-category-badge {
+    display: inline-block;
+    margin-right: 7px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: #e2f4ec;
+    color: #18735b;
+    font-size: 11px;
+    font-weight: 700;
+    vertical-align: 1px;
+}
+
+.community-related-service-link {
+    display: inline-flex;
+    margin-top: 12px;
+    color: #176c56;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.community-related-service-link:hover {
+    text-decoration: underline;
+}
+
 .community-post-owner-actions {
     display: inline-flex;
     align-items: center;
