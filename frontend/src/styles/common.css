@@ -1,0 +1,389 @@
+/* 공통 색상 */
+:root {
+    --background: #ffffff;
+    --surface: #ffffff;
+    --ink: #203b33;
+    --muted: #52756a;
+    --line: #d4eae2;
+    --brand: #78ccb7;
+    --primary: #226857;
+    --mint: #ddf4eb;
+    --mint-soft: #eaf8f2;
+    --pending: #f2efd9;
+    --card-end: #b4d4c8;
+    --error: #8d3d2b;
+
+    /* 공통 크기 */
+    --page-width: 1280px;
+    --page-padding: 32px;
+    --section-gap: 28px;
+    --panel-radius: 18px;
+    --control-radius: 10px;
+    --control-height: 48px;
+
+    /* 기본 글꼴 */
+    font-family: "Segoe UI",
+    "Malgun Gothic",
+    sans-serif;
+    /* 글씨 크기 지정 */
+    font-size: 16px;
+    /* 글줄 높이 지정 */
+    line-height: 1.65;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--ink);
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--background);
+}
+
+/* 스크롤바 유무와 관계없이 공통 화면의 좌우 위치 유지 */
+html {
+    /* 스크롤바 유무에 따른 가로 위치 변화를 줄이도록 공간 확보 */
+    scrollbar-gutter: stable;
+}
+
+/* 테두리와 여백을 너비에 포함 */
+*,
+*::before,
+*::after {
+    /* 너비와 높이에 테두리·안쪽 여백을 포함할지 지정 */
+    box-sizing: border-box;
+}
+
+/* 브라우저 기본 여백 제거 */
+body {
+    /* 요소 바깥쪽 여백 지정 */
+    margin: 0;
+}
+
+/* 입력창과 버튼의 글꼴 */
+button,
+input,
+select,
+textarea {
+    /* 입력 요소에도 부모 글꼴 설정 적용 */
+    font: inherit;
+}
+
+/* 클릭 가능한 요소의 커서 */
+button,
+select {
+    /* 마우스 포인터 모양 지정 */
+    cursor: pointer;
+}
+
+/* 링크 기본 모양 */
+a {
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: inherit;
+    text-decoration: none;
+}
+
+/* 이미지 너비 제한 */
+img {
+    /* 자식 요소의 배치 방식 지정 */
+    display: block;
+    /* 화면에서 사용할 최대 너비 제한 */
+    max-width: 100%;
+}
+
+/* 제목과 문단의 기본 여백 제거 */
+h1,
+h2,
+h3,
+p {
+    /* 요소 바깥쪽 여백 지정 */
+    margin: 0;
+}
+
+/* 페이지 제목 */
+h1 {
+    /* 글씨 크기 지정 */
+    font-size: 28px;
+    /* 글줄 높이 지정 */
+    line-height: 1.4;
+}
+
+/* 영역 제목 */
+h2 {
+    /* 글씨 크기 지정 */
+    font-size: 24px;
+    /* 글줄 높이 지정 */
+    line-height: 1.4;
+}
+
+/* 작은 제목 */
+h3 {
+    /* 글씨 크기 지정 */
+    font-size: 20px;
+    /* 글줄 높이 지정 */
+    line-height: 1.4;
+}
+
+/* 헤더와 본문과 푸터 배치 */
+.app-layout {
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* flex 요소가 나열되는 방향 지정 */
+    flex-direction: column;
+    /* 높이가 줄어들 수 있는 최소 기준 지정 */
+    min-height: 100vh;
+}
+
+/* 본문 너비와 여백 */
+.page-main {
+    /* 남은 공간을 사용하는 비율과 기본 크기 지정 */
+    flex: 1;
+    /* 가로 크기 지정 */
+    width: 100%;
+    /* 화면에서 사용할 최대 너비 제한 */
+    max-width: var(--page-width);
+    /* 요소 바깥쪽 여백 지정 */
+    margin: 0 auto;
+    /* 테두리 안쪽 여백 지정 */
+    padding: 28px var(--page-padding) 38px;
+}
+
+/* 배너와 본문 사이 간격 */
+.page-stack {
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* flex 요소가 나열되는 방향 지정 */
+    flex-direction: column;
+    /* 자식 요소 사이 간격 지정 */
+    gap: var(--section-gap);
+}
+
+/* 공통 흰색 박스 */
+.panel {
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 테두리 안쪽 여백 지정 */
+    padding: 24px;
+    /* 테두리 두께·형태·색 지정 */
+    border: 1px solid var(--line);
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: var(--panel-radius);
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--surface);
+}
+
+/* 박스 제목과 내용 사이 간격 */
+.panel-title {
+    /* 아래쪽 요소와의 바깥 간격 지정 */
+    margin-bottom: 18px;
+}
+
+/* 보조 설명 */
+.text-muted {
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--muted);
+}
+
+/* 공통 버튼 */
+.button {
+    /* 자식 요소의 배치 방식 지정 */
+    display: inline-flex;
+    /* 자식 요소를 교차축 기준으로 정렬 */
+    align-items: center;
+    /* 자식 요소를 주축 기준으로 정렬 */
+    justify-content: center;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 8px;
+
+    /* 높이가 줄어들 수 있는 최소 기준 지정 */
+    min-height: var(--control-height);
+    /* 테두리 안쪽 여백 지정 */
+    padding: 10px 18px;
+    /* 테두리 두께·형태·색 지정 */
+    border: 1px solid var(--line);
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: var(--control-radius);
+
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--surface);
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--ink);
+    /* 글씨 굵기 지정 */
+    font-weight: 600;
+    /* 마우스 포인터 모양 지정 */
+    cursor: pointer;
+}
+
+/* 기본 버튼에 마우스를 올렸을 때 */
+.button:hover {
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--mint-soft);
+}
+
+/* 강조 버튼 */
+.button-primary {
+    /* 테두리 색 지정 */
+    border-color: var(--primary);
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--primary);
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--surface);
+}
+
+/* 강조 버튼에 마우스를 올렸을 때 */
+.button-primary:hover {
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--primary);
+}
+
+/* 사용할 수 없는 버튼 */
+.button:disabled {
+    /* 요소의 투명도 지정 */
+    opacity: 0.5;
+    /* 마우스 포인터 모양 지정 */
+    cursor: not-allowed;
+}
+
+/* 입력 폼의 기본 2열 배치 */
+.form-grid {
+    /* 자식 요소의 배치 방식 지정 */
+    display: grid;
+    /* 그리드 열의 개수와 너비 지정 */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* 자식 요소를 교차축 기준으로 정렬 */
+    align-items: start;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 20px;
+}
+
+/* 두 열을 모두 사용하는 입력 항목 */
+.form-field-wide {
+    /* 그리드에서 사용할 열 위치 지정 */
+    grid-column: 1 / -1;
+}
+
+/* 입력 제목과 입력창 배치 */
+.form-field {
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* flex 요소가 나열되는 방향 지정 */
+    flex-direction: column;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 10px;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+}
+
+/* 공통 입력창 */
+.form-field input,
+.form-field select,
+.form-field textarea {
+    /* 가로 크기 지정 */
+    width: 100%;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 테두리 안쪽 여백 지정 */
+    padding: 10px 14px;
+    /* 테두리 두께·형태·색 지정 */
+    border: 1px solid var(--line);
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: var(--control-radius);
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--surface);
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--ink);
+}
+
+/* 입력창과 선택창 높이 */
+.form-field input,
+.form-field select {
+    /* 세로 크기 지정 */
+    height: var(--control-height);
+}
+
+/* 긴 글 입력창 */
+.form-field textarea {
+    /* 높이가 줄어들 수 있는 최소 기준 지정 */
+    min-height: 120px;
+    /* 사용자가 입력창 크기를 바꿀 수 있는 방향 지정 */
+    resize: vertical;
+}
+
+/* 입력창의 예시 문구 */
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--muted);
+}
+
+/* 입력창 아래 설명 */
+.form-help {
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--muted);
+    /* 글씨 크기 지정 */
+    font-size: 14px;
+}
+
+/* 폼 아래 버튼 배치 */
+.form-actions {
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* 공간이 부족할 때 줄바꿈 여부 지정 */
+    flex-wrap: wrap;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 10px;
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 24px;
+}
+
+/* 체크박스와 라디오 배치 */
+.choice-label {
+    /* 자식 요소의 배치 방식 지정 */
+    display: inline-flex;
+    /* 자식 요소를 교차축 기준으로 정렬 */
+    align-items: center;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 8px;
+    /* 마우스 포인터 모양 지정 */
+    cursor: pointer;
+}
+
+/* 체크박스와 라디오 색상 */
+.choice-label input {
+    /* 체크박스와 라디오의 강조 색 지정 */
+    accent-color: var(--primary);
+}
+
+/* 오류 안내 */
+.form-error {
+    /* 위쪽 요소와의 바깥 간격 지정 */
+    margin-top: 16px;
+    /* 테두리 안쪽 여백 지정 */
+    padding: 12px 16px;
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: var(--control-radius);
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--pending);
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--error);
+}
+
+/* 키보드로 선택한 요소 표시 */
+:where(a, button, input, select, textarea):focus-visible {
+    /* 포커스 강조선 지정 */
+    outline: 2px solid var(--primary);
+    /* 포커스 강조선과 요소 사이 거리 지정 */
+    outline-offset: 3px;
+}
+
+/* 작은 화면의 너비와 배치 */
+@media (max-width: 768px) {
+    :root {
+        --page-padding: 20px;
+    }
+
+    .form-grid {
+        /* 그리드 열의 개수와 너비 지정 */
+        grid-template-columns: 1fr;
+    }
+
+    .panel {
+        /* 테두리 안쪽 여백 지정 */
+        padding: 20px;
+    }
+}

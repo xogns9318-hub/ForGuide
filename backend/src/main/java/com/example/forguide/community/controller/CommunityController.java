@@ -6,6 +6,7 @@ import com.example.forguide.community.dto.CommunityPostUpdateRequest;
 import com.example.forguide.community.service.CommunityService;
 import com.example.forguide.community.dto.CommunityCommentCreateRequest;
 import com.example.forguide.community.dto.CommunityCommentResponse;
+import com.example.forguide.community.dto.CommunityCommentLikeResponse;
 import com.example.forguide.community.dto.CommunityPostLikeResponse;
 import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
 import com.example.forguide.community.dto.CommunityPostRepostResponse;
@@ -14,9 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDateTime;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import com.example.forguide.member.common.ApiResponse;
+import com.example.forguide.common.response.ApiResponse;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.UUID;
 import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
@@ -39,12 +43,30 @@ public class CommunityController {
         return ApiResponse.ok(communityService.getAllPosts());
     }
 
-    // 게시글 상세 조회
+    // 게시글 상세 조회: 조회수는 이 API를 열 때만 집계
     @GetMapping("/posts/{postId}")
     public ApiResponse<CommunityPostResponse> getPostById(
-            @PathVariable Long postId
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId,
+            @CookieValue(value = "community_viewer_token", required = false)
+            String visitorToken,
+            HttpServletResponse response
     ) {
-        return ApiResponse.ok(communityService.getPostById(postId));
+        // 비로그인 첫 방문자에게만 브라우저 식별용 쿠키를 발급
+        if (memberId == null
+                && (visitorToken == null ||visitorToken.isBlank())) {
+            visitorToken = UUID.randomUUID().toString();
+
+            Cookie cookie = new Cookie("community_viewer_token", visitorToken);
+            cookie.setHttpOnly(true);
+            cookie.setPath("/");
+            cookie.setMaxAge(60 * 60 * 24 * 365);
+            response.addCookie(cookie);
+        }
+
+        return ApiResponse.ok(
+                communityService.getPostByIdAndRecordView(postId, memberId, visitorToken)
+        );
     }
 
     // 무한 스크롤용 게시글 조회
@@ -121,10 +143,11 @@ public class CommunityController {
     // 비로그인 사용자도 게시글의 댓글 목록을 볼 수 있다
     @GetMapping("/posts/{postId}/comments")
     public ApiResponse<List<CommunityCommentResponse>> getCommentsByPostId(
-            @PathVariable Long postId
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId
     ) {
         return ApiResponse.ok(
-                communityService.getCommentsByPostId(postId)
+                communityService.getCommentsByPostId(postId, memberId)
         );
     }
 
@@ -160,6 +183,30 @@ public class CommunityController {
     ) {
         communityService.deleteComment(postId, commentId, memberId);
         return ApiResponse.ok();
+    }
+
+    // 로그인 회원의 댓글 공감 추가
+    @PostMapping("/posts/{postId}/comments/{commentId}/likes")
+    public ApiResponse<CommunityCommentLikeResponse> likeComment(
+            @PathVariable Long postId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.likeComment(postId, commentId, memberId)
+        );
+    }
+
+    // 로그인 회원의 댓글 공감 취소
+    @DeleteMapping("/posts/{postId}/comments/{commentId}/likes")
+    public ApiResponse<CommunityCommentLikeResponse> unlikeComment(
+            @PathVariable Long postId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal Long memberId
+    ) {
+        return ApiResponse.ok(
+                communityService.unlikeComment(postId, commentId, memberId)
+        );
     }
 
     // 비로그인 사용자도 좋아요 수는 볼 수 있고,
@@ -202,6 +249,14 @@ public class CommunityController {
             @PathVariable Long memberId
     ) {
         return ApiResponse.ok(communityService.getMemberPreview(memberId));
+    }
+
+    // 프로필 미리보기의 게시글 수를 누르면 해당 회원이 작성한 글 목록을 반환한다.
+    @GetMapping("/members/{memberId}/posts")
+    public ApiResponse<List<CommunityPostResponse>> getMemberPosts(
+            @PathVariable Long memberId
+    ) {
+        return ApiResponse.ok(communityService.getPostsByMemberId(memberId));
     }
 
     // 비로그인 사용자도 리포스트 수 볼 수 있고,

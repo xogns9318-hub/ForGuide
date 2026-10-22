@@ -1,8 +1,14 @@
-import { client } from "../auth/api/client.js";
+import { client } from "./client.js";
 
 // Spring Boot에서 실제 게시글 목록을 가져온다.
 export async function getCommunityPosts() {
     return client.get("/community/posts");
+}
+
+// 게시글 상세 화면을 열 때 사용한다.
+// 이 요청에서만 서버가 24시간 중복 규칙으로 조회수를 집계한다.
+export async function getCommunityPost(postId) {
+    return client.get(`/community/posts/${postId}`);
 }
 
 // 무한 스크롤에 사용할 게시글 목록을 가져온다.
@@ -49,10 +55,16 @@ export async function getCommunityComments(postId) {
 }
 
 // 로그인한 사용자의 댓글·답글 작성. parentCommentId가 없으면 일반 댓글이다.
-export async function createCommunityComment(postId, content, parentCommentId = null) {
+export async function createCommunityComment(
+    postId,
+    content,
+    parentCommentId = null,
+    mentionLoginId = null,
+) {
     return client.post(`/community/posts/${postId}/comments`, {
         content,
         parentCommentId,
+        mentionLoginId,
     });
 }
 
@@ -66,6 +78,16 @@ export async function updateCommunityComment(postId, commentId, content) {
 // 댓글 작성자 또는 게시글 작성자의 댓글 삭제
 export async function deleteCommunityComment(postId, commentId) {
     return client.delete(`/community/posts/${postId}/comments/${commentId}`);
+}
+
+// 로그인 회원의 댓글 공감 추가
+export async function likeCommunityComment(postId, commentId) {
+    return client.post(`/community/posts/${postId}/comments/${commentId}/likes`);
+}
+
+// 로그인 회원의 댓글 공감 취소
+export async function unlikeCommunityComment(postId, commentId) {
+    return client.delete(`/community/posts/${postId}/comments/${commentId}/likes`);
 }
 
 // 게시글의 좋아요 수와 현재 로그인 회원의 좋아요 여부 조회
@@ -86,6 +108,11 @@ export async function unlikeCommunityPost(postId) {
 // 게시글·댓글 작성자의 프로필 미리보기 정보 조회
 export async function getCommunityMemberPreview(memberId) {
     return client.get(`/community/members/${memberId}/preview`);
+}
+
+// 프로필 미리보기에서 특정 회원이 작성한 게시글 목록 조회
+export async function getCommunityMemberPosts(memberId) {
+    return client.get(`/community/members/${memberId}/posts`);
 }
 
 // 게시글의 리포스트 수와 현재 로그인 회원의 리포스트 여부 조회

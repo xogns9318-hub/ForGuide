@@ -1,13 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
     createCommunityComment,
     deleteCommunityComment,
     getCommunityComments,
+    likeCommunityComment,
+    unlikeCommunityComment,
     updateCommunityComment,
 } from "../../api/communityApi.js";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
+import { useTranslation } from "react-i18next";
+import { confirm } from "../Modal/modal.js";
 
 // 서버가 반환한 평면 댓글 목록을 부모-답글 순서의 화면 목록으로 바꾼다.
 function buildCommentRows(comments) {
@@ -25,11 +29,16 @@ function buildCommentRows(comments) {
     });
 
     const rows = [];
-    function visit(node, depth) {
-        rows.push({ comment: node.comment, depth });
-        node.children.forEach((child) => visit(child, depth + 1));
+    function visit(node, depth, threadRoot) {
+        // 답글을 다시 눌러도 화면에서는 한 단계까지만 들여쓴다.
+        rows.push({
+            comment: node.comment,
+            depth: Math.min(depth, 1),
+            threadRoot,
+        });
+        node.children.forEach((child) => visit(child, depth + 1, threadRoot));
     }
-    roots.forEach((root) => visit(root, 0));
+    roots.forEach((root) => visit(root, 0, root.comment));
     return rows;
 }
 
@@ -37,20 +46,30 @@ function buildCommentRows(comments) {
 export default function CommunityCommentSection({ postId, postMemberId, onCommentCountChange }) {
     const [comments, setComments] = useState([]);
     const [content, setContent] = useState("");
-    const [replyingToCommentId, setReplyingToCommentId] = useState(null);
+    const [replyTarget, setReplyTarget] = useState(null);
     const [replyContent, setReplyContent] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [likingCommentId, setLikingCommentId] = useState(null);
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editingContent, setEditingContent] = useState("");
     const [deletingCommentId, setDeletingCommentId] = useState(null);
     const [error, setError] = useState("");
     const [writeError, setWriteError] = useState("");
+    const replyTextareaRef = useRef(null);
 
     const accessToken = useAuthStore((state) => state.accessToken);
     const member = useAuthStore((state) => state.member);
     const navigate = useNavigate();
+    const location = useLocation();
+    const { t } = useTranslation();
     const commentRows = useMemo(() => buildCommentRows(comments), [comments]);
+
+    function moveToLogin() {
+        const next = `${location.pathname}${location.search}${location.hash}`;
+
+        navigate(`/login?next=${encodeURIComponent(next)}`);
+    }
 
     // 댓글·답글 작성 뒤에도 재사용해 목록과 게시글의 댓글 수를 즉시 최신 상태로 맞춘다.
     async function loadComments() {
@@ -58,10 +77,12 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         setError("");
         try {
             const nextComments = await getCommunityComments(postId);
-            setComments(nextComments);
-            onCommentCountChange?.(postId, nextComments.length);
+            // 서버의 삭제 기록은 보존하되, 화면 목록과 댓글 수에는 포함하지 않는다.
+            const visibleComments = nextComments.filter((comment) => !comment.deleted);
+            setComments(visibleComments);
+            onCommentCountChange?.(postId, visibleComments.length);
         } catch (requestError) {
-            setError(requestError.message || "댓글을 불러오지 못했습니다.");
+            setError(requestError.message || t("community.comments.loadError"));
         } finally {
             setIsLoading(false);
         }
@@ -71,26 +92,51 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         loadComments();
     }, [postId]);
 
+    useEffect(() => {
+        if (!replyTarget || !replyTextareaRef.current) return;
+
+        // 답글 폼이 열린 뒤 멘션 마지막 글자 바로 뒤에 커서를 놓는다.
+        const cursorPosition = replyTextareaRef.current.value.length;
+        replyTextareaRef.current.focus();
+        replyTextareaRef.current.setSelectionRange(cursorPosition, cursorPosition);
+    }, [replyTarget]);
+
     function validateCommentContent(value) {
         const trimmedContent = value.trim();
         if (!trimmedContent) {
-            setWriteError("댓글 내용을 입력해주세요.");
+            setWriteError(t("community.comments.contentRequired"));
             return null;
         }
         if (trimmedContent.length > 1000) {
-            setWriteError("댓글은 1000자 이하여야 합니다.");
+            setWriteError(t("community.comments.maxLength"));
             return null;
         }
         return trimmedContent;
     }
 
-    async function submitComment(value, parentCommentId = null) {
+    function validateReplyContent(value) {
+        const trimmedContent = value.trim();
+
+        // @닉네임을 제외한 실제 답글 내용 있는지 검사
+        const contentWithoutMention = trimmedContent
+            .replace(/^@\S+\s*/, "")
+            .trim();
+
+        if (!contentWithoutMention) {
+            setWriteError(t("community.comments.contentRequired"));
+            return null;
+        }
+
+        return trimmedContent;
+    }
+
+    async function submitComment(value, parentCommentId = null, mentionLoginId = null) {
         const trimmedContent = validateCommentContent(value);
         if (!trimmedContent) return false;
 
         if (!accessToken) {
-            setWriteError("댓글을 작성하려면 로그인이 필요합니다.");
-            navigate("/login");
+            setWriteError(t("community.comments.loginRequired"));
+            moveToLogin();
             return false;
         }
         if (isSubmitting) return false;
@@ -98,11 +144,19 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         setIsSubmitting(true);
         setWriteError("");
         try {
-            await createCommunityComment(postId, trimmedContent, parentCommentId);
+            await createCommunityComment(
+                postId,
+                trimmedContent,
+                parentCommentId,
+                mentionLoginId,
+            );
             await loadComments();
             return true;
         } catch (requestError) {
-            setWriteError(requestError.message || "댓글을 저장하지 못했습니다.");
+            setWriteError(
+                requestError.message
+                || t("community.comments.saveError"),
+            );
             return false;
         } finally {
             setIsSubmitting(false);
@@ -111,24 +165,93 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
 
     async function handleSubmit(event) {
         event.preventDefault();
-        if (await submitComment(content)) setContent("");
+
+        if (await submitComment(content)) {
+            setContent("");
+            setWriteError("");
+        }
     }
 
-    function openReply(commentId) {
+    function openReply(comment) {
         if (!accessToken) {
-            navigate("/login");
+            moveToLogin();
             return;
         }
-        setReplyingToCommentId(commentId);
+
+        // 원댓글에만 답글을 연결해 대댓글이 더 깊어지지 않게 한다.
+        setReplyTarget({
+            commentId: comment.commentId,
+            parentCommentId: comment.commentId,
+        });
+        // 답글 대상은 닉네임이 아닌 고유 로그인 아이디로 시작한다.
+        setReplyContent(`@${comment.loginId} `);
+        setWriteError("");
+    }
+
+    function closeReply() {
+        setReplyTarget(null);
         setReplyContent("");
         setWriteError("");
     }
 
-    async function handleReplySubmit(event, parentCommentId) {
+    async function handleReplySubmit(event) {
         event.preventDefault();
-        if (await submitComment(replyContent, parentCommentId)) {
-            setReplyingToCommentId(null);
-            setReplyContent("");
+
+        const validReplyContent = validateReplyContent(replyContent);
+        if (!validReplyContent) return;
+
+        const mentionMatch = validReplyContent.match(/^@(\S+)\s+([\s\S]+)$/);
+        const mentionLoginId = mentionMatch?.[1] ?? null;
+        const replyText = mentionMatch?.[2]?.trim() ?? validReplyContent;
+
+        if (await submitComment(
+            replyText,
+            replyTarget?.parentCommentId,
+            mentionLoginId,
+        )) {
+            closeReply();
+        }
+    }
+
+    function handleReplyKeyDown(event) {
+        const mentionPrefix = replyContent.match(/^@\S+\s+/)?.[0];
+        const cursorAtMentionEnd = event.currentTarget.selectionStart === mentionPrefix?.length
+            && event.currentTarget.selectionEnd === mentionPrefix?.length;
+
+        // 멘션 끝에서 Backspace를 한 번 누르면 @아이디와 뒤 공백을 한 번에 지운다.
+        if (event.key === "Backspace" && mentionPrefix && cursorAtMentionEnd) {
+            event.preventDefault();
+            setReplyContent((previousContent) => previousContent.slice(mentionPrefix.length));
+        }
+    }
+
+    async function handleCommentLike(comment) {
+        if (!accessToken) {
+            moveToLogin();
+            return;
+        }
+
+        setLikingCommentId(comment.commentId);
+        setWriteError("");
+        try {
+            const response = comment.likedByMe
+                ? await unlikeCommunityComment(postId, comment.commentId)
+                : await likeCommunityComment(postId, comment.commentId);
+
+            // 서버가 돌려준 수치로 해당 댓글의 공감 상태만 즉시 갱신한다.
+            setComments((previousComments) => previousComments.map((previousComment) => (
+                previousComment.commentId === comment.commentId
+                    ? {
+                        ...previousComment,
+                        likeCount: response.likeCount,
+                        likedByMe: response.likedByMe,
+                    }
+                    : previousComment
+            )));
+        } catch (requestError) {
+            setWriteError(requestError.message || t("community.comments.likeError"));
+        } finally {
+            setLikingCommentId(null);
         }
     }
 
@@ -156,25 +279,32 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
             setEditingContent("");
             await loadComments();
         } catch (requestError) {
-            setWriteError(requestError.message || "댓글을 수정하지 못했습니다.");
+            setWriteError(requestError.message || t("community.comments.updateError"));
         } finally {
             setIsSubmitting(false);
         }
     }
 
     async function handleDelete(commentId) {
-        if (!window.confirm("이 댓글을 삭제할까요?")) return;
-
+        if (!(await confirm(t("community.comments.deleteConfirm")))) return;
         setDeletingCommentId(commentId);
         setWriteError("");
         try {
             await deleteCommunityComment(postId, commentId);
             setEditingCommentId(null);
-            setReplyingToCommentId((currentId) => currentId === commentId ? null : currentId);
-            // 삭제된 댓글의 자식 유무에 따라 서버 결과가 달라질 수 있어 전체 목록을 다시 맞춘다.
-            await loadComments();
+            setReplyTarget((current) => (
+                current?.commentId === commentId ? null : current
+            ));
+            // 삭제 성공 직후 목록과 상단의 댓글 수를 바로 줄인다.
+            setComments((previousComments) => {
+                const nextComments = previousComments.filter(
+                    (comment) => comment.commentId !== commentId,
+                );
+                onCommentCountChange?.(postId, nextComments.length);
+                return nextComments;
+            });
         } catch (requestError) {
-            setWriteError(requestError.message || "댓글을 삭제하지 못했습니다.");
+            setWriteError(requestError.message || t("community.comments.deleteError"));
         } finally {
             setDeletingCommentId(null);
         }
@@ -182,18 +312,19 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
 
     return (
         <section className="community-comments">
-            <h3>댓글</h3>
-            {isLoading && <p>댓글을 불러오는 중입니다.</p>}
+            <h3>{t("community.comments.title")}</h3>
+            {isLoading && <p>{t("community.comments.loading")}</p>}
             {!isLoading && error && <p role="alert">{error}</p>}
-            {!isLoading && !error && comments.length === 0 && <p>아직 댓글이 없습니다.</p>}
-
+            {!isLoading && !error && comments.length === 0 && (
+                <p>{t("community.comments.empty")}</p>
+            )}
             {!isLoading && !error && comments.length > 0 && (
                 <ul className="community-comment-list">
                     {commentRows.map(({ comment, depth }) => {
                         const isCommentAuthor = comment.memberId === member?.memberId;
                         const canDelete = isCommentAuthor || postMemberId === member?.memberId;
                         const isEditing = editingCommentId === comment.commentId;
-                        const isReplying = replyingToCommentId === comment.commentId;
+                        const isReplying = replyTarget?.commentId === comment.commentId;
 
                         return (
                             <li
@@ -206,56 +337,153 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                         memberId={comment.memberId}
                                         imageUrl={comment.profileImageUrl}
                                         nickname={comment.nickname}
+                                        loginId={comment.loginId}
                                         size={30}
                                     />
                                 )}
                                 <div className="community-comment-body">
                                     {comment.deleted ? (
-                                        <p className="community-comment-deleted">삭제된 댓글입니다.</p>
+                                        <p className="community-comment-deleted">
+                                            {t("community.comments.deleted")}
+                                        </p>
                                     ) : (
                                         <>
-                                            <strong>{comment.nickname}</strong>
+                                            <strong>{comment.loginId}</strong>
                                             {isEditing ? (
-                                                <form className="community-comment-edit-form" onSubmit={(event) => handleUpdate(event, comment.commentId)}>
-                                                    <textarea value={editingContent} onChange={(event) => setEditingContent(event.target.value)} maxLength={1000} rows={3} disabled={isSubmitting} />
+                                                <form
+                                                    className="community-comment-edit-form"
+                                                    onSubmit={(event) => handleUpdate(event, comment.commentId)}
+                                                >
+                                                    <textarea
+                                                        value={editingContent}
+                                                        onChange={(event) => setEditingContent(event.target.value)}
+                                                        maxLength={1000}
+                                                        rows={3}
+                                                        disabled={isSubmitting}
+                                                    />
                                                     <div>
-                                                        <button type="submit" disabled={isSubmitting}>수정</button>
-                                                        <button type="button" onClick={cancelEditing} disabled={isSubmitting}>취소</button>
-                                                        <button type="button" onClick={() => handleDelete(comment.commentId)} disabled={deletingCommentId === comment.commentId}>
-                                                            {deletingCommentId === comment.commentId ? "삭제 중" : "삭제"}
+                                                        <button type="submit" disabled={isSubmitting}>
+                                                            {t("community.comments.edit")}
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={cancelEditing}
+                                                            disabled={isSubmitting}
+                                                        >
+                                                            {t("community.comments.cancel")}
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleDelete(comment.commentId)}
+                                                            disabled={deletingCommentId === comment.commentId}
+                                                        >
+                                                            {deletingCommentId === comment.commentId
+                                                                ? t("community.comments.deleting")
+                                                                : t("community.comments.delete")}
                                                         </button>
                                                     </div>
                                                 </form>
-                                            ) : <p>{comment.content}</p>}
+                                            ) : (
+                                                comment.mentionedMemberId ? (
+                                                    <div className="community-comment-text">
+                                                        <CommunityMemberPreview
+                                                            memberId={comment.mentionedMemberId}
+                                                            imageUrl={comment.mentionedProfileImageUrl}
+                                                            loginId={comment.mentionedLoginId}
+                                                            nickname={comment.mentionedLoginId}
+                                                            variant="mention"
+                                                        />
+                                                        {" "}
+                                                        {comment.content}
+                                                    </div>
+                                                ) : (
+                                                    <p>{comment.content}</p>
+                                                )
+                                            )}
                                         </>
                                     )}
 
                                     {!comment.deleted && !isEditing && (
                                         <div className="community-comment-actions">
-                                            <button type="button" onClick={() => openReply(comment.commentId)}>댓글</button>
-                                            {isCommentAuthor && <button type="button" onClick={() => startEditing(comment)} disabled={isSubmitting}>수정</button>}
+                                            <button
+                                                type="button"
+                                                className="community-comment-like-button"
+                                                onClick={() => handleCommentLike(comment)}
+                                                disabled={likingCommentId === comment.commentId}
+                                                aria-pressed={comment.likedByMe}
+                                            >
+                                                <span aria-hidden="true">
+                                                    {comment.likedByMe ? "♥" : "♡"}
+                                                </span>
+                                                {" "}
+                                                {t("community.comments.like")}
+                                                {" "}
+                                                {comment.likeCount ?? 0}
+                                            </button>
+
+                                            {comment.parentCommentId == null && (
+                                                <button
+                                                    type="button"
+                                                    className="community-comment-reply-button"
+                                                    onClick={() => openReply(comment)}
+                                                >
+                                                    {t("community.comments.reply")}
+                                                </button>
+                                            )}
+
+                                            {isCommentAuthor && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => startEditing(comment)}
+                                                    disabled={isSubmitting}
+                                                >
+                                                    {t("community.comments.edit")}
+                                                </button>
+                                            )}
+
                                             {canDelete && (
-                                                <button type="button" onClick={() => handleDelete(comment.commentId)} disabled={deletingCommentId === comment.commentId}>
-                                                    {deletingCommentId === comment.commentId ? "삭제 중" : "삭제"}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleDelete(comment.commentId)}
+                                                    disabled={deletingCommentId === comment.commentId}
+                                                >
+                                                    {deletingCommentId === comment.commentId
+                                                        ? t("community.comments.deleting")
+                                                        : t("community.comments.delete")}
                                                 </button>
                                             )}
                                         </div>
                                     )}
 
                                     {isReplying && (
-                                        <form className="community-reply-form" onSubmit={(event) => handleReplySubmit(event, comment.commentId)}>
+                                        <form
+                                            className="community-reply-form"
+                                            onSubmit={handleReplySubmit}
+                                        >
                                             <textarea
+                                                ref={replyTextareaRef}
                                                 value={replyContent}
-                                                onChange={(event) => setReplyContent(event.target.value)}
+                                                onChange={(event) => {
+                                                    setReplyContent(event.target.value);
+                                                    setWriteError("");
+                                                }}
+                                                onKeyDown={handleReplyKeyDown}
                                                 maxLength={1000}
                                                 rows={2}
-                                                placeholder={`${comment.nickname}님에게 댓글 작성`}
+                                                placeholder={t("community.comments.writePlaceholder")}
                                                 disabled={isSubmitting}
-                                                autoFocus
                                             />
                                             <div>
-                                                <button type="submit" disabled={isSubmitting}>등록</button>
-                                                <button type="button" onClick={() => setReplyingToCommentId(null)} disabled={isSubmitting}>취소</button>
+                                                <button type="submit" disabled={isSubmitting}>
+                                                    {t("community.comments.submit")}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={closeReply}
+                                                    disabled={isSubmitting}
+                                                >
+                                                    {t("community.comments.cancel")}
+                                                </button>
                                             </div>
                                         </form>
                                     )}
@@ -270,8 +498,22 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
 
             {/* 일반 댓글은 목록 아래의 별도 입력창에서 작성한다. */}
             <form className="community-comment-form" onSubmit={handleSubmit}>
-                <textarea value={content} onChange={(event) => setContent(event.target.value)} maxLength={1000} rows={3} placeholder="댓글을 작성해주세요." disabled={isSubmitting} />
-                <button type="submit" className="button" disabled={isSubmitting}>{isSubmitting ? "등록 중" : "댓글 작성"}</button>
+                <textarea
+                    value={content}
+                    onChange={(event) => {
+                        setContent(event.target.value);
+                        setWriteError("");
+                    }}
+                    maxLength={1000}
+                    rows={3}
+                    placeholder={t("community.comments.writePlaceholder")}
+                    disabled={isSubmitting}
+                />
+                <button type="submit" className="button" disabled={isSubmitting}>
+                    {isSubmitting
+                        ? t("community.comments.submitting")
+                        : t("community.comments.writeButton")}
+                </button>
             </form>
             {writeError && <p role="alert">{writeError}</p>}
         </section>

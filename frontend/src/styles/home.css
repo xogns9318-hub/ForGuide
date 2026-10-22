@@ -1,0 +1,181 @@
+/* 서비스 소개 상단 문구 */
+.home-services-eyebrow {
+    /* 아래쪽 요소와의 바깥 간격 지정 */
+    margin-bottom: 8px;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--primary);
+    /* 글씨 크기 지정 */
+    font-size: 12px;
+    /* 글씨 굵기 지정 */
+    font-weight: 700;
+}
+
+/* 서비스 소개 설명 */
+.home-services-intro {
+    /* 요소 바깥쪽 여백 지정 */
+    margin: 10px 0 24px;
+    /* 글씨와 현재 색상을 따르는 아이콘의 색 지정 */
+    color: var(--muted);
+}
+
+/* 서비스 카드 2열 배치 */
+.home-service-grid {
+    /* 자식 요소의 배치 방식 지정 */
+    display: grid;
+    /* 그리드 열의 개수와 너비 지정 */
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* 자식 요소 사이 간격 지정 */
+    gap: 20px;
+}
+
+/* 서비스 카드 배경과 여백 */
+.home-service-card {
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: relative;
+    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    min-width: 0;
+    /* 테두리 안쪽 여백 지정 */
+    padding: 32px;
+    /* 테두리 두께·형태·색 지정 */
+    border: 1px solid var(--primary);
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: var(--panel-radius);
+    /* 배경색 또는 배경 무늬 지정 */
+    background: var(--surface);
+}
+
+/* 아이콘 배경 */
+.home-service-icon {
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* 자식 요소를 교차축 기준으로 정렬 */
+    align-items: center;
+    /* 자식 요소를 주축 기준으로 정렬 */
+    justify-content: center;
+
+    /* 가로 크기 지정 */
+    width: 48px;
+    /* 세로 크기 지정 */
+    height: 48px;
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: 14px;
+    /* 배경색 또는 배경 무늬 지정 */
+    background: rgb(255 255 255 / 75%);
+}
+
+/* 아이콘 크기 */
+.home-service-icon svg {
+    /* 가로 크기 지정 */
+    width: 26px;
+    /* 세로 크기 지정 */
+    height: 26px;
+}
+
+/* 카드 제목 */
+.home-service-card h3 {
+    /* 요소 바깥쪽 여백 지정 */
+    margin: 20px 0 12px;
+    /* 글씨 크기 지정 */
+    font-size: 24px;
+}
+
+/* 카드 설명 */
+.home-service-card>p {
+    /* 화면에서 사용할 최대 너비 제한 */
+    max-width: 48ch;
+    /* 단어가 줄을 넘어갈 때 나누는 방식 지정 */
+    word-break: keep-all;
+}
+
+/* 카드 전체를 주 기능 링크로 사용 */
+.home-category-link::after {
+    /* 가상 요소에 표시할 내용 지정 */
+    content: "";
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: absolute;
+    /* 위·오른쪽·아래·왼쪽 위치를 한 번에 지정 */
+    inset: 0;
+    /* 겹친 요소의 표시 순서 지정 */
+    z-index: 1;
+    /* 모서리의 둥근 정도 지정 */
+    border-radius: var(--panel-radius);
+}
+
+/* 제목의 작은 선택 테두리 제거 */
+.home-category-link:focus-visible {
+    /* 포커스 강조선 지정 */
+    outline: none;
+}
+
+/* 키보드로 선택한 카드 표시 */
+.home-category-link:focus-visible::after {
+    /* 포커스 강조선 지정 */
+    outline: 2px solid var(--primary);
+    /* 포커스 강조선과 요소 사이 거리 지정 */
+    outline-offset: 3px;
+}
+
+/* 세부 기능 버튼 배치 */
+.home-feature-list {
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* 공간이 부족할 때 줄바꿈 여부 지정 */
+    flex-wrap: wrap;
+    /* 자식 요소 사이 간격 지정 */
+    gap: 8px;
+    /* 요소 바깥쪽 여백 지정 */
+    margin: 24px 0 0;
+    /* 테두리 안쪽 여백 지정 */
+    padding: 0;
+    /* 목록의 기본 기호 표시 지정 */
+    list-style: none;
+}
+
+/* 세부 버튼을 카드 링크 위에 표시 */
+.home-feature-list .button {
+    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+    position: relative;
+    /* 겹친 요소의 표시 순서 지정 */
+    z-index: 2;
+    /* 높이가 줄어들 수 있는 최소 기준 지정 */
+    min-height: 42px;
+    /* 테두리 안쪽 여백 지정 */
+    padding: 8px 14px;
+    /* 글씨 크기 지정 */
+    font-size: 14px;
+    /* 글씨 굵기 지정 */
+    font-weight: 400;
+}
+
+/* 작은 화면의 카드 배치 */
+@media (max-width: 768px) {
+    .home-service-grid {
+        /* 그리드 열의 개수와 너비 지정 */
+        grid-template-columns: 1fr;
+    }
+
+    .home-service-card {
+        /* 테두리 안쪽 여백 지정 */
+        padding: 24px;
+    }
+}
+
+/* 세부 기능 카드 내용 배치 */
+.feature-guide-card {
+    /* 자식 요소의 배치 방식 지정 */
+    display: flex;
+    /* flex 요소가 나열되는 방향 지정 */
+    flex-direction: column;
+    /* 자식 요소를 교차축 기준으로 정렬 */
+    align-items: flex-start;
+}
+
+/* 세부 기능 카드 제목 */
+.feature-guide-title {
+    /* 요소 바깥쪽 여백 지정 */
+    margin: 20px 0 12px;
+    /* 글씨 크기 지정 */
+    font-size: 24px;
+    /* 글줄 높이 지정 */
+    line-height: 1.4;
+}

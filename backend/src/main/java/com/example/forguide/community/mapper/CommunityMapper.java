@@ -23,6 +23,11 @@ public interface CommunityMapper {
             @Param("size") int size
     );
 
+    // 프로필 미리보기의 작성글 목록 모달에 표시할 게시글 조회
+    List<CommunityPostResponse> findPostsByMemberId(
+            @Param("memberId") Long memberId
+    );
+
     // 로그인 회원이 리포스트한 원본 게시글 목록
     List<CommunityPostResponse> findRepostedPostsByMemberId(
             @Param("memberId") Long memberId
@@ -37,6 +42,25 @@ public interface CommunityMapper {
     );
 
     int deletePost(@Param("postId") Long postId, @Param("memberId") Long memberId);
+
+    // 게시글 조회수 : 로그인 회원의 최근 24시간 조회 기록 확인
+    boolean existsPostViewByMember(
+            @Param("postId") Long postId,
+            @Param("memberId") Long memberId
+    );
+
+    // 게시글 조회수: 비회원 브라우저의 최근 24시간 조회 기록 확인
+    boolean existsPostViewByVisitor(
+            @Param("postId") Long postId,
+            @Param("visitorToken") String visitorToken
+    );
+
+    // 게시글 조회수: 로그인 회원 또는 비회원의 조회 기록 저장
+    int insertPostViewRecord(
+            @Param("postId") Long postId,
+            @Param("memberId") Long memberId,
+            @Param("visitorToken") String visitorToken
+    );
 
     // 게시글 사진
     List<CommunityPostImageResponse> findImagesByPostIds(
@@ -55,7 +79,10 @@ public interface CommunityMapper {
     );
 
     // 댓글
-    List<CommunityCommentResponse> findCommentsByPostId(Long postId);
+    List<CommunityCommentResponse> findCommentsByPostId(
+            @Param("postId") Long postId,
+            @Param("memberId") Long memberId
+    );
 
     CommunityCommentResponse findCommentById(Long commentId);
 
@@ -63,6 +90,7 @@ public interface CommunityMapper {
             @Param("postId") Long postId,
             @Param("memberId") Long memberId,
             @Param("parentCommentId") Long parentCommentId,
+            @Param("mentionedMemberId") Long mentionedMemberId,
             @Param("content") String content
     );
 
@@ -79,6 +107,24 @@ public interface CommunityMapper {
     int markCommentDeleted(@Param("commentId") Long commentId);
 
     int deleteCommentsByPostId(@Param("postId") Long postId);
+
+    // 댓글 공감
+    long countLikesByCommentId(@Param("commentId") Long commentId);
+
+    boolean existsCommentLike(
+            @Param("commentId") Long commentId,
+            @Param("memberId") Long memberId
+    );
+
+    int insertCommentLike(
+            @Param("commentId") Long commentId,
+            @Param("memberId") Long memberId
+    );
+
+    int deleteCommentLike(
+            @Param("commentId") Long commentId,
+            @Param("memberId") Long memberId
+    );
 
     //  공감
     long countLikesByPostId(@Param("postId") Long postId);
@@ -101,6 +147,10 @@ public interface CommunityMapper {
     // ── 작성자 프로필 미리보기: 조회 전용 ──
     CommunityMemberPreviewResponse findMemberPreviewById(
             @Param("memberId") Long memberId
+    );
+
+    CommunityMemberPreviewResponse findMemberPreviewByLoginId(
+            @Param("loginId") String loginId
     );
 
     // 게시글의 전체 리포스트 수 조회

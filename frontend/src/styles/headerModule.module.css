@@ -1,0 +1,848 @@
+/* 기존 공통 색상과 너비 변수를 사용 */
+.header {
+    position: relative;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+}
+
+/* 메뉴가 열렸을 때만 본문과 어두운 배경 위로 올림 */
+.expanded {
+    z-index: 300;
+}
+
+/* 본문을 아주 옅게 어둡게 표시: 블러는 사용하지 않음 */
+.backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 299;
+    background: rgb(0 0 0 / 8%);
+}
+
+/* 기존 커뮤니티 전용 이미지 배경 유지 */
+.community {
+    background-color: #f5fcf8;
+    background-image:
+        linear-gradient(rgb(255 255 255 / 52%),
+            rgb(255 255 255 / 52%)),
+        url("/community-scene-banner2.png");
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* 헤더 내용에만 본문과 같은 최대 너비 적용 */
+.inner {
+    width: 100%;
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: 16px var(--page-padding);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* 로고와 회원 메뉴를 양쪽에 배치 */
+.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    height: 56px;
+    min-width: 0;
+}
+
+.community .top {
+    height: 64px;
+}
+
+/* 배경 그림 위 회원 메뉴의 기존 가독성 유지 */
+.community .actions {
+    color: #1d5547;
+    font-weight: 600;
+    text-shadow: 0 1px 1px rgb(255 255 255 / 76%);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-width: 0;
+}
+
+.logo {
+    flex-shrink: 0;
+    width: 192px;
+}
+
+.logo img {
+    width: 100%;
+}
+
+/* 커뮤니티에서 로고 옆에 표시하던 제목 유지 */
+.communityTitle {
+    padding-left: 18px;
+    border-left: 1px solid var(--line);
+    color: var(--primary);
+    font-size: 24px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* 회원 메뉴와 언어 선택을 한 줄에 배치 */
+.actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* 회원 메뉴 사이의 세로 구분선 유지 */
+.actions>*+* {
+    position: relative;
+    padding-left: 12px;
+}
+
+.actions>*+*::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 1px;
+    height: 16px;
+    transform: translateY(-50%);
+    background: var(--line);
+    pointer-events: none;
+}
+
+.actions>a:hover,
+.logout:hover {
+    color: var(--primary);
+}
+
+.logout {
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+}
+
+/* 기존 LanguageSelector의 전역 클래스를 연결 */
+.actions :global(.header-language) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.actions :global(.select-box.is-compact) {
+    flex-shrink: 0;
+    width: 132px;
+}
+
+.actions :global(.select-box-trigger > span) {
+    min-width: 0;
+    white-space: nowrap;
+}
+
+/* '언어' 글씨는 숨기고 음성 안내 이름으로 유지 */
+.actions :global(.header-language-label) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* 상단 제목 세 개를 같은 너비로 배치 */
+.navigation {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.navItem {
+    min-width: 0;
+}
+
+/* 상단 제목은 페이지로 이동하지 않는 문단 */
+.menuTitle {
+    min-height: 40px;
+    padding: 8px 12px;
+    color: var(--muted);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    cursor: default;
+}
+
+/* 글씨 너비를 기준으로 밑줄 위치 설정 */
+.menuTitle>span,
+.menuLink>span {
+    position: relative;
+    display: inline-block;
+
+    /* 기존 밑줄은 제거하고 가상 요소로 표시 */
+    text-decoration: none;
+}
+
+/* 기본 상태에서는 가운데로 접힌 밑줄 */
+.menuTitle>span::after,
+.menuLink>span::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 2px;
+
+    /* 현재 글씨 색상과 동일한 색 사용 */
+    background: currentColor;
+
+    /* 가운데를 기준으로 너비를 0으로 줄임 */
+    transform: scaleX(0);
+    transform-origin: center;
+
+    /* 펼쳐질 때와 접힐 때 모두 부드럽게 전환 */
+    transition: transform 260ms ease;
+    pointer-events: none;
+}
+
+/* 기존의 진한 초록색 강조 유지 */
+.menuTitle[data-open="true"],
+.menuTitle:focus-visible,
+.menuLink:hover,
+.menuLink:focus-visible,
+.menuLink[aria-current="page"] {
+    color: #145244;
+}
+
+/* 선택하면 가운데에서 양옆으로 밑줄이 펼쳐짐 */
+.menuTitle[data-open="true"]>span::after,
+.menuTitle:focus-visible>span::after,
+.menuLink:hover>span::after,
+.menuLink:focus-visible>span::after,
+.menuLink[aria-current="page"]>span::after {
+    transform: scaleX(1);
+}
+
+/* 움직임 줄이기 설정에서는 전환 효과 생략 */
+@media (prefers-reduced-motion: reduce) {
+
+    .menuTitle>span::after,
+    .menuLink>span::after {
+        transition: none;
+    }
+}
+
+/* 바깥 header를 기준으로 사이트 전체 너비에 펼침 */
+.dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+
+    /* 낮은 화면에서는 메뉴 자체를 스크롤 */
+    max-height: calc(100dvh - var(--header-height));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: 0 12px 20px rgb(32 59 51 / 5%);
+}
+
+/* 배경은 전체 너비, 목록 내용은 가운데 정렬 */
+.groups {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 24px;
+    width: 100%;
+    max-width: var(--page-width);
+    min-height: 240px;
+    margin: 0 auto;
+    padding: 32px var(--page-padding) 40px;
+}
+
+/* 소개와 문의는 제목 하나 아래에 세로 목록으로 표시 */
+.singleGroup {
+    grid-template-columns: minmax(0, 280px);
+}
+
+.group {
+    min-width: 0;
+}
+
+/* 연한 제목에는 클릭 동작을 넣지 않음 */
+.groupTitle {
+    margin-bottom: 14px;
+    color: var(--muted);
+    opacity: 0.7;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: default;
+}
+
+/* 브라우저 기본 목록 기호와 여백 제거 */
+.linkList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* 서비스 링크와 문의 버튼에 같은 모양 적용 */
+.menuLink {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    padding: 6px 0;
+
+    /* 기존의 네모 테두리 강조 제거 */
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.7;
+    text-align: left;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+}
+
+/* 넓은 화면에서는 모바일 메뉴 버튼 숨김 */
+.mobileToggle {
+    display: none;
+}
+
+/* 모바일 구간은 기존과 같은 1024px 기준 */
+@media (max-width: 1024px) {
+    .header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .top,
+    .community .top {
+        height: 56px;
+    }
+
+    .logo {
+        width: 160px;
+    }
+
+    .communityTitle {
+        padding-left: 12px;
+        font-size: 20px;
+    }
+
+    /* 모바일에서는 회원 메뉴와 가로 제목을 펼친 목록으로 이동 */
+    .desktopActions,
+    .navigation {
+        display: none;
+    }
+
+    .mobileToggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 44px;
+        height: 44px;
+        padding: 8px;
+        border: 0;
+        background: transparent;
+        color: var(--primary);
+    }
+
+    .mobileToggle svg {
+        width: 28px;
+        height: 28px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+    }
+
+    /* 실제 헤더 바로 아래부터 모바일 목록 표시 */
+    .mobilePanel {
+        position: fixed;
+        top: var(--header-height);
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        background: var(--surface);
+    }
+
+    .mobileSection+.mobileSection {
+        border-top: 1px solid var(--line);
+    }
+
+    .mobileTitle {
+        padding: 24px var(--page-padding) 0;
+        color: var(--primary);
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    /* 작은 화면에서는 여섯 그룹을 두 열로 나눔 */
+    .mobilePanel .groups {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        min-height: 0;
+        padding: 24px var(--page-padding);
+    }
+
+    .mobilePanel .singleGroup {
+        grid-template-columns: 1fr;
+    }
+
+    /* 목록 아래에 회원 메뉴와 언어 선택 표시 */
+    .mobileActions {
+        flex-wrap: wrap;
+        justify-content: center;
+        row-gap: 20px;
+        padding: 24px var(--page-padding) 40px;
+        font-size: 14px;
+    }
+
+    .mobileActions> :global(.header-language) {
+        flex-basis: 100%;
+        justify-content: center;
+        padding-left: 0;
+    }
+
+    .mobileActions> :global(.header-language)::before {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .brand {
+        gap: 10px;
+    }
+
+    .logo {
+        width: 128px;
+    }
+
+    .communityTitle {
+        padding-left: 10px;
+        font-size: 18px;
+    }
+
+    /* 휴대폰의 좁은 화면에서는 한 열로 표시 */
+    .mobilePanel .groups {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 드롭다운을 열면 본문만 어둡게 하고 뒤쪽 화면을 흐리게 표시 */
+.backdrop {
+    /* 본문을 어둡게 표시하는 정도 */
+    background: rgb(0 0 0 / 18%);
+
+    /* Safari 브라우저에서도 블러 효과를 적용 */
+    -webkit-backdrop-filter: blur(5px);
+
+    /* 뒤쪽 본문에 블러 효과 적용 */
+    backdrop-filter: blur(5px);
+
+    /* 기본 상태에서는 보이지 않도록 설정 */
+    opacity: 0;
+
+    /* 기본 상태에서는 화면에서 숨김 */
+    visibility: hidden;
+
+    /* 닫힌 상태에서는 마우스 동작을 방해하지 않음 */
+    pointer-events: none;
+
+    /* 어두운 배경이 자연스럽게 나타나고 사라지도록 설정 */
+    transition:
+        opacity 300ms ease,
+        visibility 0s linear 300ms;
+}
+
+
+/* 카테고리에 마우스를 올리면 어두운 배경도 서서히 나타남 */
+.backdrop[data-open="true"] {
+    /* 어두운 배경을 표시 */
+    opacity: 1;
+
+    /* 화면에 보이도록 설정 */
+    visibility: visible;
+
+    /* 배경을 클릭하면 드롭다운을 닫을 수 있도록 설정 */
+    pointer-events: auto;
+
+    /* 어두운 배경이 나타날 때 부드럽게 전환 */
+    transition:
+        opacity 300ms ease,
+        visibility 0s linear 0s;
+}
+
+
+/* 모바일에는 데스크톱용 어두운 배경이 나타나지 않도록 처리 */
+@media (max-width: 1024px) {
+    .backdrop {
+        display: none;
+    }
+}
+
+
+/* 큰 화면에서만 카테고리 3칸의 꾸밈과 드롭다운 효과를 적용 */
+@media (min-width: 1025px) {
+
+    /* 아래로 스크롤해도 로고와 카테고리 메뉴를 화면 맨 위에 고정 */
+    .header {
+        /* 스크롤 중에도 지정한 위치에 고정 */
+        position: sticky;
+
+        /* 화면 최상단에 위치 */
+        top: 0;
+
+        /* 블러 배경보다 헤더를 항상 앞쪽에 표시하여 깜빡임 방지 */
+        z-index: 300;
+    }
+
+
+    /* 메뉴가 열리면 어두운 배경보다 헤더를 앞쪽에 표시 */
+    .expanded {
+        /* 어두운 배경의 z-index는 299 */
+        z-index: 300;
+    }
+
+
+    /* 기존 카테고리 3칸의 너비는 그대로 두고 경계선만 추가 */
+    .navItem {
+        /* 각 카테고리 왼쪽에 세로 구분선 표시 */
+        border-left: 1px solid var(--line);
+    }
+
+
+    /* 세 번째 카테고리의 오른쪽 선까지 표시 */
+    .navItem:last-child {
+        /* 마지막 카테고리 오른쪽에 세로 구분선 표시 */
+        border-right: 1px solid var(--line);
+    }
+
+
+    /* 가이드 소개 / 가이드 목록 / 문의하기 글씨를 칸 정중앙에 정렬 */
+    .menuTitle {
+        /* 내부 글씨의 배치 방식을 flex로 변경 */
+        display: flex;
+
+        /* 글씨의 세로 위치를 가운데로 정렬 */
+        align-items: center;
+
+        /* 글씨의 가로 위치를 가운데로 정렬 */
+        justify-content: center;
+    }
+
+
+    /* 펼침 창 하나를 유지하며 높이·투명도·위치를 천천히 전환 */
+    .dropdown {
+        /* 실제 높이는 Header.jsx에서 측정해서 전달 */
+        height: 0;
+
+        /* 기존 최대 높이 제한은 내부 콘텐츠에서 처리 */
+        max-height: none;
+
+        /* 애니메이션 중 넘치는 내용은 숨김 */
+        overflow: hidden;
+
+        /* 내부 스크롤은 dropdownContent에서 관리 */
+        overscroll-behavior: auto;
+
+        /* 기존 상단 테두리는 내부 콘텐츠에서 처리 */
+        border-top: 0;
+
+        /* 기본 상태에서는 투명하게 표시 */
+        opacity: 0;
+
+        /* 기본 상태에서는 화면에서 숨김 */
+        visibility: hidden;
+
+        /* 처음 열릴 때 위에서 아래로 내려오는 효과 준비 */
+        transform: translateY(-10px);
+
+        /* 닫힌 상태에서는 마우스 동작을 받지 않음 */
+        pointer-events: none;
+
+        /* 드롭다운 높이와 위치가 부드럽게 변경되도록 설정 */
+        transition:
+            height 420ms cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 300ms ease,
+            transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+            visibility 0s linear 420ms;
+    }
+
+
+    /* 처음 열릴 때 위에서 아래로 내려오며 자연스럽게 나타남 */
+    .dropdown[data-open="true"] {
+        /* 펼쳐진 목록을 표시 */
+        opacity: 1;
+
+        /* 화면에 보이도록 설정 */
+        visibility: visible;
+
+        /* 기존 위치로 내려와 표시 */
+        transform: translateY(0);
+
+        /* 목록의 링크와 버튼을 사용할 수 있도록 설정 */
+        pointer-events: auto;
+
+        /* 열리는 과정과 카테고리 높이 변경에 애니메이션 적용 */
+        transition:
+            height 420ms cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 300ms ease,
+            transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+            visibility 0s linear 0s;
+    }
+
+
+    /* 화면이 낮을 때는 이 영역 내부에서만 목록을 스크롤 */
+    .dropdownContent {
+        /* 헤더를 제외한 화면 높이만큼 목록을 표시 */
+        max-height: calc(100dvh - var(--header-height));
+
+        /* 목록이 길어지면 내부에서 세로 스크롤 */
+        overflow-y: auto;
+
+        /* 스크롤이 바깥 본문으로 전달되는 현상 방지 */
+        overscroll-behavior: contain;
+
+        /* 드롭다운 상단에 구분선 표시 */
+        border-top: 1px solid var(--line);
+
+        /* 목록 배경색은 기존 흰색 유지 */
+        background: var(--surface);
+    }
+
+
+    /* 다른 카테고리에 마우스를 올릴 때 글씨도 부드럽게 등장 */
+    .dropdownBody {
+        /* 새로운 목록이 나타나는 애니메이션 적용 */
+        animation: dropdownContentEnter 300ms ease both;
+    }
+
+
+    /* 가이드 목록 6개 그룹 각각을 자기 칸의 정중앙에 배치 */
+    .group {
+        /* 그룹 안의 제목과 글씨 가운데 정렬 */
+        text-align: center;
+    }
+
+
+    /* 소개 목록과 문의 목록은 한 그룹 전체를 사이트 정중앙에 배치 */
+    .singleGroup {
+        /* 하나의 그룹을 가로 중앙에 배치 */
+        justify-content: center;
+    }
+
+
+    /* 목록 안의 항목들을 그룹의 중앙으로 모음 */
+    .linkList {
+        /* 목록의 각 항목을 가로 중앙에 정렬 */
+        align-items: center;
+    }
+
+
+    /* 각 링크와 버튼에 표시된 문구도 가운데 정렬 */
+    .menuLink {
+        /* 링크 안에 있는 글씨를 가운데 정렬 */
+        text-align: center;
+    }
+}
+
+
+/* 바뀐 카테고리의 목록이 살짝 내려오며 나타나는 효과 */
+@keyframes dropdownContentEnter {
+
+    /* 목록이 처음 나타나는 상태 */
+    from {
+        /* 처음에는 투명하게 표시 */
+        opacity: 0;
+
+        /* 원래 위치보다 7px 위에서 시작 */
+        transform: translateY(-7px);
+    }
+
+    /* 목록이 완전히 나타나는 상태 */
+    to {
+        /* 완전히 보이도록 설정 */
+        opacity: 1;
+
+        /* 원래 위치로 이동 */
+        transform: translateY(0);
+    }
+}
+
+/* 움직임 줄이기를 설정한 이용자에게는 애니메이션을 생략 */
+@media (prefers-reduced-motion: reduce) {
+
+    .dropdown,
+    .dropdown[data-open="true"],
+    .backdrop,
+    .backdrop[data-open="true"] {
+        transition: none;
+    }
+
+    .dropdownBody {
+        animation: none;
+    }
+}
+
+@media (min-width: 1025px) {
+
+    /* 드롭다운 목록 전체를 기준으로 세로선 위치 설정 */
+    .dropdownContent .groups {
+        /* 세로선의 위치를 잡기 위한 기준 */
+        position: relative;
+    }
+
+
+    /* 각 메뉴 그룹을 기준으로 세로선 위치 설정 */
+    .dropdownContent .group {
+        /* 그룹별 세로선의 위치를 잡기 위한 기준 */
+        position: relative;
+    }
+
+    /* 6개 그룹 전체의 가장 왼쪽과 오른쪽 세로선 */
+    .dropdownContent .groups:not(.singleGroup)::before,
+    .dropdownContent .groups:not(.singleGroup)::after {
+        /* 세로선 생성 */
+        content: "";
+
+        /* 전체 목록을 기준으로 위치 지정 */
+        position: absolute;
+
+        /* 위쪽 여백 24px */
+        top: 24px;
+
+        /* 아래쪽 여백 24px */
+        bottom: 24px;
+
+        /* 세로선 두께 */
+        width: 1px;
+
+        /* 기존 카테고리 구분선과 동일한 색상 */
+        background: var(--line);
+
+        /* 마우스 동작을 방해하지 않도록 설정 */
+        pointer-events: none;
+    }
+
+
+    /* 가이드 목록 가장 왼쪽 세로선 */
+    .dropdownContent .groups:not(.singleGroup)::before {
+        /* 왼쪽 여백에 맞춰 표시 */
+        left: var(--page-padding);
+    }
+
+
+    /* 가이드 목록 가장 오른쪽 세로선 */
+    .dropdownContent .groups:not(.singleGroup)::after {
+        /* 오른쪽 여백에 맞춰 표시 */
+        right: var(--page-padding);
+    }
+
+    /* 마지막 그룹을 제외한 각 그룹 오른쪽에 구분선 추가 */
+    .dropdownContent .groups:not(.singleGroup) .group:not(:last-child)::after {
+        /* 세로선 생성 */
+        content: "";
+
+        /* 각 그룹을 기준으로 위치 지정 */
+        position: absolute;
+
+        /* 전체 세로선과 위쪽 시작 위치를 맞춤 */
+        top: -8px;
+
+        /* 전체 세로선과 아래쪽 끝 위치를 맞춤 */
+        bottom: -16px;
+
+        /* 그룹 사이 간격 24px의 정중앙에 표시 */
+        right: -12px;
+
+        /* 세로선 두께 */
+        width: 1px;
+
+        /* 기존 카테고리 구분선과 동일한 색상 */
+        background: var(--line);
+
+        /* 마우스 동작을 방해하지 않도록 설정 */
+        pointer-events: none;
+    }
+
+    /* 기존에 전체 영역 양쪽에 표시되던 세로선 제거 */
+    .dropdownContent .groups.singleGroup::before,
+    .dropdownContent .groups.singleGroup::after {
+        /* 소개와 문의에서는 전체 양쪽 선을 사용하지 않음 */
+        display: none;
+    }
+
+
+    /* 중앙에 배치된 소개·문의 목록의 양쪽에 구분선 추가 */
+    .dropdownContent .groups.singleGroup .group::before,
+    .dropdownContent .groups.singleGroup .group::after {
+        /* 세로선 생성 */
+        content: "";
+
+        /* 중앙 목록을 기준으로 위치 지정 */
+        position: absolute;
+
+        /* 위쪽 여백을 기존 세로선과 동일하게 설정 */
+        top: -8px;
+
+        /* 아래쪽 여백을 기존 세로선과 동일하게 설정 */
+        bottom: -16px;
+
+        /* 세로선 두께 */
+        width: 1px;
+
+        /* 기존 카테고리 구분선과 동일한 색상 */
+        background: var(--line);
+
+        /* 마우스 동작을 방해하지 않도록 설정 */
+        pointer-events: none;
+    }
+
+
+    /* 소개·문의 목록 왼쪽 세로선 */
+    .dropdownContent .groups.singleGroup .group::before {
+        /* 중앙 목록의 왼쪽 경계에 표시 */
+        left: 0;
+    }
+
+
+    /* 소개·문의 목록 오른쪽 세로선 */
+    .dropdownContent .groups.singleGroup .group::after {
+        /* 중앙 목록의 오른쪽 경계에 표시 */
+        right: 0;
+    }
+}
+
+/* 언어 선택창의 글씨와 아래 화살표 색상 변경 */
+.actions :global(.select-box.is-compact .select-box-trigger) {
+    /* 로그인·회원가입 글씨와 동일한 색상 적용 */
+    color: var(--muted);
+}
+
+/* 언어 선택창의 테두리 색상 변경 */
+.actions :global(.select-box.is-compact:not(.is-open) .select-box-trigger:not(:focus-visible)) {
+    /* 로그인·회원가입 글씨와 동일한 색상 적용 */
+    border-color: var(--muted);
+}

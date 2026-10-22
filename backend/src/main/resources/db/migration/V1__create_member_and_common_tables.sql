@@ -6,6 +6,7 @@ CREATE TABLE members (
     password VARCHAR(255) NOT NULL,
     name VARCHAR(50) NOT NULL,
     nickname VARCHAR(50) NULL,
+    phone VARCHAR(20) NULL,
     email VARCHAR(255) NOT NULL,
     birth DATE NULL,
     profile_image_url VARCHAR(1000) NULL,
@@ -13,7 +14,22 @@ CREATE TABLE members (
     updated_at DATETIME NULL,
     PRIMARY KEY (member_id),
     UNIQUE KEY uk_members_login_id (login_id),
+    UNIQUE KEY uk_members_phone (phone),
     UNIQUE KEY uk_members_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- 로그인 갱신 토큰을 회원별로 저장합니다.
+CREATE TABLE refresh_tokens (
+    refresh_token_id BIGINT NOT NULL AUTO_INCREMENT,
+    member_id BIGINT NOT NULL,
+    token VARCHAR(255) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (refresh_token_id),
+    UNIQUE KEY uk_refresh_tokens_token (token),
+    KEY idx_refresh_tokens_member_id (member_id),
+    CONSTRAINT fk_refresh_tokens_member
+        FOREIGN KEY (member_id) REFERENCES members (member_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE residence_types (
@@ -52,9 +68,7 @@ CREATE TABLE regions (
         FOREIGN KEY (parent_region_id) REFERENCES regions (region_id),
     CONSTRAINT chk_region_level
         CHECK ((region_level = 'province' AND parent_region_id IS NULL)
-            OR (region_level = 'district' AND parent_region_id IS NOT NULL)),
-    CONSTRAINT chk_region_parent
-        CHECK (parent_region_id IS NULL OR parent_region_id <> region_id)
+            OR (region_level = 'district' AND parent_region_id IS NOT NULL))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- 금융상품과 상담·취업 안내가 공통으로 연결하는 준비 목록입니다.

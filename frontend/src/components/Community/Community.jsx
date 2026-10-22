@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
     createCommunityPost,
     deleteCommunityPost,
@@ -11,6 +11,7 @@ import {
     unlikeCommunityPost,
     unrepostCommunityPost,
 } from "../../api/communityApi.js";
+import { confirm } from "../Modal/modal.js";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import ProfileAvatar from "../../auth/components/ProfileAvatar.jsx";
 import { useTranslation } from "react-i18next";
@@ -19,6 +20,8 @@ import "../../styles/community.css";
 import CommunityCommentSection from "./CommunityCommentSection.jsx";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 import CommunityPostEditForm from "./CommunityPostEditForm.jsx";
+import CommunityPostModal from "./CommunityPostModal.jsx";
+
 
 const MAX_IMAGE_COUNT = 4;
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
@@ -32,6 +35,7 @@ function PostCard({
     onRepostChanged,
     isRepostFeed,
     isDeleting,
+    onOpenPost,
 }) {
     const [isEditing, setIsEditing] = useState(false);
     const [isCommentsOpen, setIsCommentsOpen] = useState(false);
@@ -150,10 +154,11 @@ function PostCard({
                         memberId={post.memberId}
                         imageUrl={post.profileImageUrl}
                         nickname={post.nickname}
+                        loginId={post.loginId}
                         size={38}
                     />
                     <div>
-                        <strong>{post.nickname}</strong>
+                        <strong>{post.loginId}</strong>
                         <p>{formattedDate}</p>
                     </div>
                 </div>
@@ -183,18 +188,32 @@ function PostCard({
                 />
             ) : (
                 <>
-                    <p className="community-post-content">{post.content}</p>
-                    {post.images?.length > 0 && (
-                        <div className="community-post-images">
-                            {post.images.map((image, index) => (
-                                <img
-                                    key={image.imageId ?? `${image.imageUrl}-${index}`}
-                                    src={image.imageUrl}
-                                    alt={`게시글 사진 ${index + 1}`}
-                                />
-                            ))}
-                        </div>
-                    )}
+                    <div
+                        className="community-post-open-area"
+                        role="button"
+                        tabIndex={0}
+                        aria-label="게시글 상세 보기"
+                        onClick={() => onOpenPost(post.postId)}
+                        onKeyDown={(event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
+                                onOpenPost(post.postId);
+                            }
+                        }}
+                    >
+                        <p className="community-post-content">{post.content}</p>
+                        {post.images?.length > 0 && (
+                            <div className="community-post-images">
+                                {post.images.map((image, index) => (
+                                    <img
+                                        key={image.imageId ?? `${image.imageUrl}-${index}`}
+                                        src={image.imageUrl}
+                                        alt={`게시글 사진 ${index + 1}`}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
                     <div className="community-post-actions">
                         <button
@@ -221,6 +240,21 @@ function PostCard({
                             <strong>{repostInfo.repostCount}</strong>
                         </button>
 
+                        <span
+                            className="community-view-count"
+                            aria-label={`조회 ${post.viewCount ?? 0}회`}
+                        >
+                            <svg
+                                className="community-view-icon"
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+                                <circle cx="12" cy="12" r="2.5" />
+                            </svg>
+                            조회 <strong>{post.viewCount ?? 0}</strong>
+                        </span>
+
                         <button
                             type="button"
                             className="community-comment-toggle"
@@ -228,7 +262,7 @@ function PostCard({
                             aria-expanded={isCommentsOpen}
                         >
                             <span aria-hidden="true">▱</span>
-                            {isCommentsOpen ? "댓글 닫기" : "댓글 작성"}
+                            {isCommentsOpen ? "댓글 닫기" : "댓글"}
                             {!isCommentsOpen && <strong>{post.commentCount ?? 0}</strong>}
                         </button>
                     </div>
@@ -265,6 +299,7 @@ export default function Community() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [deletingPostId, setDeletingPostId] = useState(null);
     const [deleteError, setDeleteError] = useState("");
+    const [openedPostId, setOpenedPostId] = useState(null);
     const observerTarget = useRef(null);
     const loadingRef = useRef(false);
     const cursorCreatedAtRef = useRef(null);
@@ -446,7 +481,7 @@ export default function Community() {
     }
 
     async function handleDelete(postId) {
-        if (!window.confirm("이 게시글을 삭제할까요?")) return;
+        if (!(await confirm("이 게시글을 삭제할까요?"))) return;
 
         setDeletingPostId(postId);
         setDeleteError("");
@@ -465,6 +500,13 @@ export default function Community() {
             post.postId === updatedPost.postId ? updatedPost : post
         )));
     }
+
+    // 상세 모달 API가 돌려준 최신 조회수·댓글 수를 피드에도 바로 반영한다.
+    const handlePostOpened = useCallback((updatedPost) => {
+        setPosts((previous) => previous.map((post) => (
+            post.postId === updatedPost.postId ? updatedPost : post
+        )));
+    }, []);
 
     // 댓글 영역이 최신 댓글 수를 알려오면 해당 게시글 카드만 즉시 갱신한다.
     function handleCommentCountChange(postId, commentCount) {
@@ -563,6 +605,7 @@ export default function Community() {
                                 onUpdate={handleUpdatePost}
                                 onCommentCountChange={handleCommentCountChange}
                                 onRepostChanged={handleRepostChanged}
+                                onOpenPost={setOpenedPostId}
                                 isRepostFeed={feedType === "reposts"}
                                 isDeleting={deletingPostId === post.postId}
                             />
@@ -590,6 +633,13 @@ export default function Community() {
                     <button type="button">안내 확인하기</button>
                 </div>
             </section>
+
+            <CommunityPostModal
+                postId={openedPostId}
+                onClose={() => setOpenedPostId(null)}
+                onPostLoaded={handlePostOpened}
+                onCommentCountChange={handleCommentCountChange}
+            />
         </div>
     );
 }

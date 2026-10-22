@@ -6,11 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.example.forguide.community.dto.CommunityPostCreateRequest;
 import com.example.forguide.community.dto.CommunityPostUpdateRequest;
-import com.example.forguide.member.common.ApiException;
-import com.example.forguide.member.common.ErrorCode;
+import com.example.forguide.common.exception.ApiException;
+import com.example.forguide.common.exception.ErrorCode;
 import com.example.forguide.community.dto.CommunityPostImageResponse;
 import com.example.forguide.community.image.CommunityImageStorage;
 import com.example.forguide.community.dto.CommunityCommentCreateRequest;
+import com.example.forguide.community.dto.CommunityCommentLikeResponse;
 import com.example.forguide.community.dto.CommunityCommentResponse;
 import com.example.forguide.community.dto.CommunityPostLikeResponse;
 import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
@@ -53,6 +54,39 @@ public class CommunityService {
         return attachImages(List.of(post)).get(0);
     }
 
+    // 게시글 상세 화면을 열 때만 조회 기록을 남긴다.
+    @Transactional
+    public CommunityPostResponse getPostByIdAndRecordView(
+            Long postId,
+            Long viewerMemberId,
+            String visitorToken
+    ) {
+        CommunityPostResponse post = communityMapper.findPostById(postId);
+
+        if (post == null) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "게시글을 찾을 수 없습니다.");
+        }
+
+        // 로그인 회원은 본인 게시글을 봐도 조회수에 포함하지 않는다.
+        if (viewerMemberId != null) {
+            boolean isPostAuthor = post.getMemberId().equals(viewerMemberId);
+
+            if (!isPostAuthor
+                    && !communityMapper.existsPostViewByMember(postId, viewerMemberId)) {
+                communityMapper.insertPostViewRecord(postId, viewerMemberId, null);
+            }
+        }
+
+        // 비로그인 사용자는 브라우저 쿠키 토큰으로 24시간 중복을 판단
+        else if (visitorToken != null && !visitorToken.isBlank()
+                && !communityMapper.existsPostViewByVisitor(postId, visitorToken)) {
+            communityMapper.insertPostViewRecord(postId, null, visitorToken);
+        }
+
+        return getPostById(postId);
+    }
+
+
     // 무한 스크롤용 게시글 조회
     public List<CommunityPostResponse> getPostsByCursor(
             LocalDateTime cursorCreatedAt,
@@ -62,6 +96,13 @@ public class CommunityService {
         return attachImages(communityMapper.findPostsByCursor(
                 cursorCreatedAt, cursorPostId, size
         ));
+    }
+
+    // 프로필 카드에서 회원이 작성한 게시글 목록을 보여준다.
+    public List<CommunityPostResponse> getPostsByMemberId(Long memberId) {
+        // 존재하지 않는 회원과 게시글이 없는 회원을 구분한다.
+        getMemberPreview(memberId);
+        return attachImages(communityMapper.findPostsByMemberId(memberId));
     }
 
     // 내 리포스트 탭에는 내가 리포스트한 원본 게시글만 최신 리포스트 순으로 보여 준다.
@@ -382,9 +423,9 @@ public class CommunityService {
     }
 
     // 게시글 댓글 목록 조회
-    public List<CommunityCommentResponse> getCommentsByPostId(Long postId) {
+    public List<CommunityCommentResponse> getCommentsByPostId(Long postId, Long memberId) {
         validatePostExists(postId);
-        return communityMapper.findCommentsByPostId(postId);
+        return communityMapper.findCommentsByPostId(postId, memberId);
     }
 
     // 로그인 회원 댓글 작성
@@ -392,6 +433,8 @@ public class CommunityService {
     public void createComment(Long postId, Long memberId, CommunityCommentCreateRequest request)
     {
         validatePostExists(postId);
+
+        Long mentionedMemberId = null;
 
         if (request.getParentCommentId() != null) {
             CommunityCommentResponse parentComment = getCommentByPostId(
@@ -403,12 +446,32 @@ public class CommunityService {
             if (parentComment.isDeleted()) {
                 throw new ApiException(ErrorCode.INVALID_INPUT, "삭제된 댓글에는 답글을 작성할 수 없습니다.");
             }
+
+            // 답글의 답글은 서버에서도 막아 화면 규칙과 저장 규칙을 일치시킨다.
+            if (parentComment.getParentCommentId() != null) {
+                throw new ApiException(ErrorCode.INVALID_INPUT, "답글에는 다시 답글을 작성할 수 없습니다.");
+            }
+
+            // 화면의 @아이디 문자열을 믿지 않고 서버에서 실제 회원인지 확인해 태그 대상을 저장한다.
+            if (request.getMentionLoginId() != null && !request.getMentionLoginId().isBlank()) {
+                CommunityMemberPreviewResponse mentionedMember = communityMapper
+                        .findMemberPreviewByLoginId(request.getMentionLoginId());
+
+                if (mentionedMember == null) {
+                    throw new ApiException(ErrorCode.INVALID_INPUT, "존재하지 않는 아이디는 태그할 수 없습니다.");
+                }
+
+                mentionedMemberId = mentionedMember.getMemberId();
+            }
+        } else if (request.getMentionLoginId() != null && !request.getMentionLoginId().isBlank()) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, "태그는 답글에서만 사용할 수 있습니다.");
         }
 
         int insertedCount = communityMapper.insertComment(
                 postId,
                 memberId,
                 request.getParentCommentId(),
+                mentionedMemberId,
                 request.getContent()
         );
 
@@ -426,6 +489,48 @@ public class CommunityService {
         }
 
         return comment;
+    }
+
+    // 댓글 공감 수와 현재 로그인 회원의 공감 여부를 함께 반환한다.
+    public CommunityCommentLikeResponse getCommentLikeStatus(
+            Long postId, Long commentId, Long memberId
+    ) {
+        validatePostExists(postId);
+        getCommentByPostId(postId, commentId);
+
+        CommunityCommentLikeResponse response = new CommunityCommentLikeResponse();
+        response.setCommentId(commentId);
+        response.setLikeCount(communityMapper.countLikesByCommentId(commentId));
+        response.setLikedByMe(
+                memberId != null
+                        && communityMapper.existsCommentLike(commentId, memberId)
+        );
+        return response;
+    }
+
+    // 같은 회원의 중복 공감은 저장하지 않고 현재 상태를 돌려준다.
+    @Transactional
+    public CommunityCommentLikeResponse likeComment(
+            Long postId, Long commentId, Long memberId
+    ) {
+        CommunityCommentResponse comment = getCommentByPostId(postId, commentId);
+        if (comment.isDeleted()) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, "삭제된 댓글에는 공감할 수 없습니다.");
+        }
+        if (!communityMapper.existsCommentLike(commentId, memberId)) {
+            communityMapper.insertCommentLike(commentId, memberId);
+        }
+        return getCommentLikeStatus(postId, commentId, memberId);
+    }
+
+    // 아직 공감하지 않은 상태에서 취소해도 현재 상태를 그대로 돌려준다.
+    @Transactional
+    public CommunityCommentLikeResponse unlikeComment(
+            Long postId, Long commentId, Long memberId
+    ) {
+        getCommentByPostId(postId, commentId);
+        communityMapper.deleteCommentLike(commentId, memberId);
+        return getCommentLikeStatus(postId, commentId, memberId);
     }
 
     // 댓글 작성자 본인만 수정할 수 있다.
