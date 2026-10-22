@@ -1,0 +1,150 @@
+/* 공통 panel·button·색상 변수를 재사용하고 결과 배치만 정의한다. */
+.results {
+    display: grid;
+    gap: 16px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+/* 내용 길이가 달라도 상세 버튼은 카드 아래쪽에 정렬한다. */
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+.card h3 {
+    overflow-wrap: anywhere;
+}
+
+.cardActions {
+    margin-top: auto;
+    padding-top: 12px;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tags span {
+    padding: 3px 9px;
+    border-radius: 8px;
+    background: var(--mint-soft);
+    overflow-wrap: anywhere;
+}
+
+/* 긴 언어 목록과 주소가 카드 밖으로 넘치지 않게 한다. */
+.fields {
+    margin: 0;
+}
+
+.fields > div {
+    display: grid;
+    grid-template-columns: 145px minmax(0, 1fr);
+    gap: 12px;
+    padding: 6px 0;
+}
+
+.fields dt {
+    font-weight: 600;
+}
+
+.fields dd {
+    margin: 0;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.notice {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.error {
+    color: var(--error);
+}
+
+.links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.links a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.chart {
+    margin: 0;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: var(--panel-radius);
+}
+
+/* 상세 내용만 스크롤하고 블러는 적용하지 않는다. */
+.dialog {
+    width: min(960px, calc(100vw - 32px));
+    max-height: 88vh;
+    padding: 24px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--panel-radius);
+}
+
+.dialog::backdrop {
+    background: rgb(0 0 0 / 18%);
+}
+
+.dialogHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 16px;
+}
+
+.detailBody {
+    display: grid;
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.detailBody details {
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--control-radius);
+}
+
+.detailBody summary {
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.detailBody details p {
+    margin: 12px 0;
+}
+
+/* 모바일에서는 카드와 정보 항목을 한 열로 표시한다. */
+@media (max-width: 760px) {
+    .grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .fields > div {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 2px;
+    }
+
+    .dialog {
+        padding: 18px;
+    }
+}

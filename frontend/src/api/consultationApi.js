@@ -1,15 +1,436 @@
-// 원본 초안의 전체 선택 목록을 가져온다.
+import { client } from "./client.js";
 import consultationOptions from "./consultationOptions.json";
 
-// MOCK: 첫 화면에서 바로 표시할 선택 목록이다.
-// 원본 데이터가 수정되지 않도록 복사해서 제공한다.
-export const initialConsultationOptions = structuredClone(consultationOptions);
+// 선택 목록은 즉시 보여 주고 기관 자료는 실제 DB API에서 읽는다.
+export const initialConsultationOptions =
+    structuredClone(consultationOptions);
 
-// 이후 실제 API로 연결해도 같은 호출 방식을 사용한다.
+// 기존 선택 목록 호출부와의 호환을 유지한다.
 export async function getConsultationOptions() {
-    // MOCK: 서버 요청처럼 비동기로 처리하는 흐름을 유지한다.
+    // MOCK: 선택 목록을 위한 기존 초안이다.
+    // 실제 기관 데이터에는 이 지연이나 mock 자료를 사용하지 않는다.
     await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // 화면에서 사용할 별도 복사본을 반환한다.
     return structuredClone(consultationOptions);
+}
+
+export const TOPIC_LABELS = {
+    bank: "계좌·은행",
+    loan: "대출",
+    repayment: "채무·상환",
+    credit: "신용관리",
+    living: "생활비·지출",
+    wages: "급여·임금",
+    employment_contract: "근로계약·근무조건",
+    retirement: "퇴직·퇴직금",
+    employment: "취업·구직",
+    remittance: "송금·이체",
+    payment: "카드·결제",
+    housing: "주거비",
+    tax: "세금",
+    insurance: "보험·사회보장",
+    fraud: "금융사기·피해",
+    financial_support: "금융지원·복지",
+    financial_information: "금융정보·기초상담",
+};
+
+// 띄어쓰기·문장부호 차이만 정규화하고 원본 키워드는 보존한다.
+const fold = (input) =>
+    String(input ?? "")
+        .normalize("NFKC")
+        .replace(/[^\p{L}\p{N}]/gu, "")
+        .toLowerCase();
+
+const value = (input) =>
+    input === "전체" ? "" : String(input ?? "").trim();
+
+const unique = (items) => [...new Set(items)];
+
+const flag = (input) =>
+    input === 1 || input === true
+        ? true
+        : input === 0 || input === false
+            ? false
+            : null;
+
+const roles = { direct: 0, related: 1, unknown: 2 };
+
+// 일상 표현을 실제 상담 키워드로 보완한다.
+// 원래 키워드를 삭제하거나 무관한 상담 분야를 추가하지 않는다.
+const aliases = {
+    임금체불: ["임금 체불"],
+    월급을못받음: ["임금 체불"],
+    월급못받음: ["임금 체불"],
+    퇴직금을못받음: ["퇴직금 미지급"],
+    통장만들기: ["통장 개설"],
+    돈보내기: ["송금"],
+    대출이자: ["대출 금리", "이자"],
+    카드값연체: ["카드 연체"],
+    빚갚기: ["채무 상환"],
+    신용등급: ["신용점수"],
+};
+
+const terms = (input) =>
+    unique([
+        fold(input),
+        ...(aliases[fold(input)] ?? []).map(fold),
+    ]);
+
+// DB의 0·1·NULL을 true·false·null로 통일한다.
+// 미확인을 false로 바꾸지 않는다.
+export function normalizeInstitution(item) {
+    return {
+        ...item,
+        aliases: item.aliases ?? [],
+        featuredKeywords: item.featuredKeywords ?? [],
+        additionalPhones: item.additionalPhones ?? [],
+        sourceUrls: unique(
+            (item.sourceUrls ?? []).filter(Boolean),
+        ),
+        services: (item.services ?? [])
+            .map((service) => ({
+                ...service,
+                keywords: service.keywords ?? [],
+                languages: service.languages ?? [],
+                regions: service.regions ?? [],
+                phone: {
+                    ...service.phone,
+                    available: flag(service.phone?.available),
+                    weekend: flag(service.phone?.weekend),
+                    holiday: flag(service.phone?.holiday),
+                },
+                visit: {
+                    ...service.visit,
+                    available: flag(service.visit?.available),
+                    weekend: flag(service.visit?.weekend),
+                    holiday: flag(service.visit?.holiday),
+                    reservationAvailable: flag(
+                        service.visit?.reservationAvailable,
+                    ),
+                    reservationRequired: flag(
+                        service.visit?.reservationRequired,
+                    ),
+                },
+                online: {
+                    ...service.online,
+                    available: flag(service.online?.available),
+                },
+                specialPhone: {
+                    ...service.specialPhone,
+                    weekend: flag(service.specialPhone?.weekend),
+                    holiday: flag(service.specialPhone?.holiday),
+                },
+            }))
+            .sort((a, b) => a.id - b.id),
+    };
+}
+
+// 언어·지역·방식을 같은 상담 채널 안에서 평가한다.
+// 전화가 전국이라고 방문 장소까지 전국으로 처리하지 않는다.
+function channelMatch(service, channel, filters) {
+    const information = service[channel];
+
+    if (information?.available === false) return null;
+
+    const unknown = [];
+
+    if (information?.available == null) {
+        unknown.push("method");
+    }
+
+    if (filters.method === "reservation") {
+        if (service.visit.reservationAvailable === false) {
+            return null;
+        }
+
+        if (service.visit.reservationAvailable == null) {
+            unknown.push("method");
+        }
+    }
+
+    if (filters.language) {
+        const supported = service.languages.some(
+            (language) =>
+                language.method === channel &&
+                fold(language.code) === fold(filters.language),
+        );
+
+        // 목록에 없다고 미지원이라고 단정하지 않는다.
+        if (!supported) unknown.push("language");
+    }
+
+    if (filters.province) {
+        const nationwide =
+            channel === "phone" &&
+            service.phone.regionStatus === "unrestricted";
+
+        const locations = service.regions.filter(
+            (region) => region.method === channel,
+        );
+
+        if (!nationwide) {
+            if (!locations.length) {
+                unknown.push("region");
+            } else {
+                const provinceLocations = locations.filter(
+                    (region) =>
+                        region.province === filters.province,
+                );
+
+                if (!provinceLocations.length) return null;
+
+                if (
+                    filters.district &&
+                    !provinceLocations.some(
+                        (region) =>
+                            region.district === filters.district,
+                    )
+                ) {
+                    if (
+                        provinceLocations.some(
+                            (region) => !region.district,
+                        )
+                    ) {
+                        unknown.push("region");
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        }
+    }
+
+    return {
+        channel,
+        unknown: unique(unknown),
+    };
+}
+
+// 분야 AND 키워드 OR AND 검색어 조건을 적용한다.
+// 같은 기관이 여러 업무에 해당해도 기관 카드는 한 번만 반환한다.
+export function filterInstitutions(data, input = {}) {
+    const topicValue = value(input.topic);
+
+    const topic =
+        Object.keys(TOPIC_LABELS).find(
+            (code) =>
+                code === topicValue ||
+                TOPIC_LABELS[code] === topicValue,
+        ) ?? "";
+
+    if (topicValue && !topic) {
+        throw new Error("INVALID_INPUT");
+    }
+
+    const methodValues = {
+        전화: "phone",
+        방문: "visit",
+        예약: "reservation",
+        모름: "",
+    };
+
+    const rawMethod = value(input.method);
+    const method = methodValues[rawMethod] ?? rawMethod;
+
+    if (
+        !["", "phone", "visit", "reservation"].includes(method)
+    ) {
+        throw new Error("INVALID_INPUT");
+    }
+
+    const keywords = unique(
+        (input.keywords ?? []).map(value).filter(Boolean),
+    );
+
+    const filters = {
+        topic,
+        keywords,
+        method,
+        query: value(input.query),
+        province: value(input.province),
+        district: value(input.district),
+        language: value(input.language),
+    };
+
+    if (
+        filters.query.length > 100 ||
+        keywords.length > 50
+    ) {
+        throw new Error("INVALID_INPUT");
+    }
+
+    const queryTerms = filters.query
+        ? terms(filters.query).filter(Boolean)
+        : [];
+    // 입력은 있지만 기호를 제외한 검색 내용이 없으면 잘못된 입력이다.
+    // 검색 조건이 없는 전체 조회로 바뀌지 않도록 막는다.
+    if (filters.query && queryTerms.length === 0) {
+        throw new Error("INVALID_INPUT");
+    }
+
+    const channels =
+        method === "reservation"
+            ? ["visit"]
+            : method
+                ? [method]
+                : ["phone", "visit", "online"];
+
+    const items = data
+        .map(normalizeInstitution)
+        .flatMap((institution) => {
+            const institutionText = [
+                institution.name,
+                institution.phone,
+                ...institution.aliases,
+            ].map(fold);
+
+            const candidates =
+                institution.services.flatMap((service) => {
+                    if (topic && service.topic !== topic) {
+                        return [];
+                    }
+
+                    const matched = keywords.filter(
+                        (keyword) =>
+                            terms(keyword).some((term) =>
+                                service.keywords.some(
+                                    (actual) =>
+                                        fold(actual) === term,
+                                ),
+                            ),
+                    );
+
+                    if (
+                        keywords.length &&
+                        !matched.length
+                    ) {
+                        return [];
+                    }
+
+                    const searchable = [
+                        ...institutionText,
+                        TOPIC_LABELS[service.topic],
+                        service.summary,
+                        ...service.keywords,
+                    ].map(fold);
+
+                    if (
+                        queryTerms.length &&
+                        !queryTerms.some((term) =>
+                            searchable.some((text) =>
+                                text.includes(term),
+                            ),
+                        )
+                    ) {
+                        return [];
+                    }
+
+                    const channelMatches = channels
+                        .map((channel) =>
+                            channelMatch(
+                                service,
+                                channel,
+                                filters,
+                            ),
+                        )
+                        .filter(Boolean)
+                        .sort(
+                            (a, b) =>
+                                a.unknown.length -
+                                b.unknown.length,
+                        );
+
+                    if (!channelMatches.length) return [];
+
+                    return [
+                        {
+                            service,
+                            matched,
+                            ...channelMatches[0],
+                        },
+                    ];
+                });
+
+            if (!candidates.length) return [];
+
+            candidates.sort(
+                (a, b) =>
+                    (roles[a.service.role] ?? 2) -
+                    (roles[b.service.role] ?? 2) ||
+                    b.matched.length - a.matched.length ||
+                    a.unknown.length - b.unknown.length ||
+                    a.service.id - b.service.id,
+            );
+
+            const matchedKeywords = unique(
+                candidates.flatMap(
+                    (candidate) => candidate.matched,
+                ),
+            );
+
+            return [
+                {
+                    ...institution,
+                    preview: candidates[0].service,
+                    match: {
+                        role: candidates[0].service.role,
+                        keywords: matchedKeywords,
+                        selectedCount: keywords.length,
+                        percent: keywords.length
+                            ? Math.round(
+                                (matchedKeywords.length /
+                                    keywords.length) *
+                                100,
+                            )
+                            : null,
+                        unknown: candidates[0].unknown,
+                    },
+                },
+            ];
+        });
+
+    // 직접 상담 → 일치 개수 → 미확인 조건 수 → 기관 ID 순이다.
+    // 같은 입력이면 같은 순서를 반환한다.
+    items.sort(
+        (a, b) =>
+            (roles[a.match.role] ?? 2) -
+            (roles[b.match.role] ?? 2) ||
+            b.match.keywords.length -
+            a.match.keywords.length ||
+            a.match.unknown.length -
+            b.match.unknown.length ||
+            a.id - b.id,
+    );
+
+    return { items, filters };
+}
+
+// 공통 client가 토큰·오류·시간 초과를 처리한다.
+// 연결 실패를 mock 기관이나 빈 결과로 바꾸지 않는다.
+export async function getConsultationInstitutions(
+    filters = {},
+) {
+    const institutions = await client.get(
+        "/consultation/institutions",
+    );
+
+    if (!Array.isArray(institutions)) {
+        throw new Error("INVALID_RESPONSE");
+    }
+
+    return filterInstitutions(institutions, filters);
+}
+
+export async function getConsultationInstitution(id) {
+    if (
+        !Number.isSafeInteger(Number(id)) ||
+        Number(id) < 1
+    ) {
+        throw new Error("INVALID_INPUT");
+    }
+
+    return normalizeInstitution(
+        await client.get(
+            `/consultation/institutions/${id}`,
+        ),
+    );
 }
