@@ -40,3 +40,6 @@ node_modules/
 
 # 프론트엔드 배포 결과물 제외
 /frontend/dist/
+
+# 개인 DB 연결 값은 로컬에서만 관리하고 저장소에는 올리지 않는다.
+/backend/src/main/resources/application-local.properties

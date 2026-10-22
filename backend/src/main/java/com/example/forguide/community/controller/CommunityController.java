@@ -74,15 +74,29 @@ public class CommunityController {
     public ApiResponse<List<CommunityPostResponse>> getPostsByCursor(
             @RequestParam(required = false) LocalDateTime cursorCreatedAt,
             @RequestParam(required = false) Long cursorPostId,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) @Size(max = 100) String keyword,
+            @RequestParam(required = false) String topic,
             @RequestParam @Min(1) @Max(50) int size
     ) {
         return ApiResponse.ok(
                 communityService.getPostsByCursor(
                         cursorCreatedAt,
                         cursorPostId,
+                        category,
+                        keyword,
+                        topic,
                         size
                 )
         );
+    }
+
+    // 전체 게시글을 공감순 또는 조회순으로 정렬해 인기 게시글을 보여준다.
+    @GetMapping("/posts/popular")
+    public ApiResponse<List<CommunityPostResponse>> getPopularPosts(
+            @RequestParam(defaultValue = "likes") String sort
+    ) {
+        return ApiResponse.ok(communityService.getPopularPosts(sort, 3));
     }
 
     // 로그인 회원이 리포스트한 게시글만 조회한다.

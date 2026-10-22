@@ -17,6 +17,9 @@ export async function getCommunityPost(postId) {
 export async function getCommunityPostsByCursor({
     cursorCreatedAt = null,
     cursorPostId = null,
+    category = null,
+    keyword = null,
+    topic = null,
     size = 10,
 } = {}) {
 
@@ -30,7 +33,17 @@ export async function getCommunityPostsByCursor({
         params.set("cursorPostId", String(cursorPostId));
     }
 
+    // 카테고리와 본문 검색어는 선택했을 때만 서버에 전달한다.
+    if (category) params.set("category", category);
+    if (keyword?.trim()) params.set("keyword", keyword.trim());
+    if (topic) params.set("topic", topic);
+
     return client.get(`/community/posts/scroll?${params.toString()}`);
+}
+
+// 선택한 공감순 또는 조회순으로 정렬한 인기 게시글 목록
+export async function getPopularCommunityPosts(sortBy = "likes") {
+    return client.get(`/community/posts/popular?sort=${sortBy}`);
 }
 
 export async function createCommunityPost(postData) {

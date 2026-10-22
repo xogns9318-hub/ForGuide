@@ -17,9 +17,12 @@ public class CommunityPostResponse {
     private String nickname;
     private String profileImageUrl;
     private String content;
+    private String category;
+    private String relatedService;
     private String language;
     private Integer contentVersion;
     private Long commentCount;
+    private Long likeCount;
     private Long viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

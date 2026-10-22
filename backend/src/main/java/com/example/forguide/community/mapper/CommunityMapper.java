@@ -20,6 +20,15 @@ public interface CommunityMapper {
     List<CommunityPostResponse> findPostsByCursor(
             @Param("cursorCreatedAt") LocalDateTime cursorCreatedAt,
             @Param("cursorPostId") Long cursorPostId,
+            @Param("category") String category,
+            @Param("keyword") String keyword,
+            @Param("topicKeywords") List<String> topicKeywords,
+            @Param("size") int size
+    );
+
+    // 사용자가 선택한 공감순 또는 조회순으로 인기 게시글 목록을 조회한다.
+    List<CommunityPostResponse> findPopularPosts(
+            @Param("sortBy") String sortBy,
             @Param("size") int size
     );
 

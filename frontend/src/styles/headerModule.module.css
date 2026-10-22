@@ -22,8 +22,8 @@
 .community {
     background-color: #f5fcf8;
     background-image:
-        linear-gradient(rgb(255 255 255 / 52%),
-            rgb(255 255 255 / 52%)),
+        linear-gradient(rgb(255 255 255 / 30%),
+            rgb(255 255 255 / 30%)),
         url("/community-scene-banner2.png");
     background-position: center bottom;
     background-repeat: no-repeat;
@@ -61,6 +61,15 @@
     font-weight: 600;
     text-shadow: 0 1px 1px rgb(255 255 255 / 76%);
 }
+
+/* 숲 배경을 선명하게 보여도 메뉴 글자가 흐려지지 않도록 커뮤니티에서만 대비를 높인다. */
+.community .menuTitle,
+.community .menuLink {
+    color: #164d40;
+    font-weight: 700;
+    text-shadow: 0 1px 1px rgb(255 255 255 / 88%);
+}
+
 
 .brand {
     display: flex;
