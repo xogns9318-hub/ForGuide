@@ -6,6 +6,7 @@ import {
     getCommunityPostRepost,
     getMyRepostedCommunityPosts,
     getCommunityPostsByCursor,
+    getPopularCommunityPosts,
     likeCommunityPost,
     repostCommunityPost,
     unlikeCommunityPost,
@@ -26,25 +27,26 @@ import CommunityPostModal from "./CommunityPostModal.jsx";
 const MAX_IMAGE_COUNT = 4;
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 
-const CATEGORY_LABELS = {
-    QUESTION_ANSWER: "질문·답변",
-    REVIEW_RECOMMEND: "후기·추천",
-    FREE_TALK: "자유 이야기",
-};
-
-const RELATED_SERVICE_LINKS = {
-    ACCOUNT_RECOMMEND: { label: "계좌 개설 추천 보기", path: "/service/account" },
-    LOAN_RECOMMEND: { label: "대출 추천 보기", path: "/service/loan" },
-    INSURANCE_RECOMMEND: { label: "보험 추천 보기", path: "/service/insurance" },
-};
-
-const TOPICS = [
-    ["ACCOUNT", "계좌 개설"],
-    ["LOAN", "대출"],
-    ["INSURANCE", "보험"],
-    ["VISA_STAY", "비자·체류"],
-    ["LIFE_TIP", "한국 생활 팁"],
+// 현재는 화면 탐색을 위한 UI만 제공한다. 실제 카테고리 필터는 데이터 구조가 확정된 뒤 연결한다.
+const COMMUNITY_NAVIGATION_ITEMS = [
+    { icon: "▤", label: "전체 게시글", isActive: true },
+    { icon: "◌", label: "질문·답변" },
+    { icon: "☆", label: "후기·추천" },
+    { icon: "◫", label: "자유 이야기" },
 ];
+
+const COMMUNITY_TOPIC_ITEMS = [
+    { icon: "⌂", label: "계좌 개설" },
+    { icon: "◉", label: "대출" },
+    { icon: "◇", label: "보험" },
+    { icon: "▣", label: "비자·체류" },
+    { icon: "◌", label: "한국 생활 팁" },
+];
+
+function getPostPreview(post) {
+    const preview = post.content?.replace(/\s+/g, " ").trim();
+    return preview || "사진이 포함된 게시글";
+}
 
 function PostCard({
     post,
@@ -53,6 +55,7 @@ function PostCard({
     onUpdate,
     onCommentCountChange,
     onRepostChanged,
+    onPopularityChanged,
     isRepostFeed,
     isDeleting,
     onOpenPost,
@@ -92,7 +95,7 @@ function PostCard({
         return () => {
             isMounted = false;
         };
-    }, [post.postId]);
+    }, [post.postId, currentMemberId]);
 
     useEffect(() => {
         let isMounted = true;
@@ -113,7 +116,7 @@ function PostCard({
         return () => {
             isMounted = false;
         };
-    }, [post.postId]);
+    }, [post.postId, currentMemberId]);
 
     async function handleLikeClick() {
         if (!currentMemberId) {
@@ -128,6 +131,7 @@ function PostCard({
                 ? await unlikeCommunityPost(post.postId)
                 : await likeCommunityPost(post.postId);
             setLikeInfo(response);
+            onPopularityChanged?.();
         } catch (error) {
             setLikeError(error?.message || "좋아요 처리에 실패했습니다.");
         } finally {
@@ -161,8 +165,6 @@ function PostCard({
         setIsEditing(false);
     }
 
-    const relatedService = RELATED_SERVICE_LINKS[post.relatedService];
-
     return (
         <article className="community-post-card">
             {isRepostFeed && (
@@ -180,9 +182,6 @@ function PostCard({
                         size={38}
                     />
                     <div>
-                        <span className="community-category-badge">
-                            {CATEGORY_LABELS[post.category] ?? "자유 이야기"}
-                        </span>
                         <strong>{post.loginId}</strong>
                         <p>{formattedDate}</p>
                     </div>
@@ -237,15 +236,6 @@ function PostCard({
                                     />
                                 ))}
                             </div>
-                        )}
-                        {relatedService && (
-                            <a
-                                className="community-related-service-link"
-                                href={relatedService.path}
-                                onClick={(event) => event.stopPropagation()}
-                            >
-                                {relatedService.label} <span aria-hidden="true">↗</span>
-                            </a>
                         )}
                     </div>
 
@@ -322,13 +312,10 @@ export default function Community() {
     const { accessToken, member } = useAuthStore();
     const currentMemberId = member?.memberId;
     const [posts, setPosts] = useState([]);
+    const [popularPosts, setPopularPosts] = useState([]);
+    const [popularError, setPopularError] = useState("");
+    const [popularSort, setPopularSort] = useState("likes");
     const [feedType, setFeedType] = useState("all");
-    const [category, setCategory] = useState("FREE_TALK");
-    const [selectedCategory, setSelectedCategory] = useState("");
-    const [selectedTopic, setSelectedTopic] = useState("");
-    const [relatedService, setRelatedService] = useState("");
-    const [searchKeyword, setSearchKeyword] = useState("");
-    const [submittedKeyword, setSubmittedKeyword] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
     const [hasMore, setHasMore] = useState(true);
@@ -352,6 +339,23 @@ export default function Community() {
         previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     }, []);
 
+    // 오른쪽 인기 게시글은 전체 글을 기준으로 공감순 또는 조회순을 서버에서 정렬해 가져온다.
+    const loadPopularPosts = useCallback(async () => {
+        try {
+            const response = await getPopularCommunityPosts(popularSort);
+            setPopularPosts(Array.isArray(response) ? response : []);
+            setPopularError("");
+        } catch (requestError) {
+            setPopularError(
+                requestError?.message || "인기 게시글을 불러오지 못했습니다.",
+            );
+        }
+    }, [popularSort]);
+
+    useEffect(() => {
+        loadPopularPosts();
+    }, [loadPopularPosts]);
+
     async function loadMorePosts() {
         if (loadingRef.current || !hasMoreRef.current) return;
 
@@ -372,9 +376,6 @@ export default function Community() {
                 : await getCommunityPostsByCursor({
                     cursorCreatedAt: cursorCreatedAtRef.current,
                     cursorPostId: cursorPostIdRef.current,
-                    category: selectedCategory || null,
-                    keyword: submittedKeyword || null,
-                    topic: selectedTopic || null,
                     size: 10,
                 });
             const receivedPosts = Array.isArray(response) ? response : [];
@@ -407,7 +408,7 @@ export default function Community() {
         setHasMore(true);
         setPosts([]);
         loadMorePosts();
-    }, [feedType, selectedCategory, selectedTopic, submittedKeyword]);
+    }, [feedType]);
 
     useEffect(() => {
         const target = observerTarget.current;
@@ -505,13 +506,10 @@ export default function Community() {
             const formData = new FormData();
             formData.append("content", trimmedContent);
             formData.append("language", i18n.language || "ko");
-            formData.append("category", category);
-            if (relatedService) formData.append("relatedService", relatedService);
             images.forEach((image) => formData.append("images", image));
             await createCommunityPost(formData);
 
             setContent("");
-            setRelatedService("");
             clearSelectedImages();
             cursorCreatedAtRef.current = null;
             cursorPostIdRef.current = null;
@@ -519,6 +517,7 @@ export default function Community() {
             setHasMore(true);
             setPosts([]);
             await loadMorePosts();
+            await loadPopularPosts();
         } catch (requestError) {
             setWriteError(requestError?.message || "게시글 작성에 실패했습니다.");
         } finally {
@@ -534,6 +533,7 @@ export default function Community() {
         try {
             await deleteCommunityPost(postId);
             setPosts((previous) => previous.filter((post) => post.postId !== postId));
+            await loadPopularPosts();
         } catch (requestError) {
             setDeleteError(requestError?.message || "게시글 삭제에 실패했습니다.");
         } finally {
@@ -552,7 +552,8 @@ export default function Community() {
         setPosts((previous) => previous.map((post) => (
             post.postId === updatedPost.postId ? updatedPost : post
         )));
-    }, []);
+        loadPopularPosts();
+    }, [loadPopularPosts]);
 
     // 댓글 영역이 최신 댓글 수를 알려오면 해당 게시글 카드만 즉시 갱신한다.
     function handleCommentCountChange(postId, commentCount) {
@@ -568,73 +569,51 @@ export default function Community() {
         }
     }
 
-    function handleSearchSubmit(event) {
-        event.preventDefault();
-        setSubmittedKeyword(searchKeyword.trim());
-    }
-
     return (
         <div className="page-stack community-page">
-            <section className="community-board panel" aria-label="커뮤니티 게시판">
-                <header className="community-filter-header">
-                    <h1>커뮤니티</h1>
-                    <form className="community-search-form" onSubmit={handleSearchSubmit}>
-                        <label htmlFor="community-search">본문 검색</label>
-                        <input
-                            id="community-search"
-                            value={searchKeyword}
-                            onChange={(event) => setSearchKeyword(event.target.value)}
-                            placeholder="본문에서 궁금한 내용을 찾아보세요."
-                            maxLength={100}
-                        />
-                        <button type="submit">검색</button>
-                    </form>
-                    <nav className="community-category-filter" aria-label="게시글 카테고리">
-                        <button
-                            type="button"
-                            className={selectedCategory === "" ? "is-selected" : ""}
-                            onClick={() => setSelectedCategory("")}
-                        >
-                            전체 게시글
-                        </button>
-                        <button
-                            type="button"
-                            className={selectedCategory === "QUESTION_ANSWER" ? "is-selected" : ""}
-                            onClick={() => setSelectedCategory("QUESTION_ANSWER")}
-                        >
-                            질문·답변
-                        </button>
-                        <button
-                            type="button"
-                            className={selectedCategory === "REVIEW_RECOMMEND" ? "is-selected" : ""}
-                            onClick={() => setSelectedCategory("REVIEW_RECOMMEND")}
-                        >
-                            후기·추천
-                        </button>
-                        <button
-                            type="button"
-                            className={selectedCategory === "FREE_TALK" ? "is-selected" : ""}
-                            onClick={() => setSelectedCategory("FREE_TALK")}
-                        >
-                            자유 이야기
-                        </button>
-                    </nav>
-                    <nav className="community-topic-filter" aria-label="주요 주제">
-                        <span>주요 주제</span>
-                        {TOPICS.map(([value, label]) => (
-                            <button
-                                key={value}
-                                type="button"
-                                className={selectedTopic === value ? "is-selected" : ""}
-                                onClick={() => setSelectedTopic((previous) => (
-                                    previous === value ? "" : value
-                                ))}
+            <div className="community-layout">
+                <aside className="community-sidebar" aria-label="커뮤니티 둘러보기">
+                    <nav className="community-sidebar-navigation" aria-label="게시글 종류">
+                        {COMMUNITY_NAVIGATION_ITEMS.map((item) => (
+                            <span
+                                key={item.label}
+                                className={`community-sidebar-item${item.isActive ? " is-active" : ""}`}
                             >
-                                {label}
-                            </button>
+                                <span className="community-sidebar-icon" aria-hidden="true">
+                                    {item.icon}
+                                </span>
+                                {item.label}
+                            </span>
                         ))}
                     </nav>
-                </header>
+
+                    <section className="community-sidebar-topics" aria-labelledby="community-topic-title">
+                        <h2 id="community-topic-title">주요 주제</h2>
+                        <div className="community-topic-list">
+                            {COMMUNITY_TOPIC_ITEMS.map((topic) => (
+                                <span className="community-topic-item" key={topic.label}>
+                                    <span className="community-topic-icon" aria-hidden="true">
+                                        {topic.icon}
+                                    </span>
+                                    {topic.label}
+                                </span>
+                            ))}
+                        </div>
+                    </section>
+                </aside>
+
+                <section className="community-board panel" aria-label="커뮤니티 게시판">
+                    <header className="community-board-heading">
+                        <h1>커뮤니티</h1>
+                        <div className="community-search-placeholder">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="11" cy="11" r="6.5" />
+                                <path d="m16 16 4.5 4.5" />
+                            </svg>
+                            <span>궁금한 내용을 검색해보세요.</span>
+                        </div>
+                    </header>
+
                 <form className="community-write-area" onSubmit={handleSubmit}>
                     <ProfileAvatar imageUrl={member?.profileImageUrl} name={member?.nickname || ""} size={44} />
                     <div className="community-write-form">
@@ -646,38 +625,6 @@ export default function Community() {
                             maxLength={5000}
                             aria-label="게시글 내용"
                         />
-                        <div className="community-write-selects">
-                            <label>
-                                카테고리
-                                <select
-                                    value={category}
-                                    onChange={(event) => {
-                                        setCategory(event.target.value);
-                                        if (event.target.value !== "REVIEW_RECOMMEND") {
-                                            setRelatedService("");
-                                        }
-                                    }}
-                                >
-                                    <option value="QUESTION_ANSWER">질문·답변</option>
-                                    <option value="REVIEW_RECOMMEND">후기·추천</option>
-                                    <option value="FREE_TALK">자유 이야기</option>
-                                </select>
-                            </label>
-                            {category === "REVIEW_RECOMMEND" && (
-                                <label>
-                                    관련 서비스 연결 (선택)
-                                    <select
-                                        value={relatedService}
-                                        onChange={(event) => setRelatedService(event.target.value)}
-                                    >
-                                        <option value="">연결 안 함</option>
-                                        <option value="ACCOUNT_RECOMMEND">계좌 개설 추천</option>
-                                        <option value="LOAN_RECOMMEND">대출 추천</option>
-                                        <option value="INSURANCE_RECOMMEND">보험 추천</option>
-                                    </select>
-                                </label>
-                            )}
-                        </div>
                         <div className="community-write-toolbar">
                             <label className="community-image-picker" onClick={handleWriteAttempt}>
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -688,7 +635,6 @@ export default function Community() {
                                 사진 추가
                                 <input type="file" accept="image/jpeg,image/png" multiple onChange={handleImageChange} />
                             </label>
-                            <span className="community-image-guide">JPG/PNG · 최대 4장 · 장당 20MB</span>
                             <button type="submit" disabled={isSubmitting}>
                                 {isSubmitting ? "작성 중" : "작성"}
                             </button>
@@ -748,6 +694,7 @@ export default function Community() {
                                 onUpdate={handleUpdatePost}
                                 onCommentCountChange={handleCommentCountChange}
                                 onRepostChanged={handleRepostChanged}
+                                onPopularityChanged={loadPopularPosts}
                                 onOpenPost={setOpenedPostId}
                                 isRepostFeed={feedType === "reposts"}
                                 isDeleting={deletingPostId === post.postId}
@@ -772,10 +719,68 @@ export default function Community() {
                     <div ref={observerTarget} aria-hidden="true" />
                 </div>
 
-                <div className="community-notice-area">
-                    <button type="button">안내 확인하기</button>
-                </div>
-            </section>
+                </section>
+
+                <aside className="community-recent-area" aria-label="최근 게시글">
+                    <section className="community-recent-posts panel">
+                        <header className="community-recent-posts-heading">
+                            <h2>인기 게시글</h2>
+                            <div className="community-popular-sort" role="tablist" aria-label="인기 게시글 정렬">
+                                <button
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={popularSort === "likes"}
+                                    className={popularSort === "likes" ? "is-selected" : ""}
+                                    onClick={() => setPopularSort("likes")}
+                                >
+                                    공감순
+                                </button>
+                                <button
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={popularSort === "views"}
+                                    className={popularSort === "views" ? "is-selected" : ""}
+                                    onClick={() => setPopularSort("views")}
+                                >
+                                    조회순
+                                </button>
+                            </div>
+                        </header>
+
+                        {popularPosts.length > 0 ? (
+                            <ol className="community-recent-post-list">
+                                {popularPosts.map((post, index) => (
+                                    <li key={post.postId}>
+                                        <button
+                                            type="button"
+                                            onClick={() => setOpenedPostId(post.postId)}
+                                            aria-label={`${getPostPreview(post)} 상세 보기`}
+                                        >
+                                            <span className="community-recent-post-rank" aria-hidden="true">
+                                                {index + 1}
+                                            </span>
+                                            <span className="community-recent-post-copy">
+                                                <strong>{getPostPreview(post)}</strong>
+                                                <small>
+                                                    공감 {post.likeCount ?? 0}
+                                                    {" · "}
+                                                    조회 {post.viewCount ?? 0}
+                                                </small>
+                                            </span>
+                                        </button>
+                                    </li>
+                                ))}
+                            </ol>
+                        ) : popularError ? (
+                            <p className="community-recent-post-empty" role="alert">
+                                {popularError}
+                            </p>
+                        ) : (
+                            <p className="community-recent-post-empty">아직 표시할 게시글이 없습니다.</p>
+                        )}
+                    </section>
+                </aside>
+            </div>
 
             <CommunityPostModal
                 postId={openedPostId}

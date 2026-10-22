@@ -26,6 +26,12 @@ public interface CommunityMapper {
             @Param("size") int size
     );
 
+    // 사용자가 선택한 공감순 또는 조회순으로 인기 게시글 목록을 조회한다.
+    List<CommunityPostResponse> findPopularPosts(
+            @Param("sortBy") String sortBy,
+            @Param("size") int size
+    );
+
     // 프로필 미리보기의 작성글 목록 모달에 표시할 게시글 조회
     List<CommunityPostResponse> findPostsByMemberId(
             @Param("memberId") Long memberId

@@ -41,6 +41,11 @@ export async function getCommunityPostsByCursor({
     return client.get(`/community/posts/scroll?${params.toString()}`);
 }
 
+// 선택한 공감순 또는 조회순으로 정렬한 인기 게시글 목록
+export async function getPopularCommunityPosts(sortBy = "likes") {
+    return client.get(`/community/posts/popular?sort=${sortBy}`);
+}
+
 export async function createCommunityPost(postData) {
     // 공통 API 클라이언트를 통해 게시글 작성요청 보냄.
     // client.js에서 /api/v1 주소와 로그인 토큰을 처리한다.

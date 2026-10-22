@@ -22,6 +22,7 @@ public class CommunityPostResponse {
     private String language;
     private Integer contentVersion;
     private Long commentCount;
+    private Long likeCount;
     private Long viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.dao.DuplicateKeyException;
 import java.util.Map;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -106,6 +107,12 @@ public class CommunityService {
                 getTopicKeywords(topic),
                 size
         ));
+    }
+
+    // 허용한 정렬값만 mapper에 전달해 공감순·조회순을 명확히 분리한다.
+    public List<CommunityPostResponse> getPopularPosts(String sortBy, int size) {
+        String normalizedSortBy = "views".equals(sortBy) ? "views" : "likes";
+        return attachImages(communityMapper.findPopularPosts(normalizedSortBy, size));
     }
 
     // 프로필 카드에서 회원이 작성한 게시글 목록을 보여준다.
@@ -358,8 +365,19 @@ public class CommunityService {
             throw new ApiException(ErrorCode.NOT_FOUND, "게시글을 찾을 수 없습니다.");
         }
 
-        images.forEach(image ->
-                communityImageStorage.deleteIfOwned(image.getImageUrl())
+        // DB 삭제가 최종 저장된 경우에만 실제 사진 파일을 삭제
+        // DB 작업이 실패해 롤백되면 기존 사진 파일은 그대로 보존
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        images.forEach(image ->
+                                communityImageStorage.deleteIfOwned(
+                                        image.getImageUrl()
+                                )
+                        );
+                    }
+                }
         );
     }
 
@@ -381,11 +399,16 @@ public class CommunityService {
 
     // 이미 좋아요를 누른 경우에는 중복 저장하지 않고 현재 상태만 돌려줌.
     @Transactional
-    public CommunityPostLikeResponse likePost(Long postId, Long memberId) {
+    public CommunityPostLikeResponse likePost(
+            Long postId,
+            Long memberId
+    ) {
         validatePostExists(postId);
 
-        if(!communityMapper.existsPostLike(postId, memberId)) {
+        try {
             communityMapper.insertPostLike(postId, memberId);
+        } catch (DuplicateKeyException exception) {
+            // 이미 공감한 상태면 추가 저장 없이 현재 상태 반환
         }
 
         return getPostLikeStatus(postId, memberId);
@@ -427,8 +450,10 @@ public class CommunityService {
     ) {
         validatePostExists(postId);
 
-        if(!communityMapper.existsPostRepost(postId, memberId)) {
+        try {
             communityMapper.insertPostRepost(postId, memberId);
+        } catch (DuplicateKeyException exception) {
+            // 이미 리포스트한 상태면 추가 저장 없이 현재 상태를 반환한다.
         }
 
         return getPostRepostStatus(postId, memberId);
@@ -579,15 +604,28 @@ public class CommunityService {
     // 같은 회원의 중복 공감은 저장하지 않고 현재 상태를 돌려준다.
     @Transactional
     public CommunityCommentLikeResponse likeComment(
-            Long postId, Long commentId, Long memberId
+            Long postId,
+            Long commentId,
+            Long memberId
     ) {
-        CommunityCommentResponse comment = getCommentByPostId(postId, commentId);
+        CommunityCommentResponse comment = getCommentByPostId(
+                postId,
+                commentId
+        );
+
         if (comment.isDeleted()) {
-            throw new ApiException(ErrorCode.INVALID_INPUT, "삭제된 댓글에는 공감할 수 없습니다.");
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "삭제된 댓글에는 공감할 수 없습니다."
+            );
         }
-        if (!communityMapper.existsCommentLike(commentId, memberId)) {
+
+        try {
             communityMapper.insertCommentLike(commentId, memberId);
+        } catch (DuplicateKeyException exception) {
+            // 이미 공감한 상태면 추가 저장 없이 현재 상태를 반환한다.
         }
+
         return getCommentLikeStatus(postId, commentId, memberId);
     }
 

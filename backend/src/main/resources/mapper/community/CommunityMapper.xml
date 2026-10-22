@@ -117,6 +117,51 @@
 
     </select>
 
+    <!-- 사용자가 고른 공감순 또는 조회순으로 인기 게시글을 정렬 -->
+    <select id="findPopularPosts"
+            resultType="com.example.forguide.community.dto.CommunityPostResponse">
+
+        SELECT
+        <include refid="columns"/>,
+        (
+            SELECT COUNT(*)
+            FROM post_likes pl
+            WHERE pl.post_id = p.post_id
+        ) AS likeCount
+        <include refid="postFrom"/>
+        ORDER BY
+        <choose>
+            <when test="sortBy == 'views'">
+                (
+                    SELECT COUNT(*)
+                    FROM community_post_view_records v
+                    WHERE v.post_id = p.post_id
+                ) DESC,
+                (
+                    SELECT COUNT(*)
+                    FROM post_likes pl
+                    WHERE pl.post_id = p.post_id
+                ) DESC,
+            </when>
+            <otherwise>
+                (
+                    SELECT COUNT(*)
+                    FROM post_likes pl
+                    WHERE pl.post_id = p.post_id
+                ) DESC,
+                (
+                    SELECT COUNT(*)
+                    FROM community_post_view_records v
+                    WHERE v.post_id = p.post_id
+                ) DESC,
+            </otherwise>
+        </choose>
+        p.created_at DESC,
+        p.post_id DESC
+        LIMIT #{size}
+
+    </select>
+
     <!-- 프로필 미리보기에서 특정 회원이 작성한 게시글만 최신순으로 조회 -->
     <select id="findPostsByMemberId"
             resultType="com.example.forguide.community.dto.CommunityPostResponse">
