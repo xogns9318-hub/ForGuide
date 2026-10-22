@@ -136,6 +136,21 @@ SHOW GRANTS;
 .\backend\gradlew.bat -p .\backend bootRun --args="--spring.profiles.active=verify"
 ```
 
+### 상담 기관 업무·상세 안내 등록
+
+- 마이그레이션:
+  - V19__seed_institution_services.sql
+  - V20__seed_institution_guidance.sql
+- 검증 DB: 적용 성공
+- 공용 DB: 적용 성공
+- 확인 결과:
+  - 상담 업무 46건
+  - 키워드 연결 236건
+  - 전화 언어 연결 168건
+  - 방문 지역 연결 4건
+  - 금융 분야 17개
+- 남은 작업: 기관 조회 API와 결과 목록·상세 화면 연결
+
 ## 3. 앞으로 사용할 기록 양식
 
 새 작업이 생기면 아래 양식을 복사해서 추가한다.

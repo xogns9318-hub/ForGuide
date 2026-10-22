@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.forguide.consultation.institution.mapper.InstitutionMapper">
+
+    <!-- 연결 테이블을 각각 집계해 키워드·언어·지역의 곱집합을 만들지 않는다. -->
+    <!-- JSON은 조회 결과의 전달 형식이며 원본은 기존 관계형 테이블이다. -->
+    <sql id="document">
+        CAST(JSON_OBJECT(
+            'id', i.institution_id,
+            'code', i.institution_code,
+            'name', i.institution_name,
+            'description', i.description,
+            'phone', i.phone,
+            'websiteUrl', i.website_url,
+            'address', i.address,
+            'targetDescription', i.target_description,
+            'additionalNotes', i.additional_notes,
+            'featuredKeywords', COALESCE(i.featured_keywords, JSON_ARRAY()),
+            'aliases', COALESCE(i.search_aliases, JSON_ARRAY()),
+            'additionalPhones', COALESCE(i.additional_phones, JSON_ARRAY()),
+            'sourceUrls', JSON_MERGE_PRESERVE(
+                JSON_ARRAY(i.source_url),
+                COALESCE(i.additional_source_urls, JSON_ARRAY())
+            ),
+            'verificationStatus', i.verification_status,
+            'checkedAt', DATE_FORMAT(i.checked_at, '%Y-%m-%dT%H:%i:%s'),
+            'services', COALESCE((
+                SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                    'id', s.service_id,
+                    'topic', s.topic_code,
+                    'name', s.service_name,
+                    'summary', s.summary,
+                    'description', s.description,
+                    'targetDescription', s.target_description,
+                    'role', s.guidance_role,
+                    'keywords', COALESCE((
+                        SELECT JSON_ARRAYAGG(k.keyword_code)
+                        FROM institution_service_keywords k
+                        WHERE k.service_id = s.service_id
+                    ), JSON_ARRAY()),
+                    'phone', JSON_OBJECT(
+                        'available', s.phone_available,
+                        'number', s.phone,
+                        'hours', s.phone_hours,
+                        'weekend', s.phone_weekend_available,
+                        'holiday', s.phone_holiday_available,
+                        'regionStatus', s.phone_region_status
+                    ),
+                    'visit', JSON_OBJECT(
+                        'available', s.visit_available,
+                        'address', s.visit_address,
+                        'hours', s.opening_hours,
+                        'weekend', s.visit_weekend_available,
+                        'holiday', s.visit_holiday_available,
+                        'reservationAvailable', s.reservation_available,
+                        'reservationRequired', s.visit_reservation_required,
+                        'reservationUrl', s.reservation_url,
+                        'branchInformation', s.branch_information
+                    ),
+                    'online', JSON_OBJECT(
+                        'available', s.online_available,
+                        'url', s.online_url
+                    ),
+                    'specialPhone', JSON_OBJECT(
+                        'hours', s.special_phone_hours,
+                        'scope', s.special_phone_scope,
+                        'weekend', s.special_phone_weekend_available,
+                        'holiday', s.special_phone_holiday_available
+                    ),
+                    'languages', COALESCE((
+                        SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                            'code', l.language_code,
+                            'method', l.consultation_method,
+                            'description', l.description
+                        ))
+                        FROM institution_service_languages l
+                        WHERE l.service_id = s.service_id
+                    ), JSON_ARRAY()),
+                    'regions', COALESCE((
+                        SELECT JSON_ARRAYAGG(JSON_OBJECT(
+                            'province', CASE
+                                WHEN r.region_level = 'province'
+                                    THEN r.region_name
+                                ELSE p.region_name
+                            END,
+                            'district', CASE
+                                WHEN r.region_level = 'district'
+                                    THEN r.region_name
+                                ELSE NULL
+                            END,
+                            'method', sr.consultation_method
+                        ))
+                        FROM institution_service_regions sr
+                        JOIN regions r
+                            ON r.region_id = sr.region_id
+                        LEFT JOIN regions p
+                            ON p.region_id = r.parent_region_id
+                        WHERE sr.service_id = s.service_id
+                    ), JSON_ARRAY()),
+                    'languageNotes', s.language_notes,
+                    'contactDescription', s.contact_description,
+                    'preparationListId', s.list_id,
+                    'sourceUrl', s.source_url,
+                    'checkedAt', DATE_FORMAT(s.checked_at, '%Y-%m-%dT%H:%i:%s')
+                ))
+                FROM institution_services s
+                WHERE s.institution_id = i.institution_id
+            ), JSON_ARRAY())
+        ) AS CHAR CHARACTER SET utf8mb4)
+    </sql>
+
+    <!-- 예시 기관을 제외하고 실제 기관만 공개한다. -->
+    <select id="findAllDocuments" resultType="string">
+        SELECT
+            <include refid="document"/> AS document
+        FROM support_institutions i
+        WHERE i.is_example = 0
+        ORDER BY i.institution_id
+    </select>
+
+    <!-- ID를 바인딩해 문자열 조합으로 SQL을 만들지 않는다. -->
+    <select id="findDocumentById" resultType="string">
+        SELECT
+            <include refid="document"/> AS document
+        FROM support_institutions i
+        WHERE i.institution_id = #{id}
+          AND i.is_example = 0
+    </select>
+
+</mapper>
