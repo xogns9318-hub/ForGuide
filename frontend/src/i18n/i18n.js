@@ -14,11 +14,27 @@ import th from "./locales/th";
 
 const supportedLanguages = ["ko", "en", "zh", "ja", "vi", "th"];
 
+// 브라우저 언어 코드(zh-CN, ja-JP 등)에서 앞부분만 사용
+function normalizeLanguage(language) {
+    if (!language) {
+        return null;
+    }
+
+    return language.toLowerCase().split("-")[0];
+}
+
+// 저장된 사용자의 선택 언어를 가장 우선시한다.
 const savedLanguage = localStorage.getItem("forguide-language");
+
+const browserLanguage = normalizeLanguage(
+    navigator.languages?.[0] || navigator.language
+);
 
 const initialLanguage = supportedLanguages.includes(savedLanguage)
     ? savedLanguage
-    : "ko";
+    : supportedLanguages.includes(browserLanguage)
+        ? browserLanguage
+        : "ko";
 
 i18n.use(initReactI18next).init({
     // 언어별 번역 데이터 등록
