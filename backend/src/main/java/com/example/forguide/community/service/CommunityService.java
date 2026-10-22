@@ -109,10 +109,13 @@ public class CommunityService {
         ));
     }
 
-    // 허용한 정렬값만 mapper에 전달해 공감순·조회순을 명확히 분리한다.
-    public List<CommunityPostResponse> getPopularPosts(String sortBy, int size) {
+    // 허용한 정렬값만 Mapper에 전달하고, 인기 게시글은 상위 10개로 고정한다.
+    public List<CommunityPostResponse> getPopularPosts(String sortBy) {
         String normalizedSortBy = "views".equals(sortBy) ? "views" : "likes";
-        return attachImages(communityMapper.findPopularPosts(normalizedSortBy, size));
+
+        return attachImages(
+                communityMapper.findPopularPosts(normalizedSortBy, 10)
+        );
     }
 
     // 프로필 카드에서 회원이 작성한 게시글 목록을 보여준다.
@@ -304,7 +307,7 @@ public class CommunityService {
         }
 
         Set<String> services = Set.of(
-                "ACCOUNT_RECOMMEND", "LOAN_RECOMMEND", "INSURANCE_RECOMMEND"
+                "ACCOUNT_RECOMMEND", "LOAN_RECOMMEND", "INSURANCE_RECOMMEND","EMPLOYMENT_GUIDE"
         );
         if (!"REVIEW_RECOMMEND".equals(request.getCategory()) || !services.contains(relatedService)) {
             throw new ApiException(ErrorCode.INVALID_INPUT, "후기·추천 글에서만 관련 서비스를 연결할 수 있습니다.");
@@ -356,6 +359,7 @@ public class CommunityService {
         List<CommunityPostImageResponse> images =
                 communityMapper.findImagesByPostIds(List.of(postId));
 
+        communityMapper.deletePostLikesByPostId(postId);
         // community_comments의 게시글 외래키는 CASCADE가 아니므로 먼저 정리한다.
         communityMapper.deleteCommentsByPostId(postId);
 
