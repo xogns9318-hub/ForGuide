@@ -23,7 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.dao.DuplicateKeyException;
 import java.util.Map;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.time.LocalDateTime;
 
@@ -91,11 +93,26 @@ public class CommunityService {
     public List<CommunityPostResponse> getPostsByCursor(
             LocalDateTime cursorCreatedAt,
             Long cursorPostId,
+            String category,
+            String keyword,
+            String topic,
             int size
     ) {
+        validateCategory(category);
         return attachImages(communityMapper.findPostsByCursor(
-                cursorCreatedAt, cursorPostId, size
+                cursorCreatedAt,
+                cursorPostId,
+                category,
+                normalizeKeyword(keyword),
+                getTopicKeywords(topic),
+                size
         ));
+    }
+
+    // 허용한 정렬값만 mapper에 전달해 공감순·조회순을 명확히 분리한다.
+    public List<CommunityPostResponse> getPopularPosts(String sortBy, int size) {
+        String normalizedSortBy = "views".equals(sortBy) ? "views" : "likes";
+        return attachImages(communityMapper.findPopularPosts(normalizedSortBy, size));
     }
 
     // 프로필 카드에서 회원이 작성한 게시글 목록을 보여준다.
@@ -134,6 +151,7 @@ public class CommunityService {
 
         // memberId는 요청값을 믿지 않고 로그인 정보로 항상 덮어쓴다.
         request.setMemberId(memberId);
+        validateRelatedService(request);
 
         int insertedCount = communityMapper.insertPost(request);
 
@@ -264,6 +282,63 @@ public class CommunityService {
         }
     }
 
+    // 카테고리는 정해진 세 가지 값만 허용해 필터 조건과 저장 값이 어긋나지 않게 한다.
+    private void validateCategory(String category) {
+        if (category == null || category.isBlank()) {
+            return;
+        }
+
+        Set<String> categories = Set.of("QUESTION_ANSWER", "REVIEW_RECOMMEND", "FREE_TALK");
+        if (!categories.contains(category)) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, "올바른 카테고리를 선택해주세요.");
+        }
+    }
+
+    // 관련 서비스는 후기·추천 글에서만 선택할 수 있다.
+    private void validateRelatedService(CommunityPostCreateRequest request) {
+        String relatedService = request.getRelatedService();
+
+        if (relatedService == null || relatedService.isBlank()) {
+            request.setRelatedService(null);
+            return;
+        }
+
+        Set<String> services = Set.of(
+                "ACCOUNT_RECOMMEND", "LOAN_RECOMMEND", "INSURANCE_RECOMMEND"
+        );
+        if (!"REVIEW_RECOMMEND".equals(request.getCategory()) || !services.contains(relatedService)) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, "후기·추천 글에서만 관련 서비스를 연결할 수 있습니다.");
+        }
+    }
+
+    private String normalizeKeyword(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return null;
+        }
+        return keyword.trim();
+    }
+
+    // 주요 주제는 별도 분류로 저장하지 않고, 본문에 자연스럽게 등장한 단어를 찾는다.
+    private List<String> getTopicKeywords(String topic) {
+        if (topic == null || topic.isBlank()) {
+            return List.of();
+        }
+
+        Map<String, List<String>> keywordsByTopic = Map.of(
+                "ACCOUNT", List.of("계좌", "은행", "통장", "개설"),
+                "LOAN", List.of("대출", "금리", "상환", "보증"),
+                "INSURANCE", List.of("보험", "보장", "보험료", "가입"),
+                "VISA_STAY", List.of("비자", "체류", "외국인등록", "연장"),
+                "LIFE_TIP", List.of("교통", "병원", "휴대폰", "주거", "쓰레기")
+        );
+
+        List<String> keywords = keywordsByTopic.get(topic.toUpperCase(Locale.ROOT));
+        if (keywords == null) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, "올바른 주요 주제를 선택해주세요.");
+        }
+        return keywords;
+    }
+
     // 작성자를 확인한 뒤 본인 게시글만 삭제
     @Transactional
     public void deletePost(Long postId, Long memberId) {
@@ -290,8 +365,19 @@ public class CommunityService {
             throw new ApiException(ErrorCode.NOT_FOUND, "게시글을 찾을 수 없습니다.");
         }
 
-        images.forEach(image ->
-                communityImageStorage.deleteIfOwned(image.getImageUrl())
+        // DB 삭제가 최종 저장된 경우에만 실제 사진 파일을 삭제
+        // DB 작업이 실패해 롤백되면 기존 사진 파일은 그대로 보존
+        TransactionSynchronizationManager.registerSynchronization(
+                new TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        images.forEach(image ->
+                                communityImageStorage.deleteIfOwned(
+                                        image.getImageUrl()
+                                )
+                        );
+                    }
+                }
         );
     }
 
@@ -313,11 +399,16 @@ public class CommunityService {
 
     // 이미 좋아요를 누른 경우에는 중복 저장하지 않고 현재 상태만 돌려줌.
     @Transactional
-    public CommunityPostLikeResponse likePost(Long postId, Long memberId) {
+    public CommunityPostLikeResponse likePost(
+            Long postId,
+            Long memberId
+    ) {
         validatePostExists(postId);
 
-        if(!communityMapper.existsPostLike(postId, memberId)) {
+        try {
             communityMapper.insertPostLike(postId, memberId);
+        } catch (DuplicateKeyException exception) {
+            // 이미 공감한 상태면 추가 저장 없이 현재 상태 반환
         }
 
         return getPostLikeStatus(postId, memberId);
@@ -359,8 +450,10 @@ public class CommunityService {
     ) {
         validatePostExists(postId);
 
-        if(!communityMapper.existsPostRepost(postId, memberId)) {
+        try {
             communityMapper.insertPostRepost(postId, memberId);
+        } catch (DuplicateKeyException exception) {
+            // 이미 리포스트한 상태면 추가 저장 없이 현재 상태를 반환한다.
         }
 
         return getPostRepostStatus(postId, memberId);
@@ -511,15 +604,28 @@ public class CommunityService {
     // 같은 회원의 중복 공감은 저장하지 않고 현재 상태를 돌려준다.
     @Transactional
     public CommunityCommentLikeResponse likeComment(
-            Long postId, Long commentId, Long memberId
+            Long postId,
+            Long commentId,
+            Long memberId
     ) {
-        CommunityCommentResponse comment = getCommentByPostId(postId, commentId);
+        CommunityCommentResponse comment = getCommentByPostId(
+                postId,
+                commentId
+        );
+
         if (comment.isDeleted()) {
-            throw new ApiException(ErrorCode.INVALID_INPUT, "삭제된 댓글에는 공감할 수 없습니다.");
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "삭제된 댓글에는 공감할 수 없습니다."
+            );
         }
-        if (!communityMapper.existsCommentLike(commentId, memberId)) {
+
+        try {
             communityMapper.insertCommentLike(commentId, memberId);
+        } catch (DuplicateKeyException exception) {
+            // 이미 공감한 상태면 추가 저장 없이 현재 상태를 반환한다.
         }
+
         return getCommentLikeStatus(postId, commentId, memberId);
     }
 
