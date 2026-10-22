@@ -14,7 +14,7 @@
 ### 2.1. 공용 DB 생성
 
 - 작업일: 확인 필요
-- 작업자: 공용 DB 생성 담당자 이름 작성
+- 작업자: 유성철
 - 서버: 공용 PC의 MySQL 서버
 - DB 이름: forguide
 - 작업 내용: 팀에서 사용할 공용 DB 생성
@@ -23,7 +23,7 @@
 ### 2.2. 공용 DB 접속 계정 설정
 
 - 작업일: 확인 필요
-- 작업자: 계정 설정 담당자 이름 작성
+- 작업자: 유성철
 - 계정: forguide_user
 - 작업 내용: 백엔드와 팀원들이 사용할 공용 DB 접속 계정 설정
 - 상태: 프로젝트 연결 설정에 반영됨
@@ -32,7 +32,7 @@
 ### 2.3. 백엔드와 공용 DB 연결 설정
 
 - 작업일: 확인 필요
-- 작업자: 연결 설정 담당자 이름 작성
+- 작업자: 유성철
 - 대상 DB: forguide
 - 관련 파일: backend/src/main/resources/application.properties
 - 작업 내용:
@@ -44,7 +44,7 @@
 ### 2.4. members 테이블 변경
 
 - 작업일: 확인 필요
-- 작업자: 변경 담당자 이름 작성
+- 작업자: 유성철
 - 대상 DB: forguide
 - 대상 테이블: members
 - 변경하려던 내용:
@@ -76,7 +76,7 @@ SHOW INDEX FROM forguide.members;
 ### 2.5. refresh_tokens 테이블 생성
 
 - 작업일: 확인 필요
-- 작업자: 생성한 팀원 이름 작성
+- 작업자: 신수연
 - 대상 DB: 생성 위치 확인 필요
 - 대상 테이블: refresh_tokens
 - 작업 내용: 로그인 유지와 토큰 재발급을 관리할 테이블 생성
@@ -97,7 +97,7 @@ SHOW INDEX FROM forguide.members;
 ### 2.6. 검증용 DB와 접속 계정 준비
 
 - 작업일: 확인 필요
-- 작업자: 검증용 DB 담당자 이름 작성
+- 작업자: 유성철
 - 대상 서버: 공용 PC의 MySQL 서버
 - DB 이름: forguide_verify
 - 계정: forguide_verify_user
