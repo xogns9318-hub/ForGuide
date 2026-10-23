@@ -66,6 +66,7 @@ def card(result, rank, weights, user):
     item = {
         "rank": rank,
         "product_id": result["product_id"],
+        "purpose": user["purpose"],
         "company": result["kor_co_nm"],
         "product_name": result["fin_prdt_nm"],
         "institution_type": result["institution_type"],

@@ -188,6 +188,8 @@
 - 입력: `purpose`(예금 / 적금), `term`(6 / 12 / 24), `visit`(상관없음 / 원치 않음), `institution`(은행 선호 / 상관없음). 값이 틀리면 `ValueError`로 항목별 허용값을 돌려준다.
 - 출력: 위 "출력" 표의 JSON (`mode`, `input`, `base_month`, `weights`, `groups`, `mismatch`, `notices`).
 - 가중치는 `ai/models/account_fast_weights.json`(`train.py`가 만듦)이 있으면 학습값, 없으면 기준선을 쓴다.
+- 상품은 `purpose` + `product_id`로 구분한다. 금융상품한눈에에서 같은 상품 번호가 예금과 적금에 함께 나오는 경우가 있다(2026-10-23 기준 3건).
+- 테스트: `python -m unittest discover -s ai/tests` (부적격 추천률 0 확인 포함, 정제 데이터가 없으면 실제 데이터 검사는 건너뜀).
 - HTTP 주소와 서빙 방식은 미정이다.
 
 커뮤니티 예시 게시글 조회는 화면 확인용이며, 실제 게시글 조회 API는 미정이다.
