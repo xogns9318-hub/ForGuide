@@ -21,6 +21,7 @@ WEIGHTS = {
     "rate": 0.5,
     "check_count": -0.3,
     "visit_required": -0.2,
+    "savings_bank": -0.1,
     "non_preferred_institution": -0.2,
 }
 RATE_FULL_GAP = 1.0
@@ -52,12 +53,13 @@ def best_option_per_product(options, purpose, term):
 
 def judge(product, user):
     mismatch, check = [], []
+    note = product.get("foreigner_note", "")
     if product["foreigner_status"] == "불일치":
-        mismatch.append("내국인만 가입")
+        mismatch.append(note or "내국인만 가입")
     if product["visit_required"] == "1" and user["visit"] == VISIT_NOT_WANTED:
         mismatch.append("영업점 방문 필요")
     if product["foreigner_status"] == "확인 필요":
-        check.append("외국인 가입 조건 미기재")
+        check.append(note or "외국인 가입 조건 미기재")
     if product["region_limit"]:
         check.append(f"가입 지역 제한: {product['region_limit']}")
     return mismatch, check
@@ -89,6 +91,7 @@ def recommend_fast(options, user):
                 "rate": absolute_score(best_rate_by_group[group], float(product["effective_rate"]), RATE_FULL_GAP),
                 "check_count": 1 if product["foreigner_status"] == "확인 필요" else 0,
                 "visit_required": int(product["visit_required"]),
+                "savings_bank": int(product["institution_type"] != BANK),
                 "non_preferred_institution": int(user["institution"] == PREFER_BANK and product["institution_type"] != BANK),
             }
             score, contributions = weighted_score(features, WEIGHTS)

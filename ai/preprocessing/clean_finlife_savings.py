@@ -24,6 +24,10 @@ FOREIGNER_ALLOWED = re.compile(r"비거주\s*외국인\s*(외|제외)|내\s*[·�
 FOREIGNER_DENIED = re.compile(r"내국인")
 REGION_STOPWORDS = re.compile(r"비대면|대면|특판|회전|정기|예금|적금|개인|법인|모바일|인터넷|스마트|단리|복리|만기|자유|정액|이벤트|신규|고객|우대|플러스|변동|고정|금리|영업점|창구|전용|월수|\d")
 BRANCH_SUFFIX = re.compile(r"(본점|지점)$")
+FOREIGNER_OVERRIDES = {
+    "주식회사 케이뱅크": ("불일치", "외국인 가입 아직 불가 (출시 준비 중)"),
+    "주식회사 카카오뱅크": ("확인 필요", "외국인통장(입출금)만 안내, 예·적금 가입 여부 미기재"),
+}
 WHITESPACE = re.compile(r"\s+")
 OUTLIER_IQR_FACTOR = 1.5
 
@@ -35,6 +39,7 @@ COLUMNS = [
     "fin_prdt_nm",
     "purpose",
     "foreigner_status",
+    "foreigner_note",
     "join_member",
     "join_deny",
     "join_way",
@@ -55,13 +60,15 @@ def clean_text(value):
     return WHITESPACE.sub(" ", value or "").strip()
 
 
-def classify_foreigner(join_member):
+def classify_foreigner(join_member, company=""):
+    if company in FOREIGNER_OVERRIDES:
+        return FOREIGNER_OVERRIDES[company]
     text = join_member or ""
     if FOREIGNER_ALLOWED.search(text):
-        return "부합"
+        return "부합", ""
     if FOREIGNER_DENIED.search(text):
-        return "불일치"
-    return "확인 필요"
+        return "불일치", ""
+    return "확인 필요", ""
 
 
 def is_visit_required(join_way):
@@ -122,6 +129,7 @@ def build_rows(collected):
                 months = int(option["save_trm"])
                 name = clean_text(product["fin_prdt_nm"])
                 visit = is_visit_required(product.get("join_way"))
+                foreigner_status, foreigner_note = classify_foreigner(product.get("join_member"), product["kor_co_nm"])
                 rate = option.get("intr_rate")
                 effective = effective_rate(purpose, rate, months, option.get("intr_rate_type"))
                 rows.append({
@@ -131,7 +139,8 @@ def build_rows(collected):
                     "fin_prdt_cd": product["fin_prdt_cd"],
                     "fin_prdt_nm": name,
                     "purpose": purpose,
-                    "foreigner_status": classify_foreigner(product.get("join_member")),
+                    "foreigner_status": foreigner_status,
+                    "foreigner_note": foreigner_note,
                     "join_member": clean_text(product.get("join_member")),
                     "join_deny": product.get("join_deny") or "",
                     "join_way": product.get("join_way") or "",

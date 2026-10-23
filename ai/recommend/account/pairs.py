@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import random
 import sys
 from collections import defaultdict
@@ -15,8 +16,14 @@ AI_DIR = Path(__file__).resolve().parent.parent.parent
 PROCESSED_DIR = AI_DIR / "data" / "processed"
 
 SEED = 20261019
-DIRECTIONS = {"rate": 1, "check_count": -1, "visit_required": -1, "non_preferred_institution": -1}
-FEATURE_LABELS = {"rate": "금리", "check_count": "확인 필요", "visit_required": "방문", "non_preferred_institution": "금융기관"}
+DIRECTIONS = {"rate": 1, "check_count": -1, "visit_required": -1, "savings_bank": -1, "non_preferred_institution": -1}
+FEATURE_LABELS = {
+    "rate": "금리",
+    "check_count": "확인 필요",
+    "visit_required": "방문",
+    "savings_bank": "저축은행",
+    "non_preferred_institution": "비선호 금융기관",
+}
 AUTO_PAIRS_PER_GROUP = 50
 JUDGE_PAIRS_PER_GROUP = 3
 RATE_GAP_BINS = [0.2, 0.4, 0.6, 0.8, 1.0]
@@ -26,10 +33,10 @@ EVAL_RATIO = 0.3
 CONTEXT_FIELDS = ["purpose", "save_trm", "visit", "institution"]
 SIDE_FIELDS = [
     "product_id", "kor_co_nm", "fin_prdt_nm", "institution_type", "effective_rate",
-    "rate", "check_count", "visit_required", "non_preferred_institution", "baseline",
+    "rate", "check_count", "visit_required", "savings_bank", "non_preferred_institution", "baseline",
 ]
 PAIR_COLUMNS = (
-    ["pair_id", "context_id"] + CONTEXT_FIELDS + ["user_count", "weight_sum", "group", "tradeoff"]
+    ["pair_id", "pair_key", "context_id"] + CONTEXT_FIELDS + ["user_count", "weight_sum", "group", "tradeoff"]
     + [f"a_{name}" for name in SIDE_FIELDS]
     + [f"b_{name}" for name in SIDE_FIELDS]
     + ["source", "split", "judge", "label"]
@@ -84,12 +91,23 @@ def tradeoff_kind(a, b):
     return "·".join(changed)
 
 
-def make_row(context, group, a, b, source, label, rng):
-    if rng.random() < 0.5:
+def pair_key(context, a_id, b_id):
+    first, second = sorted([a_id, b_id])
+    return "|".join([str(context[name]) for name in CONTEXT_FIELDS] + [first, second])
+
+
+def eval_split(key):
+    bucket = int(hashlib.md5(key.encode("utf-8")).hexdigest(), 16) % 100
+    return "eval" if bucket < EVAL_RATIO * 100 else "train"
+
+
+def make_row(context, group, a, b, source, label, rng=None):
+    if rng is not None and rng.random() < 0.5:
         a, b = b, a
         label = {"A": "B", "B": "A"}.get(label, label)
-    row = {name: context[name] for name in ["context_id"] + CONTEXT_FIELDS + ["user_count"]}
-    row["weight_sum"] = round(context["weight_sum"], 4)
+    row = {name: context.get(name, "") for name in ["context_id"] + CONTEXT_FIELDS + ["user_count"]}
+    row["pair_key"] = pair_key(context, a["product_id"], b["product_id"])
+    row["weight_sum"] = round(context.get("weight_sum", 0.0), 4)
     row["group"] = group
     row["tradeoff"] = tradeoff_kind(a, b)
     for prefix, side in (("a", a), ("b", b)):
@@ -163,18 +181,42 @@ def build_pairs(options, contexts, rng):
     return auto_rows, judge_rows, stats
 
 
-def assign_splits(auto_rows, judge_rows, rng):
+def assign_splits(auto_rows, judge_rows):
     for row in auto_rows:
         row["split"] = "train"
-    by_context = defaultdict(list)
     for row in judge_rows:
-        row["split"] = "train"
-        by_context[row["context_id"]].append(row)
-    for rows in by_context.values():
-        rng.shuffle(rows)
-        eval_count = max(1, round(len(rows) * EVAL_RATIO)) if len(rows) >= 2 else 0
-        for row in rows[:eval_count]:
-            row["split"] = "eval"
+        row["split"] = eval_split(row["pair_key"])
+
+
+def parse_key(key):
+    values = key.split("|")
+    context = dict(zip(CONTEXT_FIELDS, values[:len(CONTEXT_FIELDS)]))
+    context["save_trm"] = int(context["save_trm"])
+    return context, values[len(CONTEXT_FIELDS):]
+
+
+def labeled_rows(options, labels):
+    cache = {}
+    rows, missing = [], []
+    for key, winner in labels.items():
+        context, product_ids = parse_key(key)
+        context_key = tuple(context[name] for name in CONTEXT_FIELDS)
+        if context_key not in cache:
+            cache[context_key] = candidates_by_group(options, context)
+        found = None
+        for group, group_results in cache[context_key].items():
+            by_id = {r["product_id"]: r for r in group_results}
+            if all(pid in by_id for pid in product_ids):
+                found = (group, by_id[product_ids[0]], by_id[product_ids[1]])
+        if found is None:
+            missing.append(key)
+            continue
+        group, a, b = found
+        label = "A" if winner == a["product_id"] else "B" if winner == b["product_id"] else "같음"
+        row = make_row(context, group, a, b, "human", label)
+        row["split"] = eval_split(key)
+        rows.append(row)
+    return rows, missing
 
 
 def save_rows(rows, prefix, path):
@@ -192,7 +234,7 @@ def main():
     options = load_options()
     contexts = build_contexts(load_users())
     auto_rows, judge_rows, stats = build_pairs(options, contexts, rng)
-    assign_splits(auto_rows, judge_rows, rng)
+    assign_splits(auto_rows, judge_rows)
     today = f"{date.today():%Y%m%d}"
     auto_path = PROCESSED_DIR / f"account_pairs_auto_{today}.csv"
     judge_path = PROCESSED_DIR / f"account_pairs_judge_{today}.csv"
