@@ -18,16 +18,42 @@
     font-size: 14px;
 }
 
-/* 왼쪽 입력과 오른쪽 결과 배치 */
+/* 계산 전에는 입력창 크기의 패널을 가운데에 표시한다. */
+.panel.monthly-payment {
+    /* 열 사이 간격과 위아래 구분선 간격을 한 곳에서 관리한다. */
+    --loan-column-gap: clamp(40px, 3vw, 56px);
+    --loan-row-gap: 40px;
+
+    width: 100%;
+    max-width: 420px;
+    margin-inline: auto;
+
+    /* 패널을 넓히면서 입력창이 가운데에서 왼쪽으로 이동한다. */
+    transition: max-width 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 첫 계산에 성공하면 패널 전체 너비로 펼친다. */
+.panel.monthly-payment.is-expanded {
+    max-width: 100%;
+}
+
+/* 계산 전에는 입력 열만 너비를 차지한다. */
 .monthly-payment-layout {
-    /* 자식 요소의 배치 방식 지정 */
     display: grid;
-    /* 그리드 열의 개수와 너비 지정 */
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    /* 자식 요소를 교차축 기준으로 정렬 */
-    align-items: start;
-    /* 자식 요소 사이 간격 지정 */
-    gap: 56px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0fr) minmax(0, 0fr);
+    align-items: stretch;
+    gap: 0;
+
+    /* 열 너비와 간격도 패널 이동에 맞춰 부드럽게 바꾼다. */
+    transition:
+        grid-template-columns 650ms cubic-bezier(0.22, 1, 0.36, 1),
+        column-gap 650ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 계산 후에는 입력·결과·그래프를 1:1.5:2 비율로 배치한다. */
+.monthly-payment.is-expanded .monthly-payment-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr) minmax(0, 2fr);
+    gap: var(--loan-row-gap) var(--loan-column-gap);
 }
 
 /* 입력 항목 배치 */
@@ -74,8 +100,8 @@
     align-items: center;
     /* 자식 요소 사이 간격 지정 */
     gap: 8px;
-    /* 가로 크기 지정 */
-    width: 33.333%;
+    /* 좁아진 입력 열 안에서 숫자 입력선을 전체 너비로 표시 */
+    width: 100%;
     /* 높이가 줄어들 수 있는 최소 기준 지정 */
     min-height: 36px;
     /* 아래쪽 구분선 지정 */
@@ -170,8 +196,8 @@
 
 /* 입력 맨 위의 상환 방식 선택창 */
 .loan-method-field {
-    /* 숫자 입력선과 비슷한 너비로 배치 */
-    width: 33.333%;
+    /* 입력 열의 전체 너비로 상환 방식 선택창 표시 */
+    width: 100%;
 
     /* 선택한 이름이 지나치게 좁아지지 않도록 제한 */
     min-width: 132px;
@@ -179,6 +205,39 @@
 
     /* 기존 입력 제목과 글씨 크기 통일 */
     font-size: 14px;
+}
+
+/* 두 계산기의 상환 방식 선택창을 밑줄 형태로 표시 */
+.monthly-payment .loan-method-field .select-box .select-box-trigger {
+    /* 선택한 이름을 위의 '상환 방식' 라벨과 왼쪽 정렬 */
+    padding-left: 0;
+
+    /* 사각 테두리를 제거하고 아래쪽 선만 표시 */
+    border: 0;
+    border-bottom: 2px solid var(--line);
+
+    /* 밑줄 끝이 둥글어지지 않도록 처리 */
+    border-radius: 0;
+
+    /* 입력 영역과 같은 배경 사용 */
+    background: transparent;
+
+    /* 공통 선택창의 사각 강조 효과 제거 */
+    box-shadow: none;
+
+    /* 오른쪽 여백을 줄여 화살표를 기존보다 8px 오른쪽으로 이동 */
+    padding-right: 4px;
+}
+
+/* 목록을 열거나 키보드로 선택하면 밑줄 색으로 강조 */
+.monthly-payment .loan-method-field .select-box.is-open .select-box-trigger,
+.monthly-payment .loan-method-field .select-box .select-box-trigger:focus-visible {
+    /* 다른 숫자 입력창과 같은 초록색 강조 */
+    border-bottom-color: var(--primary);
+
+    /* 포커스는 밑줄로 표시하므로 사각 강조선 제거 */
+    outline: none;
+    box-shadow: none;
 }
 
 /* 결과에는 선택 버튼 대신 상환 방식 이름만 표시 */
@@ -212,7 +271,7 @@
 }
 
 /* 요약 이름과 금액 */
-.loan-summary>div {
+.loan-summary > div {
     /* 자식 요소의 배치 방식 지정 */
     display: grid;
     /* 그리드 열의 개수와 너비 지정 */
@@ -331,12 +390,12 @@
 }
 
 /* 바깥 테두리와 중복되는 선 제거 */
-.loan-schedule-table tr> :last-child {
+.loan-schedule-table tr > :last-child {
     /* 오른쪽 구분선 지정 */
     border-right: 0;
 }
 
-.loan-schedule-table tbody tr:last-child>* {
+.loan-schedule-table tbody tr:last-child > * {
     /* 아래쪽 구분선 지정 */
     border-bottom: 0;
 }
@@ -389,6 +448,30 @@
     margin-top: 16px;
 }
 
+/* 계산기 그래프와 내부 요소의 검정 포커스 테두리 제거 */
+.monthly-payment .loan-chart:focus,
+.monthly-payment .loan-chart:focus-visible,
+.monthly-payment .loan-chart :focus,
+.monthly-payment .loan-chart :focus-visible {
+    /* 막대 묶음 등 내부 요소까지 포함하여 외곽선 제거 */
+    outline: none;
+}
+
+/* 세로축선의 아래쪽 끝을 기준으로 위쪽 길이를 살짝 늘린다. */
+.monthly-payment .loan-chart .recharts-yAxis .recharts-cartesian-axis-line {
+    /* SVG 선 자체의 영역을 변형 기준으로 사용한다. */
+    transform-box: fill-box;
+
+    /* 가로축과 만나는 아래쪽 끝을 고정한다. */
+    transform-origin: center bottom;
+
+    /* 세로선 길이를 위쪽으로 3% 늘린다. */
+    transform: scaleY(1.03);
+
+    /* 길이가 늘어나도 선 두께는 유지한다. */
+    vector-effect: non-scaling-stroke;
+}
+
 /* 그래프 금액 안내 */
 .loan-chart-tooltip {
     /* 테두리 안쪽 여백 지정 */
@@ -411,211 +494,232 @@
     margin-top: 4px;
 }
 
-/* 왼쪽 제목부터 계산 버튼까지를 한 영역으로 배치 */
-.loan-input-column {
-    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+/* 세 영역이 패널 너비 안에서 줄어들 수 있도록 처리한다. */
+.loan-input-column,
+.loan-result-column,
+.loan-chart-column {
     min-width: 0;
 }
 
-/* 양쪽 열의 높이 일치 */
-.monthly-payment-layout {
-    /* 자식 요소를 교차축 기준으로 정렬 */
-    align-items: stretch;
-}
-
-/* 오른쪽 높이는 왼쪽 열이 결정 */
-.loan-result-slot {
-    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
+/* 결과와 그래프를 같은 행의 전체 높이로 확장한다. */
+.loan-result-column,
+.loan-chart-column {
     position: relative;
-    /* 너비가 줄어들 수 있는 최소 기준 지정 */
-    min-width: 0;
-}
-
-/* 결과 내용이 전체 계산기 높이를 늘리지 않도록 처리 */
-.loan-result-area {
-    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
-    position: absolute;
-    /* 위·오른쪽·아래·왼쪽 위치를 한 번에 지정 */
-    inset: 0;
-    /* 자식 요소의 배치 방식 지정 */
     display: flex;
-    /* flex 요소가 나열되는 방향 지정 */
+}
+
+/* 입력 이동 후 결과창부터 오른쪽으로 부드럽게 등장한다. */
+.loan-result-column {
+    animation: loan-reveal-right 480ms ease-out both;
+}
+
+/* 결과창보다 조금 늦게 그래프 틀을 표시한다. */
+.loan-chart-column {
+    animation: loan-reveal-right 480ms ease-out 250ms both;
+}
+
+/* 영역 사이 선은 같은 굵기의 테두리로 표시한다. */
+.loan-result-column::before,
+.loan-chart-column::before {
+    content: "";
+    position: absolute;
+
+    /* 두 열 사이 빈 공간의 가운데에 선을 배치한다. */
+    left: calc(var(--loan-column-gap) * -0.5);
+    top: 12px;
+
+    /* 아래 가로 구분선에 닿기 12px 전에 멈춘다. */
+    bottom: calc(12px - var(--loan-row-gap));
+
+    /* 배경으로 채우는 대신 1px 테두리로 굵기를 통일한다. */
+    width: 0;
+    border-left: 1px solid var(--line);
+    pointer-events: none;
+}
+
+/* 결과창은 제목과 세부 내용을 세로로 배치한다. */
+.loan-result-column > .loan-result-area {
+    display: flex;
     flex-direction: column;
-    /* 너비가 줄어들 수 있는 최소 기준 지정 */
+    flex: 1;
     min-width: 0;
-    /* 높이가 줄어들 수 있는 최소 기준 지정 */
-    min-height: 0;
-    /* 영역을 넘는 내용의 표시 방식 지정 */
-    overflow: hidden;
-    /* 배경색 또는 배경 무늬 지정 */
-    background: var(--surface);
 }
 
-/* 표 외의 설명과 요약은 높이를 유지 */
-.loan-result-area> :not(.loan-table-scroll) {
-    /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
-    flex-shrink: 0;
+/* 설명과 금액 묶음을 제목 아래 공간의 가운데에 배치한다. */
+.loan-result-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+    padding-block: 32px;
 }
 
-/* 남은 높이를 표에 할당하고 표 내부에서 스크롤 */
-.loan-table-scroll {
-    /* 남은 공간을 사용하는 비율과 기본 크기 지정 */
+/* 설명과 금액 사이에 충분한 간격을 둔다. */
+.loan-result-details .loan-method-description {
+    margin: 0 0 32px;
+}
+
+/* 금액 항목 사이 간격을 넓혀 아래 공간을 활용한다. */
+.loan-result-details .loan-summary {
+    margin: 0;
+    gap: 20px;
+}
+
+/* 그래프는 해당 열의 높이를 채운다. */
+.loan-chart-column > .loan-chart-panel {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+/* 제목 아래 남은 공간에 맞춰 그래프 높이를 늘린다. */
+.loan-chart-column .loan-chart {
     flex: 1 1 0;
-    /* 높이가 줄어들 수 있는 최소 기준 지정 */
-    min-height: 0;
-    /* 내용 영역의 최대 높이 제한 */
-    max-height: none;
-    /* 배경색 또는 배경 무늬 지정 */
-    background: var(--surface);
+    height: auto;
+    min-height: 320px;
+    min-width: 0;
 }
 
-/* 표 셀의 높이와 세로 정렬 통일 */
+/* 스케줄은 모든 열을 차지하고, 처음에는 높이를 접어 둔다. */
+.loan-schedule-reveal {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-rows: 0fr;
+    min-width: 0;
+
+    /* 그래프 틀과 막대 상승이 끝난 뒤 아래로 펼친다. */
+    animation: loan-reveal-schedule 550ms ease-out 1850ms both;
+}
+
+/* 접힌 동안에는 표가 큰 빈 영역을 만들지 않도록 한다. */
+.loan-schedule-inner {
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* 가로 구분선 아래에 스케줄 제목을 배치한다. */
+.loan-schedule-panel {
+    position: relative;
+    min-width: 0;
+    padding-top: 40px;
+}
+
+/* 가로선 양 끝을 남겨 패널 테두리와 이어지지 않게 한다. */
+.loan-schedule-panel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 12px;
+    right: 12px;
+    height: 1px;
+    background: var(--line);
+    pointer-events: none;
+}
+
+/* 기존 스케줄 제목 크기를 유지한다. */
+.loan-schedule-panel h3 {
+    margin-bottom: 8px;
+    font-size: 20px;
+}
+
+/* 전체 회차를 표시하고 세로는 페이지 전체로 스크롤한다. */
+.loan-schedule-panel .loan-table-scroll {
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    margin-top: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+/* 기존 표 셀의 높이와 정렬을 유지한다. */
 .loan-schedule-table th,
 .loan-schedule-table td {
-    /* 세로 크기 지정 */
     height: 48px;
-    /* 테두리 안쪽 여백 지정 */
     padding: 10px 8px;
-    /* 표 셀 안의 세로 정렬 지정 */
     vertical-align: middle;
-    /* 글줄 높이 지정 */
     line-height: 20px;
-    /* 배경색 또는 배경 무늬 지정 */
-    background: var(--surface);
 }
 
-/* 헤더와 모든 행은 흰색 배경 */
+/* 기존 표 배경색을 유지한다. */
 .loan-schedule-table thead th,
 .loan-schedule-table tbody tr,
 .loan-schedule-table tbody tr:nth-child(odd),
 .loan-schedule-table tbody th,
 .loan-schedule-table tbody td {
-    /* 배경색 또는 배경 무늬 지정 */
     background: var(--surface);
 }
 
-/* 왼쪽은 입력과 그래프, 오른쪽은 요약과 상환표 */
-.monthly-payment-layout {
-    /* 자식 요소를 교차축 기준으로 정렬 */
-    align-items: stretch;
-    /* 행 사이 간격 지정 */
-    row-gap: 32px;
+/* 오른쪽으로 이동하면서 서서히 표시한다. */
+@keyframes loan-reveal-right {
+    from {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+    }
 }
 
-/* 왼쪽 위: 입력 영역 */
-.loan-input-column {
-    /* 그리드에서 사용할 열 위치 지정 */
-    grid-column: 1;
-    /* 그리드에서 사용할 행 위치 지정 */
-    grid-row: 1;
+/* 표의 높이를 열면서 아래로 부드럽게 표시한다. */
+@keyframes loan-reveal-schedule {
+    from {
+        grid-template-rows: 0fr;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-16px);
+    }
+
+    to {
+        grid-template-rows: 1fr;
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
 }
 
-/* 왼쪽 아래: 그래프 */
-.monthly-payment-layout>.loan-chart-panel {
-    /* 그리드에서 사용할 열 위치 지정 */
-    grid-column: 1;
-    /* 그리드에서 사용할 행 위치 지정 */
-    grid-row: 2;
-    /* 너비가 줄어들 수 있는 최소 기준 지정 */
-    min-width: 0;
-    /* 위쪽 요소와의 바깥 간격 지정 */
-    margin-top: 0;
-    /* 위쪽 안쪽 여백 지정 */
-    padding-top: 0;
-    /* 위쪽 구분선 지정 */
-    border-top: 0;
-}
+/* 좁은 화면에서는 한 열로 배치하고 구분선을 가로로 표시한다. */
+@media (max-width: 1000px) {
+    .panel.monthly-payment {
+        --loan-row-gap: 32px;
+    }
 
-/* 오른쪽은 왼쪽 입력과 그래프 전체 높이에 맞춤 */
-.loan-result-slot {
-    /* 그리드에서 사용할 열 위치 지정 */
-    grid-column: 2;
-    /* 그리드에서 사용할 행 위치 지정 */
-    grid-row: 1 / span 2;
-    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
-    position: relative;
-    /* 너비가 줄어들 수 있는 최소 기준 지정 */
-    min-width: 0;
-    /* 높이가 줄어들 수 있는 최소 기준 지정 */
-    min-height: 0;
-}
+    .monthly-payment.is-expanded .monthly-payment-layout {
+        grid-template-columns: minmax(0, 1fr);
+        column-gap: 0;
+    }
 
-/* 왼쪽에서 정한 높이 안에 요약과 표를 배치 */
-.loan-result-stack {
-    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
-    position: absolute;
-    /* 위·오른쪽·아래·왼쪽 위치를 한 번에 지정 */
-    inset: 0;
-    /* 자식 요소의 배치 방식 지정 */
-    display: flex;
-    /* flex 요소가 나열되는 방향 지정 */
-    flex-direction: column;
-    /* 자식 요소 사이 간격 지정 */
-    gap: 24px;
-    /* 너비가 줄어들 수 있는 최소 기준 지정 */
-    min-width: 0;
-    /* 높이가 줄어들 수 있는 최소 기준 지정 */
-    min-height: 0;
-}
+    /* 좁은 화면에서는 같은 굵기의 가로 테두리로 바꾼다. */
+    .loan-result-column::before,
+    .loan-chart-column::before {
+        top: -16px;
+        bottom: auto;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        height: 0;
 
-/* 선택한 방식의 설명 길이만큼 요약 높이 사용 */
-.loan-result-stack>.loan-result-area {
-    /* 기본 흐름 또는 기준 요소를 바탕으로 위치 지정 */
-    position: static;
-    /* 위·오른쪽·아래·왼쪽 위치를 한 번에 지정 */
-    inset: auto;
-    /* 남은 공간을 사용하는 비율과 기본 크기 지정 */
-    flex: 0 0 auto;
-    /* 너비가 줄어들 수 있는 최소 기준 지정 */
-    min-width: 0;
-    /* 영역을 넘는 내용의 표시 방식 지정 */
-    overflow: visible;
-}
+        /* 세로 테두리를 지우고 가로 테두리만 표시한다. */
+        border-left: 0;
+        border-top: 1px solid var(--line);
+    }
 
-/* 요약 바로 아래에서 남은 높이를 상환표에 할당 */
-.loan-result-stack>.loan-schedule-panel {
-    /* 자식 요소의 배치 방식 지정 */
-    display: flex;
-    /* flex 요소가 나열되는 방향 지정 */
-    flex-direction: column;
-    /* 남은 공간을 사용하는 비율과 기본 크기 지정 */
-    flex: 1 1 0;
-    /* 너비가 줄어들 수 있는 최소 기준 지정 */
-    min-width: 0;
-    /* 높이가 줄어들 수 있는 최소 기준 지정 */
-    min-height: 0;
-}
+    .loan-result-details {
+        padding-block: 24px;
+    }
 
-/* 상환표 제목 */
-.loan-schedule-panel h3 {
-    /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
-    flex-shrink: 0;
-    /* 아래쪽 요소와의 바깥 간격 지정 */
-    margin-bottom: 8px;
-    /* 글씨 크기 지정 */
-    font-size: 20px;
-}
-
-/* 상환 방식과 회차 안내는 줄어들지 않도록 유지 */
-.loan-schedule-panel>.form-help {
-    /* 공간이 부족할 때 요소가 줄어드는 정도 지정 */
-    flex-shrink: 0;
-}
-
-/* 요약이 길어지면 표가 줄고, 짧아지면 표가 늘어남 */
-.loan-schedule-panel .loan-table-scroll {
-    /* 남은 공간을 사용하는 비율과 기본 크기 지정 */
-    flex: 1 1 0;
-    /* 세로 크기 지정 */
-    height: auto;
-    /* 높이가 줄어들 수 있는 최소 기준 지정 */
-    min-height: 0;
-    /* 내용 영역의 최대 높이 제한 */
-    max-height: none;
-    /* 위쪽 요소와의 바깥 간격 지정 */
-    margin-top: 16px;
-    /* 영역을 넘는 내용의 표시 방식 지정 */
-    overflow: auto;
-    /* 배경색 또는 배경 무늬 지정 */
-    background: var(--surface);
+    /* 한 열에서는 그래프를 일정한 높이로 표시한다. */
+    .loan-chart-column .loan-chart {
+        flex: none;
+        height: 320px;
+    }
 }

@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import SelectBox from "../SelectBox/SelectBox.jsx";
 import {
     validateIntegerInput,
@@ -12,11 +12,7 @@ import {
     validateLoanInput,
     repaymentMethods,
 } from "../../utils/loanCalculator.js";
-import {
-    LoanResults,
-    LoanChart,
-    LoanSchedule,
-} from "./LoanResults.jsx";
+import { LoanResults, LoanChart, LoanSchedule } from "./LoanResults.jsx";
 import "../../styles/monthlyPayment.css";
 
 // 숫자 입력의 이름·단위·상한을 한 곳에서 관리
@@ -65,6 +61,26 @@ export default function LoanCalculator({ mode = "monthly" }) {
     // 계산하기를 누르기 전에는 결과를 표시하지 않음
     const [result, setResult] = useState(null);
     const [calculationError, setCalculationError] = useState("");
+    // 계산할 때마다 그래프를 새로 그리기 위한 번호를 관리한다.
+    const [chartVersion, setChartVersion] = useState(0);
+    // 첫 계산 전에는 입력창만 가운데에 표시한다.
+    const [hasCalculated, setHasCalculated] = useState(false);
+    // 패널이 펼쳐진 후에 결과를 배치하여 순간적인 줄바꿈을 막는다.
+    const [layoutReady, setLayoutReady] = useState(false);
+    // 스케줄까지 화면에 펼쳐졌는지 관리한다.
+    const [screenReady, setScreenReady] = useState(false);
+
+    useEffect(() => {
+        if (!hasCalculated) return;
+
+        // 패널 이동 0.65초가 끝난 다음 결과를 표시한다.
+        const timer = window.setTimeout(() => {
+            setLayoutReady(true);
+        }, 700);
+
+        // 다른 화면으로 이동하면 예약한 상태 변경을 취소한다.
+        return () => window.clearTimeout(timer);
+    }, [hasCalculated]);
 
     // 월 상환액의 분할상환 방식에서만 거치 입력 표시
     const showGrace = !isInterestPage && method !== "bullet";
@@ -81,8 +97,7 @@ export default function LoanCalculator({ mode = "monthly" }) {
 
     // 버튼과 실제 계산에서 동일한 입력 검증 사용
     const graceError = getGraceError(calculationInput, method);
-    const canCalculate =
-        validateLoanInput(calculationInput, method) === "";
+    const canCalculate = validateLoanInput(calculationInput, method) === "";
 
     function handleMethodChange(value) {
         setMethod(value);
@@ -95,29 +110,55 @@ export default function LoanCalculator({ mode = "monthly" }) {
             }));
         }
 
-        // 변경한 조건은 계산하기를 눌렀을 때 표시
+        // 상환 방식이 바뀌면 결과를 숨기고 입력 패널을 가운데로 되돌린다.
         setResult(null);
+        setHasCalculated(false);
+
+        // 재계산할 때 패널 이동 후부터 결과 등장 순서를 다시 시작한다.
+        setLayoutReady(false);
         setCalculationError("");
     }
 
     function handleInputChange(field, nextValue) {
-        // 013처럼 입력하면 앞자리 0을 제거하여 13으로 표시
-        const value = nextValue.replace(/^0+(?=\d)/, "");
+        // 013처럼 입력하면 앞자리 0을 제거하여 13으로 표시한다.
+        let value = nextValue.replace(/^0+(?=\d)/, "");
 
+        // 새 입력과 비교하기 위해 현재 화면에 표시된 값을 가져온다.
+        const previousValue = values[field.name];
+
+        // 금리의 소수 자리가 0일 때 뒤에 숫자 하나를 입력하면 0을 교체한다.
+        // 예: 기존 11.0 뒤에 5 입력 → 11.05 → 11.5로 변경한다.
+        // 다른 금리 입력과 금액·기간 입력에는 이 규칙을 적용하지 않는다.
+        if (
+            field.name === "annualInterestRate" &&
+            previousValue.endsWith(".0") &&
+            value.startsWith(previousValue) &&
+            /^\d+\.0\d$/.test(value)
+        ) {
+            value = value.replace(/\.0(\d)$/, ".$1");
+        }
+
+        // 교체한 값에도 기존 소수 한 자리·금리 상한 검사를 적용한다.
         const error =
             field.name === "annualInterestRate"
                 ? validateRateInput(value)
                 : validateIntegerInput(value, field.maximum);
 
-        // 기존 형식과 상한을 벗어나는 입력은 반영하지 않음
+        // 허용하지 않는 형식이나 상한 초과 입력은 반영하지 않는다.
         if (error) return;
 
+        // 검사를 통과한 입력 항목만 새 값으로 변경한다.
         setValues((previous) => ({
             ...previous,
             [field.name]: value,
         }));
 
+        // 조건이 바뀌면 결과를 숨기고 입력 패널을 가운데로 되돌린다.
         setResult(null);
+        setHasCalculated(false);
+
+        // 재계산할 때 패널 이동 후부터 결과 등장 순서를 다시 시작한다.
+        setLayoutReady(false);
         setCalculationError("");
     }
 
@@ -125,10 +166,7 @@ export default function LoanCalculator({ mode = "monthly" }) {
         // 입력을 마치면 2. 같은 표시를 2로 정리
         setValues((previous) => ({
             ...previous,
-            [name]:
-                previous[name] === ""
-                    ? ""
-                    : String(Number(previous[name])),
+            [name]: previous[name] === "" ? "" : String(Number(previous[name])),
         }));
     }
 
@@ -146,17 +184,35 @@ export default function LoanCalculator({ mode = "monthly" }) {
     }
 
     function handleCalculate(event) {
-        // 계산 버튼을 눌러도 페이지가 새로고침되지 않도록 처리
+        // Enter나 버튼으로 계산해도 페이지를 새로고침하지 않는다.
         event.preventDefault();
 
         if (!canCalculate) return;
 
         try {
-            // 두 계산기 모두 선택한 방식 하나를 같은 함수로 계산
-            setResult(calculateLoan(calculationInput, method));
+            // 계산에 성공했을 때만 입력칸의 포커스를 해제한다.
+            const nextResult = calculateLoan(calculationInput, method);
+            const focusedInput = event.currentTarget.querySelector("input:focus");
+
+            // Enter 제출 후에도 커서와 진한 입력 밑줄이 남지 않게 한다.
+            if (focusedInput) {
+                focusedInput.blur();
+            }
+
+            // 가운데 입력 패널을 펼친 뒤 결과를 순서대로 표시한다.
+            setResult(nextResult);
+            setHasCalculated(true);
+
+            // 같은 조건으로 재계산해도 등장 효과를 다시 재생한다.
+            // 새 계산의 화면 등장 효과가 끝날 때까지 툴팁을 차단한다.
+            setScreenReady(false);
+            setChartVersion((previous) => previous + 1);
             setCalculationError("");
         } catch (error) {
+            // 계산 실패 시 결과를 숨기고 가운데 입력 패널로 되돌린다.
             setResult(null);
+            setHasCalculated(false);
+            setLayoutReady(false);
             setCalculationError(
                 error instanceof Error
                     ? error.message
@@ -167,31 +223,20 @@ export default function LoanCalculator({ mode = "monthly" }) {
 
     return (
         <section
-            className="panel monthly-payment"
+            className={`panel monthly-payment ${hasCalculated ? "is-expanded" : ""}`}
             aria-labelledby={formId + "-title"}
         >
             <div className="monthly-payment-layout">
                 {/* 왼쪽 위: 기존 설명 없이 제목과 입력만 표시 */}
                 <div className="loan-input-column">
-                    <h2
-                        id={formId + "-title"}
-                        className="loan-calculator-title"
-                    >
-                        {isInterestPage
-                            ? "총 이자"
-                            : "월 상환액"}
+                    <h2 id={formId + "-title"} className="loan-calculator-title">
+                        {isInterestPage ? "총 이자" : "월 상환액"}
                     </h2>
 
-                    <form
-                        className="monthly-payment-fields"
-                        onSubmit={handleCalculate}
-                        noValidate
-                    >
+                    <form className="monthly-payment-fields" onSubmit={handleCalculate} noValidate>
                         {/* 상환 방식 선택창은 입력 영역 맨 위에 배치 */}
                         <div className="form-field loan-method-field">
-                            <span id={formId + "-method-label"}>
-                                상환 방식
-                            </span>
+                            <span id={formId + "-method-label"}>상환 방식</span>
                             <SelectBox
                                 id={formId + "-method"}
                                 labelledBy={formId + "-method-label"}
@@ -203,24 +248,14 @@ export default function LoanCalculator({ mode = "monthly" }) {
 
                         {/* 모드와 상환 방식에 맞는 숫자 입력만 표시 */}
                         {visibleFields.map((field) => {
-                            const inputId =
-                                formId + "-" + field.name;
+                            const inputId = formId + "-" + field.name;
                             const helpId = inputId + "-help";
-                            const convertedText =
-                                getConvertedText(field.name);
-                            const warning =
-                                field.name === "graceMonths"
-                                    ? graceError
-                                    : "";
+                            const convertedText = getConvertedText(field.name);
+                            const warning = field.name === "graceMonths" ? graceError : "";
 
                             return (
-                                <div
-                                    key={field.name}
-                                    className="monthly-number-field"
-                                >
-                                    <label htmlFor={inputId}>
-                                        {field.label}
-                                    </label>
+                                <div key={field.name} className="monthly-number-field">
+                                    <label htmlFor={inputId}>{field.label}</label>
 
                                     <div className="monthly-number-line">
                                         <input
@@ -234,44 +269,26 @@ export default function LoanCalculator({ mode = "monthly" }) {
                                             }
                                             autoComplete="off"
                                             value={values[field.name]}
-                                            aria-invalid={
-                                                warning ? true : undefined
-                                            }
+                                            aria-invalid={warning ? true : undefined}
                                             aria-describedby={
-                                                warning || convertedText
-                                                    ? helpId
-                                                    : undefined
+                                                warning || convertedText ? helpId : undefined
                                             }
                                             onChange={(event) =>
-                                                handleInputChange(
-                                                    field,
-                                                    event.target.value,
-                                                )
+                                                handleInputChange(field, event.target.value)
                                             }
-                                            onBlur={() =>
-                                                handleInputBlur(field.name)
-                                            }
+                                            onBlur={() => handleInputBlur(field.name)}
                                         />
 
-                                        <span className="monthly-input-unit">
-                                            {field.unit}
-                                        </span>
+                                        <span className="monthly-input-unit">{field.unit}</span>
                                     </div>
 
                                     {/* 거치 관계 오류는 기간 환산 문구 대신 표시 */}
                                     {warning ? (
-                                        <p
-                                            id={helpId}
-                                            className="monthly-input-error"
-                                            role="alert"
-                                        >
+                                        <p id={helpId} className="monthly-input-error" role="alert">
                                             {warning}
                                         </p>
                                     ) : convertedText ? (
-                                        <p
-                                            id={helpId}
-                                            className="monthly-converted-value"
-                                        >
+                                        <p id={helpId} className="monthly-converted-value">
                                             {convertedText}
                                         </p>
                                     ) : null}
@@ -281,10 +298,7 @@ export default function LoanCalculator({ mode = "monthly" }) {
 
                         {/* 실제 계산 실패가 있을 때만 오류 표시 */}
                         {calculationError && (
-                            <p
-                                className="monthly-input-error"
-                                role="alert"
-                            >
+                            <p className="monthly-input-error" role="alert">
                                 {calculationError}
                             </p>
                         )}
@@ -300,24 +314,49 @@ export default function LoanCalculator({ mode = "monthly" }) {
                     </form>
                 </div>
 
-                {/* 오른쪽: 결과 제목과 요약 바로 아래에 스케줄 연결 */}
-                <div className="loan-result-slot">
-                    <div className="loan-result-stack">
-                        <LoanResults mode={mode} result={result} />
+                {/* 입력 이동이 끝난 뒤 결과를 순서대로 표시한다. */}
+                {result && layoutReady && (
+                    <>
+                        {/* 재계산할 때도 결과창의 등장 효과를 다시 실행한다. */}
+                        <div key={`result-${chartVersion}`} className="loan-result-column">
+                            <LoanResults mode={mode} result={result} />
+                        </div>
 
-                        <LoanSchedule
-                            mode={mode}
-                            result={result}
-                            scheduleId={formId + "-schedule"}
-                        />
-                    </div>
-                </div>
+                        {/* 그래프 틀이 나타난 뒤 막대 상승을 시작한다. */}
+                        <div key={`chart-${chartVersion}`} className="loan-chart-column">
+                            <LoanChart
+                                mode={mode}
+                                result={result}
+                                chartId={formId + "-chart"}
+                                animationBegin={850}
+                                screenReady={screenReady}
+                            />
+                        </div>
 
-                {/* 왼쪽 아래: 월별 상환금 하나만 선으로 표시 */}
-                <LoanChart
-                    result={result}
-                    chartId={formId + "-chart"}
-                />
+                        {/* 막대 상승이 끝나면 상환표 높이를 펼치며 표시한다. */}
+                        <div
+                            key={`schedule-${chartVersion}`}
+                            className="loan-schedule-reveal"
+                            onAnimationEnd={(event) => {
+                                // 스케줄 자체의 펼침 효과가 끝났을 때만 허용한다.
+                                if (
+                                    event.target === event.currentTarget &&
+                                    event.animationName === "loan-reveal-schedule"
+                                ) {
+                                    setScreenReady(true);
+                                }
+                            }}
+                        >
+                            <div className="loan-schedule-inner">
+                                <LoanSchedule
+                                    mode={mode}
+                                    result={result}
+                                    scheduleId={formId + "-schedule"}
+                                />
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
         </section>
     );

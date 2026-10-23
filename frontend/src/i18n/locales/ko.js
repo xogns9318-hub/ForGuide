@@ -1,4 +1,20 @@
 const ko = {
+    // 두 계산기의 결과 요약 막대그래프 문구
+    loanChart: {
+        title: "{{method}} 결과 금액 비교",
+        amount: "금액",
+
+        // 오른쪽 결과창과 같은 항목 이름을 사용한다.
+        items: {
+            firstPayment: "첫 회차 상환 금액",
+            averagePayment: "평균 상환 금액",
+            maximumPayment: "최대 상환 금액",
+            totalPayment: "총 상환 금액",
+            regularPayment: "매월 상환 금액",
+            firstMonthPayment: "첫 달 상환 금액",
+            totalInterest: "총 이자 금액",
+        },
+    },
     institutionGuide: {
         // 도움 기관 안내의 검색 조건과 제출 버튼 문구다.
         topicLabel: "상담 분야",
