@@ -43,7 +43,7 @@ def premium_of(row, sex):
 
 def judge(row, user):
     mismatch = []
-    check = ["보험사 외국인 가입 심사"]
+    check = ["insurer_review"]
     return mismatch, check
 
 
@@ -54,6 +54,26 @@ def separate_options(rows, user):
             if premium_of(row, user["sex"]) is not None:
                 found.append(row["product_type"])
     return sorted(set(found))
+
+
+def separate_products(rows, user):
+    found = {}
+    for row in rows:
+        if row["product_type"] in SEPARATE_TYPES and int(row["age"]) == user["age"]:
+            premium = premium_of(row, user["sex"])
+            if premium is not None:
+                found.setdefault(row["product_type"], []).append({
+                    "cmpy_nm": row["cmpy_nm"],
+                    "prd_nm": row["prd_nm"],
+                    "insurer_type": row["insurer_type"],
+                    "is_direct": int(row["is_direct"]),
+                    "premium": premium,
+                    "homepage": row.get("homepage", ""),
+                    "phone": row.get("phone", ""),
+                    "bas_dt": row["bas_dt"],
+                    "check_reasons": ["insurer_review"],
+                })
+    return {t: sorted(items, key=lambda r: r["premium"]) for t, items in found.items()}
 
 
 def recommend_fast(rows, user):
@@ -84,6 +104,10 @@ def recommend_fast(rows, user):
             "is_direct": int(row["is_direct"]),
             "premium": premium,
             "basic": row["male_basic" if user["sex"] == "남" else "female_basic"],
+            "rider1": row["male_rider1" if user["sex"] == "남" else "female_rider1"],
+            "rider2": row["male_rider2" if user["sex"] == "남" else "female_rider2"],
+            "homepage": row.get("homepage", ""),
+            "phone": row.get("phone", ""),
             "group": decide_group(mismatch, check),
             "score": score,
             "reasons": top_reasons(contributions),

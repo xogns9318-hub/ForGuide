@@ -1,7 +1,9 @@
 import csv
 import json
 import re
+import statistics
 import sys
+from collections import defaultdict
 from datetime import date
 from pathlib import Path
 
@@ -22,6 +24,12 @@ FOREIGNER_ALLOWED = re.compile(r"비거주\s*외국인\s*(외|제외)|내\s*[·�
 FOREIGNER_DENIED = re.compile(r"내국인")
 REGION_STOPWORDS = re.compile(r"비대면|대면|특판|회전|정기|예금|적금|개인|법인|모바일|인터넷|스마트|단리|복리|만기|자유|정액|이벤트|신규|고객|우대|플러스|변동|고정|금리|영업점|창구|전용|월수|\d")
 BRANCH_SUFFIX = re.compile(r"(본점|지점)$")
+FOREIGNER_OVERRIDES = {
+    "주식회사 케이뱅크": ("불일치", "kbank_not_yet"),
+    "주식회사 카카오뱅크": ("확인 필요", "kakao_withdrawal_only"),
+}
+WHITESPACE = re.compile(r"\s+")
+OUTLIER_IQR_FACTOR = 1.5
 
 COLUMNS = [
     "fin_co_no",
@@ -31,6 +39,7 @@ COLUMNS = [
     "fin_prdt_nm",
     "purpose",
     "foreigner_status",
+    "foreigner_note",
     "join_member",
     "join_deny",
     "join_way",
@@ -42,17 +51,26 @@ COLUMNS = [
     "intr_rate",
     "intr_rate2",
     "effective_rate",
+    "rate_outlier",
+    "homepage",
+    "phone",
     "dcls_month",
 ]
 
 
-def classify_foreigner(join_member):
+def clean_text(value):
+    return WHITESPACE.sub(" ", value or "").strip()
+
+
+def classify_foreigner(join_member, company=""):
+    if company in FOREIGNER_OVERRIDES:
+        return FOREIGNER_OVERRIDES[company]
     text = join_member or ""
     if FOREIGNER_ALLOWED.search(text):
-        return "부합"
+        return "부합", ""
     if FOREIGNER_DENIED.search(text):
-        return "불일치"
-    return "확인 필요"
+        return "불일치", ""
+    return "확인 필요", ""
 
 
 def is_visit_required(join_way):
@@ -100,7 +118,22 @@ def load_raw(service, group, collected):
     return data["baseList"], data["optionList"]
 
 
+def load_companies():
+    companies = {}
+    for group in INSTITUTION_TYPES:
+        files = sorted(RAW_DIR.glob(f"finlife_companySearch_{group}_*.json"))
+        if not files:
+            continue
+        for company in json.loads(files[-1].read_text(encoding="utf-8"))["baseList"]:
+            companies[company["fin_co_no"]] = {
+                "homepage": (company.get("homp_url") or "").strip(),
+                "phone": (company.get("cal_tel") or "").strip(),
+            }
+    return companies
+
+
 def build_rows(collected):
+    companies = load_companies()
     rows = []
     for service, purpose in SOURCES.items():
         for group, institution_type in INSTITUTION_TYPES.items():
@@ -111,7 +144,9 @@ def build_rows(collected):
                 if product is None:
                     continue
                 months = int(option["save_trm"])
+                name = clean_text(product["fin_prdt_nm"])
                 visit = is_visit_required(product.get("join_way"))
+                foreigner_status, foreigner_note = classify_foreigner(product.get("join_member"), product["kor_co_nm"])
                 rate = option.get("intr_rate")
                 effective = effective_rate(purpose, rate, months, option.get("intr_rate_type"))
                 rows.append({
@@ -119,22 +154,42 @@ def build_rows(collected):
                     "kor_co_nm": product["kor_co_nm"],
                     "institution_type": institution_type,
                     "fin_prdt_cd": product["fin_prdt_cd"],
-                    "fin_prdt_nm": product["fin_prdt_nm"],
+                    "fin_prdt_nm": name,
                     "purpose": purpose,
-                    "foreigner_status": classify_foreigner(product.get("join_member")),
-                    "join_member": (product.get("join_member") or "").replace("\n", " ").strip(),
+                    "foreigner_status": foreigner_status,
+                    "foreigner_note": foreigner_note,
+                    "join_member": clean_text(product.get("join_member")),
                     "join_deny": product.get("join_deny") or "",
                     "join_way": product.get("join_way") or "",
                     "visit_required": visit,
-                    "region_limit": extract_region(product["fin_prdt_nm"], visit),
+                    "region_limit": extract_region(name, visit),
                     "save_trm": months,
                     "intr_rate_type": option.get("intr_rate_type") or "",
                     "rsrv_type": option.get("rsrv_type") or "",
                     "intr_rate": "" if rate is None else rate,
                     "intr_rate2": "" if option.get("intr_rate2") is None else option["intr_rate2"],
                     "effective_rate": "" if effective is None else round(effective, 4),
+                    "rate_outlier": 0,
+                    "homepage": companies.get(product["fin_co_no"], {}).get("homepage", ""),
+                    "phone": companies.get(product["fin_co_no"], {}).get("phone", ""),
                     "dcls_month": product.get("dcls_month") or "",
                 })
+    return rows
+
+
+def mark_rate_outliers(rows):
+    groups = defaultdict(list)
+    for row in rows:
+        if row["effective_rate"] != "":
+            groups[(row["purpose"], row["save_trm"])].append(row)
+    for group_rows in groups.values():
+        rates = [row["effective_rate"] for row in group_rows]
+        if len(rates) < 4:
+            continue
+        q1, _, q3 = statistics.quantiles(rates, n=4)
+        upper = q3 + OUTLIER_IQR_FACTOR * (q3 - q1)
+        for row in group_rows:
+            row["rate_outlier"] = int(row["effective_rate"] > upper)
     return rows
 
 
@@ -149,10 +204,11 @@ def save_rows(rows, output_path):
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     collected = sys.argv[1] if len(sys.argv) > 1 else "20261014"
-    rows = build_rows(collected)
+    rows = mark_rate_outliers(build_rows(collected))
     output_path = PROCESSED_DIR / f"finlife_savings_{date.today():%Y%m%d}.csv"
     save_rows(rows, output_path)
     print(f"{len(rows)}행 저장: {output_path}")
+    print(f"금리 이상값 {sum(row['rate_outlier'] for row in rows)}행 표시")
 
 
 if __name__ == "__main__":

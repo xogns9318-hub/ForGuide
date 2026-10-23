@@ -44,6 +44,8 @@ SEX = {"1": "남", "2": "여"}
 
 ASSUMED_CHOICES = {
     "account_purpose": ["예금", "적금"],
+    "account_term": [6, 12, 24],
+    "institution": ["은행 선호", "상관없음"],
     "visit": ["상관없음", "원치 않음"],
     "loan_purpose": ["생활비", "주거(전세)", "기타"],
 }
@@ -57,6 +59,8 @@ USER_COLUMNS = [
     "age",
     "sex",
     "account_purpose",
+    "account_term",
+    "institution",
     "visit",
     "health_insurance",
     "loan_purpose",
@@ -146,6 +150,8 @@ def sample_users(respondents, count, rng):
             "age": rng.randint(low, high),
             "sex": r["sex"],
             "account_purpose": rng.choice(ASSUMED_CHOICES["account_purpose"]),
+            "account_term": rng.choice(ASSUMED_CHOICES["account_term"]),
+            "institution": rng.choice(ASSUMED_CHOICES["institution"]),
             "visit": rng.choice(ASSUMED_CHOICES["visit"]),
             "health_insurance": "예",
             "loan_purpose": rng.choice(ASSUMED_CHOICES["loan_purpose"]),

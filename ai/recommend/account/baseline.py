@@ -21,12 +21,14 @@ WEIGHTS = {
     "rate": 0.5,
     "check_count": -0.3,
     "visit_required": -0.2,
+    "savings_bank": -0.1,
+    "non_preferred_institution": -0.2,
 }
 RATE_FULL_GAP = 1.0
-LONG_STAY_STATUSES = {"영주(F-5)", "결혼이민(F-6)"}
-LONG_STAY_TERM = 12
-DEFAULT_TERM = 6
 VISIT_NOT_WANTED = "원치 않음"
+PREFER_BANK = "은행 선호"
+BANK = "은행"
+OUTLIER_REASON = "rate_outlier"
 
 
 def load_options(path=None):
@@ -34,10 +36,6 @@ def load_options(path=None):
         path = sorted(PROCESSED_DIR.glob("finlife_savings_*.csv"))[-1]
     with Path(path).open(encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
-
-
-def comparison_term(residence_status):
-    return LONG_STAY_TERM if residence_status in LONG_STAY_STATUSES else DEFAULT_TERM
 
 
 def best_option_per_product(options, purpose, term):
@@ -56,29 +54,38 @@ def best_option_per_product(options, purpose, term):
 
 def judge(product, user):
     mismatch, check = [], []
+    note = product.get("foreigner_note", "")
     if product["foreigner_status"] == "불일치":
-        mismatch.append("내국인만 가입")
+        mismatch.append(note or "domestic_only")
     if product["visit_required"] == "1" and user["visit"] == VISIT_NOT_WANTED:
-        mismatch.append("영업점 방문 필요")
+        mismatch.append("visit_required")
     if product["foreigner_status"] == "확인 필요":
-        check.append("외국인 가입 조건 미기재")
+        check.append(note or "foreigner_unspecified")
     if product["region_limit"]:
-        check.append(f"가입 지역 제한: {product['region_limit']}")
+        check.append("region_limit")
+    if product.get("rate_outlier") == "1":
+        check.append(OUTLIER_REASON)
     return mismatch, check
 
 
-def recommend_fast(options, user):
-    term = comparison_term(user["residence_status"])
+def recommend_fast(options, user, weights=None):
+    weights = weights or WEIGHTS
+    term = int(user["term"])
     products = best_option_per_product(options, user["purpose"], term)
     judged = []
     best_rate_by_group = {}
+    best_with_outliers = {}
     for product in products:
         mismatch, check = judge(product, user)
         group = decide_group(mismatch, check)
         judged.append((product, mismatch, check, group))
         if group != GROUP_MISMATCH:
             rate = float(product["effective_rate"])
-            best_rate_by_group[group] = max(rate, best_rate_by_group.get(group, rate))
+            best_with_outliers[group] = max(rate, best_with_outliers.get(group, rate))
+            if product.get("rate_outlier") != "1":
+                best_rate_by_group[group] = max(rate, best_rate_by_group.get(group, rate))
+    for group, rate in best_with_outliers.items():
+        best_rate_by_group.setdefault(group, rate)
 
     results = []
     for product, mismatch, check, group in judged:
@@ -88,8 +95,10 @@ def recommend_fast(options, user):
                 "rate": absolute_score(best_rate_by_group[group], float(product["effective_rate"]), RATE_FULL_GAP),
                 "check_count": 1 if product["foreigner_status"] == "확인 필요" else 0,
                 "visit_required": int(product["visit_required"]),
+                "savings_bank": int(product["institution_type"] != BANK),
+                "non_preferred_institution": int(user["institution"] == PREFER_BANK and product["institution_type"] != BANK),
             }
-            score, contributions = weighted_score(features, WEIGHTS)
+            score, contributions = weighted_score(features, weights)
             reasons = top_reasons(contributions)
         results.append({
             "product_id": f"{product['fin_co_no']}-{product['fin_prdt_cd']}",
@@ -98,7 +107,13 @@ def recommend_fast(options, user):
             "institution_type": product["institution_type"],
             "save_trm": term,
             "intr_rate_type": product["intr_rate_type"],
+            "intr_rate": float(product["intr_rate"]),
             "effective_rate": float(product["effective_rate"]),
+            "join_way": product["join_way"],
+            "visit_required": product["visit_required"] == "1",
+            "rate_outlier": product.get("rate_outlier") == "1",
+            "homepage": product.get("homepage", ""),
+            "phone": product.get("phone", ""),
             "group": group,
             "score": score,
             "features": features,
@@ -106,7 +121,7 @@ def recommend_fast(options, user):
             "check_reasons": check,
             "mismatch_reasons": mismatch,
             "region_limit": product["region_limit"],
-            "sort_last": bool(product["region_limit"]),
+            "sort_last": bool(product["region_limit"]) or product.get("rate_outlier") == "1",
             "tiebreak": float(product["effective_rate"]),
             "dcls_month": product["dcls_month"],
         })
@@ -114,7 +129,7 @@ def recommend_fast(options, user):
 
 
 def print_summary(user, term, results, per_group=5):
-    print(f"\n## {user['residence_status']}, {user['purpose']}, 방문 {user['visit']} → 비교 기간 {term}개월")
+    print(f"\n## {user['purpose']} {term}개월, 방문 {user['visit']}, 금융기관 {user['institution']}")
     shown = defaultdict(int)
     for r in results:
         if shown[r["group"]] >= per_group:
@@ -133,9 +148,9 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8")
     options = load_options()
     examples = [
-        {"residence_status": "비전문취업(E-9)", "purpose": "예금", "visit": "상관없음"},
-        {"residence_status": "결혼이민(F-6)", "purpose": "예금", "visit": "원치 않음"},
-        {"residence_status": "유학생", "purpose": "적금", "visit": "상관없음"},
+        {"residence_status": "비전문취업(E-9)", "purpose": "예금", "term": 6, "visit": "상관없음", "institution": "상관없음"},
+        {"residence_status": "결혼이민(F-6)", "purpose": "예금", "term": 12, "visit": "원치 않음", "institution": "은행 선호"},
+        {"residence_status": "유학생", "purpose": "적금", "term": 24, "visit": "상관없음", "institution": "은행 선호"},
     ]
     for user in examples:
         term, results = recommend_fast(options, user)
