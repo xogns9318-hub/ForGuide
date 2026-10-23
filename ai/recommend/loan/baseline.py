@@ -5,28 +5,14 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from engine import (
-    GROUP_MISMATCH,
-    absolute_score,
-    decide_group,
-    sort_results,
-    top_reasons,
-    weighted_score,
-)
+from engine import decide_group, sort_results
 
 AI_DIR = Path(__file__).resolve().parent.parent.parent
 PROCESSED_DIR = AI_DIR / "data" / "processed"
 
-WEIGHTS = {
-    "rate": 0.5,
-    "check_count": -0.3,
-    "visit_required": -0.2,
-}
-RATE_FULL_GAP = 3.0
 PURPOSE_TO_LOAN_TYPE = {
     "생활비": "신용대출",
-    "주거(전세)": "전세자금대출",
-    "기타": "신용대출",
+    "전세 보증금": "전세자금대출",
 }
 
 
@@ -43,68 +29,59 @@ def rate_of(product):
 
 def judge(product, user):
     mismatch, check = [], []
-    if product["foreigner_status"] == "확인 필요":
-        check.append("외국인 가입 조건 미기재")
-    check.append("한도는 심사 후 결정")
+    note = product.get("foreigner_note", "")
+    if product["foreigner_status"] == "불일치":
+        mismatch.append(note or "domestic_only")
+    elif product["foreigner_status"] == "확인 필요":
+        check.append(note or "foreigner_unspecified")
+    check.append("limit_after_review")
+    if product.get("target_limited") == "1":
+        check.append("special_target")
     if rate_of(product) is None:
-        check.append("평균 금리 미공시")
+        check.append("rate_not_disclosed")
     return mismatch, check
 
 
 def recommend_fast(products, user):
     loan_type = PURPOSE_TO_LOAN_TYPE[user["purpose"]]
-    candidates = [p for p in products if p["loan_type"] == loan_type]
-
-    judged = []
-    best_rate_by_group = {}
-    for product in candidates:
-        mismatch, check = judge(product, user)
-        group = decide_group(mismatch, check)
-        judged.append((product, mismatch, check, group))
-        rate = rate_of(product)
-        if group != GROUP_MISMATCH and rate is not None:
-            best_rate_by_group[group] = min(rate, best_rate_by_group.get(group, rate))
-
     results = []
-    for product, mismatch, check, group in judged:
+    for product in products:
+        if product["loan_type"] != loan_type:
+            continue
+        mismatch, check = judge(product, user)
         rate = rate_of(product)
-        score, reasons = None, []
-        if group != GROUP_MISMATCH and rate is not None:
-            features = {
-                "rate": absolute_score(-best_rate_by_group[group], -rate, RATE_FULL_GAP),
-                "check_count": 1 if product["foreigner_status"] == "확인 필요" else 0,
-                "visit_required": int(product["visit_required"]),
-            }
-            score, contributions = weighted_score(features, WEIGHTS)
-            reasons = top_reasons(contributions)
         results.append({
+            "product_id": f"{product['fin_co_no']}-{product['fin_prdt_cd']}",
             "kor_co_nm": product["kor_co_nm"],
             "fin_prdt_nm": product["fin_prdt_nm"],
             "product_kind": product["product_kind"],
             "institution_type": product["institution_type"],
             "rate_avg": rate,
-            "rate_min": product["rate_min"],
-            "rate_max": product["rate_max"],
+            "rate_min": float(product["rate_min"]) if product["rate_min"] else None,
+            "rate_max": float(product["rate_max"]) if product["rate_max"] else None,
             "loan_limit_text": product["loan_limit_text"],
-            "requested_amount": user["amount"],
-            "group": group,
-            "score": score,
-            "reasons": reasons,
+            "repay_types": product["repay_types"],
+            "rate_types": product["rate_types"],
+            "join_way": product["join_way"],
+            "visit_required": product["visit_required"] == "1",
+            "homepage": product.get("homepage", ""),
+            "phone": product.get("phone", ""),
+            "group": decide_group(mismatch, check),
+            "score": -rate if rate is not None else None,
             "check_reasons": check,
             "mismatch_reasons": mismatch,
-            "sort_last": rate is None,
-            "tiebreak": -(rate if rate is not None else 0),
+            "sort_last": rate is None or product.get("target_limited") == "1",
+            "tiebreak": 0,
             "dcls_month": product["dcls_month"],
         })
     return loan_type, sort_results(results)
 
 
 def print_summary(user, loan_type, results, limit=6):
-    print(f"\n## {user['residence_status']}, {user['purpose']}, {user['amount']:,}만 원 → {loan_type}")
+    print(f"\n## {user['residence_status']}, {user['purpose']} → {loan_type}")
     for r in results[:limit]:
-        score = "-" if r["score"] is None else f"{r['score']:.3f}"
         rate = "-" if r["rate_avg"] is None else f"{r['rate_avg']:.2f}%"
-        print(f"  [{r['group']}] {score:>6} | 평균 {rate:>7} | {r['kor_co_nm']} {r['fin_prdt_nm']} ({r['product_kind']})")
+        print(f"  [{r['group']}] 평균 {rate:>7} | {r['kor_co_nm']} {r['fin_prdt_nm']} ({r['product_kind']})")
     counts = defaultdict(int)
     for r in results:
         counts[r["group"]] += 1
@@ -116,8 +93,8 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8")
     products = load_products()
     examples = [
-        {"residence_status": "비전문취업(E-9)", "purpose": "생활비", "amount": 300},
-        {"residence_status": "결혼이민(F-6)", "purpose": "주거(전세)", "amount": 10000},
+        {"residence_status": "비전문취업(E-9)", "purpose": "생활비"},
+        {"residence_status": "결혼이민(F-6)", "purpose": "전세 보증금"},
     ]
     for user in examples:
         loan_type, results = recommend_fast(products, user)

@@ -4,6 +4,10 @@ import sys
 from datetime import date
 from pathlib import Path
 
+import re
+
+from clean_finlife_savings import FOREIGNER_OVERRIDES, clean_text, load_companies
+
 AI_DIR = Path(__file__).resolve().parent.parent
 RAW_DIR = AI_DIR / "data" / "raw"
 PROCESSED_DIR = AI_DIR / "data" / "processed"
@@ -13,6 +17,7 @@ INSTITUTION_TYPES = {
     "030300": "저축은행",
 }
 EXCLUDED_CREDIT_TYPES = {"장기카드대출(카드론)"}
+TARGET_KEYWORDS = re.compile(r"청년|신혼|다자녀|사회초년|버팀목|디딤돌|군인|공무원|교직원|임직원")
 CREDIT_RATE_TYPE = "A"
 CREDIT_GRADE_COLUMNS = [
     "crdt_grad_1",
@@ -34,6 +39,8 @@ COLUMNS = [
     "fin_prdt_nm",
     "product_kind",
     "foreigner_status",
+    "foreigner_note",
+    "target_limited",
     "join_way",
     "visit_required",
     "rate_avg",
@@ -42,6 +49,8 @@ COLUMNS = [
     "loan_limit_text",
     "repay_types",
     "rate_types",
+    "homepage",
+    "phone",
     "dcls_month",
 ]
 
@@ -71,8 +80,10 @@ def base_row(product, loan_type, institution_type):
         "kor_co_nm": product["kor_co_nm"],
         "institution_type": institution_type,
         "fin_prdt_cd": product["fin_prdt_cd"],
-        "fin_prdt_nm": product["fin_prdt_nm"],
-        "foreigner_status": "확인 필요",
+        "fin_prdt_nm": clean_text(product["fin_prdt_nm"]),
+        "foreigner_status": FOREIGNER_OVERRIDES.get(product["kor_co_nm"], ("확인 필요", ""))[0],
+        "foreigner_note": FOREIGNER_OVERRIDES.get(product["kor_co_nm"], ("확인 필요", ""))[1],
+        "target_limited": int(bool(TARGET_KEYWORDS.search(product["fin_prdt_nm"]))),
         "join_way": product.get("join_way") or "",
         "visit_required": is_visit_required(product.get("join_way")),
         "dcls_month": product.get("dcls_month") or "",
@@ -147,6 +158,11 @@ def main():
     sys.stdout.reconfigure(encoding="utf-8")
     collected = sys.argv[1] if len(sys.argv) > 1 else "20261014"
     rows = credit_rows(collected) + rent_rows(collected)
+    companies = load_companies()
+    for row in rows:
+        contact = companies.get(row["fin_co_no"], {})
+        row["homepage"] = contact.get("homepage", "")
+        row["phone"] = contact.get("phone", "")
     output_path = PROCESSED_DIR / f"finlife_loans_{date.today():%Y%m%d}.csv"
     save_rows(rows, output_path)
     print(f"{len(rows)}행 저장: {output_path}")
