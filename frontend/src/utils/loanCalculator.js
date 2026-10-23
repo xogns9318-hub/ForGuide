@@ -235,13 +235,3 @@ export function calculateLoan(values, method = "bullet") {
         schedule,
     };
 }
-
-// 이후 비교 기능에서도 같은 계산 함수를 재사용할 수 있도록 유지
-export function calculateLoanComparison(values) {
-    return Object.fromEntries(
-        repaymentMethods.map(({ value }) => [
-            value,
-            calculateLoan(values, value),
-        ]),
-    );
-}

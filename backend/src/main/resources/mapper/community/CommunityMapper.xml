@@ -17,6 +17,8 @@
         m.nickname AS nickname,
         m.profile_image_url AS profileImageUrl,
         p.content AS content,
+        p.category AS category,
+        p.related_service AS relatedService,
         p.language AS language,
         p.content_version AS contentVersion,
         (
@@ -83,19 +85,79 @@
         <include refid="columns"/>
         <include refid="postFrom"/>
 
-        <!-- 첫 페이지에는 커서가 없으므로 WHERE 조건을 생략 -->
-        <if test="cursorCreatedAt != null and cursorPostId != null">
-            WHERE (
-            p.created_at &lt; #{cursorCreatedAt}
-            OR (
-            p.created_at = #{cursorCreatedAt}
-            AND p.post_id &lt; #{cursorPostId}
-            )
-            )
-        </if>
+        <where>
+            <if test="category != null and category != ''">
+                AND p.category = #{category}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND p.content LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="topicKeywords != null and topicKeywords.size() > 0">
+                AND (
+                    <foreach collection="topicKeywords" item="topicKeyword" separator=" OR ">
+                        p.content LIKE CONCAT('%', #{topicKeyword}, '%')
+                    </foreach>
+                )
+            </if>
+            <!-- 첫 페이지에는 커서가 없으므로 커서 조건을 추가하지 않는다. -->
+            <if test="cursorCreatedAt != null and cursorPostId != null">
+                AND (
+                    p.created_at &lt; #{cursorCreatedAt}
+                    OR (
+                        p.created_at = #{cursorCreatedAt}
+                        AND p.post_id &lt; #{cursorPostId}
+                    )
+                )
+            </if>
+        </where>
 
         <!-- 최신 게시글부터 정렬하고 요청한 개수만 조회 -->
         ORDER BY p.created_at DESC, p.post_id DESC
+        LIMIT #{size}
+
+    </select>
+
+    <!-- 사용자가 고른 공감순 또는 조회순으로 인기 게시글을 정렬 -->
+    <select id="findPopularPosts"
+            resultType="com.example.forguide.community.dto.CommunityPostResponse">
+
+        SELECT
+        <include refid="columns"/>,
+        (
+            SELECT COUNT(*)
+            FROM post_likes pl
+            WHERE pl.post_id = p.post_id
+        ) AS likeCount
+        <include refid="postFrom"/>
+        ORDER BY
+        <choose>
+            <when test="sortBy == 'views'">
+                (
+                    SELECT COUNT(*)
+                    FROM community_post_view_records v
+                    WHERE v.post_id = p.post_id
+                ) DESC,
+                (
+                    SELECT COUNT(*)
+                    FROM post_likes pl
+                    WHERE pl.post_id = p.post_id
+                ) DESC,
+            </when>
+            <otherwise>
+                (
+                    SELECT COUNT(*)
+                    FROM post_likes pl
+                    WHERE pl.post_id = p.post_id
+                ) DESC,
+                (
+                    SELECT COUNT(*)
+                    FROM community_post_view_records v
+                    WHERE v.post_id = p.post_id
+                ) DESC,
+            </otherwise>
+        </choose>
+        p.created_at DESC,
+        p.post_id DESC
         LIMIT #{size}
 
     </select>
@@ -114,6 +176,8 @@
     <insert id="insertPost" useGeneratedKeys="true" keyProperty="postId">
         INSERT INTO community_posts (
             member_id,
+            category,
+            related_service,
             content,
             language,
             content_version,
@@ -122,6 +186,8 @@
         )
         VALUES (
             #{memberId},
+            #{category},
+            #{relatedService},
             #{content},
             #{language},
             1,
@@ -529,6 +595,12 @@
         DELETE FROM post_reposts
         WHERE post_id = #{postId}
           AND member_id = #{memberId}
+    </delete>
+
+    <!-- 게시글 삭제 전에 연결된 공감 기록을 정리한다. -->
+    <delete id="deletePostLikesByPostId">
+        DELETE FROM post_likes
+        WHERE post_id = #{postId}
     </delete>
 
 </mapper>

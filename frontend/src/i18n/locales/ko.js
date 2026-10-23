@@ -1,4 +1,118 @@
 const ko = {
+    institutionGuide: {
+        // 도움 기관 안내의 검색 조건과 제출 버튼 문구다.
+        topicLabel: "상담 분야",
+        keywordLabel: "상담 키워드",
+        requiredSuffix: " · 필수",
+        chooseTopicAndKeywords: "상담 분야와 키워드를 선택해주세요.",
+        chooseKeywords: "상담 키워드를 한 개 이상 선택해주세요.",
+        selectedKeywords: "키워드 {{count}}개 선택됨",
+        submit: "안내받기",
+        dbNotice:
+            "공식 출처를 바탕으로 등록한 기관을 조회합니다. 확인되지 않은 이용 조건은 ‘확인 필요’로 표시합니다.",
+        searchLabel: "기관명·상담 내용 검색",
+        searchPlaceholder: "예: 임금체불, 통장 만들기, 외국인등록",
+        queryReady: "검색어와 현재 선택 조건으로 기관을 조회합니다.",
+        showAll: "전체 기관 보기",
+        all: "전체",
+        resultsTitle: "도움 기관 조회 결과",
+        resultCount: "기관 {{count}}곳",
+        loading: "기관 정보를 불러오는 중입니다.",
+        loadError: "기관 정보를 불러오지 못했습니다. 서버 연결을 확인하고 다시 시도해주세요.",
+        invalidInput: "검색 조건을 확인해주세요.",
+        retry: "다시 시도",
+        empty: "조건에 맞는 기관이 없습니다. 키워드를 줄이거나 전체 기관을 확인해주세요.",
+        unknown: "확인 필요",
+        available: "운영",
+        unavailable: "미운영",
+        required: "예약 필수",
+        notRequired: "필수 아님",
+        detail: "상세 보기",
+        detailTitle: "기관 상세",
+        close: "목록으로 돌아가기",
+        notFound: "해당 기관을 찾을 수 없습니다.",
+        administration: "행정·생활 안내",
+        servicesTitle: "상담 업무별 이용 안내",
+        partialNotice:
+            "일부 정보만 확인된 자료입니다. 실제 이용 전 기관에 최신 조건을 확인해주세요.",
+        rankingNotice:
+            "직접 상담 기관을 우선하고, 선택 키워드 일치 개수와 조건 확인 여부 순으로 표시합니다. 일치율은 지원 자격이나 승인 확률이 아닙니다.",
+        matchCount: "선택 키워드 {{total}}개 중 {{matched}}개 일치 · {{percent}}%",
+        matchedList: "일치한 키워드: {{keywords}}",
+        chartTitle: "상위 기관의 선택 키워드 일치 개수",
+        matchedLabel: "일치 키워드",
+        specialHours: "별도 운영: {{scope}} — {{hours}}",
+        phoneNationwide: "전화 이용 지역 제한 없음",
+        preparationUnknown: "준비물은 이용할 기관과 업무를 정한 뒤 확인해주세요.",
+        reservationLink: "예약 안내",
+        onlineLink: "온라인 상담",
+        serviceSource: "상담 업무 출처",
+        officialLink: "공식 홈페이지",
+        sourceLink: "공식 출처 {{count}}",
+        prepareCard: "상담 준비 카드 만들기",
+
+        roles: {
+            direct: "직접 상담",
+            related: "관련 상담·민원·기관 안내",
+            unknown: "상담 역할 확인 필요",
+        },
+
+        methods: {
+            phone: "전화",
+            visit: "방문",
+            online: "온라인",
+        },
+
+        pending: {
+            method: "상담 방식 확인 필요",
+            language: "선택 언어 확인 필요",
+            region: "선택 지역 확인 필요",
+        },
+
+        fields: {
+            location: "기관 위치·전화 지역",
+            phoneHours: "전화 상담시간",
+            visitHours: "방문 상담시간",
+            phoneWeekend: "주말 · 전화 기준",
+            phoneHoliday: "공휴일 · 전화 기준",
+            phoneLanguages: "전화 지원 언어",
+            visitLanguages: "방문 지원 언어",
+            methods: "확인된 상담 방식",
+            visitAddress: "실제 방문 장소",
+            visitWeekend: "주말 방문 운영",
+            visitHoliday: "공휴일 방문 운영",
+            reservationRequired: "방문 예약 필수 여부",
+            branch: "방문 지사·예약 안내",
+            languageNotes: "언어 이용 조건",
+            contact: "상담 이용 절차",
+            target: "상담 대상",
+            preparation: "준비물",
+            address: "기관 소재지",
+            phone: "기관 번호",
+            keywords: "전체 상담 키워드",
+            checkedAt: "자료 확인일",
+        },
+
+        topics: {
+            bank: "계좌·은행",
+            loan: "대출",
+            repayment: "채무·상환",
+            credit: "신용관리",
+            living: "생활비·지출",
+            wages: "급여·임금",
+            employment_contract: "근로계약·근무조건",
+            retirement: "퇴직·퇴직금",
+            employment: "취업·구직",
+            remittance: "송금·이체",
+            payment: "카드·결제",
+            housing: "주거비",
+            tax: "세금",
+            insurance: "보험·사회보장",
+            fraud: "금융사기·피해",
+            financial_support: "금융지원·복지",
+            financial_information: "금융정보·기초상담",
+        },
+    },
     header: {
         login: "로그인",
         signup: "회원가입",
@@ -6,13 +120,35 @@ const ko = {
         myPage: "마이페이지",
         myFinance: "내 금융 정보",
         language: "언어",
+
+        // 새 헤더 메뉴에서 사용할 한국어 문구
+        mega: {
+            introduction: "가이드 소개",
+            guides: "가이드 목록",
+            contact: "문의하기",
+
+            // 클릭할 수 없는 연한 제목
+            introductionList: "소개 목록",
+            contactGroup: "문의",
+
+            // 아직 페이지를 연결하지 않은 문의 버튼
+            myInquiries: "내 문의",
+            privateInquiry: "1:1 문의",
+            faq: "자주하는 질문",
+
+            // 화면 읽기와 모바일 메뉴용 이름
+            home: "ForGuide 홈",
+            navigation: "가이드 메뉴",
+            open: "메뉴 열기",
+            close: "메뉴 닫기",
+        },
     },
 
     navigation: {
-        counseling: "상담",
-        recommendation: "추천",
-        repayment: "계산 도우미",
-        employment: "취업 도우미",
+        counseling: "상담 가이드",
+        recommendation: "추천 가이드",
+        repayment: "계산 가이드",
+        employment: "취업 가이드",
         simulator: "시뮬레이터",
         community: "커뮤니티",
     },
@@ -58,24 +194,30 @@ const ko = {
                 preparationCard: "상담 준비 카드 만들기",
             },
             recommendation: {
-                loan: "대출 상품 추천",
-                insurance: "보험 상품 추천",
-                account: "계좌 추천",
+                loan: "대출 상품",
+                insurance: "보험 상품",
+                account: "계좌 개설",
             },
             repayment: {
-                monthlyPayment: "월 상환액 계산기",
-                totalInterest: "총 이자 계산기",
+                monthlyPayment: "월 상환액",
+                totalInterest: "총 이자",
             },
             employment: {
-                jobListings: "일자리 목록",
-                employment: "취업 준비자료",
+                jobListings: "일자리 찾기",
+                employment: "취업 준비 자료",
+            },
+            simulator: {
+                simulator: "시뮬레이터",
+            },
+            community: {
+                community: "커뮤니티",
             },
         },
     },
 
     footer: {
-        description: "이곳은 Footer입니다. 발냄새가 지독한 곳이죠.",
-        copyright: "© 이것이 최선입니까 휴먼?",
+        description: "빠른 시일 내에 변경될 예정인 Footer 입니다.",
+        copyright: "© ForGuide",
     },
 
     community: {
@@ -185,6 +327,37 @@ const ko = {
         },
     },
 
+    jobListings: {
+        page: {
+            title: "일자리 목록",
+            description: "나에게 맞는 취업 정보와 지원 기관을 찾아보세요.",
+        },
+        actions: {
+            details: "자세히 보기",
+            openSite: "사이트 바로가기",
+            openOfficialSite: "공식 사이트 바로가기",
+            close: "닫기",
+        },
+        labels: {
+            target: "대상",
+            language: "언어",
+            region: "지역 선택",
+        },
+        detailModal: {
+            about: "어떤 곳인가요?",
+            recommendedFor: "이런 분들이 이용하면 좋아요",
+            caution: "이용 전 확인",
+            source: "정보 출처",
+            verifiedAt: "확인일",
+            unknown: "확인 필요",
+            closeAria: "상세 안내 닫기",
+        },
+        status: {
+            loading: "기관 정보를 불러오는 중입니다.",
+            error: "기관 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.",
+        },
+    },
+
     status: {
         loading: {
             title: "이동중입니다! 잠시만 기다려주세요",
@@ -224,6 +397,13 @@ const ko = {
             success: "필수 입력 검증을 통과했습니다.",
             requiredError: "필수 입력 항목입니다.",
         },
+    },
+
+    // 미구현 서비스의 제작 중 안내
+    underConstruction: {
+        title: "현재 페이지는 제작중입니다.",
+        description: "빠른 시일 내에 완성하겠습니다.",
+        duckLabel: "고개를 숙여 인사하는 픽셀 오리",
     },
 
     // 공통 확인창·알림 버튼 (components/Modal)

@@ -20,6 +20,9 @@ public interface CommunityMapper {
     List<CommunityPostResponse> findPostsByCursor(
             @Param("cursorCreatedAt") LocalDateTime cursorCreatedAt,
             @Param("cursorPostId") Long cursorPostId,
+            @Param("category") String category,
+            @Param("keyword") String keyword,
+            @Param("topicKeywords") List<String> topicKeywords,
             @Param("size") int size
     );
 
@@ -32,6 +35,15 @@ public interface CommunityMapper {
     List<CommunityPostResponse> findRepostedPostsByMemberId(
             @Param("memberId") Long memberId
     );
+
+    // 공감순 or 조회순 기준으로 인기 게시글 상위 10개 조회.
+    List<CommunityPostResponse> findPopularPosts(
+            @Param("sortBy") String sortBy,
+            @Param("size") int size
+    );
+
+    // 게시글 삭제 전에 연결된 모든 공감 기록을 먼저 삭제한다.
+    int deletePostLikesByPostId(@Param("postId") Long postId);
 
     int insertPost(CommunityPostCreateRequest request);
 

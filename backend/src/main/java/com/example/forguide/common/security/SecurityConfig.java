@@ -62,6 +62,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/members/*/preview").permitAll()
                         // 프로필 카드에서 작성글 목록을 보는 기능도 공개 조회로 제공한다.
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/members/*/posts").permitAll()
+                        // 도움 기관 목록·상세는 로그인 없이 조회할 수 있다.
+                        // GET만 공개하고 다른 요청 방식은 기존 인증 정책을 유지한다.
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/v1/consultation/institutions",
+                                "/api/v1/consultation/institutions/**"  
+                        ).permitAll()
                         // ── 그 밖의 모든 주소는 로그인 필요 ──
                         .anyRequest().authenticated())
 

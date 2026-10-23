@@ -1,6 +1,7 @@
 import { useAuthStore } from "../auth/store/useAuthStore.js";
 import { ApiError } from "./apiError.js";
 import { refreshAccessToken } from "./tokenRefresh.js";
+import i18n from "../i18n/i18n";
 
 // 모든 API 요청의 공통 주소 (프론트와 같은 출처, 개발 시 Vite 프록시로 백엔드에 전달)
 export const API_BASE = "/api/v1";
@@ -58,7 +59,10 @@ function toApiUrl(path) {
 async function send(path, { method, body, headers }) {
     const { accessToken } = useAuthStore.getState();
 
-    const requestHeaders = { Accept: "application/json", ...headers };
+    const requestHeaders = {
+        Accept: "application/json",
+        "Accept-Language": i18n.resolvedLanguage || i18n.language || "ko",
+        ...headers };
 
     // 로그인 상태면 모든 요청에 access token을 붙인다
     if (accessToken) {
