@@ -6,6 +6,21 @@ const vi = {
         myPage: "Trang cá nhân",
         myFinance: "Thông tin tài chính của tôi",
         language: "Ngôn ngữ",
+
+        mega: {
+            introduction: "Giới thiệu hướng dẫn",
+            guides: "Danh sách hướng dẫn",
+            contact: "Liên hệ",
+            introductionList: "Danh sách giới thiệu",
+            contactGroup: "Liên hệ",
+            myInquiries: "Yêu cầu của tôi",
+            privateInquiry: "Tư vấn 1:1",
+            faq: "Câu hỏi thường gặp",
+            home: "Trang chủ ForGuide",
+            navigation: "Menu hướng dẫn",
+            open: "Mở menu",
+            close: "Đóng menu",
+        },
     },
 
     navigation: {
@@ -76,6 +91,12 @@ const vi = {
                 jobListings: "Danh sách việc làm",
                 employment: "Tài liệu chuẩn bị xin việc",
             },
+            simulator: {
+                simulator: "Trình mô phỏng",
+            },
+            community: {
+                community: "Cộng đồng",
+            },
         },
     },
 
@@ -117,6 +138,14 @@ const vi = {
         },
         employment: {
             description: "Tạo, lưu hoặc in sơ yếu lý lịch phù hợp với cách thức ứng tuyển của bạn.",
+        },
+        simulator: {
+            description:
+                "Ghi lại ngày trả nợ, thu nhập và chi tiêu trên lịch để lập kế hoạch chi tiêu hằng ngày.",
+        },
+        community: {
+            description:
+                "Chia sẻ kinh nghiệm, thông tin về cuộc sống tại Hàn Quốc và kết nối với mọi người.",
         },
     },
 

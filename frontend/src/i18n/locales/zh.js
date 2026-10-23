@@ -6,6 +6,21 @@ const zh = {
         myPage: "我的主页",
         myFinance: "我的金融信息",
         language: "语言",
+
+        mega: {
+            introduction: "指南介绍",
+            guides: "指南目录",
+            contact: "联系我们",
+            introductionList: "介绍目录",
+            contactGroup: "咨询",
+            myInquiries: "我的咨询",
+            privateInquiry: "一对一咨询",
+            faq: "常见问题",
+            home: "ForGuide 首页",
+            navigation: "指南菜单",
+            open: "打开菜单",
+            close: "关闭菜单",
+        },
     },
 
     navigation: {
@@ -70,6 +85,12 @@ const zh = {
                 jobListings: "招聘信息",
                 employment: "求职准备资料",
             },
+            simulator: {
+                simulator: "模拟器",
+            },
+            community: {
+                community: "社区",
+            },
         },
     },
 
@@ -105,6 +126,14 @@ const zh = {
         },
         employment: {
             description: "根据申请方式创建、保存或打印简历。",
+        },
+        simulator: {
+            description:
+                "在日历中记录还款日期、收入和支出，制定每日支出计划。",
+        },
+        community: {
+            description:
+                "分享在韩国生活的经验和信息，交流彼此的故事。",
         },
     },
 

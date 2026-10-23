@@ -6,6 +6,21 @@ const ja = {
         myPage: "マイページ",
         myFinance: "マイ金融情報",
         language: "言語",
+
+        mega: {
+            introduction: "ガイド紹介",
+            guides: "ガイド一覧",
+            contact: "お問い合わせ",
+            introductionList: "紹介一覧",
+            contactGroup: "お問い合わせ",
+            myInquiries: "お問い合わせ履歴",
+            privateInquiry: "1対1お問い合わせ",
+            faq: "よくある質問",
+            home: "ForGuide ホーム",
+            navigation: "ガイドメニュー",
+            open: "メニューを開く",
+            close: "メニューを閉じる",
+        },
     },
 
     navigation: {
@@ -74,6 +89,12 @@ const ja = {
                 jobListings: "求人一覧",
                 employment: "就職準備資料",
             },
+            simulator: {
+                simulator: "シミュレーター",
+            },
+            community: {
+                community: "コミュニティ",
+            },
         },
     },
 
@@ -109,6 +130,14 @@ const ja = {
         },
         employment: {
             description: "応募方法に合わせて履歴書を作成し、保存または印刷しましょう。",
+        },
+        simulator: {
+            description:
+                "返済日や収入・支出をカレンダーに記録し、毎日の支出計画を立てましょう。",
+        },
+        community: {
+            description:
+                "韓国生活の経験や情報を共有し、さまざまな人と交流しましょう。",
         },
     },
 
