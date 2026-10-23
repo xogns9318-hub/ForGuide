@@ -44,6 +44,23 @@
 토큰이 실려 오면 `@AuthenticationPrincipal Long memberId`로 회원 번호를 받는다(공개 주소에서 토큰이 없으면 `null`).
 로그인 없이 써야 하는 새 API는 해당 담당자가 `common/security/SecurityConfig`의 "공개 주소" 구역에 한 줄 추가한다. 잊으면 401이 난다.
 
+## 이력서 저장 API
+
+모든 이력서 API는 로그인한 회원만 사용할 수 있으며, 서버는 토큰의 `memberId`로 본인 이력서만 조회·변경한다. 일반(`BASIC`)과 블라인드(`BLIND`) 양식은 회원별로 각각 한 건만 저장한다.
+
+| HTTP | 주소 | 역할 |
+| --- | --- | --- |
+| POST | `/api/v1/employment/resumes` | 이력서와 선택 증명사진 저장 |
+| GET | `/api/v1/employment/resumes` | 내 일반·블라인드 이력서 목록 조회 |
+| GET | `/api/v1/employment/resumes/{resumeId}` | 내 이력서 한 건 조회 |
+| GET | `/api/v1/employment/resumes/{resumeId}/photo` | 내 증명사진 파일 조회 |
+| DELETE | `/api/v1/employment/resumes/{resumeId}/photo` | 내 증명사진 즉시 삭제 |
+| DELETE | `/api/v1/employment/resumes/{resumeId}` | 내 이력서와 연결 사진 삭제 |
+
+저장 요청은 `multipart/form-data`이며 `resumeType`, JSON 문자열 `resumeData`, 선택 `photo`를 받는다. 일반 이력서 사진은 JPG·PNG 등 공통 이미지 검사 규칙과 4MB 제한을 통과해야 하며, 블라인드 양식의 사진 업로드는 거부한다.
+
+사진 삭제는 DB의 `photo_url` 연결을 먼저 제거하고 트랜잭션 커밋 뒤 실제 서버 파일을 삭제한다. 이력서 작성 중 텍스트와 활성 탭은 브라우저 세션에만 임시 보관하며, 로그아웃하면 삭제된다. 서버의 저장 버튼을 누른 이력서만 재로그인 뒤에도 유지된다.
+
 ```java
 .requestMatchers(HttpMethod.GET, "/api/v1/기능주소/**").permitAll()
 ```

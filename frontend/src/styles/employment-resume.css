@@ -189,7 +189,7 @@
 }
 /* 증명사진 칸을 정확히 3:4 비율로 고정한다. */
 .resume-photo-frame {
-    width: 90px;
+    width: 108px;
     aspect-ratio: 3 / 4;
     height: auto;
     overflow: hidden;
@@ -201,6 +201,46 @@
     height: 100%;
     object-fit: cover;
 }
+
+/* 사진 선택·변경·삭제를 한 덩어리로 정렬한다. */
+.resume-photo-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 210px;
+    padding: 16px 12px;
+    border-right: 1px solid #a9cfc0;
+    background: #f1f8f5;
+}
+
+/* 기존 사진 영역의 배경과 경계는 바깥 컨트롤 영역이 담당한다. */
+.resume-photo-control .resume-photo-slot {
+    min-height: 0;
+    border-right: 0;
+    background: transparent;
+}
+
+/* 사진 삭제는 작고 명확한 보조 버튼으로 표시한다. */
+.resume-photo-control .resume-photo-delete {
+    min-height: 24px;
+    padding: 3px 9px;
+    border: 1px solid #c9dfd5;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--primary);
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: none;
+}
+
+.resume-photo-delete:hover {
+    border-color: var(--primary);
+    background: #e7f4ee;
+}
+
 /* 저장한 이력서 목록 모달 */
 .resume-library-backdrop {
     position: fixed;
