@@ -13,11 +13,15 @@ export default function SelectBox({
     options,
     onChange,
     compact = false,
+    // 언어 선택에만 마우스 올림으로 여는 동작을 사용한다.
+    openOnHover = false,
 }) {
     // 선택창 바깥 클릭을 판별할 전체 영역 참조
     const rootRef = useRef(null);
     // 선택 후 강조를 해제할 버튼 참조
     const triggerRef = useRef(null);
+    // 마우스 올림과 모바일 터치를 구분한다.
+    const hoverRef = useRef(false);
     // 공통 선택창의 목록 열림 상태 관리
     const [isOpen, setIsOpen] = useState(false);
     // 방향키와 마우스로 가리킨 항목 위치 관리
@@ -52,10 +56,7 @@ export default function SelectBox({
 
         return () => {
             // 닫히거나 화면을 벗어나면 입력 감시 제거
-            document.removeEventListener(
-                "pointerdown",
-                handleOutsidePointer,
-            );
+            document.removeEventListener("pointerdown", handleOutsidePointer);
         };
     }, [isOpen]);
 
@@ -108,12 +109,7 @@ export default function SelectBox({
             // 누른 방향키에 따라 이동할 항목 위치 결정
             const direction = key === "ArrowDown" ? 1 : -1;
 
-            setActiveIndex((index) =>
-                Math.max(
-                    0,
-                    Math.min(options.length - 1, index + direction),
-                ),
-            );
+            setActiveIndex((index) => Math.max(0, Math.min(options.length - 1, index + direction)));
             return;
         }
 
@@ -145,9 +141,22 @@ export default function SelectBox({
     return (
         <div
             ref={rootRef}
-            className={`select-box ${compact ? "is-compact" : ""} ${
-                isOpen ? "is-open" : ""
-            }`}
+            className={`select-box ${compact ? "is-compact" : ""} ${isOpen ? "is-open" : ""}`}
+            onPointerEnter={(event) => {
+                // 언어 선택창에서 실제 마우스를 올렸을 때만 목록을 연다.
+                if (!openOnHover || event.pointerType !== "mouse") return;
+
+                hoverRef.current = true;
+                setActiveIndex(selectedIndex);
+                setIsOpen(true);
+            }}
+            onPointerLeave={(event) => {
+                // 버튼과 목록을 모두 벗어나면 닫는다.
+                if (!openOnHover || event.pointerType !== "mouse") return;
+
+                hoverRef.current = false;
+                setIsOpen(false);
+            }}
             onBlur={(event) => {
                 // 키보드로 선택창 밖으로 이동하면 닫기
                 if (!event.currentTarget.contains(event.relatedTarget)) {
@@ -167,11 +176,11 @@ export default function SelectBox({
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
                 aria-controls={`${id}-options`}
-                aria-activedescendant={
-                    isOpen ? `${id}-option-${activeIndex}` : undefined
-                }
+                aria-activedescendant={isOpen ? `${id}-option-${activeIndex}` : undefined}
                 onKeyDown={handleKeyDown}
                 onClick={(event) => {
+                    // 마우스로 연 언어 목록은 버튼 클릭으로 다시 닫지 않는다.
+                    if (openOnHover && hoverRef.current) return;
                     // 목록이 이미 열려 있는지 확인
                     if (isOpen) {
                         // 선택창의 펼친 목록 닫기
@@ -216,9 +225,8 @@ export default function SelectBox({
                             id={`${id}-option-${index}`}
                             role="option"
                             aria-selected={option.value === value}
-                            className={`select-box-option ${
-                                index === activeIndex ? "is-active" : ""
-                            }`}
+                            className={`select-box-option ${index === activeIndex ? "is-active" : ""
+                                }`}
                             onMouseEnter={() => setActiveIndex(index)}
                             onMouseDown={(event) => {
                                 // 목록을 클릭하는 동안 선택창 포커스 유지
@@ -226,7 +234,7 @@ export default function SelectBox({
                             }}
                             onClick={() => chooseOption(index, true)}
                         >
-                            {option.label}
+                            <span>{option.label}</span>
                         </div>
                     ))}
                 </div>

@@ -1,51 +1,106 @@
-// 브라우저가 새로고침되면 함께 사라지는 메모리 초안 목록입니다.
-let resumeDraftsInMemory = [];
+import { API_BASE, client } from "./client.js";
+import { useAuthStore } from "../auth/store/useAuthStore.js";
 
-// 실제 서버 요청처럼 0.5초 후 결과를 돌려준다.
-function waitForMockResponse() {
-    return new Promise((resolve) => {
-        setTimeout(resolve, 500);
-    });
+// 화면에서 쓰는 소문자 양식값을 서버 저장값으로 변환한다.
+function toServerResumeType(resumeType) {
+    return resumeType === "blind" ? "BLIND" : "BASIC";
 }
 
-// MOCK: 현재 작성 중인 이력서를 브라우저 메모리에만 저장한다.
-export async function saveResumeDraft({ resumeType, resume }) {
-    await waitForMockResponse();
+// 서버 응답을 기존 이력서 화면이 사용하던 구조로 변환한다.
+function toResumeDraft(response) {
+    let resume = {};
 
-    const savedResume = {
-        id: crypto.randomUUID(),
-        resumeType,
-        savedAt: new Date().toISOString(),
-        // 사진은 현재 미리보기 전용이라 초안에 저장하지 않는다.
+    try {
+        resume = JSON.parse(response.resumeData);
+    } catch {
+        // 서버 데이터가 깨져도 화면 전체가 멈추지 않도록 빈 양식으로 처리
+        resume = {};
+    }
+
+    return {
+        id: response.resumeId,
+        resumeType: response.resumeType === "BLIND"
+            ? "blind"
+            : "basic",
+        savedAt: response.updatedAt,
+        photoUrl: response.photoUrl,
         resume: {
             ...resume,
+            // 서버 사진은 다음 단계에서 보호 API로 Blob URL을 받아 표시한다.
             photoPreviewUrl: "",
         },
     };
-
-    // 같은 양식의 기존 초안은 제외하고, 최신 초안만 남긴다.
-    resumeDraftsInMemory = [
-        savedResume,
-        ...resumeDraftsInMemory.filter(
-            (draft) => draft.resumeType !== resumeType,
-        ),
-    ];
-
-    return savedResume;
 }
 
-// MOCK: 현재 화면이 열린 동안 저장된 초안 목록을 불러온다.
-export async function getResumeDrafts() {
-    await waitForMockResponse();
+// 이력서 내용과 선택한 사진을 실제 서버에 저장한다.
+export async function saveResumeDraft({
+                                          resumeType,
+                                          resume,
+                                          photoFile = null,
+                                          removePhoto = false,
+                                      }) {
+    const formData = new FormData();
 
-    return [...resumeDraftsInMemory];
-}
+    formData.append("resumeType", toServerResumeType(resumeType));
 
-// MOCK: 선택한 이력서 한 건을 메모리에서 불러온다.
-export async function getResumeDraft(resumeId) {
-    await waitForMockResponse();
+    // 미리보기 주소는 브라우저에서만 의미가 있으므로 DB JSON에는 저장하지 않는다.
+    const { photoPreviewUrl, ...resumeData } = resume;
 
-    return resumeDraftsInMemory.find(
-        (draft) => draft.id === resumeId,
+    formData.append("resumeData", JSON.stringify(resumeData));
+    formData.append("removePhoto", String(removePhoto));
+
+    if (photoFile) {
+        formData.append("photo", photoFile);
+    }
+
+    const response = await client.post(
+        "/employment/resumes",
+        formData,
     );
+
+    return toResumeDraft(response);
+}
+
+// 현재 로그인한 회원의 일반·블라인드 이력서 목록을 조회한다.
+export async function getResumeDrafts() {
+    const responses = await client.get("/employment/resumes");
+
+    return responses.map(toResumeDraft);
+}
+
+// 현재 로그인한 회원의 이력서 한 건만 조회한다.
+export async function getResumeDraft(resumeId) {
+    const response = await client.get(
+        `/employment/resumes/${resumeId}`,
+    );
+
+    return toResumeDraft(response);
+}
+
+// 저장된 일반 이력서의 증명사진을 즉시 삭제한다.
+export async function deleteResumePhoto(resumeId) {
+    await client.delete(`/employment/resumes/${resumeId}/photo`);
+}
+
+// 보호된 사진 API를 인증 요청으로 호출해 브라우저 미리보기 주소를 만든다.
+export async function getResumePhotoPreviewUrl(resumeId) {
+    const { accessToken } = useAuthStore.getState();
+
+    const response = await fetch(
+        `${API_BASE}/employment/resumes/${resumeId}/photo`,
+        {
+            headers: accessToken
+                ? { Authorization: `Bearer ${accessToken}` }
+                : {},
+            credentials: "same-origin",
+        },
+    );
+
+    if (!response.ok) {
+        throw new Error("이력서 사진을 불러오지 못했습니다.");
+    }
+
+    const photoBlob = await response.blob();
+
+    return URL.createObjectURL(photoBlob);
 }
