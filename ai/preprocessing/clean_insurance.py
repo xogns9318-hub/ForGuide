@@ -26,6 +26,22 @@ INSURER_TYPE = {
     "생명보험협회": "생명보험",
     "손해보험협회": "손해보험",
 }
+COMPANY_GROUP = "050000"
+OFFICIAL_NAMES = {
+    "DB손보": "DB손해보험주식회사",
+    "KB손보": "주식회사KB손해보험",
+    "NH농협생명": "농협생명보험주식회사",
+    "교보생명": "교보생명보험주식회사",
+    "농협손보": "농협손해보험주식회사",
+    "동양생명": "동양생명보험주식회사",
+    "롯데손보": "롯데손해보험주식회사",
+    "삼성생명": "삼성생명보험주식회사",
+    "삼성화재": "삼성화재해상보험주식회사",
+    "한화생명": "한화생명보험주식회사",
+    "현대해상": "현대해상화재보험주식회사",
+    "흥국생명": "흥국생명보험주식회사",
+    "흥국화재": "흥국화재해상보험주식회사",
+}
 
 COLUMNS = [
     "insurer_type",
@@ -43,6 +59,8 @@ COLUMNS = [
     "female_rider1",
     "female_rider2",
     "female_total",
+    "homepage",
+    "phone",
     "bas_dt",
 ]
 
@@ -102,8 +120,22 @@ def split_premium(product_type, groups, sex):
     return "", "", "", total
 
 
+def load_contacts():
+    files = sorted(RAW_DIR.glob(f"finlife_companySearch_{COMPANY_GROUP}_*.json"))
+    if not files:
+        return {}
+    by_name = {c["kor_co_nm"]: c for c in json.loads(files[-1].read_text(encoding="utf-8"))["baseList"]}
+    contacts = {}
+    for short, official in OFFICIAL_NAMES.items():
+        company = by_name.get(official)
+        if company:
+            contacts[short] = {"homepage": (company.get("homp_url") or "").strip(), "phone": (company.get("cal_tel") or "").strip()}
+    return contacts
+
+
 def build_rows(collected):
     products, premiums = collect_premiums(load_raw(collected))
+    contacts = load_contacts()
     rows = []
     for (product_key, age), groups in sorted(premiums.items()):
         r = products[product_key]
@@ -128,6 +160,8 @@ def build_rows(collected):
             "female_rider1": female[1],
             "female_rider2": female[2],
             "female_total": female[3] or "",
+            "homepage": contacts.get(r["cmpyNm"], {}).get("homepage", ""),
+            "phone": contacts.get(r["cmpyNm"], {}).get("phone", ""),
             "bas_dt": r["basDt"],
         })
     return rows

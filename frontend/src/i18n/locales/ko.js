@@ -438,6 +438,8 @@ const ko = {
             high_rate: "같은 조건의 상품 중 금리가 높은 편이에요",
             no_visit: "영업점에 가지 않고 가입할 수 있어요",
             bank: "은행(1금융권) 상품이에요",
+            low_premium: "같은 보장 중 보험료가 낮은 편이에요",
+            online_join: "온라인으로 가입할 수 있어요",
         },
         checkReasons: {
             foreigner_unspecified: "외국인 가입 조건이 공시되지 않았어요",
@@ -445,6 +447,7 @@ const ko = {
             rate_outlier: "금리가 다른 상품보다 크게 높아요. 특별한 가입 조건이 있는지 확인하세요",
             kakao_withdrawal_only:
                 "외국인은 입출금 통장만 안내돼 있어요. 예·적금 가입 여부를 확인하세요",
+            insurer_review: "보험사마다 외국인 가입 심사 기준이 달라요",
         },
         mismatchReasons: {
             domestic_only: "내국인만 가입할 수 있어요",
@@ -457,13 +460,23 @@ const ko = {
                 "외국인 가입이 가능하다고 안내된 상품이에요. 금융사 앱이나 홈페이지에서 가입하세요.",
             ask_foreigner_eligibility:
                 "외국인 가입 조건이 공시되지 않았어요. 가입 전에 금융사에 외국인도 가입할 수 있는지 물어보세요.",
+            ask_insurer_eligibility:
+                "가입 전에 보험사에 체류자격과 체류 기간으로 가입할 수 있는지 물어보세요.",
         },
         moreFromCompany: "이 금융사 상품 {{count}}개 더",
+        separate: {
+            title: "이런 상품도 있어요",
+            senior: "노후 실손",
+            simplified: "유병력자 실손",
+            description: "가입 조건과 보장 구성이 일반 실손과 달라서 따로 보여 드려요.",
+        },
         notices: {
             rate_may_change: "금리는 {{month}} 공시 기준이며 바뀔 수 있어요.",
             savings_bank_protected: "저축은행 예·적금도 예금자보호 대상이에요.",
             reference_only:
-                "추천은 참고용이에요. 실제 가입 여부와 금리는 금융사 심사에 따라 달라요.",
+                "추천은 참고용이에요. 실제 가입 여부와 조건은 금융사 심사에 따라 달라요.",
+            premium_may_change: "보험료는 {{date}} 공시 기준이며 바뀔 수 있어요.",
+            insurance_age_basis: "보험료는 보험 나이 기준이라 실제 보험료가 조금 다를 수 있어요.",
         },
     },
 };

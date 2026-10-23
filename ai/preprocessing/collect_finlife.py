@@ -11,6 +11,7 @@ ENV_PATH = AI_DIR / ".env"
 
 BASE_URL = "http://finlife.fss.or.kr/finlifeapi/{service}.json"
 GROUPS = ["020000", "030300"]
+SERVICE_GROUPS = {"companySearch": ["020000", "030300", "050000"]}
 
 
 def read_key():
@@ -46,7 +47,7 @@ def main():
     auth = read_key()
     RAW_DIR.mkdir(parents=True, exist_ok=True)
     today = f"{date.today():%Y%m%d}"
-    for group in GROUPS:
+    for group in SERVICE_GROUPS.get(service, GROUPS):
         data = fetch_all(service, group, auth)
         path = RAW_DIR / f"finlife_{service}_{group}_{today}.json"
         path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
