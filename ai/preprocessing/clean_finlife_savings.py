@@ -52,6 +52,8 @@ COLUMNS = [
     "intr_rate2",
     "effective_rate",
     "rate_outlier",
+    "homepage",
+    "phone",
     "dcls_month",
 ]
 
@@ -116,7 +118,22 @@ def load_raw(service, group, collected):
     return data["baseList"], data["optionList"]
 
 
+def load_companies():
+    companies = {}
+    for group in INSTITUTION_TYPES:
+        files = sorted(RAW_DIR.glob(f"finlife_companySearch_{group}_*.json"))
+        if not files:
+            continue
+        for company in json.loads(files[-1].read_text(encoding="utf-8"))["baseList"]:
+            companies[company["fin_co_no"]] = {
+                "homepage": (company.get("homp_url") or "").strip(),
+                "phone": (company.get("cal_tel") or "").strip(),
+            }
+    return companies
+
+
 def build_rows(collected):
+    companies = load_companies()
     rows = []
     for service, purpose in SOURCES.items():
         for group, institution_type in INSTITUTION_TYPES.items():
@@ -153,6 +170,8 @@ def build_rows(collected):
                     "intr_rate2": "" if option.get("intr_rate2") is None else option["intr_rate2"],
                     "effective_rate": "" if effective is None else round(effective, 4),
                     "rate_outlier": 0,
+                    "homepage": companies.get(product["fin_co_no"], {}).get("homepage", ""),
+                    "phone": companies.get(product["fin_co_no"], {}).get("phone", ""),
                     "dcls_month": product.get("dcls_month") or "",
                 })
     return rows

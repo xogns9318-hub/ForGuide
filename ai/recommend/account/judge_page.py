@@ -1,4 +1,3 @@
-import ast
 import csv
 import json
 import sys
@@ -6,7 +5,7 @@ from pathlib import Path
 
 AI_DIR = Path(__file__).resolve().parent.parent.parent
 PROCESSED_DIR = AI_DIR / "data" / "processed"
-NOTEBOOK = AI_DIR / "recommend" / "experiments.ipynb"
+LABELS_PATH = Path(__file__).resolve().parent / "labels.json"
 
 SIDE = ["kor_co_nm", "fin_prdt_nm", "institution_type", "effective_rate", "visit_required"]
 EXAMPLE_DEPOSIT = 10_000_000
@@ -99,20 +98,21 @@ def latest_date():
     return sorted(PROCESSED_DIR.glob("account_pairs_judge_*.csv"))[-1].stem.rsplit("_", 1)[-1]
 
 
-def notebook_labels():
-    nb = json.loads(NOTEBOOK.read_text(encoding="utf-8"))
-    for cell in nb["cells"]:
-        src = "".join(cell["source"])
-        if cell["cell_type"] == "code" and "LABELS = {" in src:
-            start = src.index("LABELS = {") + len("LABELS = ")
-            end = src.index("}", start) + 1
-            return ast.literal_eval(src[start:end])
-    return {}
+def saved_labels(judge=None):
+    if not LABELS_PATH.exists():
+        return {}
+    by_judge = json.loads(LABELS_PATH.read_text(encoding="utf-8"))
+    if judge:
+        return by_judge.get(judge, {})
+    merged = {}
+    for labels in by_judge.values():
+        merged.update(labels)
+    return merged
 
 
-def build(date):
+def build(date, judge=None):
     rows = list(csv.DictReader((PROCESSED_DIR / f"account_pairs_judge_{date}.csv").open(encoding="utf-8-sig")))
-    labels = notebook_labels()
+    labels = saved_labels(judge)
     pairs, preset = [], {}
     for r in rows:
         side = lambda p: [r[f"{p}_{n}"] for n in SIDE[:3]] + [float(r[f"{p}_effective_rate"]), int(r[f"{p}_visit_required"])]
@@ -125,15 +125,16 @@ def build(date):
             .replace("__MONTHLY__", str(EXAMPLE_MONTHLY))
             .replace("__PAIRS__", json.dumps(pairs, ensure_ascii=False, separators=(",", ":")))
             .replace("__PRESET__", json.dumps(preset, ensure_ascii=False)))
-    path = PROCESSED_DIR / f"account_judge_{date}.html"
+    path = PROCESSED_DIR / f"account_judge_{date}{'_' + judge if judge else ''}.html"
     path.write_text(page, encoding="utf-8")
     return path, len(pairs), len(preset)
 
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    date = sys.argv[1] if len(sys.argv) > 1 else latest_date()
-    path, total, preset = build(date)
+    date = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1] != "-" else latest_date()
+    judge = sys.argv[2] if len(sys.argv) > 2 else None
+    path, total, preset = build(date, judge)
     print(f"판정 페이지 저장: {path} (쌍 {total}개, 이미 판정 {preset}개)")
 
 

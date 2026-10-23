@@ -28,6 +28,7 @@ RATE_FULL_GAP = 1.0
 VISIT_NOT_WANTED = "원치 않음"
 PREFER_BANK = "은행 선호"
 BANK = "은행"
+OUTLIER_REASON = "금리가 다른 상품보다 크게 높음: 가입 조건 확인"
 
 
 def load_options(path=None):
@@ -62,10 +63,13 @@ def judge(product, user):
         check.append(note or "외국인 가입 조건 미기재")
     if product["region_limit"]:
         check.append(f"가입 지역 제한: {product['region_limit']}")
+    if product.get("rate_outlier") == "1":
+        check.append(OUTLIER_REASON)
     return mismatch, check
 
 
-def recommend_fast(options, user):
+def recommend_fast(options, user, weights=None):
+    weights = weights or WEIGHTS
     term = int(user["term"])
     products = best_option_per_product(options, user["purpose"], term)
     judged = []
@@ -94,7 +98,7 @@ def recommend_fast(options, user):
                 "savings_bank": int(product["institution_type"] != BANK),
                 "non_preferred_institution": int(user["institution"] == PREFER_BANK and product["institution_type"] != BANK),
             }
-            score, contributions = weighted_score(features, WEIGHTS)
+            score, contributions = weighted_score(features, weights)
             reasons = top_reasons(contributions)
         results.append({
             "product_id": f"{product['fin_co_no']}-{product['fin_prdt_cd']}",
@@ -103,7 +107,13 @@ def recommend_fast(options, user):
             "institution_type": product["institution_type"],
             "save_trm": term,
             "intr_rate_type": product["intr_rate_type"],
+            "intr_rate": float(product["intr_rate"]),
             "effective_rate": float(product["effective_rate"]),
+            "join_way": product["join_way"],
+            "visit_required": product["visit_required"] == "1",
+            "rate_outlier": product.get("rate_outlier") == "1",
+            "homepage": product.get("homepage", ""),
+            "phone": product.get("phone", ""),
             "group": group,
             "score": score,
             "features": features,
@@ -111,7 +121,7 @@ def recommend_fast(options, user):
             "check_reasons": check,
             "mismatch_reasons": mismatch,
             "region_limit": product["region_limit"],
-            "sort_last": bool(product["region_limit"]),
+            "sort_last": bool(product["region_limit"]) or product.get("rate_outlier") == "1",
             "tiebreak": float(product["effective_rate"]),
             "dcls_month": product["dcls_month"],
         })
