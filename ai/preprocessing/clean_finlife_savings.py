@@ -25,8 +25,8 @@ FOREIGNER_DENIED = re.compile(r"내국인")
 REGION_STOPWORDS = re.compile(r"비대면|대면|특판|회전|정기|예금|적금|개인|법인|모바일|인터넷|스마트|단리|복리|만기|자유|정액|이벤트|신규|고객|우대|플러스|변동|고정|금리|영업점|창구|전용|월수|\d")
 BRANCH_SUFFIX = re.compile(r"(본점|지점)$")
 FOREIGNER_OVERRIDES = {
-    "주식회사 케이뱅크": ("불일치", "외국인 가입 아직 불가 (출시 준비 중)"),
-    "주식회사 카카오뱅크": ("확인 필요", "외국인통장(입출금)만 안내, 예·적금 가입 여부 미기재"),
+    "주식회사 케이뱅크": ("불일치", "kbank_not_yet"),
+    "주식회사 카카오뱅크": ("확인 필요", "kakao_withdrawal_only"),
 }
 WHITESPACE = re.compile(r"\s+")
 OUTLIER_IQR_FACTOR = 1.5

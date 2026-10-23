@@ -24,6 +24,7 @@ GROUP_GUIDES = {
     GROUP_MATCH: "join_at_company",
     GROUP_CHECK: "ask_foreigner_eligibility",
 }
+GROUP_KEYS = {GROUP_MATCH: "match", GROUP_CHECK: "check", GROUP_MISMATCH: "mismatch"}
 NOTICES = ["rate_may_change", "savings_bank_protected", "reference_only"]
 
 
@@ -122,6 +123,7 @@ def recommend(user, options=None, weights=None, top_n=TOP_N, mismatch_n=MISMATCH
             items.append(item)
         groups.append({
             "group": group,
+            "key": GROUP_KEYS[group],
             "total": len(members),
             "companies": len(leaders),
             "guide": GROUP_GUIDES[group],
@@ -137,6 +139,7 @@ def recommend(user, options=None, weights=None, top_n=TOP_N, mismatch_n=MISMATCH
         "weights": weight_source,
         "groups": groups,
         "mismatch": {
+            "key": GROUP_KEYS[GROUP_MISMATCH],
             "total": len(mismatched),
             "items": [card(r, i, weights, user) for i, r in enumerate(mismatched[:mismatch_n], start=1)],
         },

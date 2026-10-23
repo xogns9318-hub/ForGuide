@@ -28,7 +28,7 @@ RATE_FULL_GAP = 1.0
 VISIT_NOT_WANTED = "원치 않음"
 PREFER_BANK = "은행 선호"
 BANK = "은행"
-OUTLIER_REASON = "금리가 다른 상품보다 크게 높음: 가입 조건 확인"
+OUTLIER_REASON = "rate_outlier"
 
 
 def load_options(path=None):
@@ -56,13 +56,13 @@ def judge(product, user):
     mismatch, check = [], []
     note = product.get("foreigner_note", "")
     if product["foreigner_status"] == "불일치":
-        mismatch.append(note or "내국인만 가입")
+        mismatch.append(note or "domestic_only")
     if product["visit_required"] == "1" and user["visit"] == VISIT_NOT_WANTED:
-        mismatch.append("영업점 방문 필요")
+        mismatch.append("visit_required")
     if product["foreigner_status"] == "확인 필요":
-        check.append(note or "외국인 가입 조건 미기재")
+        check.append(note or "foreigner_unspecified")
     if product["region_limit"]:
-        check.append(f"가입 지역 제한: {product['region_limit']}")
+        check.append("region_limit")
     if product.get("rate_outlier") == "1":
         check.append(OUTLIER_REASON)
     return mismatch, check
