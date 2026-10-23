@@ -1,11 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Banner from "../Banner/Banner.jsx";
 import {
+    deleteResumePhoto,
     getResumeDraft,
     getResumeDrafts,
-    saveResumeDraft
+    getResumePhotoPreviewUrl,
+    saveResumeDraft,
 } from "../../api/resumeApi.js";
 import ResumeLoadModal from "./ResumeLoadModal.jsx";
+import { useAuthStore } from "../../auth/store/useAuthStore.js";
+import {
+    readResumeTemporaryDraft,
+    readResumeTemporaryPhoto,
+    writeResumeTemporaryDraft,
+    writeResumeTemporaryPhoto,
+    clearResumeTemporaryPhoto,
+} from "../../utils/resumeDraftStorage.js";
 import "../../styles/employment-resume.css";
 
 const EMPTY_ROWS = Array.from({ length: 4 });
@@ -185,35 +195,52 @@ function ResumeTable({ title, columns, fields, rows, onChange, })
     );
 }
 
-function BasicPersonalInfo({personal, photoPreviewUrl, onChange, onPhotoChange,}) {
+function BasicPersonalInfo({
+    personal,
+    photoPreviewUrl,
+    isRemovingPhoto,
+    onChange,
+    onPhotoChange,
+    onPhotoRemove,
+}) {
     return (
     <section className="resume-personal-section">
         <h3>인적사항</h3>
 
         <div className="resume-personal-grid">
-        <label className="resume-photo-slot">
-            <input
-                className="resume-photo-input"
-                type="file"
-                accept="image/*"
-                onChange={onPhotoChange}
-            />
-
-            <div className="resume-photo-frame">
-                {photoPreviewUrl && (
-                    <img
-                        src={photoPreviewUrl}
-                        alt="선택한 사진 미리보기"
+            <div className="resume-photo-control">
+                <label className="resume-photo-slot">
+                    <input
+                        className="resume-photo-input"
+                        type="file"
+                        accept="image/*"
+                        onChange={onPhotoChange}
                     />
 
+                    <div className="resume-photo-frame">
+                        {photoPreviewUrl && (
+                            <img
+                                src={photoPreviewUrl}
+                                alt="선택한 사진 미리보기"
+                            />
+                        )}
+                    </div>
+
+                    {!photoPreviewUrl && <span>사진 선택</span>}
+                    <small>3 * 4cm</small>
+                </label>
+
+                {photoPreviewUrl && (
+                    <button
+                        type="button"
+                        className="button resume-photo-delete"
+                        onClick={onPhotoRemove}
+                        disabled={isRemovingPhoto}
+                    >
+                        {isRemovingPhoto ? "삭제 중..." : "삭제"}
+                    </button>
                 )}
             </div>
-
-            <span>
-                {photoPreviewUrl ? "사진 변경" : "사진 선택"}
-            </span>
-            <small>3 * 4cm</small>
-        </label>
 
             <div className="resume-personal-fields">
                 <label className="resume-name-field">
@@ -345,12 +372,21 @@ function BlindPersonalInfo({ personal, onChange }) {
 
 // 저장·불러오기·인쇄는 다음 작업에서 연결하고, 여기서는 양식과 탭만 제공한다.
 export default function EmploymentResume() {
+    const memberId = useAuthStore(
+        (state) => state.member?.memberId,
+    );
+
     const [resumeType, setResumeType] = useState("basic");
     const [isSaving, setIsSaving] = useState(false);
     const [saveMessage, setSaveMessage] = useState("");
     const [isLibraryOpen, setIsLibraryOpen] = useState(false);
     const [isLoadingDrafts, setIsLoadingDrafts] = useState(false);
     const [savedDrafts, setSavedDrafts] = useState([]);
+    const [basicPhotoFile, setBasicPhotoFile] = useState(null);
+    const [basicResumeId, setBasicResumeId] = useState(null);
+    const [basicPhotoUrl, setBasicPhotoUrl] = useState(null);
+    const [isRemovingPhoto, setIsRemovingPhoto] = useState(false);
+    const [hasTemporaryBasicPhoto, setHasTemporaryBasicPhoto] = useState(false);
 
     // 기본,블라인드 이력서의 입력값을 화면이 열려 있는 동안 보관
     const [basicResume, setBasicResume] = useState(
@@ -360,6 +396,165 @@ export default function EmploymentResume() {
     const [blindResume, setBlindResume] = useState(
         createInitialBlindResume,
     );
+
+    const [restoredMemberId, setRestoredMemberId] = useState(null);
+
+    // 로그인한 회원의 작성 중 이력서와 마지막 선택 탭을 복원
+    useEffect(() => {
+        if (!memberId) {
+            return;
+        }
+
+        setRestoredMemberId(null);
+
+        const savedDraft = readResumeTemporaryDraft(memberId);
+
+        if (savedDraft?.basicResume) {
+            setBasicResume({
+                ...savedDraft.basicResume,
+                // 브라우저 임시 사진 주소는 새로고침 뒤 사용할 수 없다.
+                photoPreviewUrl: "",
+            });
+        }
+
+        if (savedDraft?.blindResume) {
+            setBlindResume(savedDraft.blindResume);
+        }
+
+        setBasicResumeId(savedDraft?.basicResumeId ?? null);
+        setBasicPhotoUrl(savedDraft?.basicPhotoUrl ?? null);
+        setHasTemporaryBasicPhoto(
+            Boolean(savedDraft?.hasTemporaryBasicPhoto),
+        );
+
+        setResumeType(
+            savedDraft?.resumeType === "blind" ? "blind" : "basic",
+        );
+        setBasicPhotoFile(null);
+        setRestoredMemberId(memberId);
+    }, [memberId]);
+
+    // 입력값이 바뀔 때마다 회원별 브라우저 저장소에 임시 저장
+    useEffect(() => {
+        if (!memberId || restoredMemberId !== memberId) {
+            return;
+        }
+
+        // blol: 미리보기 주소는 새로고침 뒤 무효라 저장하지 않음.
+        const { photoPreviewUrl, ...basicResumeWithoutPreview } =
+            basicResume;
+
+        const draftToSave = {
+            resumeType,
+            basicResume: basicResumeWithoutPreview,
+            blindResume,
+            // 서버에 저장된 사진을 새로고침 뒤 다시 조회하기 위한 식별값
+            basicResumeId,
+            basicPhotoUrl,
+            hasTemporaryBasicPhoto,
+        };
+
+        writeResumeTemporaryDraft(memberId, draftToSave);
+    }, [
+        memberId,
+        restoredMemberId,
+        resumeType,
+        basicResume,
+        blindResume,
+        basicResumeId,
+        basicPhotoUrl,
+        hasTemporaryBasicPhoto,
+    ]);
+
+    // 저장 전 선택한 사진도 새로고침 뒤 IndexedDB에서 복원한다.
+    useEffect(() => {
+        if (
+            !memberId
+            || restoredMemberId !== memberId
+            || !hasTemporaryBasicPhoto
+            || basicPhotoFile
+        ) {
+            return;
+        }
+
+        let isCurrent = true;
+
+        readResumeTemporaryPhoto(memberId)
+            .then((photoFile) => {
+                if (!isCurrent) {
+                    return;
+                }
+
+                if (!photoFile) {
+                    setHasTemporaryBasicPhoto(false);
+                    return;
+                }
+
+                setBasicPhotoFile(photoFile);
+                setBasicResume((previousResume) => ({
+                    ...previousResume,
+                    photoPreviewUrl: URL.createObjectURL(photoFile),
+                }));
+            })
+            .catch(() => {
+                if (isCurrent) {
+                    setHasTemporaryBasicPhoto(false);
+                }
+            });
+
+        return () => {
+            isCurrent = false;
+        };
+    }, [
+        memberId,
+        restoredMemberId,
+        hasTemporaryBasicPhoto,
+        basicPhotoFile,
+    ]);
+
+    // 저장된 사진은 보호 API를 통해서만 다시 미리보기 주소로 바꾼다.
+    useEffect(() => {
+        if (
+            !memberId
+            || restoredMemberId !== memberId
+            || !basicResumeId
+            || !basicPhotoUrl
+            || basicPhotoFile
+            || basicResume.photoPreviewUrl
+            || hasTemporaryBasicPhoto
+        ) {
+            return;
+        }
+
+        let isCurrent = true;
+
+        getResumePhotoPreviewUrl(basicResumeId)
+            .then((photoPreviewUrl) => {
+                if (!isCurrent) {
+                    return;
+                }
+
+                setBasicResume((previousResume) => ({
+                    ...previousResume,
+                    photoPreviewUrl,
+                }));
+            })
+            .catch(() => {
+                // 사진 복원에 실패해도 이력서 텍스트 임시본은 유지한다.
+            });
+
+        return () => {
+            isCurrent = false;
+        };
+    }, [
+        memberId,
+        restoredMemberId,
+        basicResumeId,
+        basicPhotoUrl,
+        basicPhotoFile,
+        basicResume.photoPreviewUrl,
+        hasTemporaryBasicPhoto,
+    ]);
 
     function handleBasicPersonalChange(field, value) {
         setBasicResume((previousResume) => ({
@@ -371,20 +566,73 @@ export default function EmploymentResume() {
         }));
     }
 
-    function handleBasicPhotoChange(event) {
+    async function handleBasicPhotoChange(event) {
         const selectedFile = event.target.files?.[0];
 
         if (!selectedFile) {
             return;
         }
 
-        // 선택한 사진은 서버 업로드 전까지 브라우저에서만 미리보기로 사용
+        // 선택 직후에는 즉시 미리보기를 보여 준다.
         const previewUrl = URL.createObjectURL(selectedFile);
 
+        setBasicPhotoFile(selectedFile);
         setBasicResume((previousResume) => ({
             ...previousResume,
             photoPreviewUrl: previewUrl,
         }));
+
+        try {
+            // 저장 전 사진도 새로고침 뒤 복원할 수 있도록 브라우저 DB에 보관한다.
+            await writeResumeTemporaryPhoto(memberId, selectedFile);
+            setHasTemporaryBasicPhoto(true);
+        } catch {
+            setSaveMessage(
+                "선택한 사진을 임시 저장하지 못했습니다.",
+            );
+        }
+    }
+
+    async function handleBasicPhotoRemove() {
+        const previousPhotoPreviewUrl = basicResume.photoPreviewUrl;
+        const previousPhotoFile = basicPhotoFile;
+        const previousPhotoUrl = basicPhotoUrl;
+        const previousHasTemporaryPhoto = hasTemporaryBasicPhoto;
+
+        // 클릭 즉시 화면에서는 사진을 제거한다.
+        setBasicResume((previousResume) => ({
+            ...previousResume,
+            photoPreviewUrl: "",
+        }));
+        setBasicPhotoFile(null);
+        setIsRemovingPhoto(true);
+        setSaveMessage("");
+
+        try {
+            // 서버 사진이 있으면 DB 연결과 서버 파일을 즉시 삭제한다.
+            if (basicPhotoUrl && basicResumeId) {
+                await deleteResumePhoto(basicResumeId);
+            }
+
+            // 저장 전 선택했던 사진도 IndexedDB에서 제거한다.
+            await clearResumeTemporaryPhoto(memberId);
+
+            setBasicPhotoUrl(null);
+            setHasTemporaryBasicPhoto(false);
+            setSaveMessage("사진을 삭제했습니다.");
+        } catch {
+            // 서버 삭제가 실패한 경우에만 원래 화면 상태로 되돌린다.
+            setBasicPhotoUrl(previousPhotoUrl);
+            setBasicPhotoFile(previousPhotoFile);
+            setHasTemporaryBasicPhoto(previousHasTemporaryPhoto);
+            setBasicResume((previousResume) => ({
+                ...previousResume,
+                photoPreviewUrl: previousPhotoPreviewUrl,
+            }));
+            setSaveMessage("사진을 삭제하지 못했습니다. 다시 시도해주세요.");
+        } finally {
+            setIsRemovingPhoto(false);
+        }
     }
 
     function handleBlindPersonalChange(field, value) {
@@ -421,9 +669,10 @@ export default function EmploymentResume() {
         setSaveMessage("");
 
         try{
-            await saveResumeDraft({
+            const savedDraft = await saveResumeDraft({
                 resumeType,
                 resume: activeResume,
+                photoFile: isBlind ? null : basicPhotoFile,
             });
 
             const resumeName = isBlind
@@ -431,6 +680,23 @@ export default function EmploymentResume() {
                 : "기본 이력서";
 
             setSaveMessage(`${resumeName}를 저장했습니다.`);
+
+            if (!isBlind) {
+                setBasicResumeId(savedDraft.id);
+                setBasicPhotoUrl(savedDraft.photoUrl);
+
+                // 서버 저장이 끝났으므로 브라우저의 임시 사진 파일만 정리
+                // photoPreviewUrl은 건드리지 않아 현재 사진은 화면에 그대로
+                try {
+                    await clearResumeTemporaryPhoto(memberId);
+                } catch {
+                    // 서버 저장은 성공했으므로 IndexedDB 정리 실패만 기록
+                    console.warn("임시 사진을 정리하지 못했습니다.");
+                }
+
+                setHasTemporaryBasicPhoto(false);
+                setBasicPhotoFile(null);
+            }
         } catch {
             setSaveMessage("저장하지 못했습니다. 다시 시도해주세요.");
         } finally {
@@ -466,12 +732,31 @@ export default function EmploymentResume() {
             if(!selectedDraft) {
                 throw new Error("저장한 이력서를 찾을 수 없습니다.");
             }
+            const resumeWithPreview = {
+                ...selectedDraft.resume,
+            };
+
+            if (
+                selectedDraft.resumeType === "basic"
+                && selectedDraft.photoUrl
+            ) {
+                try {
+                    resumeWithPreview.photoPreviewUrl =
+                        await getResumePhotoPreviewUrl(selectedDraft.id);
+                } catch {
+                    // 사진 파일이 없거나 접근할 수 없어도 이력서 본문은 불러온다.
+                    resumeWithPreview.photoPreviewUrl = "";
+                }
+            }
 
             if(selectedDraft.resumeType === "blind") {
-                setBlindResume(selectedDraft.resume);
+                setBlindResume(resumeWithPreview);
                 setResumeType("blind");
             } else {
-                setBasicResume(selectedDraft.resume);
+                setBasicResume(resumeWithPreview);
+                setBasicResumeId(selectedDraft.id);
+                setBasicPhotoUrl(selectedDraft.photoUrl);
+                setBasicPhotoFile(null);
                 setResumeType("basic");
             }
 
@@ -502,11 +787,11 @@ export default function EmploymentResume() {
                     aria-selected={isBlind} className={isBlind ? "is-active" : ""}
                     onClick={() => setResumeType("blind")}>블라인드 채용 이력서
             </button>
-        </div>{isBlind && <p className="employment-blind-notice">사진·이름·생년월일 등 신원 정보는 작성하지 않습니다.</p>}
+        </div>
+        
         <article className="employment-resume-sheet" role="tabpanel">
             <header className="employment-resume-sheet-title">
                 <h2>{isBlind ? "블라인드 채용 이력서" : "이력서"}</h2>
-                <span>예시 데이터</span>
             </header>{isBlind ? (
                 <BlindPersonalInfo
                     personal={blindResume.personal}
@@ -516,8 +801,10 @@ export default function EmploymentResume() {
             <BasicPersonalInfo
                 personal={basicResume.personal}
                 photoPreviewUrl={basicResume.photoPreviewUrl}
+                isRemovingPhoto={isRemovingPhoto}
                 onChange={handleBasicPersonalChange}
                 onPhotoChange={handleBasicPhotoChange}
+                onPhotoRemove={handleBasicPhotoRemove}
             />
         )}
 

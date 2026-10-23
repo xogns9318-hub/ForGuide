@@ -16,6 +16,7 @@ import Consultation from "../components/Consultation/Consultation.jsx";
 import EmploymentResume from "../components/Employment/EmploymentResume.jsx";
 import JobListings from "../components/JobListings/JobListings.jsx";
 import UnderConstruction from "../components/UnderConstruction/UnderConstruction.jsx";
+import RequireAuth from "../auth/components/RequireAuth.jsx";
 
 // 제작 중 화면을 표시할 서비스 주소만 지정
 const constructionPaths = new Set([
@@ -229,7 +230,8 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                     .filter(
                         (route) =>
                             route.path !== "/service/community" &&
-                            route.path !== "/service/consultation",
+                            route.path !== "/service/consultation"&&
+                            route.path !== "/service/employment",
                     )
                     .map((route) => (
                         <Route
@@ -272,6 +274,14 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                             }
                         />
                     ))}
+
+                {/* 이력서 작성은 로그인한 회원만 가능 */}
+                <Route element={<RequireAuth />}>
+                    <Route
+                        path="/service/employment"
+                        element={<EmploymentResume />}
+                    />
+                </Route>
 
                 {/* 회원가입·로그인·마이페이지 */}
                 {authRoutes()}
