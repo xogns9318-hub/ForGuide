@@ -3829,32 +3829,6 @@
       },
       {
        "rank": 13,
-       "product_id": "0013175-10-003-1384-0001",
-       "purpose": "예금",
-       "company": "농협은행주식회사",
-       "product_name": "NH올원e예금",
-       "institution_type": "은행",
-       "term_months": 12,
-       "base_rate": 3.65,
-       "rate_type": "단리",
-       "effective_rate": 3.65,
-       "join_way": "인터넷,스마트폰",
-       "visit_required": false,
-       "contact": {
-        "homepage": "https://banking.nonghyup.com",
-        "phone": "16613000"
-       },
-       "reasons": [
-        "bank",
-        "no_visit"
-       ],
-       "check_reasons": [
-        "foreigner_unspecified"
-       ],
-       "more_from_company": 3
-      },
-      {
-       "rank": 14,
        "product_id": "0010359-240039",
        "purpose": "예금",
        "company": "키움예스저축은행",
@@ -3880,7 +3854,7 @@
        "more_from_company": 5
       },
       {
-       "rank": 15,
+       "rank": 14,
        "product_id": "0010560-C614010",
        "purpose": "예금",
        "company": "참저축은행",
@@ -3906,21 +3880,21 @@
        "more_from_company": 3
       },
       {
-       "rank": 16,
-       "product_id": "0010026-01211310142",
+       "rank": 15,
+       "product_id": "0013175-10-003-1384-0001",
        "purpose": "예금",
-       "company": "중소기업은행",
-       "product_name": "IBK굴리기통장(정기예금)",
+       "company": "농협은행주식회사",
+       "product_name": "NH올원e예금",
        "institution_type": "은행",
        "term_months": 12,
-       "base_rate": 3.63,
+       "base_rate": 3.65,
        "rate_type": "단리",
-       "effective_rate": 3.63,
-       "join_way": "영업점,스마트폰",
+       "effective_rate": 3.65,
+       "join_way": "인터넷,스마트폰",
        "visit_required": false,
        "contact": {
-        "homepage": "http://www.ibk.co.kr",
-        "phone": "15662566"
+        "homepage": "https://banking.nonghyup.com",
+        "phone": "16613000"
        },
        "reasons": [
         "bank",
@@ -3929,10 +3903,10 @@
        "check_reasons": [
         "foreigner_unspecified"
        ],
-       "more_from_company": 2
+       "more_from_company": 3
       },
       {
-       "rank": 17,
+       "rank": 16,
        "product_id": "0010378-240002",
        "purpose": "예금",
        "company": "바로저축은행",
@@ -3958,7 +3932,7 @@
        "more_from_company": 2
       },
       {
-       "rank": 18,
+       "rank": 17,
        "product_id": "0010404-DH002",
        "purpose": "예금",
        "company": "DH저축은행",
@@ -3984,7 +3958,7 @@
        "more_from_company": 1
       },
       {
-       "rank": 19,
+       "rank": 18,
        "product_id": "0010438-240016",
        "purpose": "예금",
        "company": "유니온저축은행",
@@ -4010,7 +3984,7 @@
        "more_from_company": 1
       },
       {
-       "rank": 20,
+       "rank": 19,
        "product_id": "0011551-240031",
        "purpose": "예금",
        "company": "예가람저축은행",
@@ -4034,6 +4008,32 @@
         "foreigner_unspecified"
        ],
        "more_from_company": 5
+      },
+      {
+       "rank": 20,
+       "product_id": "0010026-01211310142",
+       "purpose": "예금",
+       "company": "중소기업은행",
+       "product_name": "IBK굴리기통장(정기예금)",
+       "institution_type": "은행",
+       "term_months": 12,
+       "base_rate": 3.63,
+       "rate_type": "단리",
+       "effective_rate": 3.63,
+       "join_way": "영업점,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.ibk.co.kr",
+        "phone": "15662566"
+       },
+       "reasons": [
+        "bank",
+        "no_visit"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified"
+       ],
+       "more_from_company": 2
       }
      ]
     }
@@ -5170,31 +5170,6 @@
       },
       {
        "rank": 13,
-       "product_id": "0013175-10-003-1384-0001",
-       "purpose": "예금",
-       "company": "농협은행주식회사",
-       "product_name": "NH올원e예금",
-       "institution_type": "은행",
-       "term_months": 12,
-       "base_rate": 3.65,
-       "rate_type": "단리",
-       "effective_rate": 3.65,
-       "join_way": "인터넷,스마트폰",
-       "visit_required": false,
-       "contact": {
-        "homepage": "https://banking.nonghyup.com",
-        "phone": "16613000"
-       },
-       "reasons": [
-        "bank"
-       ],
-       "check_reasons": [
-        "foreigner_unspecified"
-       ],
-       "more_from_company": 3
-      },
-      {
-       "rank": 14,
        "product_id": "0010359-240039",
        "purpose": "예금",
        "company": "키움예스저축은행",
@@ -5219,7 +5194,7 @@
        "more_from_company": 3
       },
       {
-       "rank": 15,
+       "rank": 14,
        "product_id": "0010560-C614010",
        "purpose": "예금",
        "company": "참저축은행",
@@ -5244,21 +5219,21 @@
        "more_from_company": 1
       },
       {
-       "rank": 16,
-       "product_id": "0010026-01211310142",
+       "rank": 15,
+       "product_id": "0013175-10-003-1384-0001",
        "purpose": "예금",
-       "company": "중소기업은행",
-       "product_name": "IBK굴리기통장(정기예금)",
+       "company": "농협은행주식회사",
+       "product_name": "NH올원e예금",
        "institution_type": "은행",
        "term_months": 12,
-       "base_rate": 3.63,
+       "base_rate": 3.65,
        "rate_type": "단리",
-       "effective_rate": 3.63,
-       "join_way": "영업점,스마트폰",
+       "effective_rate": 3.65,
+       "join_way": "인터넷,스마트폰",
        "visit_required": false,
        "contact": {
-        "homepage": "http://www.ibk.co.kr",
-        "phone": "15662566"
+        "homepage": "https://banking.nonghyup.com",
+        "phone": "16613000"
        },
        "reasons": [
         "bank"
@@ -5266,10 +5241,10 @@
        "check_reasons": [
         "foreigner_unspecified"
        ],
-       "more_from_company": 2
+       "more_from_company": 3
       },
       {
-       "rank": 17,
+       "rank": 16,
        "product_id": "0010378-240002",
        "purpose": "예금",
        "company": "바로저축은행",
@@ -5294,7 +5269,7 @@
        "more_from_company": 1
       },
       {
-       "rank": 18,
+       "rank": 17,
        "product_id": "0010404-DH002",
        "purpose": "예금",
        "company": "DH저축은행",
@@ -5318,7 +5293,7 @@
        ]
       },
       {
-       "rank": 19,
+       "rank": 18,
        "product_id": "0010438-240016",
        "purpose": "예금",
        "company": "유니온저축은행",
@@ -5342,7 +5317,7 @@
        ]
       },
       {
-       "rank": 20,
+       "rank": 19,
        "product_id": "0011551-240031",
        "purpose": "예금",
        "company": "예가람저축은행",
@@ -5360,6 +5335,31 @@
        },
        "reasons": [
         "high_rate"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified"
+       ],
+       "more_from_company": 2
+      },
+      {
+       "rank": 20,
+       "product_id": "0010026-01211310142",
+       "purpose": "예금",
+       "company": "중소기업은행",
+       "product_name": "IBK굴리기통장(정기예금)",
+       "institution_type": "은행",
+       "term_months": 12,
+       "base_rate": 3.63,
+       "rate_type": "단리",
+       "effective_rate": 3.63,
+       "join_way": "영업점,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.ibk.co.kr",
+        "phone": "15662566"
+       },
+       "reasons": [
+        "bank"
        ],
        "check_reasons": [
         "foreigner_unspecified"
@@ -12356,31 +12356,6 @@
      "items": [
       {
        "rank": 1,
-       "product_id": "0010030-03700",
-       "purpose": "적금",
-       "company": "한국산업은행",
-       "product_name": "KDB 자유적금",
-       "institution_type": "은행",
-       "term_months": 12,
-       "base_rate": 3.81,
-       "rate_type": "단리",
-       "effective_rate": 3.81,
-       "join_way": "영업점,인터넷,스마트폰",
-       "visit_required": false,
-       "contact": {
-        "homepage": "https://www.kdb.co.kr",
-        "phone": "0215881500"
-       },
-       "reasons": [
-        "bank"
-       ],
-       "check_reasons": [
-        "foreigner_unspecified"
-       ],
-       "more_from_company": 1
-      },
-      {
-       "rank": 2,
        "product_id": "0013127-310006",
        "purpose": "적금",
        "company": "KB저축은행",
@@ -12403,6 +12378,31 @@
         "foreigner_unspecified"
        ],
        "more_from_company": 2
+      },
+      {
+       "rank": 2,
+       "product_id": "0010030-03700",
+       "purpose": "적금",
+       "company": "한국산업은행",
+       "product_name": "KDB 자유적금",
+       "institution_type": "은행",
+       "term_months": 12,
+       "base_rate": 3.81,
+       "rate_type": "단리",
+       "effective_rate": 3.81,
+       "join_way": "영업점,인터넷,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "https://www.kdb.co.kr",
+        "phone": "0215881500"
+       },
+       "reasons": [
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified"
+       ],
+       "more_from_company": 1
       },
       {
        "rank": 3,
