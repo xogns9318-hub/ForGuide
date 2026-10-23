@@ -22,8 +22,7 @@
 .community {
     background-color: #f5fcf8;
     background-image:
-        linear-gradient(rgb(255 255 255 / 30%),
-            rgb(255 255 255 / 30%)),
+        linear-gradient(rgb(255 255 255 / 30%), rgb(255 255 255 / 30%)),
         url("/community-scene-banner2.png");
     background-position: center bottom;
     background-repeat: no-repeat;
@@ -70,7 +69,6 @@
     text-shadow: 0 1px 1px rgb(255 255 255 / 88%);
 }
 
-
 .brand {
     display: flex;
     align-items: center;
@@ -97,30 +95,34 @@
     white-space: nowrap;
 }
 
-/* 회원 메뉴와 언어 선택을 한 줄에 배치 */
+/* 회원 메뉴는 글씨 너비와 한 줄 높이에 맞춰 배치한다. */
 .actions {
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    gap: 12px;
+
+    /* 안쪽 여백 대신 항목 사이 간격으로 구분선 공간을 확보한다. */
+    gap: 24px;
     color: var(--muted);
     font-size: 12px;
+    line-height: 1;
     white-space: nowrap;
 }
 
-/* 회원 메뉴 사이의 세로 구분선 유지 */
+/* 각 항목의 클릭 영역에 왼쪽 여백이 포함되지 않게 한다. */
 .actions>*+* {
     position: relative;
-    padding-left: 12px;
+    padding-left: 0;
 }
 
+/* 구분선은 글씨 영역 밖의 간격 가운데에 표시한다. */
 .actions>*+*::before {
     content: "";
     position: absolute;
-    left: 0;
+    left: -12px;
     top: 50%;
     width: 1px;
-    height: 16px;
+    height: 100%;
     transform: translateY(-50%);
     background: var(--line);
     pointer-events: none;
@@ -147,9 +149,10 @@
     gap: 8px;
 }
 
+/* 선택한 언어 글씨만큼만 가로 공간을 사용한다. */
 .actions :global(.select-box.is-compact) {
     flex-shrink: 0;
-    width: 132px;
+    width: max-content;
 }
 
 .actions :global(.select-box-trigger > span) {
@@ -485,7 +488,6 @@
         visibility 0s linear 300ms;
 }
 
-
 /* 카테고리에 마우스를 올리면 어두운 배경도 서서히 나타남 */
 .backdrop[data-open="true"] {
     /* 어두운 배경을 표시 */
@@ -503,14 +505,12 @@
         visibility 0s linear 0s;
 }
 
-
 /* 모바일에는 데스크톱용 어두운 배경이 나타나지 않도록 처리 */
 @media (max-width: 1024px) {
     .backdrop {
         display: none;
     }
 }
-
 
 /* 큰 화면에서만 카테고리 3칸의 꾸밈과 드롭다운 효과를 적용 */
 @media (min-width: 1025px) {
@@ -527,13 +527,11 @@
         z-index: 300;
     }
 
-
     /* 메뉴가 열리면 어두운 배경보다 헤더를 앞쪽에 표시 */
     .expanded {
         /* 어두운 배경의 z-index는 299 */
         z-index: 300;
     }
-
 
     /* 기존 카테고리 3칸의 너비는 그대로 두고 경계선만 추가 */
     .navItem {
@@ -541,13 +539,11 @@
         border-left: 1px solid var(--line);
     }
 
-
     /* 세 번째 카테고리의 오른쪽 선까지 표시 */
     .navItem:last-child {
         /* 마지막 카테고리 오른쪽에 세로 구분선 표시 */
         border-right: 1px solid var(--line);
     }
-
 
     /* 가이드 소개 / 가이드 목록 / 문의하기 글씨를 칸 정중앙에 정렬 */
     .menuTitle {
@@ -560,7 +556,6 @@
         /* 글씨의 가로 위치를 가운데로 정렬 */
         justify-content: center;
     }
-
 
     /* 펼침 창 하나를 유지하며 높이·투명도·위치를 천천히 전환 */
     .dropdown {
@@ -599,7 +594,6 @@
             visibility 0s linear 420ms;
     }
 
-
     /* 처음 열릴 때 위에서 아래로 내려오며 자연스럽게 나타남 */
     .dropdown[data-open="true"] {
         /* 펼쳐진 목록을 표시 */
@@ -622,7 +616,6 @@
             visibility 0s linear 0s;
     }
 
-
     /* 화면이 낮을 때는 이 영역 내부에서만 목록을 스크롤 */
     .dropdownContent {
         /* 헤더를 제외한 화면 높이만큼 목록을 표시 */
@@ -641,13 +634,11 @@
         background: var(--surface);
     }
 
-
     /* 다른 카테고리에 마우스를 올릴 때 글씨도 부드럽게 등장 */
     .dropdownBody {
         /* 새로운 목록이 나타나는 애니메이션 적용 */
         animation: dropdownContentEnter 300ms ease both;
     }
-
 
     /* 가이드 목록 6개 그룹 각각을 자기 칸의 정중앙에 배치 */
     .group {
@@ -655,13 +646,11 @@
         text-align: center;
     }
 
-
     /* 소개 목록과 문의 목록은 한 그룹 전체를 사이트 정중앙에 배치 */
     .singleGroup {
         /* 하나의 그룹을 가로 중앙에 배치 */
         justify-content: center;
     }
-
 
     /* 목록 안의 항목들을 그룹의 중앙으로 모음 */
     .linkList {
@@ -669,14 +658,12 @@
         align-items: center;
     }
 
-
     /* 각 링크와 버튼에 표시된 문구도 가운데 정렬 */
     .menuLink {
         /* 링크 안에 있는 글씨를 가운데 정렬 */
         text-align: center;
     }
 }
-
 
 /* 바뀐 카테고리의 목록이 살짝 내려오며 나타나는 효과 */
 @keyframes dropdownContentEnter {
@@ -723,7 +710,6 @@
         position: relative;
     }
 
-
     /* 각 메뉴 그룹을 기준으로 세로선 위치 설정 */
     .dropdownContent .group {
         /* 그룹별 세로선의 위치를 잡기 위한 기준 */
@@ -755,13 +741,11 @@
         pointer-events: none;
     }
 
-
     /* 가이드 목록 가장 왼쪽 세로선 */
     .dropdownContent .groups:not(.singleGroup)::before {
         /* 왼쪽 여백에 맞춰 표시 */
         left: var(--page-padding);
     }
-
 
     /* 가이드 목록 가장 오른쪽 세로선 */
     .dropdownContent .groups:not(.singleGroup)::after {
@@ -803,7 +787,6 @@
         display: none;
     }
 
-
     /* 중앙에 배치된 소개·문의 목록의 양쪽에 구분선 추가 */
     .dropdownContent .groups.singleGroup .group::before,
     .dropdownContent .groups.singleGroup .group::after {
@@ -829,13 +812,11 @@
         pointer-events: none;
     }
 
-
     /* 소개·문의 목록 왼쪽 세로선 */
     .dropdownContent .groups.singleGroup .group::before {
         /* 중앙 목록의 왼쪽 경계에 표시 */
         left: 0;
     }
-
 
     /* 소개·문의 목록 오른쪽 세로선 */
     .dropdownContent .groups.singleGroup .group::after {
@@ -844,14 +825,134 @@
     }
 }
 
-/* 언어 선택창의 글씨와 아래 화살표 색상 변경 */
-.actions :global(.select-box.is-compact .select-box-trigger) {
-    /* 로그인·회원가입 글씨와 동일한 색상 적용 */
+/* 헤더 언어 선택의 너비와 높이를 글씨 크기에 맞춘다. */
+.actions :global(.select-box.is-compact .select-box-trigger),
+.actions :global(.select-box.is-compact.is-open .select-box-trigger),
+.actions :global(.select-box.is-compact .select-box-trigger:focus),
+.actions :global(.select-box.is-compact .select-box-trigger:focus-visible) {
+    justify-content: center;
+    width: max-content;
+    min-height: 0;
+    padding: 0;
+    line-height: inherit;
+    border: 0;
+    border-radius: 0;
+    outline: none;
+    box-shadow: none;
+    background: transparent;
     color: var(--muted);
+    text-align: center;
+    /* 현재 언어는 안내 글씨처럼 표시하고 드래그 선택을 막는다. */
+    cursor: default;
+    user-select: none;
 }
 
-/* 언어 선택창의 테두리 색상 변경 */
-.actions :global(.select-box.is-compact:not(.is-open) .select-box-trigger:not(:focus-visible)) {
-    /* 로그인·회원가입 글씨와 동일한 색상 적용 */
-    border-color: var(--muted);
+/* 키보드로 이동할 때는 사각 테두리 대신 글씨 밑줄로 위치를 표시한다. */
+.actions :global(.select-box.is-compact .select-box-trigger:focus-visible) {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+/* 헤더 언어 선택창의 오른쪽 화살표만 숨긴다. */
+.actions :global(.select-box.is-compact .select-box-trigger > svg) {
+    display: none;
+}
+
+/* 현재 언어 글씨 아래에서 목록을 조금 내려 표시한다. */
+.actions :global(.header-language .select-box-options) {
+    --language-menu-gap: 12px;
+
+    top: calc(100% + var(--language-menu-gap));
+    left: 50%;
+    width: 88px;
+    transform: translateX(-50%);
+    padding: 4px;
+    border: 0;
+    line-height: 1.65;
+
+    /* 글씨는 선명하게 두고 흰 배경만 20% 투명하게 표시한다. */
+    background: rgb(255 255 255 / 80%);
+    box-shadow: none;
+
+    /* 목록이 열릴 때 위에서 아래로 부드럽게 내려온다. */
+    animation: language-menu-reveal 260ms ease-out both;
+}
+
+/* 가운데 정렬을 유지하면서 아래로 이동하고 서서히 표시한다. */
+@keyframes language-menu-reveal {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* 글씨에서 목록으로 이동하는 빈틈도 마우스 영역으로 연결한다. */
+.actions :global(.header-language .select-box-options)::before {
+    content: "";
+    position: absolute;
+    top: calc(-1 * var(--language-menu-gap));
+    left: 0;
+    right: 0;
+    height: var(--language-menu-gap);
+}
+
+/* 각 언어를 가운데에 놓고 배경 강조와 사각 테두리를 제거한다. */
+.actions :global(.header-language .select-box-option) {
+    padding: 8px 2px;
+    background: transparent;
+    box-shadow: none;
+    color: var(--muted);
+    text-align: center;
+    white-space: nowrap;
+    transition: color 260ms ease;
+}
+
+/* 밑줄은 목록 전체가 아닌 언어 글씨의 너비를 기준으로 그린다. */
+.actions :global(.header-language .select-box-option > span) {
+    position: relative;
+    display: inline-block;
+}
+
+/* 기본 밑줄은 가운데로 접어 두고 양옆으로 펼칠 준비를 한다. */
+.actions :global(.header-language .select-box-option > span)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 260ms ease;
+    pointer-events: none;
+}
+
+/* 마우스나 방향키로 가리킨 언어는 카테고리와 같은 색으로 강조한다. */
+.actions :global(.header-language .select-box-option.is-active) {
+    background: transparent;
+    color: #145244;
+    box-shadow: none;
+}
+
+/* 선택 후보의 밑줄을 가운데에서 양옆으로 펼친다. */
+.actions :global(.header-language .select-box-option.is-active > span)::after {
+    transform: scaleX(1);
+}
+
+/* 움직임 줄이기 설정에서는 목록과 강조 효과를 즉시 표시한다. */
+@media (prefers-reduced-motion: reduce) {
+    .actions :global(.header-language .select-box-options) {
+        animation: none;
+    }
+
+    .actions :global(.header-language .select-box-option),
+    .actions :global(.header-language .select-box-option > span)::after {
+        transition: none;
+    }
 }

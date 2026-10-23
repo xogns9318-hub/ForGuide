@@ -10,16 +10,12 @@ export default function LanguageSelector() {
     // 언어 제목과 공통 선택창을 연결할 고유 식별자 생성
     const selectorId = useId();
 
-    const language =
-        i18n.resolvedLanguage || i18n.language || "ko";
+    const language = i18n.resolvedLanguage || i18n.language || "ko";
 
     function handleLanguageChange(selectedLanguage) {
         // 선택한 언어를 화면과 다음 방문의 저장값에 반영
         i18n.changeLanguage(selectedLanguage);
-        localStorage.setItem(
-            "forguide-language",
-            selectedLanguage,
-        );
+        localStorage.setItem("forguide-language", selectedLanguage);
     }
 
     return (
@@ -36,6 +32,7 @@ export default function LanguageSelector() {
                 options={languages}
                 onChange={handleLanguageChange}
                 compact
+                openOnHover
             />
         </div>
     );
