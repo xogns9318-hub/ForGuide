@@ -6,6 +6,21 @@ const en = {
         myPage: "My Page",
         myFinance: "My Financial Information",
         language: "Language",
+
+        mega: {
+            introduction: "Guide Introduction",
+            guides: "Guide List",
+            contact: "Contact",
+            introductionList: "Introduction List",
+            contactGroup: "Inquiries",
+            myInquiries: "My Inquiries",
+            privateInquiry: "1-on-1 Inquiry",
+            faq: "Frequently Asked Questions",
+            home: "ForGuide Home",
+            navigation: "Guide Menu",
+            open: "Open Menu",
+            close: "Close Menu",
+        },
     },
 
     navigation: {
@@ -76,6 +91,12 @@ const en = {
                 jobListings: "Job Listings",
                 employment: "Job Preparation Resources",
             },
+            simulator: {
+                simulator: "Simulator",
+            },
+            community: {
+                community: "Community",
+            },
         },
     },
 
@@ -83,6 +104,100 @@ const en = {
         description: "This is the footer. It smells terribly of feet here.",
         copyright: "© Is this the best you can do, human?",
     },
+
+        community: {
+            navigation: {
+                allPosts: "All Posts",
+                questionAnswer: "Q&A",
+                reviewRecommend: "Reviews & Recommendations",
+                freeTalk: "Free Talk",
+            },
+
+            topics: {
+                title: "Main Topics",
+                account: "Open an Account",
+                loan: "Loans",
+                insurance: "Insurance",
+                visaStay: "Visa & Stay",
+                lifeTip: "Korea Living Tips",
+            },
+
+            memberPreview: {
+                triggerAria: "Preview {{nickname}}'s profile",
+                cardAria: "Profile preview",
+                loading: "Loading profile...",
+                error: "Unable to load profile information.",
+                unnamedMember: "Unnamed member",
+                defaultIntro: "This member has not written an introduction yet.",
+                postCount: "Posts",
+                receivedLikes: "Likes received",
+                postsButtonAria: "View {{count}} posts by {{nickname}}",
+            },
+
+            memberPosts: {
+                title: "Posts by {{nickname}}",
+                loading: "Loading posts...",
+                empty: "There are no posts yet.",
+                error: "Unable to load posts.",
+                close: "Close",
+                imageOnly: "Photo post",
+                viewCount: "{{count}} views",
+                commentCount: "{{count}} comments",
+            },
+
+            postModal: {
+                title: "Post",
+                close: "Close",
+                loading: "Loading post...",
+                error: "Unable to load post.",
+                viewCount: "Views",
+                commentCount: "Comments",
+            },
+
+            comments: {
+                title: "Comments",
+                loading: "Loading comments...",
+                empty: "No comments yet.",
+                loadError: "Unable to load comments.",
+                contentRequired: "Please enter a comment.",
+                maxLength: "Comments must be 1,000 characters or fewer.",
+                loginRequired: "Please log in to write a comment.",
+                saveError: "Unable to save the comment.",
+                updateError: "Unable to update the comment.",
+                deleteConfirm: "Delete this comment?",
+                deleteError: "Unable to delete the comment.",
+                deleted: "Deleted comment",
+                reply: "Reply",
+                like: "Like",
+                unlike: "Unlike",
+                likeError: "Unable to process the comment like.",
+                edit: "Edit",
+                cancel: "Cancel",
+                delete: "Delete",
+                deleting: "Deleting...",
+                submit: "Submit",
+                submitting: "Submitting...",
+                replyPlaceholder: "Write a reply to {{nickname}}",
+                writePlaceholder: "Write a comment.",
+                writeButton: "Write Comment",
+            },
+
+            postEdit: {
+                contentAria: "Edit post content",
+                imageAlt: "Existing post image",
+                invalidImage: "Only JPG or PNG images up to 20 MB each can be uploaded.",
+                maxImageCount: "You can upload up to 4 images per post.",
+                contentRequired: "Please enter post content.",
+                updateError: "Unable to update the post.",
+                removeCancel: "Cancel removal",
+                removeImage: "Remove image",
+                addImage: "Add image",
+                removeNewImage: "Remove",
+                cancel: "Cancel",
+                submitting: "Updating...",
+                submit: "Save Changes",
+            },
+        },
 
     service: {
         consultation: {
@@ -119,6 +234,14 @@ const en = {
         },
         employment: {
             description: "Create, save, or print a resume that fits your application method.",
+        },
+        simulator: {
+            description:
+                "Organize repayment dates, income, and expenses on a calendar to plan your daily spending.",
+        },
+        community: {
+            description:
+                "Share experiences and information about life in Korea and connect with others.",
         },
     },
 
