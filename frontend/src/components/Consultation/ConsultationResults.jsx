@@ -1,37 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-    Bar,
-    BarChart,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
-} from "recharts";
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import {
     getConsultationInstitutions,
     getConsultationInstitution,
+    getInstitutionGuide,
 } from "../../api/consultationApi.js";
 import styles from "../../styles/institutionResults.module.css";
 
-const unique = (values) =>
-    [...new Set(values.filter(Boolean))];
+const unique = (values) => [...new Set(values.filter(Boolean))];
 
 const availability = (value, t) =>
-    value === true
-        ? t("available")
-        : value === false
-            ? t("unavailable")
-            : t("unknown");
+    value === true ? t("available") : value === false ? t("unavailable") : t("unknown");
 
 // 공식 사이트와 출처 링크에는 HTTP(S) 주소만 허용한다.
 function webUrl(value) {
     try {
         const url = new URL(value);
-        return ["https:", "http:"].includes(url.protocol)
-            ? url.href
-            : null;
+        return ["https:", "http:"].includes(url.protocol) ? url.href : null;
     } catch {
         return null;
     }
@@ -41,27 +28,16 @@ function Website({ url, children }) {
     const href = webUrl(url);
 
     return href ? (
-        <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-        >
+        <a href={href} target="_blank" rel="noopener noreferrer">
             {children}
         </a>
     ) : null;
 }
 
 function PhoneLink({ number, fallback }) {
-    const phone = String(number ?? "").replace(
-        /[^+\d]/g,
-        "",
-    );
+    const phone = String(number ?? "").replace(/[^+\d]/g, "");
 
-    return phone ? (
-        <a href={`tel:${phone}`}>{number}</a>
-    ) : (
-        fallback
-    );
+    return phone ? <a href={`tel:${phone}`}>{number}</a> : fallback;
 }
 
 function Field({ label, children }) {
@@ -73,166 +49,121 @@ function Field({ label, children }) {
     );
 }
 
-// 카드와 상세에서 같은 운영 여부 해석을 사용한다.
-// 전화의 언어·주말 운영을 방문 정보로 바꾸지 않는다.
-function ServiceInformation({
-    service,
-    t,
-    compact = false,
-}) {
+// 카드에서는 언어를 요약하고, 상세에서는 원문과 이용 조건을 모두 보여준다.
+function ServiceInformation({ service, guidance, t, compact = false }) {
     const p = service.phone;
     const v = service.visit;
+    const baseLanguages = ["한국어", "영어", "중국어", "일본어", "태국어", "베트남어"];
 
-    const languages = (method) =>
-        unique(
+    const languages = (method) => {
+        const all = unique(
             service.languages
-                .filter(
-                    (language) =>
-                        language.method === method,
-                )
+                .filter((language) => language.method === method)
                 .map((language) => language.code),
-        )
-            .sort((a, b) => a.localeCompare(b, "ko"))
-            .join(", ") || t("unknown");
+        );
+
+        if (!compact) {
+            const original =
+                method === "phone" ? guidance?.phoneLanguages : guidance?.visitLanguages;
+
+            return original || all.join(", ") || t("unknown");
+        }
+
+        // 실제 지원하는 기본 언어만 남기고, 나머지는 다국어 한 번으로 표시한다.
+        const displayed = baseLanguages.filter((language) => all.includes(language));
+
+        if (all.some((language) => !baseLanguages.includes(language))) {
+            displayed.push(t("multilingual"));
+        }
+
+        return displayed.join(", ") || t("unknown");
+    };
 
     const location =
         unique(
             service.regions
-                .filter(
-                    (region) =>
-                        region.method === "visit",
-                )
-                .map((region) =>
-                    [
-                        region.province,
-                        region.district,
-                    ]
-                        .filter(Boolean)
-                        .join(" "),
-                ),
-        ).join(", ") ||
-        (p.regionStatus === "unrestricted"
-            ? t("phoneNationwide")
-            : t("unknown"));
+                .filter((region) => region.method === "visit")
+                .map((region) => [region.province, region.district].filter(Boolean).join(" ")),
+        ).join(", ") || (p.regionStatus === "unrestricted" ? t("phoneNationwide") : t("unknown"));
 
     const methods = ["phone", "visit", "online"]
-        .filter(
-            (method) =>
-                service[method]?.available === true,
-        )
+        .filter((method) => service[method]?.available === true)
         .map((method) => t(`methods.${method}`))
         .join(" · ");
+
+    const reservation =
+        v.reservationRequired === true
+            ? t("required")
+            : v.reservationRequired === false
+              ? t("notRequired")
+              : t("unknown");
+
+    // 단순한 운영 여부만 통일하고, 긴급상담·제보 접수 같은 예외 설명은 보존한다.
+    const phoneAvailability = (description, value) => {
+        const normalized = String(description ?? "").trim();
+        const closedDescriptions = [
+            "미운영",
+            "미운영(상담원)",
+            "미운영(일반 상담원)",
+            "미운영(일반 상담)",
+            "미운영(콜센터 상담원)",
+            "미운영(일반 전화상담)",
+            "미운영(평일 상담 안내)",
+            "미운영(공휴일 제외 명시)",
+        ];
+
+        if (closedDescriptions.includes(normalized)) {
+            return t("phoneAgentUnavailable");
+        }
+
+        if (normalized === "가능(24시간)") {
+            return t("phone24Hours");
+        }
+
+        if (["가능(매일 운영)", "가능(상시운영)"].includes(normalized)) {
+            return t("phoneOpenWithinHours");
+        }
+
+        if (normalized) return normalized;
+
+        return value === false ? t("phoneAgentUnavailable") : availability(value, t);
+    };
+    // 카드에는 기본 운영정보만 표시하고, 이용 조건은 상세에서 보여준다.
+    const commonFields = [
+        ["location", guidance?.location || location],
+        ["phoneHours", p.available === false ? t("unavailable") : p.hours || t("unknown")],
+        ["visitHours", v.available === false ? t("unavailable") : v.hours || t("unknown")],
+        ["phoneWeekend", phoneAvailability(guidance?.phoneWeekend, p.weekend)],
+        ["phoneHoliday", phoneAvailability(guidance?.phoneHoliday, p.holiday)],
+        ["phoneLanguages", languages("phone")],
+    ];
+
+    const detailFields = [
+        ["methods", guidance?.methods || methods || t("unknown")],
+        ["reservationRequired", guidance?.reservation || reservation],
+        ["visitAddress", v.address || t("unknown")],
+        ["visitWeekend", guidance?.visitWeekend || availability(v.weekend, t)],
+        ["visitHoliday", guidance?.visitHoliday || availability(v.holiday, t)],
+        ["visitLanguages", languages("visit")],
+        ["branch", v.branchInformation || t("unknown")],
+        ["languageNotes", service.languageNotes || t("unknown")],
+        ["contact", service.contactDescription || t("unknown")],
+        ["target", service.targetDescription || t("unknown")],
+        ["preparation", guidance?.preparation || t("preparationUnknown")],
+    ];
 
     return (
         <>
             <dl className={styles.fields}>
-                <Field label={t("fields.location")}>
-                    {location}
-                </Field>
-
-                <Field label={t("fields.phoneHours")}>
-                    {p.available === false
-                        ? t("unavailable")
-                        : p.hours || t("unknown")}
-                </Field>
-
-                <Field label={t("fields.visitHours")}>
-                    {v.available === false
-                        ? t("unavailable")
-                        : v.hours || t("unknown")}
-                </Field>
-
-                <Field label={t("fields.phoneWeekend")}>
-                    {availability(p.weekend, t)}
-                </Field>
-
-                <Field label={t("fields.phoneHoliday")}>
-                    {availability(p.holiday, t)}
-                </Field>
-
-                <Field label={t("fields.phoneLanguages")}>
-                    {languages("phone")}
-                </Field>
-                {/* 카드에서도 시간대·전용 번호 등 언어 이용 조건을 함께 표시한다. */}
-                {/* 상세 화면에서는 아래의 기존 조건 안내를 사용한다. */}
-                {compact && service.languageNotes && (
-                    <Field label={t("fields.languageNotes")}>
-                        {service.languageNotes}
-                    </Field>
-                )}
-
-                <Field label={t("fields.methods")}>
-                    {methods || t("unknown")}
-                </Field>
-
-                <Field
-                    label={t("fields.reservationRequired")}
-                >
-                    {v.reservationRequired === true
-                        ? t("required")
-                        : v.reservationRequired === false
-                            ? t("notRequired")
-                            : t("unknown")}
-                </Field>
-
-                {!compact && (
-                    <>
-                        <Field
-                            label={t("fields.visitAddress")}
-                        >
-                            {v.address || t("unknown")}
+                {(compact ? commonFields : [...commonFields, ...detailFields]).map(
+                    ([key, value]) => (
+                        <Field key={key} label={t(`fields.${key}`)}>
+                            {value}
                         </Field>
-
-                        <Field
-                            label={t("fields.visitWeekend")}
-                        >
-                            {availability(v.weekend, t)}
-                        </Field>
-
-                        <Field
-                            label={t("fields.visitHoliday")}
-                        >
-                            {availability(v.holiday, t)}
-                        </Field>
-
-                        <Field
-                            label={t("fields.visitLanguages")}
-                        >
-                            {languages("visit")}
-                        </Field>
-
-                        <Field label={t("fields.branch")}>
-                            {v.branchInformation ||
-                                t("unknown")}
-                        </Field>
-
-                        <Field
-                            label={t("fields.languageNotes")}
-                        >
-                            {service.languageNotes ||
-                                t("unknown")}
-                        </Field>
-
-                        <Field label={t("fields.contact")}>
-                            {service.contactDescription ||
-                                t("unknown")}
-                        </Field>
-
-                        <Field label={t("fields.target")}>
-                            {service.targetDescription ||
-                                t("unknown")}
-                        </Field>
-
-                        <Field
-                            label={t("fields.preparation")}
-                        >
-                            {t("preparationUnknown")}
-                        </Field>
-                    </>
+                    ),
                 )}
             </dl>
 
-            {/* 24시간이라는 안내를 일반 상담 전체에 적용하지 않는다. */}
             {service.specialPhone?.hours && (
                 <p className={styles.notice}>
                     {t("specialHours", {
@@ -244,15 +175,9 @@ function ServiceInformation({
 
             {!compact && (
                 <div className={styles.links}>
-                    <Website url={v.reservationUrl}>
-                        {t("reservationLink")}
-                    </Website>
-                    <Website url={service.online.url}>
-                        {t("onlineLink")}
-                    </Website>
-                    <Website url={service.sourceUrl}>
-                        {t("serviceSource")}
-                    </Website>
+                    <Website url={v.reservationUrl}>{t("reservationLink")}</Website>
+                    <Website url={service.online.url}>{t("onlineLink")}</Website>
+                    <Website url={service.sourceUrl}>{t("serviceSource")}</Website>
                 </div>
             )}
         </>
@@ -260,12 +185,7 @@ function ServiceInformation({
 }
 
 // 네이티브 dialog가 모달의 포커스와 배경 접근 제한을 관리한다.
-function InstitutionDialog({
-    id,
-    filters,
-    onClose,
-    t,
-}) {
+function InstitutionDialog({ id, filters, onClose, t }) {
     const dialogRef = useRef(null);
     const [item, setItem] = useState(null);
     const [error, setError] = useState(null);
@@ -294,13 +214,9 @@ function InstitutionDialog({
         };
     }, [id, retry]);
 
-    const keywords = item
-        ? unique(
-            item.services.flatMap(
-                (service) => service.keywords,
-            ),
-        )
-        : [];
+    // 대표 키워드와 중복을 제거한 이용 안내를 같은 기관 자료에서 만든다.
+    const guide = item ? getInstitutionGuide(item) : null;
+    const keywords = guide?.keywords ?? [];
 
     return (
         <dialog
@@ -328,36 +244,21 @@ function InstitutionDialog({
             }}
         >
             <div className={styles.dialogHeader}>
-                <h2 id="institution-dialog-title">
-                    {item?.name || t("detailTitle")}
-                </h2>
-                <button
-                    type="button"
-                    className="button"
-                    onClick={onClose}
-                    autoFocus
-                >
+                <h2 id="institution-dialog-title">{item?.name || t("detailTitle")}</h2>
+                <button type="button" className="button" onClick={onClose} autoFocus>
                     {t("close")}
                 </button>
             </div>
 
-            {!item && !error && (
-                <p role="status">{t("loading")}</p>
-            )}
+            {!item && !error && <p role="status">{t("loading")}</p>}
 
             {error && (
                 <div role="alert">
-                    <p>
-                        {error.code === "NOT_FOUND"
-                            ? t("notFound")
-                            : t("loadError")}
-                    </p>
+                    <p>{error.code === "NOT_FOUND" ? t("notFound") : t("loadError")}</p>
                     <button
                         type="button"
                         className="button"
-                        onClick={() =>
-                            setRetry((previous) => previous + 1)
-                        }
+                        onClick={() => setRetry((previous) => previous + 1)}
                     >
                         {t("retry")}
                     </button>
@@ -366,109 +267,94 @@ function InstitutionDialog({
 
             {item && (
                 <div className={styles.detailBody}>
-                    <p>
-                        {item.description || t("unknown")}
-                    </p>
+                    <p>{item.description || t("unknown")}</p>
 
-                    {item.verificationStatus !==
-                        "verified" && (
-                            <p className={styles.notice}>
-                                {t("partialNotice")}
-                            </p>
-                        )}
+                    {item.verificationStatus !== "verified" && (
+                        <p className={styles.notice}>{t("partialNotice")}</p>
+                    )}
 
                     <dl className={styles.fields}>
                         <Field label={t("fields.target")}>
-                            {item.targetDescription ||
-                                t("unknown")}
+                            {item.targetDescription || t("unknown")}
                         </Field>
 
-                        <Field label={t("fields.address")}>
-                            {item.address || t("unknown")}
-                        </Field>
+                        <Field label={t("fields.address")}>{item.address || t("unknown")}</Field>
 
                         <Field label={t("fields.phone")}>
-                            <PhoneLink
-                                number={item.phone}
-                                fallback={t("unknown")}
-                            />
+                            <PhoneLink number={item.phone} fallback={t("unknown")} />
                         </Field>
 
                         <Field label={t("fields.keywords")}>
-                            {keywords.join(", ") ||
-                                t("unknown")}
+                            {keywords.join(", ") || t("unknown")}
                         </Field>
 
                         <Field label={t("fields.checkedAt")}>
-                            {item.checkedAt?.slice(0, 10) ||
-                                t("unknown")}
+                            {item.checkedAt?.slice(0, 10) || t("unknown")}
                         </Field>
                     </dl>
 
                     {item.additionalPhones.map((phone) => (
                         <p key={phone.phone}>
                             {phone.label}:{" "}
-                            <PhoneLink
-                                number={phone.phone}
-                                fallback={t("unknown")}
-                            />{" "}
-                            {phone.notes}
+                            <PhoneLink number={phone.phone} fallback={t("unknown")} /> {phone.notes}
                         </p>
                     ))}
 
                     {item.additionalNotes && (
-                        <p className={styles.notice}>
-                            {item.additionalNotes}
-                        </p>
+                        <p className={styles.notice}>{item.additionalNotes}</p>
                     )}
 
                     <h3>{t("servicesTitle")}</h3>
 
-                    {item.services.map((service, index) => (
-                        <details
-                            key={service.id}
-                            open={index === 0}
-                        >
-                            <summary>
-                                {service.topic
-                                    ? t(
-                                        `topics.${service.topic}`,
-                                    )
-                                    : t("administration")}
-                                {" · "}
-                                {t(`roles.${service.role}`)}
-                            </summary>
+                    <dl className={styles.fields}>
+                        {guide.topicGroups.map((group) => (
+                            <Field key={group.code} label={t(`selectionLabels.${group.name}`)}>
+                                {group.keywords
+                                    .map((keyword) => t(`selectionLabels.${keyword}`))
+                                    .join(", ")}
+                            </Field>
+                        ))}
+                    </dl>
 
-                            <p>{service.summary}</p>
+                    {guide.scopeNotes.length > 0 && (
+                        <details>
+                            <summary>{t("scopeNotesTitle")}</summary>
+                            <ul>
+                                {guide.scopeNotes.map((note) => (
+                                    <li key={note}>{note}</li>
+                                ))}
+                            </ul>
+                        </details>
+                    )}
 
-                            {service.description && (
-                                <p>{service.description}</p>
+                    <h3>{t("usageInfoTitle")}</h3>
+
+                    {guide.usageGroups.map((group, index) => (
+                        <div key={group.id}>
+                            {guide.usageGroups.length > 1 && (
+                                <>
+                                    <h4>{t("usageVariant", { count: index + 1 })}</h4>
+                                    <p>{group.labels.join(" / ")}</p>
+                                </>
                             )}
-
                             <ServiceInformation
-                                service={service}
+                                service={group.service}
+                                guidance={item.guidance}
                                 t={t}
                             />
-                        </details>
+                        </div>
                     ))}
 
                     <div className={styles.links}>
-                        <Website url={item.websiteUrl}>
-                            {t("officialLink")}
-                        </Website>
+                        <Website url={item.websiteUrl}>{t("officialLink")}</Website>
 
-                        {item.sourceUrls.map(
-                            (source, index) => (
-                                <Website
-                                    key={source}
-                                    url={source}
-                                >
-                                    {t("sourceLink", {
-                                        count: index + 1,
-                                    })}
-                                </Website>
-                            ),
-                        )}
+                        {item.sourceUrls.map((source, index) => (
+                            <Website key={source} url={source}>
+                                {t("sourceLink", {
+                                    count: index + 1,
+                                })}
+                            </Website>
+                        ))}
                     </div>
 
                     {/* 기존 준비 카드 주소에 기관·선택 조건을 전달한다. */}
@@ -481,11 +367,8 @@ function InstitutionDialog({
                                 institutionCode: item.code,
                                 institutionName: item.name,
                                 topic: filters?.topic || "",
-                                keywords:
-                                    filters?.keywords || [],
-                                serviceIds: item.services.map(
-                                    (service) => service.id,
-                                ),
+                                keywords: filters?.keywords || [],
+                                serviceIds: item.services.map((service) => service.id),
                             },
                         }}
                     >
@@ -497,14 +380,9 @@ function InstitutionDialog({
     );
 }
 
-export default function ConsultationResults({
-    filters,
-    visible,
-    reloadKey,
-}) {
+export default function ConsultationResults({ filters, visible, reloadKey }) {
     const { t: translate } = useTranslation();
-    const t = (key, variables) =>
-        translate(`institutionGuide.${key}`, variables);
+    const t = (key, variables) => translate(`institutionGuide.${key}`, variables);
 
     const [result, setResult] = useState(null);
     const [error, setError] = useState(null);
@@ -554,30 +432,17 @@ export default function ConsultationResults({
             aria-labelledby="institution-results-title"
             aria-busy={loading}
         >
-            <h2 id="institution-results-title">
-                {t("resultsTitle")}
-            </h2>
+            <h2 id="institution-results-title">{t("resultsTitle")}</h2>
 
-            {loading && (
-                <p role="status">{t("loading")}</p>
-            )}
+            {loading && <p role="status">{t("loading")}</p>}
 
             {error && (
-                <div
-                    role="alert"
-                    className={styles.error}
-                >
-                    <p>
-                        {error.message === "INVALID_INPUT"
-                            ? t("invalidInput")
-                            : t("loadError")}
-                    </p>
+                <div role="alert" className={styles.error}>
+                    <p>{error.message === "INVALID_INPUT" ? t("invalidInput") : t("loadError")}</p>
                     <button
                         className="button"
                         type="button"
-                        onClick={() =>
-                            setRetry((previous) => previous + 1)
-                        }
+                        onClick={() => setRetry((previous) => previous + 1)}
                     >
                         {t("retry")}
                     </button>
@@ -592,160 +457,107 @@ export default function ConsultationResults({
                         })}
                     </p>
 
-                    <p className={styles.notice}>
-                        {t("rankingNotice")}
-                    </p>
+                    <p className={styles.notice}>{t("rankingNotice")}</p>
 
-                    {!result.items.length && (
-                        <p>{t("empty")}</p>
-                    )}
+                    {!result.items.length && <p>{t("empty")}</p>}
 
                     {/* 실제 키워드 일치 개수만 비교한다. */}
-                    {result.filters.keywords.length > 0 &&
-                        chart.length > 0 && (
-                            <figure
-                                className={styles.chart}
-                                aria-label={t("chartTitle")}
-                            >
-                                <figcaption>
-                                    {t("chartTitle")}
-                                </figcaption>
-                                <ResponsiveContainer
-                                    width="100%"
-                                    height={220}
+                    {result.filters.keywords.length > 0 && chart.length > 0 && (
+                        <figure className={styles.chart} aria-label={t("chartTitle")}>
+                            <figcaption>{t("chartTitle")}</figcaption>
+                            <ResponsiveContainer width="100%" height={220}>
+                                <BarChart
+                                    data={chart}
+                                    margin={{
+                                        bottom: 55,
+                                        left: 0,
+                                        right: 10,
+                                    }}
                                 >
-                                    <BarChart
-                                        data={chart}
-                                        margin={{
-                                            bottom: 55,
-                                            left: 0,
-                                            right: 10,
+                                    <XAxis
+                                        dataKey="name"
+                                        angle={-15}
+                                        textAnchor="end"
+                                        interval={0}
+                                        height={65}
+                                        tick={{
+                                            fontSize: 11,
                                         }}
-                                    >
-                                        <XAxis
-                                            dataKey="name"
-                                            angle={-15}
-                                            textAnchor="end"
-                                            interval={0}
-                                            height={65}
-                                            tick={{
-                                                fontSize: 11,
-                                            }}
-                                        />
-                                        <YAxis
-                                            allowDecimals={false}
-                                            domain={[
-                                                0,
-                                                result.filters
-                                                    .keywords
-                                                    .length,
-                                            ]}
-                                        />
-                                        <Tooltip
-                                            formatter={(count) => [
-                                                count,
-                                                t("matchedLabel"),
-                                            ]}
-                                        />
-                                        <Bar
-                                            dataKey="matched"
-                                            fill="var(--primary)"
-                                        />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </figure>
-                        )}
+                                    />
+                                    <YAxis
+                                        allowDecimals={false}
+                                        domain={[0, result.filters.keywords.length]}
+                                    />
+                                    <Tooltip formatter={(count) => [count, t("matchedLabel")]} />
+                                    <Bar dataKey="matched" fill="var(--primary)" />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </figure>
+                    )}
 
                     <div className={styles.grid}>
                         {result.items.map((item) => (
-                            <article
-                                key={item.id}
-                                className={`panel ${styles.card}`}
-                            >
+                            <article key={item.id} className={`panel ${styles.card}`}>
                                 <h3>{item.name}</h3>
 
                                 <div className={styles.tags}>
-                                    {item.featuredKeywords
-                                        .slice(0, 4)
+                                    {getInstitutionGuide(item)
+                                        .keywords.slice(0, 4)
                                         .map((keyword) => (
                                             <span key={keyword}>
-                                                {keyword}
+                                                {t(`selectionLabels.${keyword}`)}
                                             </span>
                                         ))}
                                 </div>
-
-                                <p>
-                                    {t(
-                                        `roles.${item.match.role}`,
-                                    )}
-                                </p>
-
                                 {item.match.selectedCount > 0 && (
                                     <p>
                                         {t("matchCount", {
-                                            matched:
-                                                item.match
-                                                    .keywords
-                                                    .length,
-                                            total: item.match
-                                                .selectedCount,
-                                            percent:
-                                                item.match
-                                                    .percent,
+                                            matched: item.match.keywords.length,
+                                            total: item.match.selectedCount,
+                                            percent: item.match.percent,
                                         })}
                                     </p>
                                 )}
 
-                                {item.match.keywords.length >
-                                    0 && (
-                                        <p className={styles.notice}>
-                                            {t("matchedList", {
-                                                keywords:
-                                                    item.match.keywords.join(
-                                                        ", ",
-                                                    ),
-                                            })}
-                                        </p>
-                                    )}
+                                {item.match.keywords.length > 0 && (
+                                    <p className={styles.notice}>
+                                        {t("matchedList", {
+                                            keywords: item.match.keywords.join(", "),
+                                        })}
+                                    </p>
+                                )}
 
-                                {item.match.unknown.length >
-                                    0 && (
-                                        <p className={styles.notice}>
-                                            {item.match.unknown
-                                                .map((field) =>
-                                                    t(
-                                                        `pending.${field}`,
-                                                    ),
-                                                )
-                                                .join(" · ")}
-                                        </p>
-                                    )}
+                                {item.match.unknown.length > 0 && (
+                                    <p className={styles.notice}>
+                                        {item.match.unknown
+                                            .map((field) => t(`pending.${field}`))
+                                            .join(" · ")}
+                                    </p>
+                                )}
 
-                                <ServiceInformation
-                                    service={item.preview}
-                                    t={t}
-                                    compact
-                                />
-
-                                <p>
-                                    {t("fields.phone")}:{" "}
-                                    <PhoneLink
-                                        number={item.phone}
-                                        fallback={t("unknown")}
+                                <div>
+                                    <ServiceInformation
+                                        service={item.preview}
+                                        guidance={item.guidance}
+                                        t={t}
+                                        compact
                                     />
-                                </p>
 
-                                <div
-                                    className={styles.cardActions}
-                                >
+                                    <dl className={styles.fields}>
+                                        <Field label={t("fields.phone")}>
+                                            <PhoneLink
+                                                number={item.phone}
+                                                fallback={t("unknown")}
+                                            />
+                                        </Field>
+                                    </dl>
+                                </div>
+
+                                <div className={styles.cardActions}>
                                     <button
                                         type="button"
                                         className="button button-primary"
-                                        onClick={() =>
-                                            setSelectedId(
-                                                item.id,
-                                            )
-                                        }
+                                        onClick={() => setSelectedId(item.id)}
                                     >
                                         {t("detail")}
                                     </button>
