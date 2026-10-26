@@ -173,7 +173,7 @@ export default function AccountRecommend() {
                                 {t("recommendAccount.noAccountAction")}
                             </Link>
                         </div>
-                    ) : choicesError ? (
+                    ) : !form.own_account ? null : choicesError ? (
                         <div role="alert" className="form-error">
                             <p>{t("recommendForm.loadError")}</p>
                             <button
