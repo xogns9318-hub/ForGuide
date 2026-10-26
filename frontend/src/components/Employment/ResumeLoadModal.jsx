@@ -1,23 +1,19 @@
-function formatSavedAt(savedAt) {
-    return new Intl.DateTimeFormat("ko-KR", {
+import { useTranslation } from "react-i18next";
+
+function formatSavedAt(savedAt, language) {
+    return new Intl.DateTimeFormat(language, {
         dateStyle: "medium",
         timeStyle: "short",
     }).format(new Date(savedAt));
 }
 
-function getResumeTypeName(resumeType) {
-    return resumeType === "blind"
-        ? "블라인드 채용 이력서"
-        : "기본 이력서";
+function getResumeTypeName(resumeType, t) {
+    return resumeType === "blind" ? t("resume.page.blindTab") : t("resume.page.basicTab");
 }
 
-export default function ResumeLoadModal({
-    isOpen,
-    drafts,
-    isLoading,
-    onClose,
-    onSelect,
-}) {
+export default function ResumeLoadModal({ isOpen, drafts, isLoading, onClose, onSelect }) {
+    const { t, i18n } = useTranslation();
+
     if (!isOpen) {
         return null;
     }
@@ -32,48 +28,26 @@ export default function ResumeLoadModal({
             >
                 <header className="resume-library-header">
                     <div>
-                        <h2 id="resume-library-title">
-                            저장한 이력서 불러오기
-                        </h2>
-                        <p>
-                            저장한 이력서를 선택하면 현재 작성 내용이
-                            선택한 초안으로 바뀝니다.
-                        </p>
+                        <h2 id="resume-library-title">{t("resume.library.title")}</h2>
+                        <p>{t("resume.library.description")}</p>
                     </div>
 
-                    <button
-                        type="button"
-                        className="button"
-                        onClick={onClose}
-                    >
-                        닫기
+                    <button type="button" className="button" onClick={onClose}>
+                        {t("resume.library.close")}
                     </button>
                 </header>
 
                 {isLoading ? (
-                    <p className="resume-library-state">
-                        저장한 이력서를 불러오는 중입니다.
-                    </p>
+                    <p className="resume-library-state">{t("resume.library.loading")}</p>
                 ) : drafts.length === 0 ? (
-                    <p className="resume-library-state">
-                        저장한 이력서가 없습니다.
-                    </p>
+                    <p className="resume-library-state">{t("resume.library.empty")}</p>
                 ) : (
                     <ul className="resume-library-list">
                         {drafts.map((draft) => (
                             <li key={draft.id}>
-                                <button
-                                    type="button"
-                                    onClick={() => onSelect(draft.id)}
-                            >
-                                    <strong>
-                                        {getResumeTypeName(
-                                            draft.resumeType,
-                                        )}
-                                    </strong>
-                                    <span>
-                                        {formatSavedAt(draft.savedAt)}
-                                    </span>
+                                <button type="button" onClick={() => onSelect(draft.id)}>
+                                    <strong>{getResumeTypeName(draft.resumeType, t)}</strong>
+                                    <span>{formatSavedAt(draft.savedAt, i18n.language)}</span>
                                 </button>
                             </li>
                         ))}

@@ -265,6 +265,16 @@ const ko = {
             error: "게시글을 불러오지 못했습니다.",
             viewCount: "조회",
             commentCount: "댓글",
+            reactionLoadError: "리액션 정보를 불러오지 못했습니다.",
+            likeLoginRequired: "공감을 누르려면 로그인이 필요합니다.",
+            likeActionError: "공감 처리에 실패했습니다.",
+            repostLoginRequired: "리포스트하려면 로그인이 필요합니다.",
+            repostActionError: "리포스트 처리에 실패했습니다.",
+            imageAlt: "게시글 사진 {{index}}",
+            like: "공감",
+            unlike: "공감 취소",
+            repost: "리포스트",
+            unrepost: "리포스트 취소",
         },
 
         comments: {
@@ -310,12 +320,14 @@ const ko = {
             submitting: "수정 중...",
             submit: "수정 완료",
         },
+
         navigation: {
             allPosts: "전체 게시글",
             questionAnswer: "질문·답변",
             reviewRecommend: "후기·추천",
             freeTalk: "자유 이야기",
         },
+
         topics: {
             title: "주요 주제",
             account: "계좌 개설",
@@ -324,8 +336,97 @@ const ko = {
             visaStay: "비자·체류",
             lifeTip: "한국 생활 팁",
         },
-    },
 
+        board: {
+            title: "커뮤니티",
+            searchPlaceholder: "내용을 검색해보세요.",
+            searchAria: "게시글 본문 검색",
+            searchSubmitAria: "검색",
+            writePlaceholder: "한국 생활에 필요한 정보를 함께 나누고 싶어요.",
+            writeAria: "게시글 내용",
+            categoryLabel: "카테고리",
+            questionAnswer: "질문·답변",
+            reviewRecommend: "후기·추천",
+            freeTalk: "자유 이야기",
+            relatedServiceLabel: "관련 서비스",
+            noRelatedService: "연결 안 함",
+            addImage: "사진 추가",
+            imageGuide: "JPG/PNG · 최대 4장 · 장당 20MB",
+            submit: "작성",
+            submitting: "작성 중",
+        },
+
+        post: {
+            reposted: "내가 리포스트함",
+            edit: "수정",
+            delete: "삭제",
+            deleting: "삭제 중",
+            detailsAria: "게시글 상세 보기",
+            imageAlt: "게시글 사진 {{index}}",
+            like: "공감",
+            unlike: "공감 취소",
+            repost: "리포스트",
+            unrepost: "리포스트 취소",
+            viewAria: "조회 {{count}}회",
+            views: "조회",
+            comments: "댓글",
+            closeComments: "댓글 닫기",
+            likeLoadError: "공감 정보를 불러오지 못했습니다.",
+            likeLoginRequired: "공감을 누르려면 로그인이 필요합니다.",
+            likeActionError: "공감 처리에 실패했습니다.",
+            repostLoadError: "리포스트 정보를 불러오지 못했습니다.",
+            repostLoginRequired: "리포스트하려면 로그인이 필요합니다.",
+            repostActionError: "리포스트 처리에 실패했습니다.",
+        },
+
+        feed: {
+            selectedImageAlt: "선택한 사진: {{name}}",
+            deleteImageAria: "{{name}} 삭제",
+            tabsAria: "커뮤니티 피드 선택",
+            allPosts: "전체 게시글",
+            myReposts: "내 리포스트",
+            loading: "게시글을 불러오는 중입니다.",
+            retry: "다시 시도",
+            empty: "아직 작성된 게시글이 없습니다.",
+            end: "모든 게시글을 불러왔습니다.",
+            popularAreaAria: "최근 게시글",
+            popularTitle: "인기 게시글",
+            popularSortAria: "인기 게시글 정렬",
+            sortByLikes: "공감순",
+            sortByViews: "조회순",
+            popularDetailsAria: "{{preview}} 상세 보기",
+            likeCount: "공감 {{count}}",
+            viewCount: "조회 {{count}}",
+            popularEmpty: "아직 표시할 게시글이 없습니다.",
+        },
+
+        feedback: {
+            popularLoadError: "인기 게시글을 불러오지 못했습니다.",
+            myRepostsLoginRequired: "내 리포스트는 로그인 후 확인할 수 있습니다.",
+            postsLoadError: "게시글을 불러오지 못했습니다.",
+            imageCountLimit: "사진은 최대 {{count}}장까지 첨부할 수 있습니다.",
+            imageValidation: "JPG 또는 PNG 파일만 가능하며, 사진 한 장은 20MB 이하여야 합니다.",
+            writeLoginRequired: "게시글을 작성하려면 로그인이 필요합니다.",
+            contentRequired: "게시글 내용 또는 사진을 추가해주세요.",
+            writeFailed: "게시글 작성에 실패했습니다.",
+            deleteConfirm: "이 게시글을 삭제할까요?",
+            deleteFailed: "게시글 삭제에 실패했습니다.",
+            imageOnlyPost: "사진이 포함된 게시글",
+        },
+
+        accessibility: {
+            explore: "커뮤니티 둘러보기",
+            postTypeNavigation: "게시글 종류",
+            board: "커뮤니티 게시판",
+        },
+
+        relatedServices: {
+            account: "계좌 개설 바로가기",
+            loan: "대출 바로가기",
+            insurance: "보험 바로가기",
+            employment: "취업 도우미 바로가기",
+        },
+    },
     service: {
         consultation: {
             description: "도움이 필요한 문제를 고르고, 상황에 맞는 도움 기관을 찾아보세요.",
@@ -356,11 +457,104 @@ const ko = {
             description: "지원 방식에 맞는 이력서를 작성하고 저장하거나 출력하세요.",
         },
         simulator: {
-            description: "상환일과 수입·지출을 달력에 정리하고 하루 지출 계획을 세워보세요."
+            description: "상환일과 수입·지출을 달력에 정리하고 하루 지출 계획을 세워보세요.",
         },
 
         community: {
-            description: "한국 생활의 경험과 정보를 나누고, 서로의 이야기를 만나보세요."
+            description: "한국 생활의 경험과 정보를 나누고, 서로의 이야기를 만나보세요.",
+        },
+    },
+
+    resume: {
+        page: {
+            title: "취업 준비자료",
+            description: "지원 방식에 맞는 A4 이력서를 작성하고 저장하거나 출력하세요.",
+            tabListAria: "이력서 양식 선택",
+            basicTab: "기본 이력서",
+            blindTab: "블라인드 채용 이력서",
+            basicSheetTitle: "이력서",
+            blindSheetTitle: "블라인드 채용 이력서",
+        },
+
+        actions: {
+            save: "저장",
+            saving: "저장 중...",
+            load: "불러오기",
+            print: "인쇄/출력",
+            translateToKorean: "한국어로 변환",
+        },
+
+        personal: {
+            basicTitle: "인적사항",
+            blindTitle: "지원 정보",
+
+            photoPreviewAlt: "선택한 사진 미리보기",
+            selectPhoto: "사진 선택",
+            removingPhoto: "삭제 중...",
+            removePhoto: "삭제",
+
+            name: "성명",
+            koreanNamePlaceholder: "(한글)",
+            englishNamePlaceholder: "(영문)",
+            birthDate: "생년월일",
+            phone: "연락처",
+            phonePlaceholder: "휴대전화",
+            email: "이메일",
+            address: "주소",
+
+            receiptNumber: "접수번호",
+            targetJob: "지원 직무",
+        },
+
+        sections: {
+            education: "학력",
+            career: "경력",
+            certificates: "자격증",
+            awards: "수상내역",
+            jobEducation: "직무 관련 교육",
+        },
+
+        columns: {
+            schoolName: "학교명",
+            major: "전공분야",
+            degree: "학위",
+            period: "기간",
+            companyName: "근무처",
+            jobDuty: "담당직무",
+            position: "직위",
+            certificateName: "자격증명",
+            grade: "등급",
+            issuer: "발급기관",
+            acquiredAt: "취득일",
+            awardName: "수상명",
+            organization: "수여기관",
+            awardedAt: "수상일",
+            jobField: "직무 분야",
+            field: "교육 분야",
+            courseName: "교육 과정",
+            completionStatus: "수료 여부",
+        },
+
+        table: { cellAria: "{{title}} {{row}}행 {{column}}" },
+
+        messages: {
+            temporaryPhotoSaveFailed: "선택한 사진을 임시 저장하지 못했습니다.",
+            photoDeleted: "사진을 삭제했습니다.",
+            photoDeleteFailed: "사진을 삭제하지 못했습니다. 다시 시도해주세요.",
+            saved: "{{resumeName}}를 저장했습니다.",
+            saveFailed: "저장하지 못했습니다. 다시 시도해주세요.",
+            libraryLoadFailed: "저장한 이력서 목록을 불러오지 못했습니다.",
+            draftNotFound: "저장한 이력서를 찾을 수 없습니다.",
+            draftLoaded: "저장한 이력서를 불러왔습니다.",
+            draftLoadFailed: "저장한 이력서를 불러오지 못했습니다.",
+        },
+
+        library: {
+            title: "저장한 이력서 불러오기",
+            description: "저장한 이력서를 선택하면 현재 작성 내용이 선택한 초안으로 바뀝니다.",
+            close: "닫기",
+            loading: "저장한 이력서를 불러오는 중입니다.",
+            empty: "저장한 이력서가 없습니다.",
         },
     },
 
