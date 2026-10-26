@@ -190,6 +190,85 @@ class AuthControllerTest {
         assertThat(wrongPassword).isEqualTo(noUser).contains("LOGIN_FAILED");
     }
 
+    private org.springframework.test.web.servlet.ResultActions loginWith(String loginId, String password) throws Exception {
+        return mockMvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"loginId\":\"" + loginId + "\",\"password\":\"" + password + "\"}"));
+    }
+
+    @Test
+    void 다섯_번_틀리면_잠기고_맞는_비밀번호도_거부된다() throws Exception {
+        signup();
+        for (int i = 0; i < 4; i++) {
+            loginWith("newuser1", "Wrong123!").andExpect(jsonPath("$.error.code").value("LOGIN_FAILED"));
+        }
+        // 5번째 실패에서 바로 잠김 안내
+        loginWith("newuser1", "Wrong123!")
+                .andExpect(status().isTooManyRequests())
+                .andExpect(jsonPath("$.error.code").value("LOGIN_LOCKED"));
+
+        loginWith("newuser1", "Abcdef1!")
+                .andExpect(status().isTooManyRequests())
+                .andExpect(jsonPath("$.error.code").value("LOGIN_LOCKED"));
+    }
+
+    @Test
+    void 잠금_시간이_지나면_다시_로그인할_수_있다() throws Exception {
+        signup();
+        for (int i = 0; i < 5; i++) {
+            loginWith("newuser1", "Wrong123!");
+        }
+        jdbcTemplate.update("UPDATE login_attempts SET locked_until = DATEADD('MINUTE', -1, CURRENT_TIMESTAMP)");
+
+        loginWith("newuser1", "Abcdef1!").andExpect(status().isOk());
+    }
+
+    @Test
+    void 로그인에_성공하면_실패_횟수가_초기화된다() throws Exception {
+        signup();
+        for (int i = 0; i < 4; i++) {
+            loginWith("newuser1", "Wrong123!");
+        }
+        loginWith("newuser1", "Abcdef1!").andExpect(status().isOk());
+
+        // 다시 4번 틀려도 잠기지 않는다 (앞의 4번은 지워졌다)
+        for (int i = 0; i < 4; i++) {
+            loginWith("newuser1", "Wrong123!").andExpect(jsonPath("$.error.code").value("LOGIN_FAILED"));
+        }
+        loginWith("newuser1", "Abcdef1!").andExpect(status().isOk());
+    }
+
+    @Test
+    void 오래된_실패는_다시_센다() throws Exception {
+        signup();
+        for (int i = 0; i < 4; i++) {
+            loginWith("newuser1", "Wrong123!");
+        }
+        jdbcTemplate.update("UPDATE login_attempts SET last_failed_at = DATEADD('MINUTE', -16, CURRENT_TIMESTAMP)");
+
+        // 15분이 지난 실패 기록은 지우고 1번째 실패부터 다시 센다
+        loginWith("newuser1", "Wrong123!").andExpect(jsonPath("$.error.code").value("LOGIN_FAILED"));
+        Integer count = jdbcTemplate.queryForObject("SELECT failed_count FROM login_attempts", Integer.class);
+        assertThat(count).isEqualTo(1);
+    }
+
+    @Test
+    void 없는_아이디도_똑같이_잠긴다() throws Exception {
+        // 잠김 응답으로 가입 여부가 드러나지 않게 한다
+        for (int i = 0; i < 4; i++) {
+            loginWith("nobody99", "Wrong123!").andExpect(jsonPath("$.error.code").value("LOGIN_FAILED"));
+        }
+        loginWith("nobody99", "Wrong123!").andExpect(jsonPath("$.error.code").value("LOGIN_LOCKED"));
+    }
+
+    @Test
+    void 한_아이디가_잠겨도_다른_아이디는_로그인된다() throws Exception {
+        signup();
+        for (int i = 0; i < 5; i++) {
+            loginWith("other123", "Wrong123!");
+        }
+        loginWith("newuser1", "Abcdef1!").andExpect(status().isOk());
+    }
+
     @Test
     void 재발급하면_토큰이_바뀌고_쓴_토큰은_다시_못_쓴다() throws Exception {
         signup();

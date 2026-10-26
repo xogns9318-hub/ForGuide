@@ -546,6 +546,7 @@ const ko = {
         // 서버 오류 코드별 안내 (src/auth/utils/authMessages.js의 KNOWN_ERROR_CODES)
         errors: {
             LOGIN_FAILED: "아이디 또는 비밀번호가 올바르지 않습니다.",
+            LOGIN_LOCKED: "로그인에 5번 실패해 잠시 잠겼습니다. 15분 후 다시 시도해주세요.",
             LOGIN_ID_DUPLICATED: "이미 사용 중인 아이디입니다.",
             EMAIL_DUPLICATED: "이미 가입된 이메일입니다.",
             EMAIL_NOT_VERIFIED: "이메일 인증을 완료해주세요.",

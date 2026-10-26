@@ -110,6 +110,7 @@ export default function Login() {
             }
 
             // LOGIN_FAILED: 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는 안내를 표시
+            // LOGIN_LOCKED: 5번 실패해 15분 동안 잠겼다는 안내 (서버가 아이디별로 센다)
             setFormError(apiErrorMessage(error, "auth.login.failed"));
             inputRefs.current.password?.focus();
         } finally {

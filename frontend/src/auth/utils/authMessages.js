@@ -31,6 +31,7 @@ export function messageText(t, message) {
 // (목록에 없는 코드는 서버가 보낸 문구를 그대로 쓴다)
 const KNOWN_ERROR_CODES = [
     "LOGIN_FAILED",
+    "LOGIN_LOCKED",
     "LOGIN_ID_DUPLICATED",
     "EMAIL_DUPLICATED",
     "EMAIL_NOT_VERIFIED",

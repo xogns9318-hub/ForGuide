@@ -112,7 +112,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | `sendEmailCode({ email, purpose })` | `POST /auth/email/send-code` | 이메일, `purpose`(`SIGNUP`·`PASSWORD_RESET`) | `{ expiresInSeconds, resendAfterSeconds }` | `INVALID_INPUT`, `EMAIL_DUPLICATED`(가입용), `VERIFICATION_RESEND_TOO_SOON`(429), `VERIFICATION_DAILY_LIMIT`(429), `MAIL_SEND_FAILED`(503) |
 | `verifyEmailCode({ email, purpose, code })` | `POST /auth/email/verify` | 이메일, 목적, 6자리 코드 | `{ verificationToken }` | `INVALID_INPUT`, `VERIFICATION_CODE_INVALID`, `VERIFICATION_EXPIRED`, `VERIFICATION_ATTEMPTS_EXCEEDED` |
 | `signup({ loginId, password, givenName, familyName, nickname, email, emailVerificationToken })` | `POST /auth/signup`                 | 아래 입력 규칙 + 인증 완료 토큰 | `member`                                    | `INVALID_INPUT`, `LOGIN_ID_DUPLICATED`, `EMAIL_DUPLICATED`, `EMAIL_NOT_VERIFIED` |
-| `login({ loginId, password })`               | `POST /auth/login`                  | 아이디·비밀번호           | `{ accessToken, member }` + refresh token 쿠키                          | `INVALID_INPUT`, `LOGIN_FAILED`                                               |
+| `login({ loginId, password })`               | `POST /auth/login`                  | 아이디·비밀번호           | `{ accessToken, member }` + refresh token 쿠키                          | `INVALID_INPUT`, `LOGIN_FAILED`, `LOGIN_LOCKED`(429) |
 | `restoreSession()`                           | `POST /auth/refresh`                | 없음 (refresh token 쿠키) | `{ accessToken, member }` → 스토어 저장. 쿠키가 없으면 `data` 없음(200) | 쿠키 없음·실패 = 로그아웃 상태로 시작 (정상). mock에서는 서버를 부르지 않는다 |
 | `logout()`                                   | `POST /auth/logout`                 | 없음 (refresh token 쿠키) | 없음                                                                    | 실패해도 화면의 로그인 상태는 지운다                                          |
 
@@ -120,6 +120,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - 백엔드 구현: `member/controller/AuthController`, `member/service/AuthService`, `member/mapper/`(SQL `resources/mapper/member/`). 회원가입 성공은 201.
 - refresh token: 무작위 32바이트(쿠키 `refreshToken`, HttpOnly·SameSite=Strict·Path=/api/v1/auth·Max-Age 14일). DB `refresh_tokens.token`에는 SHA-256 해시만 저장. 재발급 시 교체하고, 같은 토큰은 한 번만 쓸 수 있다.
 - 로그인: 없는 아이디도 비밀번호 비교 시간을 똑같이 써서 응답 시간으로 가입 여부를 알 수 없게 한다.
+- 로그인 시도 제한(`member/service/LoginAttemptService`, 테이블 `login_attempts`): 같은 아이디로 연속 5번 실패하면 15분 잠금(5번째 실패부터 `LOGIN_LOCKED`), 잠긴 동안은 맞는 비밀번호도 거부. 성공하면 초기화, 마지막 실패 후 15분이 지나면 다시 센다. 없는 아이디도 똑같이 세어 잠김 여부로 가입 여부가 드러나지 않게 한다.
 - 앱 시작 시 `App.jsx`가 `restoreSession()`을 한 번 부르고, 끝나면 성공·실패와 무관하게 `initialized`를 표시한다.
 - `login` 성공 시 스토어에 저장한다. 실패 메시지는 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는다.
 - 이메일은 소문자로 바꿔 비교·저장한다.

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.forguide.member.mapper.LoginAttemptMapper">
+
+    <select id="findByLoginId" resultType="com.example.forguide.member.mapper.LoginAttemptRow">
+        SELECT login_id       AS loginId,
+               failed_count   AS failedCount,
+               last_failed_at AS lastFailedAt,
+               locked_until   AS lockedUntil
+        FROM login_attempts
+        WHERE login_id = #{loginId}
+    </select>
+
+    <insert id="insertFirstFailure">
+        INSERT INTO login_attempts (login_id, failed_count, last_failed_at)
+        VALUES (#{loginId}, 1, #{now})
+    </insert>
+
+    <!--
+        한 문장으로 증가시켜 동시에 여러 번 실패해도 횟수가 빠지지 않게 한다.
+        locked_until을 failed_count보다 먼저 쓴다: MySQL은 SET을 왼쪽부터 적용해 뒤쪽 식에서 바뀐 값을 보지만,
+        이 순서면 MySQL과 H2 모두 바뀌기 전 failed_count로 계산한다.
+    -->
+    <update id="increaseFailure">
+        UPDATE login_attempts
+        SET locked_until   = CASE WHEN failed_count + 1 &gt;= #{maxFailures} THEN #{lockUntil} ELSE locked_until END,
+            failed_count   = failed_count + 1,
+            last_failed_at = #{now}
+        WHERE login_id = #{loginId}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM login_attempts WHERE login_id = #{loginId}
+    </delete>
+</mapper>

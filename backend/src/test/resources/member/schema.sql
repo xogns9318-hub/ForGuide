@@ -43,3 +43,12 @@ CREATE TABLE email_verifications (
     token_used_at     DATETIME,
     created_at        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+DROP TABLE IF EXISTS login_attempts;
+
+CREATE TABLE login_attempts (
+    login_id        VARCHAR(20) NOT NULL PRIMARY KEY,
+    failed_count    INT         NOT NULL,
+    last_failed_at  DATETIME    NOT NULL,
+    locked_until    DATETIME
+);

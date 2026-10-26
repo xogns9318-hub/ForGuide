@@ -23,6 +23,7 @@ public enum ErrorCode {
 
     // 보안: 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는다
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다."),
+    LOGIN_LOCKED(HttpStatus.TOO_MANY_REQUESTS, "로그인에 5번 실패해 잠시 잠겼습니다. 15분 후 다시 시도해주세요."),
 
     // ── 회원 ──
     LOGIN_ID_DUPLICATED(HttpStatus.CONFLICT, "이미 사용 중인 아이디입니다."),

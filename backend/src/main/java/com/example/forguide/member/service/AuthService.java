@@ -44,6 +44,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final EmailVerificationService emailVerificationService;
+    private final LoginAttemptService loginAttemptService;
     private final SecureRandom secureRandom = new SecureRandom();
 
     // 없는 아이디로 로그인할 때도 비밀번호 비교 시간을 똑같이 쓰기 위한 가짜 해시
@@ -52,12 +53,14 @@ public class AuthService {
 
     public AuthService(MemberMapper memberMapper, RefreshTokenMapper refreshTokenMapper,
                        PasswordEncoder passwordEncoder, JwtProvider jwtProvider,
-                       EmailVerificationService emailVerificationService) {
+                       EmailVerificationService emailVerificationService,
+                       LoginAttemptService loginAttemptService) {
         this.memberMapper = memberMapper;
         this.refreshTokenMapper = refreshTokenMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
         this.emailVerificationService = emailVerificationService;
+        this.loginAttemptService = loginAttemptService;
         this.dummyPasswordHash = passwordEncoder.encode("dummy-password-for-timing");
     }
 
@@ -118,9 +121,17 @@ public class AuthService {
         return MemberResponse.from(memberMapper.findById(row.getMemberId()));
     }
 
-    /** 로그인 → access token + refresh token */
-    @Transactional
+    /**
+     * 로그인 → access token + refresh token
+     * 실패 기록은 오류를 던져도 저장되어야 하므로 ApiException에는 되돌리지 않는다
+     */
+    @Transactional(noRollbackFor = ApiException.class)
     public AuthTokens login(LoginRequest request) {
+        LocalDateTime now = LocalDateTime.now();
+
+        // 잠긴 아이디는 비밀번호를 확인하지 않고 거부한다 (맞는 비밀번호여도)
+        loginAttemptService.checkNotLocked(request.loginId(), now);
+
         MemberRow member = memberMapper.findByLoginId(request.loginId());
 
         // 회원이 없어도 비교는 한다 (시간 차이로 가입 여부가 드러나지 않게)
@@ -129,8 +140,12 @@ public class AuthService {
 
         // 보안: 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는다
         if (member == null || !matches) {
+            // 실패 횟수를 세고, 이번이 5번째면 LOGIN_LOCKED로 바로 알린다
+            loginAttemptService.recordFailure(request.loginId(), now);
             throw new ApiException(ErrorCode.LOGIN_FAILED);
         }
+
+        loginAttemptService.reset(request.loginId());
         return issueTokens(member);
     }
 
