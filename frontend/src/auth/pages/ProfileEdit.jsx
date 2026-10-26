@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Banner from "../../components/Banner/Banner.jsx";
 import FieldError from "../../components/FieldError/FieldError.jsx";
 import { updateNickname } from "../api/memberApi.js";
 import { messageText, apiErrorMessage, apiFieldErrors } from "../utils/authMessages.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { validateNickname } from "../utils/authValidation.js";
-import "../auth.css";
+import styles from "./AuthPage.module.css";
 
 // 프로필 수정 (Figma: 프로필 수정 · 기본 정보, /mypage/edit) — 지금은 닉네임만 수정
 // RequireAuth 안에서만 열리므로 로그인한 회원 정보가 있다
@@ -67,22 +66,21 @@ export default function ProfileEdit() {
 
     return (
         <div className="page-stack">
-            <Banner
-                title={t("auth.profileEdit.title")}
-                description={t("auth.profileEdit.description")}
-            />
-
+            {/* 가운데 카드 안의 입력 폼 (한 줄에 한 항목) */}
             <form
-                className="panel"
+                className={`panel ${styles.card}`}
                 onSubmit={handleSubmit}
                 noValidate
                 aria-labelledby="profile-edit-title"
             >
-                <div className="auth-panel-head panel-title">
-                    <h2 id="profile-edit-title">{t("auth.profileEdit.heading")}</h2>
+                <div className={styles.head}>
+                    <h1 id="profile-edit-title" className={styles.title}>
+                        {t("auth.profileEdit.title")}
+                    </h1>
+                    <p className={styles.description}>{t("auth.profileEdit.description")}</p>
                 </div>
 
-                <div className="form-grid">
+                <div className={styles.fields}>
                     {/* 닉네임 */}
                     <div className="form-field">
                         <label htmlFor="profile-nickname">{t("auth.profileEdit.nickname")}</label>
@@ -119,7 +117,7 @@ export default function ProfileEdit() {
                     </div>
                 </div>
 
-                <div className="form-actions">
+                <div className={styles.actions}>
                     <button type="submit" className="button button-primary" disabled={isSaving}>
                         {isSaving ? t("auth.common.saving") : t("auth.common.save")}
                     </button>

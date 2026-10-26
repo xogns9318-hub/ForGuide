@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Banner from "../../components/Banner/Banner.jsx";
 import FieldError from "../../components/FieldError/FieldError.jsx";
 import { checkLoginId, signup } from "../api/authApi.js";
 import { msg, messageText, apiErrorMessage, apiFieldErrors } from "../utils/authMessages.js";
@@ -11,7 +10,7 @@ import {
     validateName,
     validateEmail,
 } from "../utils/authValidation.js";
-import "../auth.css";
+import styles from "./AuthPage.module.css";
 
 // 입력 항목 순서 (오류가 있으면 이 순서대로 첫 항목에 포커스)
 const fieldOrder = ["loginId", "password", "name", "email"];
@@ -207,24 +206,21 @@ export default function Signup() {
 
     return (
         <div className="page-stack">
-            {/* 공통 페이지 배너 */}
-            <Banner
-                title={t("auth.signup.title")}
-                description={t("auth.common.bannerDescription")}
-            />
-
-            {/* 공통 본문 박스 안의 입력 폼 */}
+            {/* 가운데 카드 안의 입력 폼 (한 줄에 한 항목) */}
             <form
-                className="panel"
+                className={`panel ${styles.card}`}
                 onSubmit={handleSubmit}
                 noValidate
                 aria-labelledby="signup-title"
             >
-                <div className="auth-panel-head panel-title">
-                    <h2 id="signup-title">{t("auth.signup.heading")}</h2>
+                <div className={styles.head}>
+                    <h1 id="signup-title" className={styles.title}>
+                        {t("auth.signup.title")}
+                    </h1>
+                    <p className={styles.description}>{t("auth.signup.heading")}</p>
                 </div>
 
-                <div className="form-grid">
+                <div className={styles.fields}>
                     {/* 아이디 */}
                     <div className="form-field">
                         <label htmlFor="signup-loginId">{t("auth.common.loginId")}</label>
@@ -243,7 +239,7 @@ export default function Signup() {
                             </p>
                         )}
                         {isIdAvailable && !errors.loginId && (
-                            <p className="auth-field-ok" role="status">
+                            <p className={styles.ok} role="status">
                                 {t("auth.signup.loginIdAvailable")}
                             </p>
                         )}
@@ -256,7 +252,7 @@ export default function Signup() {
                     {/* 비밀번호 + 보기 버튼 */}
                     <div className="form-field">
                         <label htmlFor="signup-password">{t("auth.common.password")}</label>
-                        <div className="auth-password">
+                        <div className={styles.password}>
                             <input
                                 {...fieldProps("password")}
                                 type={showPassword ? "text" : "password"}
@@ -265,7 +261,7 @@ export default function Signup() {
                             />
                             <button
                                 type="button"
-                                className="auth-password-toggle"
+                                className={styles.passwordToggle}
                                 aria-pressed={showPassword}
                                 aria-controls="signup-password"
                                 onClick={() => setShowPassword((prev) => !prev)}
@@ -309,15 +305,17 @@ export default function Signup() {
                     </p>
                 )}
 
-                {/* 공통 버튼 배치 */}
-                <div className="form-actions">
+                <div className={styles.actions}>
                     <button type="submit" className="button button-primary" disabled={isSubmitting}>
                         {isSubmitting ? t("auth.signup.submitting") : t("auth.signup.submit")}
                     </button>
-                    <Link to="/login" className="button">
-                        {t("auth.signup.goLogin")}
-                    </Link>
                 </div>
+
+                {/* 이미 계정이 있으면 로그인으로 */}
+                <p className={styles.switch}>
+                    {t("auth.signup.haveAccount")}
+                    <Link to="/login">{t("auth.signup.goLogin")}</Link>
+                </p>
             </form>
         </div>
     );

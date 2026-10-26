@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Banner from "../../components/Banner/Banner.jsx";
 import FieldError from "../../components/FieldError/FieldError.jsx";
 import ProfileAvatar from "../components/ProfileAvatar.jsx";
 import { updateProfileImage } from "../api/memberApi.js";
@@ -13,7 +12,7 @@ import {
     prepareProfileImage,
     validateProfileImage,
 } from "../utils/profileImage.js";
-import "../auth.css";
+import styles from "./AuthPage.module.css";
 
 // 마이페이지 (Figma: /mypage) — 지금은 프로필 이미지 설정만 제공
 // RequireAuth 안에서만 열리므로 로그인한 회원 정보가 있다
@@ -114,14 +113,20 @@ export default function MyPage() {
 
     return (
         <div className="page-stack">
-            <Banner title={t("auth.myPage.title")} description={t("auth.myPage.description")} />
-
-            <form className="panel" onSubmit={handleSave} aria-labelledby="mypage-image-title">
-                <div className="auth-panel-head panel-title">
-                    <h2 id="mypage-image-title">{t("auth.myPage.imageHeading")}</h2>
+            {/* 가운데 카드: 제목 → 프로필 이미지 → 파일 선택 → 버튼 (위에서 아래로) */}
+            <form
+                className={`panel ${styles.card}`}
+                onSubmit={handleSave}
+                aria-labelledby="mypage-title"
+            >
+                <div className={styles.head}>
+                    <h1 id="mypage-title" className={styles.title}>
+                        {t("auth.myPage.title")}
+                    </h1>
+                    <p className={styles.description}>{t("auth.myPage.description")}</p>
                 </div>
 
-                <div className="mypage-image-row">
+                <div className={styles.imageArea}>
                     {/* 저장 전에는 고른 이미지를, 아니면 현재 이미지를 보여 준다 */}
                     <ProfileAvatar
                         imageUrl={previewUrl ?? member?.profileImageUrl}
@@ -146,14 +151,14 @@ export default function MyPage() {
                         </p>
                         <FieldError id="mypage-image-error" message={messageText(t, error)} />
                         {message && (
-                            <p className="auth-field-ok" role="status">
+                            <p className={styles.ok} role="status">
                                 {messageText(t, message)}
                             </p>
                         )}
                     </div>
                 </div>
 
-                <div className="form-actions">
+                <div className={styles.actions}>
                     <button
                         type="submit"
                         className="button button-primary"
