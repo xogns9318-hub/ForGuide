@@ -67,9 +67,17 @@ export default function ProfileEdit() {
 
     return (
         <div className="page-stack">
-            <Banner title={t("auth.profileEdit.title")} description={t("auth.profileEdit.description")} />
+            <Banner
+                title={t("auth.profileEdit.title")}
+                description={t("auth.profileEdit.description")}
+            />
 
-            <form className="panel" onSubmit={handleSubmit} noValidate aria-labelledby="profile-edit-title">
+            <form
+                className="panel"
+                onSubmit={handleSubmit}
+                noValidate
+                aria-labelledby="profile-edit-title"
+            >
                 <div className="auth-panel-head panel-title">
                     <h2 id="profile-edit-title">{t("auth.profileEdit.heading")}</h2>
                 </div>

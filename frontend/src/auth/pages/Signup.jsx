@@ -119,11 +119,7 @@ export default function Signup() {
         );
 
         // 이미 사용 중으로 확인된 아이디는 가입 요청을 보내지 않는다
-        if (
-            !next.loginId &&
-            idCheck.status === "taken" &&
-            idCheck.checkedId === form.loginId
-        ) {
+        if (!next.loginId && idCheck.status === "taken" && idCheck.checkedId === form.loginId) {
             next.loginId = msg("auth.errors.LOGIN_ID_DUPLICATED");
         }
 
@@ -207,8 +203,7 @@ export default function Signup() {
         };
     }
 
-    const isIdAvailable =
-        idCheck.status === "available" && idCheck.checkedId === form.loginId;
+    const isIdAvailable = idCheck.status === "available" && idCheck.checkedId === form.loginId;
 
     return (
         <div className="page-stack">
@@ -252,7 +247,10 @@ export default function Signup() {
                                 {t("auth.signup.loginIdAvailable")}
                             </p>
                         )}
-                        <FieldError id="signup-loginId-error" message={messageText(t, errors.loginId)} />
+                        <FieldError
+                            id="signup-loginId-error"
+                            message={messageText(t, errors.loginId)}
+                        />
                     </div>
 
                     {/* 비밀번호 + 보기 버튼 */}
@@ -275,17 +273,16 @@ export default function Signup() {
                                 {showPassword ? t("auth.common.hide") : t("auth.common.show")}
                             </button>
                         </div>
-                        <FieldError id="signup-password-error" message={messageText(t, errors.password)} />
+                        <FieldError
+                            id="signup-password-error"
+                            message={messageText(t, errors.password)}
+                        />
                     </div>
 
                     {/* 이름 */}
                     <div className="form-field">
                         <label htmlFor="signup-name">{t("auth.signup.name")}</label>
-                        <input
-                            {...fieldProps("name")}
-                            type="text"
-                            autoComplete="name"
-                        />
+                        <input {...fieldProps("name")} type="text" autoComplete="name" />
                         <FieldError id="signup-name-error" message={messageText(t, errors.name)} />
                     </div>
 
@@ -299,7 +296,10 @@ export default function Signup() {
                             inputMode="email"
                             maxLength={254}
                         />
-                        <FieldError id="signup-email-error" message={messageText(t, errors.email)} />
+                        <FieldError
+                            id="signup-email-error"
+                            message={messageText(t, errors.email)}
+                        />
                     </div>
                 </div>
 
@@ -311,11 +311,7 @@ export default function Signup() {
 
                 {/* 공통 버튼 배치 */}
                 <div className="form-actions">
-                    <button
-                        type="submit"
-                        className="button button-primary"
-                        disabled={isSubmitting}
-                    >
+                    <button type="submit" className="button button-primary" disabled={isSubmitting}>
                         {isSubmitting ? t("auth.signup.submitting") : t("auth.signup.submit")}
                     </button>
                     <Link to="/login" className="button">

@@ -179,7 +179,10 @@ export default function Login() {
                             spellCheck={false}
                             maxLength={20}
                         />
-                        <FieldError id="login-loginId-error" message={messageText(t, errors.loginId)} />
+                        <FieldError
+                            id="login-loginId-error"
+                            message={messageText(t, errors.loginId)}
+                        />
                     </div>
 
                     {/* 비밀번호 + 보기 버튼 */}
@@ -202,7 +205,10 @@ export default function Login() {
                                 {showPassword ? t("auth.common.hide") : t("auth.common.show")}
                             </button>
                         </div>
-                        <FieldError id="login-password-error" message={messageText(t, errors.password)} />
+                        <FieldError
+                            id="login-password-error"
+                            message={messageText(t, errors.password)}
+                        />
                     </div>
                 </div>
 
@@ -214,11 +220,7 @@ export default function Login() {
 
                 {/* 공통 버튼 배치 */}
                 <div className="form-actions">
-                    <button
-                        type="submit"
-                        className="button button-primary"
-                        disabled={isSubmitting}
-                    >
+                    <button type="submit" className="button button-primary" disabled={isSubmitting}>
                         {isSubmitting ? t("auth.login.submitting") : t("auth.login.submit")}
                     </button>
                     <Link to="/signup" className="button">
