@@ -6,6 +6,22 @@ const th = {
         myPage: "หน้าของฉัน",
         myFinance: "ข้อมูลทางการเงินของฉัน",
         language: "ภาษา",
+
+        mega: {
+            introduction: "แนะนำคู่มือ",
+            guides: "รายการคู่มือ",
+            contact: "ติดต่อเรา",
+            introductionList: "รายการแนะนำ",
+            contactGroup: "ติดต่อสอบถาม",
+            myInquiries: "รายการสอบถามของฉัน",
+            privateInquiry: "สอบถามแบบ 1:1",
+            faq: "คำถามที่พบบ่อย",
+            home: "หน้าแรก ForGuide",
+            navigation: "เมนูคู่มือ",
+            open: "เปิดเมนู",
+            close: "ปิดเมนู",
+        },
+
     },
 
     navigation: {
@@ -76,6 +92,12 @@ const th = {
                 jobListings: "รายการงาน",
                 employment: "เอกสารเตรียมสมัครงาน",
             },
+            simulator: {
+                simulator: "โปรแกรมจำลอง",
+            },
+            community: {
+                community: "ชุมชน",
+            },
         },
     },
 
@@ -113,6 +135,14 @@ const th = {
         },
         employment: {
             description: "สร้าง บันทึก หรือพิมพ์เรซูเม่ให้เหมาะกับวิธีการสมัครงานของคุณ",
+        },
+        simulator: {
+            description:
+                "บันทึกวันชำระคืนเงินกู้ รายรับ และรายจ่ายลงในปฏิทิน เพื่อวางแผนการใช้จ่ายประจำวัน",
+        },
+        community: {
+            description:
+                "แบ่งปันประสบการณ์และข้อมูลเกี่ยวกับการใช้ชีวิตในเกาหลี พร้อมแลกเปลี่ยนเรื่องราวกับผู้อื่น",
         },
     },
 

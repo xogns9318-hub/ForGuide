@@ -310,6 +310,20 @@ const ko = {
             submitting: "수정 중...",
             submit: "수정 완료",
         },
+        navigation: {
+            allPosts: "전체 게시글",
+            questionAnswer: "질문·답변",
+            reviewRecommend: "후기·추천",
+            freeTalk: "자유 이야기",
+        },
+        topics: {
+            title: "주요 주제",
+            account: "계좌 개설",
+            loan: "대출",
+            insurance: "보험",
+            visaStay: "비자·체류",
+            lifeTip: "한국 생활 팁",
+        },
     },
 
     service: {
@@ -340,6 +354,13 @@ const ko = {
         },
         employment: {
             description: "지원 방식에 맞는 이력서를 작성하고 저장하거나 출력하세요.",
+        },
+        simulator: {
+            description: "상환일과 수입·지출을 달력에 정리하고 하루 지출 계획을 세워보세요."
+        },
+
+        community: {
+            description: "한국 생활의 경험과 정보를 나누고, 서로의 이야기를 만나보세요."
         },
     },
 

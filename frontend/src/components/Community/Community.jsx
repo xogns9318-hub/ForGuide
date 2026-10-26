@@ -29,18 +29,18 @@ const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 
 // 현재는 화면 탐색을 위한 UI만 제공한다. 실제 카테고리 필터는 데이터 구조가 확정된 뒤 연결한다.
 const COMMUNITY_NAVIGATION_ITEMS = [
-    { icon: "▤", label: "전체 게시글", value:"" },
-    { icon: "◌", label: "질문·답변", value: "QUESTION_ANSWER" },
-    { icon: "☆", label: "후기·추천", value: "REVIEW_RECOMMEND" },
-    { icon: "◫", label: "자유 이야기", value: "FREE_TALK" },
+    { icon: "▤", labelKey: "community.navigation.allPosts", value: "" },
+    { icon: "◌", labelKey: "community.navigation.questionAnswer", value: "QUESTION_ANSWER" },
+    { icon: "☆", labelKey: "community.navigation.reviewRecommend", value: "REVIEW_RECOMMEND" },
+    { icon: "◫", labelKey: "community.navigation.freeTalk", value: "FREE_TALK" },
 ];
 
 const COMMUNITY_TOPIC_ITEMS = [
-    { icon: "⌂", label: "계좌 개설", value: "ACCOUNT" },
-    { icon: "◉", label: "대출", value: "LOAN" },
-    { icon: "◇", label: "보험", value: "INSURANCE" },
-    { icon: "▣", label: "비자·체류", value: "VISA_STAY" },
-    { icon: "◌", label: "한국 생활 팁", value: "LIFE_TIP" },
+    { icon: "⌂", labelKey: "community.topics.account", value: "ACCOUNT" },
+    { icon: "◉", labelKey: "community.topics.loan", value: "LOAN" },
+    { icon: "◇", labelKey: "community.topics.insurance", value: "INSURANCE" },
+    { icon: "▣", labelKey: "community.topics.visaStay", value: "VISA_STAY" },
+    { icon: "◌", labelKey: "community.topics.lifeTip", value: "LIFE_TIP" },
 ];
 
 const RELATED_SERVICE_LINKS = {
@@ -334,7 +334,7 @@ function PostCard({
 }
 
 export default function Community() {
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const { accessToken, member } = useAuthStore();
     const currentMemberId = member?.memberId;
@@ -615,7 +615,7 @@ export default function Community() {
                     <nav className="community-sidebar-navigation" aria-label="게시글 종류">
                         {COMMUNITY_NAVIGATION_ITEMS.map((item) => (
                             <button
-                                key={item.label}
+                                key={item.value}
                                 type="button"
                                 className={`community-sidebar-item${
                                     selectedCategory === item.value ? " is-active" : ""
@@ -631,7 +631,7 @@ export default function Community() {
                                 <span className="community-sidebar-icon" aria-hidden="true">
                                     {item.icon}
                                 </span>
-                                {item.label}
+                                {t(item.labelKey)}
                             </button>
                         ))}
                     </nav>
@@ -641,7 +641,7 @@ export default function Community() {
                             className="community-sidebar-topics"
                             aria-labelledby="community-topic-title"
                         >
-                            <h2 id="community-topic-title">주요 주제</h2>
+                            <h2 id="community-topic-title">{t("community.topics.title")}</h2>
 
                             <div className="community-topic-list">
                                 {COMMUNITY_TOPIC_ITEMS.map((topic) => (
@@ -664,7 +664,7 @@ export default function Community() {
                             >
                                         {topic.icon}
                             </span>
-                                        {topic.label}
+                                        {t(topic.labelKey)}
                                     </button>
                                 ))}
                             </div>
