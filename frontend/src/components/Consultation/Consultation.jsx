@@ -110,21 +110,14 @@ export default function Consultation() {
         Boolean(query.trim() || (selectedTopic && keywords.length > 0));
 
     function handleTopicChange(value) {
-        // 현재 선택과 같은 분야라면 조건이 바뀐 것이 아니다.
-        // 불필요하게 키워드와 결과를 초기화하지 않는다.
-        if (topic === value) {
-            return;
-        }
+        // 같은 분야를 다시 누르면 해제하고, 다른 분야를 누르면 교체한다.
+        // 저장하는 값은 하나이므로 동시에 여러 분야가 선택되지는 않는다.
+        setTopic((previous) => (previous === value ? "" : value));
 
-        // 새 분야를 현재 선택값으로 반영한다.
-        setTopic(value);
-
-        // 이전 분야에서 선택한 키워드를 새 분야에 그대로 사용하지 않는다.
-        // 분야마다 선택할 수 있는 키워드가 다르기 때문이다.
+        // 분야를 바꾸거나 해제하면 기존 키워드도 함께 초기화한다.
         setKeywords([]);
 
-        // 이전 결과는 이전 분야와 키워드로 만든 결과다.
-        // 새 조건으로 다시 안내받기 전까지 숨긴다.
+        // 이전 조건으로 만든 선택 확인 내용과 기관 결과를 숨긴다.
         clearPreviousResult();
     }
 
@@ -317,35 +310,37 @@ export default function Consultation() {
                                 }}
                             />
                         </div>
-                        {/* 상담 분야는 라디오 입력으로 하나만 선택 */}
+                        {/* 해제 가능한 입력을 사용하되 선택 상태는 한 분야만 유지한다. */}
                         <fieldset className="consultation-group">
                             <legend>
                                 {t("institutionGuide.topicLabel")}
                                 {!query.trim() && t("institutionGuide.requiredSuffix")}
                             </legend>
+
                             <div className="consultation-choices">
                                 {options.topics.map((item) => (
                                     <label key={item.name} className="consultation-choice">
                                         <input
-                                            type="radio"
+                                            type="checkbox"
                                             name="consultation-topic"
                                             value={item.name}
                                             checked={topic === item.name}
                                             onChange={() => handleTopicChange(item.name)}
-                                            required={!query.trim()}
                                         />
-                                        <span>{item.name}</span>
+                                        <span>
+                                            {t(`institutionGuide.selectionLabels.${item.name}`)}
+                                        </span>
                                     </label>
                                 ))}
                             </div>
                         </fieldset>
 
-                        {/* 선택한 분야의 전체 키워드를 표시하고 복수 선택 */}
+                        {/* 선택한 분야의 대표 키워드 세 개를 표시하고 복수 선택한다. */}
                         <fieldset className="consultation-group">
                             <legend>
                                 {t("institutionGuide.keywordLabel")}
                                 {!query.trim() && t("institutionGuide.requiredSuffix")}
-                                <small> (여러 개 선택 가능)</small>
+                                <small> {t("institutionGuide.multipleKeywords")}</small>
                             </legend>
 
                             {selectedTopic ? (
@@ -359,12 +354,16 @@ export default function Consultation() {
                                                 checked={keywords.includes(keyword)}
                                                 onChange={() => handleKeywordChange(keyword)}
                                             />
-                                            <span>{keyword}</span>
+                                            <span>
+                                                {t(`institutionGuide.selectionLabels.${keyword}`)}
+                                            </span>
                                         </label>
                                     ))}
                                 </div>
                             ) : (
-                                <p className="form-help">상담 분야를 먼저 선택해주세요.</p>
+                                <p className="form-help">
+                                    {t("institutionGuide.chooseTopicFirst")}
+                                </p>
                             )}
                         </fieldset>
 
@@ -460,12 +459,26 @@ export default function Consultation() {
 
                                     <dl>
                                         <div>
-                                            <dt>상담 분야</dt>
-                                            <dd>{confirmed.topic}</dd>
+                                            <dt>{t("institutionGuide.topicLabel")}</dt>
+                                            <dd>
+                                                {t(
+                                                    `institutionGuide.selectionLabels.${confirmed.topic}`,
+                                                    { defaultValue: confirmed.topic },
+                                                )}
+                                            </dd>
                                         </div>
                                         <div>
-                                            <dt>상담 키워드</dt>
-                                            <dd>{confirmed.keywords.join(", ")}</dd>
+                                            <dt>{t("institutionGuide.keywordLabel")}</dt>
+                                            <dd>
+                                                {confirmed.keywords
+                                                    .map((keyword) =>
+                                                        t(
+                                                            `institutionGuide.selectionLabels.${keyword}`,
+                                                            { defaultValue: keyword },
+                                                        ),
+                                                    )
+                                                    .join(", ")}
+                                            </dd>
                                         </div>
                                         <div>
                                             <dt>희망 지역</dt>

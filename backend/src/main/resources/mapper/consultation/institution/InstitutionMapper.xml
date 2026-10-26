@@ -26,6 +26,38 @@
             ),
             'verificationStatus', i.verification_status,
             'checkedAt', DATE_FORMAT(i.checked_at, '%Y-%m-%dT%H:%i:%s'),
+                        'guidance', JSON_OBJECT(
+                'location', JSON_EXTRACT(
+                    i.guidance_data, '$.detail."기관위치_전화지역"'
+                ),
+                'methods', JSON_EXTRACT(
+                    i.guidance_data, '$.detail."상담방식"'
+                ),
+                'reservation', JSON_EXTRACT(
+                    i.guidance_data, '$.detail."방문예약필수여부"'
+                ),
+                'preparation', JSON_EXTRACT(
+                    i.guidance_data, '$.detail."준비물"'
+                ),
+                'phoneLanguages', JSON_EXTRACT(
+                    i.guidance_data, '$.detail."전화지원언어"'
+                ),
+                'visitLanguages', JSON_EXTRACT(
+                    i.guidance_data, '$.detail."방문지원언어"'
+                ),
+                'phoneWeekend', JSON_EXTRACT(
+                    i.guidance_data, '$.detail."주말전화"'
+                ),
+                'phoneHoliday', JSON_EXTRACT(
+                    i.guidance_data, '$.detail."공휴일전화"'
+                ),
+                'visitWeekend', JSON_EXTRACT(
+                    i.guidance_data, '$.detail."주말방문"'
+                ),
+                'visitHoliday', JSON_EXTRACT(
+                    i.guidance_data, '$.detail."공휴일방문"'
+                )
+            ),
             'services', COALESCE((
                 SELECT JSON_ARRAYAGG(JSON_OBJECT(
                     'id', s.service_id,

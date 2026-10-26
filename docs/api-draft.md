@@ -48,14 +48,14 @@
 
 모든 이력서 API는 로그인한 회원만 사용할 수 있으며, 서버는 토큰의 `memberId`로 본인 이력서만 조회·변경한다. 일반(`BASIC`)과 블라인드(`BLIND`) 양식은 회원별로 각각 한 건만 저장한다.
 
-| HTTP | 주소 | 역할 |
-| --- | --- | --- |
-| POST | `/api/v1/employment/resumes` | 이력서와 선택 증명사진 저장 |
-| GET | `/api/v1/employment/resumes` | 내 일반·블라인드 이력서 목록 조회 |
-| GET | `/api/v1/employment/resumes/{resumeId}` | 내 이력서 한 건 조회 |
-| GET | `/api/v1/employment/resumes/{resumeId}/photo` | 내 증명사진 파일 조회 |
-| DELETE | `/api/v1/employment/resumes/{resumeId}/photo` | 내 증명사진 즉시 삭제 |
-| DELETE | `/api/v1/employment/resumes/{resumeId}` | 내 이력서와 연결 사진 삭제 |
+| HTTP   | 주소                                          | 역할                              |
+| ------ | --------------------------------------------- | --------------------------------- |
+| POST   | `/api/v1/employment/resumes`                  | 이력서와 선택 증명사진 저장       |
+| GET    | `/api/v1/employment/resumes`                  | 내 일반·블라인드 이력서 목록 조회 |
+| GET    | `/api/v1/employment/resumes/{resumeId}`       | 내 이력서 한 건 조회              |
+| GET    | `/api/v1/employment/resumes/{resumeId}/photo` | 내 증명사진 파일 조회             |
+| DELETE | `/api/v1/employment/resumes/{resumeId}/photo` | 내 증명사진 즉시 삭제             |
+| DELETE | `/api/v1/employment/resumes/{resumeId}`       | 내 이력서와 연결 사진 삭제        |
 
 저장 요청은 `multipart/form-data`이며 `resumeType`, JSON 문자열 `resumeData`, 선택 `photo`를 받는다. 일반 이력서 사진은 JPG·PNG 등 공통 이미지 검사 규칙과 4MB 제한을 통과해야 하며, 블라인드 양식의 사진 업로드는 거부한다.
 
@@ -353,20 +353,21 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 - MyBatis 리소스 처리: 성공
 - 실제 MySQL 연결 및 HTTP API 테스트: 대기
 
-## 도움 기관 안내 선택 항목 — 화면 확인용
+## 도움 기관 안내 선택 항목
 
 - 프론트 함수: `getConsultationOptions()`
-- 원본 초안의 전체 분야·키워드·지역·언어·상담 방식 목록을 반환한다.
-- 현재 mock JSON을 읽으며 500ms 지연을 적용한다.
+- 상담 분야 6개와 분야별 대표 키워드 3개씩 총 18개를 반환한다.
+- 지역·언어·상담 방식 목록은 기존 값을 유지한다.
+- 로컬 선택 목록을 읽으며 기존 500ms 지연을 유지한다. 실제 기관 데이터는 DB API에서 조회한다.
 - 반환 구조: `{ topics, regions, languages, methods }`
-- 실제 서버 API 주소와 DB 구조는 미정이다.
-- 안내받기는 선택 조건만 확인하며 기관 검색을 요청하지 않는다.
-- `initialConsultationOptions`: 첫 화면에 바로 표시할 로컬 초안 목록.
-- 초기 목록을 즉시 표시하고, 비동기 조회 결과로 목록을 갱신한다.
+- topics 항목: `{ code, name, keywords, rules }`
+- rules는 대표 키워드를 기존 DB 업무의 분야 코드와 세부 키워드에 연결한다.
+- `initialConsultationOptions`는 첫 화면에 바로 표시할 선택 목록이다.
+- 안내받기는 확정 조건으로 실제 기관 API를 조회한 뒤 프론트에서 검색·정렬한다.
 
 ## 도움 기관 안내 — DB 기관 조회
 
-선택 항목은 기존 로컬 초안 목록을 사용하고, 실제 기관 자료는 백엔드 API에서 조회한다.
+선택 항목은 로컬 목록을 사용하고, 실제 기관 자료는 백엔드 API에서 조회한다.
 
 | HTTP | 주소                                     | 역할                              |
 | ---- | ---------------------------------------- | --------------------------------- |
@@ -386,3 +387,13 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 - 안내받기를 누르면 확정 조건으로 다시 조회한다.
 - 서버 연결 실패를 가짜 기관이나 빈 목록으로 대체하지 않는다.
 - 확인되지 않은 이용 조건은 ‘확인 필요’로 표시한다.
+- 기관 목록·상세 응답에 guidance 객체를 추가한다.
+- guidance 항목: location, methods, reservation, preparation, phoneLanguages, visitLanguages, phoneWeekend, phoneHoliday, visitWeekend, visitHoliday.
+- guidance는 제공받은 기관 조사 원문의 조건부 설명을 전달한다.
+- services.languages는 검색에 사용하는 확인된 방식별 지원 언어를 유지한다.
+- 기본 6개 언어 외의 언어를 ‘다국어’로 묶는 처리는 카드 표시 단계에서만 수행한다.
+- 검색어 조회에는 featuredKeywords도 포함한다.
+- 화면의 6개 분야와 18개 대표 키워드는 기존 DB 업무의 분야·세부 키워드에 rules로 연결한다.
+- 대표 키워드는 같은 상담 업무 안에서 분야와 세부 키워드가 모두 일치할 때만 인정한다.
+- 대표 항목 하나의 내부 표현이 여러 개 일치해도 일치 개수는 한 번만 센다.
+- 선택한 그룹에 없는 대표 키워드는 INVALID_INPUT으로 처리한다.
