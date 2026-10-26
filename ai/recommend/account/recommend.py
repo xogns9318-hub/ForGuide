@@ -12,7 +12,7 @@ WEIGHTS_PATH = AI_DIR / "models" / "account_fast_weights.json"
 
 CHOICES = {
     "purpose": ["예금", "적금"],
-    "term": [6, 12, 24],
+    "term": [6, 12, 24, 36],
     "visit": ["상관없음", "원치 않음"],
     "institution": ["은행 선호", "상관없음"],
 }

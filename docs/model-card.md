@@ -42,7 +42,7 @@
 | 본인 명의 통장 여부 | 선택: 예 / 아니오 | 예 (예시값) | 계좌 관문 |
 | 방문 가능 여부 | 선택: 상관없음 / 원치 않음 | 상관없음 (예시값) | 계좌 관문 |
 | 목적 | 선택: 예금 / 적금 | 예금 (예시값) | 계좌 fast |
-| 넣어 둘 기간 | 선택: 6 / 12 / 24개월 (예시값) | 12개월 (예시값) | 계좌 fast |
+| 넣어 둘 기간 | 선택: 6 / 12 / 24 / 36개월 | 12개월 (예시값) | 계좌 fast |
 | 금융기관 선호 | 선택: 은행 선호 / 상관없음 | 상관없음 (예시값) | 계좌 fast |
 | 건강보험 가입 여부 | 선택: 예 / 아니오 / 모름 | 예 (예시값) | 보험 관문 |
 | 나이 | 숫자: 만 나이 19~99 | 30 (예시값) | 보험 fast |
@@ -143,13 +143,14 @@
 | 추천 근거 | 문구 키 최대 3개: `high_rate`, `no_visit`, `bank` | `["high_rate", "no_visit"]` | 상품 카드 |
 | 확인 필요·불일치 사유 | 문구 키 목록 | `foreigner_unspecified`, `domestic_only` | 상품 카드 |
 | 가입 지역, 금리 이상값 | 있을 때만 | 진주, 통영 | 상품 카드 |
-| 다음 행동 | 금융사 홈페이지·대표 전화, 그룹 안내 키(부합 `join_at_company`, 확인 필요 `ask_foreigner_eligibility`) | 1877-9900 | 상품 카드 |
+| 다음 행동 | 금융사 홈페이지·대표 전화, 그룹 안내 키(부합 `join_at_company`, 확인 필요 `ask_foreigner_eligibility`) | 1877-9900 | 그룹 제목 아래(안내), 상세 팝업(홈페이지·전화) |
 | 고정 안내 | `rate_may_change`, `savings_bank_protected`, `reference_only` | 금리는 바뀔 수 있음 | 결과 하단 |
 | 공시 기준월 | YYYYMM | 202609 | 결과 하단 |
 
 - 결과에는 문구 키만 담고, 화면 문구는 `frontend/src/i18n/locales/ko.js`의 `recommendResult`에 둔다(그룹·근거·사유·다음 행동·안내).
 - 점수는 그룹 안에서만 의미가 있는 상대값이라 화면에 보여 주지 않고 정렬에만 쓴다.
-- 예시 이자는 보여 주지 않는다. 금액을 묻는 plus에서 다룬다.
+- 화면(`/service/account`, 2026-10-26): 관문(본인 명의 통장 → 체류자격·방문) → fast 3문항 → 결과(고정 안내, 예상 이자 막대 그래프, 그룹별 카드, 불일치 접기) → 상세 팝업(근거·확인할 점·다음 행동). 통장이 없으면 결과 대신 입출금통장 안내와 도움 기관 링크.
+- 예상 이자(세전, 예시값): 예금 1,000만 원, 적금 월 50만 원을 기본 금리·단리/복리로 계산해 그래프 상위 5개와 상세 팝업에 보여 준다. 사용자의 금액을 받는 것은 plus에서 다룬다.
 
 ## 결과 근거
 
@@ -191,16 +192,16 @@
 
 계좌 fast (Python): `ai/recommend/account/recommend.py`의 `recommend(user)`
 
-- 입력: `purpose`(예금 / 적금), `term`(6 / 12 / 24), `visit`(상관없음 / 원치 않음), `institution`(은행 선호 / 상관없음). 값이 틀리면 `ValueError`로 항목별 허용값을 돌려준다.
+- 입력: `purpose`(예금 / 적금), `term`(6 / 12 / 24 / 36), `visit`(상관없음 / 원치 않음), `institution`(은행 선호 / 상관없음). 값이 틀리면 `ValueError`로 항목별 허용값을 돌려준다.
 - 출력: 위 "출력" 표의 JSON (`mode`, `input`, `base_month`, `weights`, `groups`, `mismatch`, `notices`).
 - 가중치는 `ai/models/account_fast_weights.json`(`train.py`가 만듦)이 있으면 학습값, 없으면 기준선을 쓴다.
 - 상품은 `purpose` + `product_id`로 구분한다. 금융상품한눈에에서 같은 상품 번호가 예금과 적금에 함께 나오는 경우가 있다(2026-10-23 기준 3건).
 - 테스트: `python -m unittest discover -s ai/tests` (부적격 추천률 0 확인 포함, 정제 데이터가 없으면 실제 데이터 검사는 건너뜀).
-- 서빙(fast): 입력 조합이 정해져 있으므로 모든 조합의 결과를 미리 계산해(배치 추론) `backend/src/main/resources/recommend/account_fast.json`에 둔다(`export_results.py`, 24가지, 그룹당 상위 20개). Spring은 입력을 `key_order` 순서로 `|`로 이어 키를 만들어 `results`에서 찾는다. 데이터나 가중치가 바뀌면 다시 만든다.
+- 서빙(fast): 입력 조합이 정해져 있으므로 모든 조합의 결과를 미리 계산해(배치 추론) `backend/src/main/resources/recommend/account_fast.json`에 둔다(`export_results.py`, 32가지, 그룹당 상위 20개). Spring은 입력을 `key_order` 순서로 `|`로 이어 키를 만들어 `results`에서 찾는다. 데이터나 가중치가 바뀌면 다시 만든다.
 - plus처럼 연속값 입력이 생기면 Python 추천 서버를 붙인다. 결과 형식은 같다.
 - 보험 fast: `ai/recommend/insurance/recommend.py`의 `recommend(user)`. 입력은 `health_insurance`, `residence_status`, `sex`, `age`. 건강보험이 "예"가 아니면 `{"redirect": "consultation"}`. 출력은 계좌와 같은 틀에 `monthly_premium`·`premium_breakdown`·`online`, 별도 안내 `separate`(`senior`, `simplified`)가 붙는다. 서빙 파일은 `resources/recommend/insurance_fast.json`(`성별|나이` 162가지, 관문은 키에 넣지 않음).
 - 대출 fast: `ai/recommend/loan/recommend.py`의 `recommend(user)`. 입력은 `residence_status`, `purpose`. 출력은 같은 틀에 `loan_type`(credit / jeonse), `rate_avg`·`rate_range`, 전세는 `limit_text`·`repay_types`가 붙는다. 서빙 파일은 `resources/recommend/loan_fast.json`(용도 2가지).
-- HTTP 주소는 미정이다.
+- HTTP 주소: `GET /api/v1/recommend/{account|insurance|loan}/fast` (입력·오류는 `docs/api-draft.md` "추천 fast API").
 
 커뮤니티 예시 게시글 조회는 화면 확인용이며, 실제 게시글 조회 API는 미정이다.
 
@@ -296,7 +297,7 @@
 - 보험: plus의 보험료 점수 기준, 체류자격별 보험사 외국인 심사 기준
 - 대출: 외국인 대출 조건 출처(은행별, 전세 보증기관 HF·HUG·SGI), plus의 희망 금액 단위·범위와 한도 처리
 - plus (fast 마감 후로 미룸): 남은 체류기간·월소득 구간 경계, 기간 일치 피처, 펼친 질문의 `모름` 처리
-- 추천 HTTP 주소, 팀 ERD v2 컬럼과 정제 항목의 대응
+- 팀 ERD v2 컬럼과 정제 항목의 대응
 
 ## 주 기능 안내 화면
 

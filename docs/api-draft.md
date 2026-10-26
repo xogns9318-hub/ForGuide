@@ -75,6 +75,21 @@ PowerShell에서 키 만들기:
 
 IntelliJ 실행 설정의 Environment variables에 `JWT_SECRET=만든값`을 넣는다. 없거나 짧으면 서버가 이유를 출력하고 시작하지 않는다.
 
+## 추천 fast API
+
+로그인 없이 쓴다. 입력은 쿼리 문자열이고, 미리 만든 `resources/recommend/*_fast.json`에서 결과를 찾아 `data`로 돌려준다(결과 모양은 `docs/model-card.md` "출력"). 모든 상품군에 `residence_status`(체류자격 8개 중 하나)가 필요하다.
+
+| HTTP | 주소 | 입력 |
+| --- | --- | --- |
+| GET | `/api/v1/recommend/account/fast` | `purpose`(예금 / 적금), `term`(6 / 12 / 24 / 36), `visit`(상관없음 / 원치 않음), `institution`(은행 선호 / 상관없음) |
+| GET | `/api/v1/recommend/insurance/fast` | `health_insurance`(예 / 아니오 / 모름), `sex`(남 / 여), `age`(19~99). 건강보험이 "예"가 아니면 `{ mode, redirect: "consultation" }` |
+| GET | `/api/v1/recommend/loan/fast` | `purpose`(생활비 / 전세 보증금) |
+| GET | `/api/v1/recommend/{account\|insurance\|loan}/choices` | 없음. 서빙 파일의 `key_order`·`choices`와 체류자격 목록 `residence_status`를 돌려준다. 화면은 선택지를 하드코딩하지 않고 이 값을 쓴다 (`getAccountChoices()`) |
+
+프론트는 `src/recommend/api/recommendApi.js`의 `getAccountRecommendation(input)`·`getInsuranceRecommendation(input)`·`getLoanRecommendation(input)`으로 부른다(입력 객체를 그대로 쿼리로 보냄).
+
+값이 틀리면 400 `INVALID_INPUT`, `fieldErrors`에 항목별 허용값(예: `"term": "허용값: 6, 12, 24"`). 계좌 관문의 "본인 명의 통장 아니오"는 API를 부르지 않고 화면에서 입출금통장 안내로 보낸다.
+
 ## 공통 요청 클라이언트 (`src/api/client.js`)
 
 auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한다. 화면에서 `fetch`를 직접 쓰지 않는다.
