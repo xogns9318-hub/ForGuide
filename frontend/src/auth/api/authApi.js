@@ -7,9 +7,7 @@ import { clearResumeTemporaryDraft } from "../../utils/resumeDraftStorage.js";
 
 // 아이디 중복 확인 → { available }
 export async function checkLoginId(loginId) {
-    return client.get(
-        `/auth/check-login-id?loginId=${encodeURIComponent(loginId)}`,
-    );
+    return client.get(`/auth/check-login-id?loginId=${encodeURIComponent(loginId)}`);
 }
 
 // 회원가입 → { memberId, loginId, name, email } (비밀번호는 응답에 없다)

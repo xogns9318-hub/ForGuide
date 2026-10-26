@@ -7,7 +7,7 @@ const initialState = {
     // API 요청의 Authorization 헤더에 붙이는 토큰이다. 로그인한 사용자임을 증명한다.
     accessToken: null,
 
-    // 로그인한 사용자의 정보. 
+    // 로그인한 사용자의 정보.
     member: null,
 
     // 앱 시작 시 로그인 복원 시도가 끝났는지 확인한다.

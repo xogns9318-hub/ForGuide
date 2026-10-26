@@ -23,9 +23,7 @@ export default function RequireAuth() {
     // 로그인하지 않았으면 로그인 화면으로, 로그인 후 돌아올 원래 주소를 next로 전달
     if (!accessToken) {
         const next = `${location.pathname}${location.search}${location.hash}`;
-        return (
-            <Navigate to={`/login?next=${encodeURIComponent(next)}`} replace />
-        );
+        return <Navigate to={`/login?next=${encodeURIComponent(next)}`} replace />;
     }
 
     return <Outlet />;
