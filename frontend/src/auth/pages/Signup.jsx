@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Banner from "../../components/Banner/Banner.jsx";
-import ExampleBadge from "../../components/ExampleBadge/ExampleBadge.jsx";
 import FieldError from "../../components/FieldError/FieldError.jsx";
 import { checkLoginId, signup } from "../api/authApi.js";
-import { ApiError } from "../../api/apiError.js";
+import { msg, messageText, apiErrorMessage, apiFieldErrors } from "../utils/authMessages.js";
 import {
     validateLoginId,
     validatePassword,
@@ -29,6 +29,7 @@ const validators = {
 // 회원가입 화면 (Figma: 회원가입 · 입력, /signup)
 export default function Signup() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const [form, setForm] = useState(emptyForm);
     const [errors, setErrors] = useState({});
@@ -96,7 +97,7 @@ export default function Signup() {
             if (!available) {
                 setErrors((prev) => ({
                     ...prev,
-                    loginId: "이미 사용 중인 아이디입니다.",
+                    loginId: msg("auth.errors.LOGIN_ID_DUPLICATED"),
                 }));
             }
         } catch (error) {
@@ -104,11 +105,9 @@ export default function Signup() {
 
             // 확인에 실패해도 가입은 막지 않는다 (서버가 가입 시 다시 중복을 검사한다)
             setIdCheck({ status: "idle", checkedId: "" });
-            if (error instanceof ApiError && error.fieldErrors.loginId) {
-                setErrors((prev) => ({
-                    ...prev,
-                    loginId: error.fieldErrors.loginId,
-                }));
+            const fieldErrors = apiFieldErrors(error);
+            if (fieldErrors.loginId) {
+                setErrors((prev) => ({ ...prev, loginId: fieldErrors.loginId }));
             }
         }
     }
@@ -125,7 +124,7 @@ export default function Signup() {
             idCheck.status === "taken" &&
             idCheck.checkedId === form.loginId
         ) {
-            next.loginId = "이미 사용 중인 아이디입니다.";
+            next.loginId = msg("auth.errors.LOGIN_ID_DUPLICATED");
         }
 
         return next;
@@ -171,9 +170,10 @@ export default function Signup() {
             if (!mounted.current) return;
 
             // 항목별 오류(중복·형식)는 해당 입력칸 아래에만 표시한다
-            if (error instanceof ApiError && Object.keys(error.fieldErrors).length > 0) {
-                setErrors((prev) => ({ ...prev, ...error.fieldErrors }));
-                focusFirstError(error.fieldErrors);
+            const fieldErrors = apiFieldErrors(error);
+            if (Object.keys(fieldErrors).length > 0) {
+                setErrors((prev) => ({ ...prev, ...fieldErrors }));
+                focusFirstError(fieldErrors);
 
                 if (error.code === "LOGIN_ID_DUPLICATED") {
                     setIdCheck({ status: "taken", checkedId: form.loginId });
@@ -182,11 +182,7 @@ export default function Signup() {
             }
 
             // 항목과 무관한 실패(네트워크 등)는 폼 아래에 표시한다
-            setFormError(
-                error instanceof ApiError
-                    ? error.message
-                    : "가입 처리에 실패했습니다. 잠시 후 다시 시도해주세요.",
-            );
+            setFormError(apiErrorMessage(error, "auth.signup.failed"));
         } finally {
             if (mounted.current) {
                 setIsSubmitting(false);
@@ -218,8 +214,8 @@ export default function Signup() {
         <div className="page-stack">
             {/* 공통 페이지 배너 */}
             <Banner
-                title="회원가입"
-                description="도움을 찾고, 내일을 준비하는 첫걸음. ForGuide가 함께할게요."
+                title={t("auth.signup.title")}
+                description={t("auth.common.bannerDescription")}
             />
 
             {/* 공통 본문 박스 안의 입력 폼 */}
@@ -230,14 +226,13 @@ export default function Signup() {
                 aria-labelledby="signup-title"
             >
                 <div className="auth-panel-head panel-title">
-                    <h2 id="signup-title">ForGuide와 함께 시작해요</h2>
-                    <ExampleBadge />
+                    <h2 id="signup-title">{t("auth.signup.heading")}</h2>
                 </div>
 
                 <div className="form-grid">
                     {/* 아이디 */}
                     <div className="form-field">
-                        <label htmlFor="signup-loginId">아이디</label>
+                        <label htmlFor="signup-loginId">{t("auth.common.loginId")}</label>
                         <input
                             {...fieldProps("loginId")}
                             type="text"
@@ -249,20 +244,20 @@ export default function Signup() {
                         />
                         {idCheck.status === "checking" && (
                             <p className="form-help" role="status">
-                                아이디를 확인하고 있습니다…
+                                {t("auth.signup.checkingLoginId")}
                             </p>
                         )}
                         {isIdAvailable && !errors.loginId && (
                             <p className="auth-field-ok" role="status">
-                                사용할 수 있는 아이디입니다.
+                                {t("auth.signup.loginIdAvailable")}
                             </p>
                         )}
-                        <FieldError id="signup-loginId-error" message={errors.loginId} />
+                        <FieldError id="signup-loginId-error" message={messageText(t, errors.loginId)} />
                     </div>
 
                     {/* 비밀번호 + 보기 버튼 */}
                     <div className="form-field">
-                        <label htmlFor="signup-password">비밀번호</label>
+                        <label htmlFor="signup-password">{t("auth.common.password")}</label>
                         <div className="auth-password">
                             <input
                                 {...fieldProps("password")}
@@ -277,26 +272,26 @@ export default function Signup() {
                                 aria-controls="signup-password"
                                 onClick={() => setShowPassword((prev) => !prev)}
                             >
-                                {showPassword ? "숨기기" : "보기"}
+                                {showPassword ? t("auth.common.hide") : t("auth.common.show")}
                             </button>
                         </div>
-                        <FieldError id="signup-password-error" message={errors.password} />
+                        <FieldError id="signup-password-error" message={messageText(t, errors.password)} />
                     </div>
 
                     {/* 이름 */}
                     <div className="form-field">
-                        <label htmlFor="signup-name">이름</label>
+                        <label htmlFor="signup-name">{t("auth.signup.name")}</label>
                         <input
                             {...fieldProps("name")}
                             type="text"
                             autoComplete="name"
                         />
-                        <FieldError id="signup-name-error" message={errors.name} />
+                        <FieldError id="signup-name-error" message={messageText(t, errors.name)} />
                     </div>
 
                     {/* 이메일 */}
                     <div className="form-field">
-                        <label htmlFor="signup-email">이메일</label>
+                        <label htmlFor="signup-email">{t("auth.signup.email")}</label>
                         <input
                             {...fieldProps("email")}
                             type="email"
@@ -304,13 +299,13 @@ export default function Signup() {
                             inputMode="email"
                             maxLength={254}
                         />
-                        <FieldError id="signup-email-error" message={errors.email} />
+                        <FieldError id="signup-email-error" message={messageText(t, errors.email)} />
                     </div>
                 </div>
 
                 {formError && (
                     <p className="form-error" role="alert">
-                        {formError}
+                        {messageText(t, formError)}
                     </p>
                 )}
 
@@ -321,10 +316,10 @@ export default function Signup() {
                         className="button button-primary"
                         disabled={isSubmitting}
                     >
-                        {isSubmitting ? "가입 처리 중…" : "회원가입"}
+                        {isSubmitting ? t("auth.signup.submitting") : t("auth.signup.submit")}
                     </button>
                     <Link to="/login" className="button">
-                        로그인
+                        {t("auth.signup.goLogin")}
                     </Link>
                 </div>
             </form>

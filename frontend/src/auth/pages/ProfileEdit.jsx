@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Banner from "../../components/Banner/Banner.jsx";
-import ExampleBadge from "../../components/ExampleBadge/ExampleBadge.jsx";
 import FieldError from "../../components/FieldError/FieldError.jsx";
 import { updateNickname } from "../api/memberApi.js";
-import { ApiError } from "../../api/apiError.js";
+import { messageText, apiErrorMessage, apiFieldErrors } from "../utils/authMessages.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { validateNickname } from "../utils/authValidation.js";
 import "../auth.css";
@@ -13,6 +13,7 @@ import "../auth.css";
 // RequireAuth 안에서만 열리므로 로그인한 회원 정보가 있다
 export default function ProfileEdit() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const member = useAuthStore((state) => state.member);
 
     // 처음 값은 현재 닉네임 (없으면 빈칸)
@@ -55,9 +56,8 @@ export default function ProfileEdit() {
             if (!mounted.current) return;
 
             setError(
-                saveError instanceof ApiError
-                    ? saveError.fieldErrors.nickname ?? saveError.message
-                    : "닉네임을 저장하지 못했습니다. 잠시 후 다시 시도해주세요.",
+                apiFieldErrors(saveError).nickname ??
+                    apiErrorMessage(saveError, "auth.profileEdit.saveFailed"),
             );
             inputRef.current?.focus();
         } finally {
@@ -67,18 +67,17 @@ export default function ProfileEdit() {
 
     return (
         <div className="page-stack">
-            <Banner title="프로필 수정" description="사용할 닉네임을 정하세요." />
+            <Banner title={t("auth.profileEdit.title")} description={t("auth.profileEdit.description")} />
 
             <form className="panel" onSubmit={handleSubmit} noValidate aria-labelledby="profile-edit-title">
                 <div className="auth-panel-head panel-title">
-                    <h2 id="profile-edit-title">기본 정보</h2>
-                    <ExampleBadge />
+                    <h2 id="profile-edit-title">{t("auth.profileEdit.heading")}</h2>
                 </div>
 
                 <div className="form-grid">
                     {/* 닉네임 */}
                     <div className="form-field">
-                        <label htmlFor="profile-nickname">닉네임</label>
+                        <label htmlFor="profile-nickname">{t("auth.profileEdit.nickname")}</label>
                         <input
                             ref={inputRef}
                             id="profile-nickname"
@@ -94,14 +93,14 @@ export default function ProfileEdit() {
                             aria-describedby={`profile-nickname-help${error ? " profile-nickname-error" : ""}`}
                         />
                         <p id="profile-nickname-help" className="form-help">
-                            2~20자, 여러 언어의 글자·숫자·기호를 쓸 수 있습니다.
+                            {t("auth.profileEdit.nicknameHelp")}
                         </p>
-                        <FieldError id="profile-nickname-error" message={error} />
+                        <FieldError id="profile-nickname-error" message={messageText(t, error)} />
                     </div>
 
                     {/* 로그인 아이디 (바꿀 수 없음) */}
                     <div className="form-field">
-                        <label htmlFor="profile-loginId">로그인 아이디</label>
+                        <label htmlFor="profile-loginId">{t("auth.profileEdit.loginId")}</label>
                         <input
                             id="profile-loginId"
                             type="text"
@@ -114,10 +113,10 @@ export default function ProfileEdit() {
 
                 <div className="form-actions">
                     <button type="submit" className="button button-primary" disabled={isSaving}>
-                        {isSaving ? "저장 중…" : "저장"}
+                        {isSaving ? t("auth.common.saving") : t("auth.common.save")}
                     </button>
                     <Link to="/mypage" className="button">
-                        취소
+                        {t("auth.common.cancel")}
                     </Link>
                 </div>
             </form>

@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Banner from "../../components/Banner/Banner.jsx";
-import ExampleBadge from "../../components/ExampleBadge/ExampleBadge.jsx";
 import FieldError from "../../components/FieldError/FieldError.jsx";
 import ProfileAvatar from "../components/ProfileAvatar.jsx";
 import { updateProfileImage } from "../api/memberApi.js";
-import { ApiError } from "../../api/apiError.js";
+import { msg, messageText, apiErrorMessage, apiFieldErrors } from "../utils/authMessages.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import {
     PROFILE_IMAGE_ACCEPT,
-    PROFILE_IMAGE_HELP,
+    PROFILE_IMAGE_HELP_VALUES,
     prepareProfileImage,
     validateProfileImage,
 } from "../utils/profileImage.js";
@@ -18,6 +18,7 @@ import "../auth.css";
 // 마이페이지 (Figma: /mypage) — 지금은 프로필 이미지 설정만 제공
 // RequireAuth 안에서만 열리므로 로그인한 회원 정보가 있다
 export default function MyPage() {
+    const { t } = useTranslation();
     const member = useAuthStore((state) => state.member);
 
     // 고른 파일과 미리보기 주소 (저장 전까지는 화면에서만 보인다)
@@ -95,14 +96,13 @@ export default function MyPage() {
             if (!mounted.current) return;
 
             resetSelection();
-            setMessage("프로필 이미지를 저장했습니다.");
+            setMessage(msg("auth.myPage.imageSaved"));
         } catch (saveError) {
             if (!mounted.current) return;
 
             setError(
-                saveError instanceof ApiError
-                    ? saveError.fieldErrors.image ?? saveError.message
-                    : "프로필 이미지를 저장하지 못했습니다. 잠시 후 다시 시도해주세요.",
+                apiFieldErrors(saveError).image ??
+                    apiErrorMessage(saveError, "auth.myPage.imageSaveFailed"),
             );
         } finally {
             if (mounted.current) setIsSaving(false);
@@ -114,12 +114,11 @@ export default function MyPage() {
 
     return (
         <div className="page-stack">
-            <Banner title="마이페이지" description="프로필과 내 정보를 관리하세요." />
+            <Banner title={t("auth.myPage.title")} description={t("auth.myPage.description")} />
 
             <form className="panel" onSubmit={handleSave} aria-labelledby="mypage-image-title">
                 <div className="auth-panel-head panel-title">
-                    <h2 id="mypage-image-title">프로필 이미지</h2>
-                    <ExampleBadge />
+                    <h2 id="mypage-image-title">{t("auth.myPage.imageHeading")}</h2>
                 </div>
 
                 <div className="mypage-image-row">
@@ -131,7 +130,7 @@ export default function MyPage() {
                     />
 
                     <div className="form-field">
-                        <label htmlFor="mypage-image">이미지 선택</label>
+                        <label htmlFor="mypage-image">{t("auth.myPage.selectImage")}</label>
                         <input
                             ref={fileInputRef}
                             id="mypage-image"
@@ -143,12 +142,12 @@ export default function MyPage() {
                             aria-describedby={`mypage-image-help${error ? " mypage-image-error" : ""}`}
                         />
                         <p id="mypage-image-help" className="form-help">
-                            {PROFILE_IMAGE_HELP}
+                            {t("auth.profileImage.help", PROFILE_IMAGE_HELP_VALUES)}
                         </p>
-                        <FieldError id="mypage-image-error" message={error} />
+                        <FieldError id="mypage-image-error" message={messageText(t, error)} />
                         {message && (
                             <p className="auth-field-ok" role="status">
-                                {message}
+                                {messageText(t, message)}
                             </p>
                         )}
                     </div>
@@ -160,7 +159,7 @@ export default function MyPage() {
                         className="button button-primary"
                         disabled={!selectedFile || isSaving}
                     >
-                        {isSaving ? "저장 중…" : "저장"}
+                        {isSaving ? t("auth.common.saving") : t("auth.common.save")}
                     </button>
                     {selectedFile && (
                         <button
@@ -169,11 +168,11 @@ export default function MyPage() {
                             onClick={resetSelection}
                             disabled={isSaving}
                         >
-                            취소
+                            {t("auth.common.cancel")}
                         </button>
                     )}
                     <Link to="/mypage/edit" className="button">
-                        프로필 수정
+                        {t("auth.myPage.goProfileEdit")}
                     </Link>
                 </div>
             </form>

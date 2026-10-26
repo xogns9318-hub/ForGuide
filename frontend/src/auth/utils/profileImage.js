@@ -1,4 +1,6 @@
-// 프로필 이미지 규칙과 업로드 준비 (화면·mock 서버가 같은 규칙을 쓴다)
+import { msg } from "./authMessages.js";
+
+// 프로필 이미지 규칙과 업로드 준비 (화면이 쓰는 규칙. 서버도 같은 규칙으로 다시 검사한다)
 // 규칙을 바꿀 때는 이 파일의 PROFILE_IMAGE_RULES만 고친다. 서버(백엔드)도 같은 값으로 다시 검사한다.
 
 export const PROFILE_IMAGE_RULES = {
@@ -19,10 +21,16 @@ export const PROFILE_IMAGE_RULES = {
 // 파일 선택창에서 고를 수 있는 형식 (<input accept>)
 export const PROFILE_IMAGE_ACCEPT = ".jpg,.jpeg,.png,image/jpeg,image/png";
 
-// 화면 안내용 문구 (예: "JPG·PNG, 4MB 이하")
-export const PROFILE_IMAGE_HELP = `${Object.values(PROFILE_IMAGE_RULES.formats)
-    .map((format) => format.label)
-    .join("·")}, ${PROFILE_IMAGE_RULES.maxBytes / 1024 / 1024}MB 이하`;
+// 화면 안내 문구에 넣을 값 (예: formats "JPG·PNG", maxMb 4 → "JPG·PNG, 4MB 이하")
+// 문구 자체는 번역 키 auth.profileImage.help 에 있다
+export const PROFILE_IMAGE_HELP_VALUES = {
+    formats: Object.values(PROFILE_IMAGE_RULES.formats)
+        .map((format) => format.label)
+        .join("·"),
+    maxMb: PROFILE_IMAGE_RULES.maxBytes / 1024 / 1024,
+};
+
+const RULE_MESSAGE = msg("auth.profileImage.invalid", PROFILE_IMAGE_HELP_VALUES);
 
 // 파일 앞부분을 읽어 실제 형식을 알아낸다 (모르는 형식이면 null)
 async function detectImageType(file) {
@@ -37,25 +45,25 @@ async function detectImageType(file) {
     return match ? match[0] : null;
 }
 
-// 프로필 이미지 검사 → 문제가 있으면 안내 문구, 없으면 ""
+// 프로필 이미지 검사 → 문제가 있으면 번역 키 메시지, 없으면 ""
 export async function validateProfileImage(file) {
     if (!(file instanceof Blob)) {
-        return "이미지 파일을 선택해주세요.";
+        return msg("auth.profileImage.required");
     }
 
     if (file.size === 0) {
-        return "빈 파일은 올릴 수 없습니다.";
+        return msg("auth.profileImage.empty");
     }
 
     if (file.size > PROFILE_IMAGE_RULES.maxBytes) {
-        return `이미지는 ${PROFILE_IMAGE_HELP}로 올려주세요.`;
+        return RULE_MESSAGE;
     }
 
     // 선택한 형식(MIME)과 실제 내용이 모두 허용 형식이고 서로 같아야 한다
     // (예: PNG 내용에 .jpg 이름을 붙인 파일, 이미지가 아닌 파일에 .png 이름을 붙인 파일을 막는다)
     const detectedType = await detectImageType(file);
     if (!detectedType || file.type !== detectedType) {
-        return `이미지는 ${PROFILE_IMAGE_HELP}로 올려주세요.`;
+        return RULE_MESSAGE;
     }
 
     return "";
