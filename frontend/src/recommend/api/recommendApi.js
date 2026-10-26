@@ -13,8 +13,16 @@ export function getAccountRecommendation(input) {
     return fast("account", input);
 }
 
+export function getInsuranceChoices() {
+    return client.get("/recommend/insurance/choices");
+}
+
 export function getInsuranceRecommendation(input) {
     return fast("insurance", input);
+}
+
+export function getLoanChoices() {
+    return client.get("/recommend/loan/choices");
 }
 
 export function getLoanRecommendation(input) {

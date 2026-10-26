@@ -83,11 +83,21 @@ class EligibilityTest(unittest.TestCase):
         self.assertIn("rate_outlier", results["O1"]["check_reasons"])
         self.assertIn("region_limit", results["R1"]["check_reasons"])
 
-    def test_bank_is_favored_by_savings_bank_feature(self):
-        results = self.run_fast(institution="은행 선호")
-        self.assertEqual(results["B1"]["features"]["savings_bank"], 0)
-        self.assertEqual(results["B1"]["features"]["non_preferred_institution"], 0)
-        self.assertEqual(results["V1"]["features"]["non_preferred_institution"], 1)
+    def test_bank_preference_applies_only_when_chosen(self):
+        preferred = self.run_fast(institution="은행 선호")
+        self.assertEqual(preferred["B1"]["features"]["non_preferred_institution"], 0)
+        self.assertEqual(preferred["V1"]["features"]["non_preferred_institution"], 1)
+        indifferent = self.run_fast()
+        self.assertNotIn("savings_bank", indifferent["V1"]["features"])
+        self.assertEqual(indifferent["V1"]["features"]["non_preferred_institution"], 0)
+
+    def test_bank_reason_only_for_bank_preference(self):
+        def reasons(institution):
+            result = recommend({"purpose": "예금", "term": 12, "visit": "상관없음", "institution": institution},
+                               options=FIXTURE, weights=WEIGHTS)
+            return {i["product_id"].split("-")[1]: i["reasons"] for i in shown_items(result)}
+        self.assertIn("bank", reasons("은행 선호")["B1"])
+        self.assertNotIn("bank", reasons("상관없음")["B1"])
 
 
 class OutputTest(unittest.TestCase):

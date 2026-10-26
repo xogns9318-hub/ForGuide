@@ -17,7 +17,7 @@ spec.loader.exec_module(insurance_recommend)
 AI_DIR = INSURANCE_DIR.parent.parent
 DEFAULT_OUT = AI_DIR.parent / "backend" / "src" / "main" / "resources" / "recommend" / "insurance_fast.json"
 EXPORT_TOP_N = 20
-KEY_ORDER = ["sex", "age"]
+KEY_ORDER = ["sex", "age", "coverage"]
 
 
 def result_key(user):
@@ -30,9 +30,11 @@ def export(out_path=DEFAULT_OUT):
     results = {}
     for sex in choices["sex"]:
         for age in choices["age"]:
-            user = {"health_insurance": GATE_PASS, "residence_status": insurance_recommend.RESIDENCE_STATUSES[0], "sex": sex, "age": age}
-            result = insurance_recommend.recommend(user, rows=rows, top_n=EXPORT_TOP_N)
-            results[result_key(user)] = result
+            for coverage in choices["coverage"]:
+                user = {"health_insurance": GATE_PASS, "residence_status": insurance_recommend.RESIDENCE_STATUSES[0],
+                        "sex": sex, "age": age, "coverage": coverage}
+                result = insurance_recommend.recommend(user, rows=rows, top_n=EXPORT_TOP_N)
+                results[result_key(user)] = result
     dates = sorted({r["base_date"] for r in results.values() if r["base_date"]})
     payload = {
         "product": "insurance",
@@ -41,7 +43,7 @@ def export(out_path=DEFAULT_OUT):
         "base_date": dates[-1] if dates else "",
         "gate": {"health_insurance": GATE_PASS, "otherwise": insurance_recommend.REDIRECT},
         "key_order": KEY_ORDER,
-        "choices": {"sex": choices["sex"], "age": [choices["age"][0], choices["age"][-1]]},
+        "choices": {"sex": choices["sex"], "age": [choices["age"][0], choices["age"][-1]], "coverage": choices["coverage"]},
         "top_n": EXPORT_TOP_N,
         "results": results,
     }

@@ -5,7 +5,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from engine import GROUP_CHECK, GROUP_MATCH, GROUP_MISMATCH
-from baseline import PREFER_BANK, VISIT_NOT_WANTED, WEIGHTS, load_options, recommend_fast
+from baseline import BANK, PREFER_BANK, VISIT_NOT_WANTED, WEIGHTS, load_options, recommend_fast
 
 AI_DIR = Path(__file__).resolve().parent.parent.parent
 WEIGHTS_PATH = AI_DIR / "models" / "account_fast_weights.json"
@@ -55,8 +55,8 @@ def reason_keys(result, weights, user, limit=3):
     benefits = {
         "high_rate": weights["rate"] * features["rate"] if features["rate"] >= HIGH_RATE_SCORE else 0,
         "no_visit": abs(weights["visit_required"]) * (1 - features["visit_required"]) if user["visit"] != VISIT_NOT_WANTED else 0,
-        "bank": (abs(weights["savings_bank"]) + (abs(weights["non_preferred_institution"]) if user["institution"] == PREFER_BANK else 0))
-        * (1 - features["savings_bank"]),
+        "bank": abs(weights["non_preferred_institution"])
+        if user["institution"] == PREFER_BANK and result["institution_type"] == BANK else 0,
     }
     ordered = sorted(benefits.items(), key=lambda kv: -kv[1])
     return [key for key, value in ordered if value > 0][:limit]

@@ -57,7 +57,7 @@ FIXTURE = [
     row("라손보", "라유병력자실손", 18000, product_type="유병력자"),
     row("가손보", "가실손", 30000, age=50),
 ]
-USER = {"health_insurance": "예", "residence_status": "유학생", "sex": "남", "age": 30}
+USER = {"health_insurance": "예", "residence_status": "유학생", "sex": "남", "age": 30, "coverage": "비급여까지"}
 
 
 class InsuranceTest(unittest.TestCase):
@@ -91,10 +91,18 @@ class InsuranceTest(unittest.TestCase):
         self.assertEqual(items[2]["reasons"], [])
         self.assertTrue(all(i["check_reasons"] == ["insurer_review"] for i in items))
 
+    def test_basic_coverage_compares_basic_premium_only(self):
+        result = self.run_fixture(coverage="기본형만")
+        items = result["groups"][0]["items"]
+        self.assertEqual([i["monthly_premium"] for i in items], [4000, 6000, 10000])
+        self.assertTrue(all("premium_breakdown" not in i for i in items))
+        self.assertEqual(result["input"]["coverage"], "기본형만")
+        self.assertIn("premium_breakdown", self.run_fixture()["groups"][0]["items"][0])
+
     def test_validation(self):
         with self.assertRaises(ValueError) as caught:
             recommend_module.validate({"sex": "x", "age": 10, "residence_status": "관광"})
-        self.assertEqual(set(caught.exception.args[0]), {"sex", "age", "residence_status"})
+        self.assertEqual(set(caught.exception.args[0]), {"sex", "age", "coverage", "residence_status"})
         self.assertEqual(recommend_module.validate({**USER, "age": "45"})["age"], 45)
 
     def test_every_key_has_korean_text(self):
@@ -113,7 +121,7 @@ class InsuranceRealDataTest(unittest.TestCase):
             path, count = export_module.export(Path(folder) / "insurance_fast.json")
             payload = json.loads(path.read_text(encoding="utf-8"))
         choices = recommend_module.CHOICES
-        self.assertEqual(count, len(choices["sex"]) * len(choices["age"]))
+        self.assertEqual(count, len(choices["sex"]) * len(choices["age"]) * len(choices["coverage"]))
         for key, result in payload["results"].items():
             items = result["groups"][0]["items"]
             premiums = [i["monthly_premium"] for i in items]

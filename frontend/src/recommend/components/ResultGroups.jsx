@@ -4,6 +4,9 @@ import styles from "../recommend.module.css";
 
 const PREVIEW_COUNT = 5;
 
+const itemKey = (item) =>
+    [item.purpose, item.product_id ?? `${item.company}-${item.product_name}`].join("-");
+
 function ProductCard({ item, renderFacts, onDetail, muted = false }) {
     const { t } = useTranslation();
     const reasonKeys = muted ? (item.mismatch_reasons ?? []) : (item.reasons ?? []);
@@ -64,13 +67,15 @@ function Group({ group, renderFacts, onDetail }) {
         <section className={styles.resultGroup} aria-labelledby={`recommend-group-${group.key}`}>
             <div className={styles.groupHeading}>
                 <h3 id={`recommend-group-${group.key}`}>
-                    {t(`recommendResult.groups.${group.key}`)}
+                    {group.title ?? t(`recommendResult.groups.${group.key}`)}
                 </h3>
                 <span className="text-muted">
-                    {t("recommendForm.groupCount", {
-                        companies: group.companies,
-                        total: group.total,
-                    })}
+                    {group.companies
+                        ? t("recommendForm.groupCount", {
+                              companies: group.companies,
+                              total: group.total,
+                          })
+                        : t("recommendForm.productCount", { total: group.total })}
                 </span>
             </div>
             {group.guide && (
@@ -80,7 +85,7 @@ function Group({ group, renderFacts, onDetail }) {
             <div className={styles.grid}>
                 {items.map((item) => (
                     <ProductCard
-                        key={`${item.purpose ?? ""}-${item.product_id}`}
+                        key={itemKey(item)}
                         item={item}
                         renderFacts={renderFacts}
                         onDetail={(selected) => onDetail(selected, group)}
@@ -103,7 +108,7 @@ function Group({ group, renderFacts, onDetail }) {
     );
 }
 
-export default function ResultGroups({ groups, mismatch, renderFacts, onDetail }) {
+export default function ResultGroups({ groups, mismatch, separate, renderFacts, onDetail }) {
     const { t } = useTranslation();
     const visible = groups.filter((group) => group.items.length > 0);
 
@@ -120,6 +125,23 @@ export default function ResultGroups({ groups, mismatch, renderFacts, onDetail }
                 />
             ))}
 
+            {separate?.length > 0 && (
+                <section className={styles.separate} aria-labelledby="recommend-separate-title">
+                    <div>
+                        <h3 id="recommend-separate-title">{t("recommendResult.separate.title")}</h3>
+                        <p className="text-muted">{t("recommendResult.separate.description")}</p>
+                    </div>
+                    {separate.map((group) => (
+                        <Group
+                            key={group.key}
+                            group={{ ...group, title: t(`recommendResult.separate.${group.key}`) }}
+                            renderFacts={renderFacts}
+                            onDetail={onDetail}
+                        />
+                    ))}
+                </section>
+            )}
+
             {mismatch?.items.length > 0 && (
                 <details className={styles.mismatch}>
                     <summary>
@@ -128,7 +150,7 @@ export default function ResultGroups({ groups, mismatch, renderFacts, onDetail }
                     <div className={styles.grid}>
                         {mismatch.items.map((item) => (
                             <ProductCard
-                                key={`${item.purpose ?? ""}-${item.product_id}`}
+                                key={itemKey(item)}
                                 item={item}
                                 renderFacts={renderFacts}
                                 muted

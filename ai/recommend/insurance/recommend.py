@@ -12,7 +12,9 @@ RESIDENCE_STATUSES = [
 CHOICES = {
     "sex": ["남", "여"],
     "age": list(range(19, 100)),
+    "coverage": ["기본형만", "비급여까지"],
 }
+FULL_COVERAGE = "비급여까지"
 TOP_N = 5
 SEPARATE_N = 3
 LOW_PREMIUM_RATIO = 1.2
@@ -33,6 +35,8 @@ def validate(user):
         age = None
     if age not in CHOICES["age"]:
         errors["age"] = [CHOICES["age"][0], CHOICES["age"][-1]]
+    if user.get("coverage") not in CHOICES["coverage"]:
+        errors["coverage"] = CHOICES["coverage"]
     if user.get("residence_status") not in RESIDENCE_STATUSES:
         errors["residence_status"] = RESIDENCE_STATUSES
     if errors:
@@ -40,7 +44,7 @@ def validate(user):
     return {**user, "age": age}
 
 
-def card(result, rank, cheapest):
+def card(result, rank, cheapest, breakdown=True):
     item = {
         "rank": rank,
         "company": result["cmpy_nm"],
@@ -50,7 +54,7 @@ def card(result, rank, cheapest):
         "monthly_premium": result["premium"],
         "contact": {"homepage": result["homepage"], "phone": result["phone"]},
     }
-    if "basic" in result and result["basic"] != "":
+    if breakdown and "basic" in result and result["basic"] != "":
         item["premium_breakdown"] = {"basic": int(result["basic"]), "rider1": int(result["rider1"]), "rider2": int(result["rider2"])}
     reasons = []
     if cheapest and result["premium"] <= cheapest * LOW_PREMIUM_RATIO:
@@ -86,7 +90,7 @@ def recommend(user, rows=None, top_n=TOP_N, separate_n=SEPARATE_N):
     leaders, more = one_per_company(results)
     items = []
     for i, r in enumerate(leaders[:top_n], start=1):
-        item = card(r, i, cheapest)
+        item = card(r, i, cheapest, breakdown=user["coverage"] == FULL_COVERAGE)
         if more[r["cmpy_nm"]]:
             item["more_from_company"] = more[r["cmpy_nm"]]
         items.append(item)
@@ -101,7 +105,7 @@ def recommend(user, rows=None, top_n=TOP_N, separate_n=SEPARATE_N):
     return {
         "mode": "fast",
         "redirect": None,
-        "input": {"sex": user["sex"], "age": user["age"]},
+        "input": {"sex": user["sex"], "age": user["age"], "coverage": user["coverage"]},
         "base_date": dates[-1] if dates else "",
         "groups": [{
             "group": "확인 필요",
@@ -118,7 +122,7 @@ def recommend(user, rows=None, top_n=TOP_N, separate_n=SEPARATE_N):
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    user = {"health_insurance": "예", "residence_status": "비전문취업(E-9)", "sex": "남", "age": 30}
+    user = {"health_insurance": "예", "residence_status": "비전문취업(E-9)", "sex": "남", "age": 30, "coverage": "비급여까지"}
     print(json.dumps(recommend(user), ensure_ascii=False, indent=1))
 
 

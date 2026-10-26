@@ -22,8 +22,6 @@ import RequireAuth from "../auth/components/RequireAuth.jsx";
 // 제작 중 화면을 표시할 서비스 주소만 지정
 const constructionPaths = new Set([
     "/service/preparationCard",
-    "/service/loan",
-    "/service/insurance",
     "/service/simulator",
 ]);
 
