@@ -9,12 +9,14 @@ public record MemberResponse(
         Long memberId,
         String loginId,
         String name,
+        String givenName,
+        String familyName,
         String email,
         String nickname,
         String profileImageUrl) {
 
     public static MemberResponse from(MemberRow row) {
-        return new MemberResponse(row.getMemberId(), row.getLoginId(), row.getName(), row.getEmail(),
-                row.getNickname(), row.getProfileImageUrl());
+        return new MemberResponse(row.getMemberId(), row.getLoginId(), row.getName(), row.getGivenName(),
+                row.getFamilyName(), row.getEmail(), row.getNickname(), row.getProfileImageUrl());
     }
 }

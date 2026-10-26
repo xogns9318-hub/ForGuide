@@ -23,11 +23,21 @@ public enum ErrorCode {
 
     // 보안: 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는다
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다."),
+    LOGIN_LOCKED(HttpStatus.TOO_MANY_REQUESTS, "로그인에 5번 실패해 잠시 잠겼습니다. 15분 후 다시 시도해주세요."),
 
     // ── 회원 ──
     LOGIN_ID_DUPLICATED(HttpStatus.CONFLICT, "이미 사용 중인 아이디입니다."),
     EMAIL_DUPLICATED(HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),
-    INVALID_IMAGE(HttpStatus.BAD_REQUEST, "이미지는 JPG·PNG, 4MB 이하로 올려주세요.");
+    INVALID_IMAGE(HttpStatus.BAD_REQUEST, "이미지는 JPG·PNG, 4MB 이하로 올려주세요."),
+
+    // ── 이메일 인증 ──
+    EMAIL_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "이메일 인증을 완료해주세요."),
+    VERIFICATION_CODE_INVALID(HttpStatus.BAD_REQUEST, "인증 코드가 올바르지 않습니다."),
+    VERIFICATION_EXPIRED(HttpStatus.BAD_REQUEST, "인증 코드가 만료되었습니다. 코드를 다시 받아주세요."),
+    VERIFICATION_ATTEMPTS_EXCEEDED(HttpStatus.BAD_REQUEST, "인증 코드를 여러 번 틀렸습니다. 코드를 다시 받아주세요."),
+    VERIFICATION_RESEND_TOO_SOON(HttpStatus.TOO_MANY_REQUESTS, "잠시 후 다시 요청해주세요."),
+    VERIFICATION_DAILY_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "오늘은 더 이상 인증 코드를 보낼 수 없습니다."),
+    MAIL_SEND_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "인증 메일을 보내지 못했습니다. 잠시 후 다시 시도해주세요.");
 
     private final HttpStatus status;
     private final String defaultMessage;

@@ -1,19 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import Banner from "../../components/Banner/Banner.jsx";
-import ExampleBadge from "../../components/ExampleBadge/ExampleBadge.jsx";
+import { useTranslation } from "react-i18next";
 import FieldError from "../../components/FieldError/FieldError.jsx";
 import { login } from "../api/authApi.js";
-import { ApiError } from "../../api/apiError.js";
+import { msg, messageText, apiErrorMessage, apiFieldErrors } from "../utils/authMessages.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 import { getSafeNextPath } from "../utils/safeRedirect.js";
-import "../auth.css";
+import styles from "./AuthPage.module.css";
 
 // 입력 항목 순서 (오류가 있으면 이 순서대로 첫 항목에 포커스)
 const fieldOrder = ["loginId", "password"];
 
 // 로그인 화면 (Figma: 로그인 · 마이페이지로 이동, /login?next=/mypage)
 export default function Login() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
@@ -61,8 +61,8 @@ export default function Login() {
     // 로그인은 빈 값만 확인한다 (가입 규칙을 로그인 화면에서 드러내지 않기 위해)
     function validateForm() {
         return {
-            loginId: form.loginId ? "" : "아이디를 입력해주세요.",
-            password: form.password ? "" : "비밀번호를 입력해주세요.",
+            loginId: form.loginId ? "" : msg("auth.validation.loginIdRequired"),
+            password: form.password ? "" : msg("auth.validation.passwordRequired"),
         };
     }
 
@@ -102,18 +102,16 @@ export default function Login() {
             // 보안: 실패하면 입력한 비밀번호를 지운다
             setForm((prev) => ({ ...prev, password: "" }));
 
-            if (error instanceof ApiError && Object.keys(error.fieldErrors).length > 0) {
-                setErrors((prev) => ({ ...prev, ...error.fieldErrors }));
-                focusFirstError(error.fieldErrors);
+            const fieldErrors = apiFieldErrors(error);
+            if (Object.keys(fieldErrors).length > 0) {
+                setErrors((prev) => ({ ...prev, ...fieldErrors }));
+                focusFirstError(fieldErrors);
                 return;
             }
 
-            // LOGIN_FAILED: 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는 서버 메시지를 그대로 표시
-            setFormError(
-                error instanceof ApiError
-                    ? error.message
-                    : "로그인에 실패했습니다. 잠시 후 다시 시도해주세요.",
-            );
+            // LOGIN_FAILED: 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는 안내를 표시
+            // LOGIN_LOCKED: 5번 실패해 15분 동안 잠겼다는 안내 (서버가 아이디별로 센다)
+            setFormError(apiErrorMessage(error, "auth.login.failed"));
             inputRefs.current.password?.focus();
         } finally {
             if (mounted.current) {
@@ -146,34 +144,30 @@ export default function Login() {
 
     return (
         <div className="page-stack">
-            {/* 공통 페이지 배너 */}
-            <Banner
-                title="로그인"
-                description="도움을 찾고, 내일을 준비하는 첫걸음. ForGuide가 함께할게요."
-            />
-
-            {/* 공통 본문 박스 안의 입력 폼 */}
+            {/* 가운데 카드 안의 입력 폼 (한 줄에 한 항목) */}
             <form
-                className="panel"
+                className={`panel ${styles.card}`}
                 onSubmit={handleSubmit}
                 noValidate
                 aria-labelledby="login-title"
             >
-                <div className="auth-panel-head panel-title">
-                    <h2 id="login-title">다시 만나서 반가워요</h2>
-                    <ExampleBadge />
+                <div className={styles.head}>
+                    <h1 id="login-title" className={styles.title}>
+                        {t("auth.login.title")}
+                    </h1>
+                    <p className={styles.description}>{t("auth.login.heading")}</p>
                 </div>
 
                 {signedUpLoginId && (
-                    <p className="auth-field-ok" role="status">
-                        가입이 완료되었습니다. 비밀번호를 입력해 로그인해주세요.
+                    <p className={styles.ok} role="status">
+                        {t("auth.login.signedUp")}
                     </p>
                 )}
 
-                <div className="form-grid">
+                <div className={styles.fields}>
                     {/* 아이디 */}
                     <div className="form-field">
-                        <label htmlFor="login-loginId">아이디</label>
+                        <label htmlFor="login-loginId">{t("auth.common.loginId")}</label>
                         <input
                             {...fieldProps("loginId")}
                             type="text"
@@ -182,13 +176,16 @@ export default function Login() {
                             spellCheck={false}
                             maxLength={20}
                         />
-                        <FieldError id="login-loginId-error" message={errors.loginId} />
+                        <FieldError
+                            id="login-loginId-error"
+                            message={messageText(t, errors.loginId)}
+                        />
                     </div>
 
                     {/* 비밀번호 + 보기 버튼 */}
                     <div className="form-field">
-                        <label htmlFor="login-password">비밀번호</label>
-                        <div className="auth-password">
+                        <label htmlFor="login-password">{t("auth.common.password")}</label>
+                        <div className={styles.password}>
                             <input
                                 {...fieldProps("password")}
                                 type={showPassword ? "text" : "password"}
@@ -197,37 +194,38 @@ export default function Login() {
                             />
                             <button
                                 type="button"
-                                className="auth-password-toggle"
+                                className={styles.passwordToggle}
                                 aria-pressed={showPassword}
                                 aria-controls="login-password"
                                 onClick={() => setShowPassword((prev) => !prev)}
                             >
-                                {showPassword ? "숨기기" : "보기"}
+                                {showPassword ? t("auth.common.hide") : t("auth.common.show")}
                             </button>
                         </div>
-                        <FieldError id="login-password-error" message={errors.password} />
+                        <FieldError
+                            id="login-password-error"
+                            message={messageText(t, errors.password)}
+                        />
                     </div>
                 </div>
 
                 {formError && (
                     <p className="form-error" role="alert">
-                        {formError}
+                        {messageText(t, formError)}
                     </p>
                 )}
 
-                {/* 공통 버튼 배치 */}
-                <div className="form-actions">
-                    <button
-                        type="submit"
-                        className="button button-primary"
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? "로그인 중…" : "로그인"}
+                <div className={styles.actions}>
+                    <button type="submit" className="button button-primary" disabled={isSubmitting}>
+                        {isSubmitting ? t("auth.login.submitting") : t("auth.login.submit")}
                     </button>
-                    <Link to="/signup" className="button">
-                        회원가입
-                    </Link>
                 </div>
+
+                {/* 계정이 없으면 회원가입으로 */}
+                <p className={styles.switch}>
+                    {t("auth.login.noAccount")}
+                    <Link to="/signup">{t("auth.login.goSignup")}</Link>
+                </p>
             </form>
         </div>
     );

@@ -7,7 +7,6 @@ import com.example.forguide.member.image.ProfileImageStorage;
 import com.example.forguide.member.mapper.MemberMapper;
 import com.example.forguide.member.mapper.MemberRow;
 import java.util.Map;
-import java.util.regex.Pattern;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,10 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Service
 public class MemberService {
-
-    // 닉네임: 모든 언어의 글자·결합 기호·숫자·문장부호·기호·일반 공백 (제어 문자·보이지 않는 문자 불가)
-    // 프론트 src/auth/utils/authValidation.js의 validateNickname과 같은 규칙
-    private static final Pattern NICKNAME_PATTERN = Pattern.compile("^[\\p{L}\\p{M}\\p{N}\\p{P}\\p{S} ]+$");
 
     private final MemberMapper memberMapper;
     private final ProfileImageStorage profileImageStorage;
@@ -33,8 +28,8 @@ public class MemberService {
     /** 닉네임 변경 (앞뒤 공백 제거 후 2~20자, 중복 허용) */
     @Transactional
     public MemberResponse updateNickname(Long memberId, String nickname) {
-        String text = (nickname == null) ? "" : nickname.trim();
-        String problem = checkNickname(text);
+        String text = NicknamePolicy.normalize(nickname);
+        String problem = NicknamePolicy.check(text);
         if (problem != null) {
             throw new ApiException(ErrorCode.INVALID_INPUT, problem, Map.of("nickname", problem));
         }
@@ -70,11 +65,4 @@ public class MemberService {
         return member;
     }
 
-    private static String checkNickname(String text) {
-        if (text.isEmpty()) return "닉네임을 입력해주세요.";
-        int length = text.codePointCount(0, text.length()); // 이모지 등도 한 글자로 센다
-        if (length < 2 || length > 20) return "닉네임은 2~20자로 입력해주세요.";
-        if (!NICKNAME_PATTERN.matcher(text).matches()) return "닉네임에 쓸 수 없는 문자가 있습니다.";
-        return null;
-    }
 }

@@ -1,19 +1,16 @@
-import { validateText } from "../../utils/validation.js";
+import { msg } from "./authMessages.js";
 
-// 회원 입력 규칙 (화면과 mock 서버가 같은 규칙으로 검사한다. 백엔드도 같은 규칙으로 다시 검사한다)
+// 회원 입력 규칙 (백엔드도 같은 규칙으로 다시 검사한다)
+// 문제가 없으면 "", 있으면 번역 키로 된 메시지 { key, values }를 돌려준다 (화면에서 messageText로 번역)
+
+const V = "auth.validation";
 
 // 아이디: 4~20자, 영문 소문자와 숫자만 (대소문자 혼동으로 인한 중복 방지)
 export function validateLoginId(value) {
     const text = typeof value === "string" ? value : "";
 
-    if (!text) {
-        return "아이디를 입력해주세요.";
-    }
-
-    if (!/^[a-z0-9]{4,20}$/.test(text)) {
-        return "4~20자의 영문 소문자와 숫자만 사용할 수 있습니다.";
-    }
-
+    if (!text) return msg(`${V}.loginIdRequired`);
+    if (!/^[a-z0-9]{4,20}$/.test(text)) return msg(`${V}.loginIdFormat`);
     return "";
 }
 
@@ -22,50 +19,48 @@ export function validateLoginId(value) {
 export function validatePassword(value) {
     const text = typeof value === "string" ? value : "";
 
-    if (!text) {
-        return "비밀번호를 입력해주세요.";
-    }
-
-    if (text.length < 8 || text.length > 32) {
-        return "비밀번호는 8~32자로 입력해주세요.";
-    }
+    if (!text) return msg(`${V}.passwordRequired`);
+    if (text.length < 8 || text.length > 32) return msg(`${V}.passwordLength`);
 
     // 공백·한글 등을 제외한 영문 자판 문자만 허용
-    if (!/^[\x21-\x7E]+$/.test(text)) {
-        return "비밀번호에는 공백이나 영문 자판 외 문자를 쓸 수 없습니다.";
-    }
+    if (!/^[\x21-\x7E]+$/.test(text)) return msg(`${V}.passwordCharacters`);
 
-    // 빠진 조건을 모아 한 번에 안내
+    // 빠진 조건을 모아 한 번에 안내 (항목 이름도 번역 키로 넘긴다)
     const missing = [];
-    if (!/[a-z]/.test(text)) missing.push("소문자");
-    if (!/[A-Z]/.test(text)) missing.push("대문자");
-    if (!/[0-9]/.test(text)) missing.push("숫자");
-    if (!/[^A-Za-z0-9]/.test(text)) missing.push("특수문자");
+    if (!/[a-z]/.test(text)) missing.push(`${V}.passwordParts.lower`);
+    if (!/[A-Z]/.test(text)) missing.push(`${V}.passwordParts.upper`);
+    if (!/[0-9]/.test(text)) missing.push(`${V}.passwordParts.digit`);
+    if (!/[^A-Za-z0-9]/.test(text)) missing.push(`${V}.passwordParts.special`);
 
-    if (missing.length > 0) {
-        return `${missing.join("·")}를 포함해주세요.`;
-    }
-
+    if (missing.length > 0) return msg(`${V}.passwordMissing`, { itemKeys: missing });
     return "";
 }
 
-// 이름: 1~50자, 외국인 이름을 고려해 문자 종류 제한 없음
-export function validateName(value) {
-    return validateText(value, { required: true, maxLength: 50 });
+// 이름(given name): 필수, 앞뒤 공백을 뺀 1~50자. 외국인 이름을 고려해 문자 종류 제한 없음
+export function validateGivenName(value) {
+    const text = typeof value === "string" ? value.trim() : "";
+
+    if (!text) return msg(`${V}.givenNameRequired`);
+    if (Array.from(text).length > 50) return msg(`${V}.nameLength`, { max: 50 });
+    return "";
+}
+
+// 성(family name): 선택 (성이 없는 문화권 사용자를 위해 비워 둘 수 있음), 최대 50자
+export function validateFamilyName(value) {
+    const text = typeof value === "string" ? value.trim() : "";
+
+    if (Array.from(text).length > 50) return msg(`${V}.nameLength`, { max: 50 });
+    return "";
 }
 
 // 이메일: 기본 형식(아이디@도메인.최상위)과 표준 최대 길이(254자) 확인
 export function validateEmail(value) {
     const text = typeof value === "string" ? value.trim() : "";
 
-    if (!text) {
-        return "이메일을 입력해주세요.";
-    }
-
+    if (!text) return msg(`${V}.emailRequired`);
     if (text.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) {
-        return "올바른 이메일 형식으로 입력해주세요.";
+        return msg(`${V}.emailFormat`);
     }
-
     return "";
 }
 
@@ -75,18 +70,20 @@ export function validateEmail(value) {
 export function validateNickname(value) {
     const text = typeof value === "string" ? value.trim() : "";
 
-    if (!text) {
-        return "닉네임을 입력해주세요.";
-    }
+    if (!text) return msg(`${V}.nicknameRequired`);
 
     const length = Array.from(text).length;
-    if (length < 2 || length > 20) {
-        return "닉네임은 2~20자로 입력해주세요.";
-    }
+    if (length < 2 || length > 20) return msg(`${V}.nicknameLength`);
 
-    if (!/^[\p{L}\p{M}\p{N}\p{P}\p{S} ]+$/u.test(text)) {
-        return "닉네임에 쓸 수 없는 문자가 있습니다.";
-    }
+    if (!/^[\p{L}\p{M}\p{N}\p{P}\p{S} ]+$/u.test(text)) return msg(`${V}.nicknameCharacters`);
+    return "";
+}
 
+// 이메일 인증 코드: 메일로 받은 6자리 숫자
+export function validateVerificationCode(value) {
+    const text = typeof value === "string" ? value.trim() : "";
+
+    if (!text) return msg(`${V}.codeRequired`);
+    if (!/^[0-9]{6}$/.test(text)) return msg(`${V}.codeFormat`);
     return "";
 }

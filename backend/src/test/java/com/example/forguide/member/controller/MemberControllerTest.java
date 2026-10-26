@@ -1,5 +1,7 @@
 package com.example.forguide.member.controller;
 
+import static com.example.forguide.member.controller.EmailVerificationSteps.verifiedToken;
+import static com.example.forguide.member.controller.EmailVerificationSteps.withToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.forguide.member.service.VerificationMailSender;
 import com.jayway.jsonpath.JsonPath;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -26,8 +29,10 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -49,6 +54,10 @@ class MemberControllerTest {
     @Autowired
     private WebApplicationContext context;
 
+    // 메일은 실제로 보내지 않고, 보낸 코드를 테스트에서 꺼내 쓴다
+    @MockitoBean
+    private VerificationMailSender mail;
+
     private MockMvc mockMvc;
     private String accessToken;
 
@@ -56,8 +65,9 @@ class MemberControllerTest {
     void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 
+        String token = verifiedToken(mockMvc, mail, "n1@example.com");
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\",\"name\":\"홍길동\",\"email\":\"n1@example.com\"}"));
+                .content(withToken("{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\",\"givenName\":\"길동\",\"familyName\":\"홍\",\"nickname\":\"길동이\",\"email\":\"n1@example.com\"}", token)));
         String body = mockMvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\"}"))
                 .andReturn().getResponse().getContentAsString();
@@ -71,7 +81,7 @@ class MemberControllerTest {
         return out.toByteArray();
     }
 
-    private org.springframework.test.web.servlet.ResultActions upload(byte[] bytes, String fileName, String type)
+    private ResultActions upload(byte[] bytes, String fileName, String type)
             throws Exception {
         return mockMvc.perform(multipart(HttpMethod.PATCH, "/api/v1/members/me/profile-image")
                 .file(new MockMultipartFile("image", fileName, type, bytes))

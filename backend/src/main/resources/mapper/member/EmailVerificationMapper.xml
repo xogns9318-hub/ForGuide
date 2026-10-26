@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.forguide.member.mapper.EmailVerificationMapper">
+
+    <!-- 컬럼 → EmailVerificationRow 필드 이름을 직접 맞춘다 -->
+    <sql id="columns">
+        verification_id  AS verificationId,
+        email            AS email,
+        purpose          AS purpose,
+        code_hash        AS codeHash,
+        expires_at       AS expiresAt,
+        failed_attempts  AS failedAttempts,
+        verified_at      AS verifiedAt,
+        token_hash       AS tokenHash,
+        token_expires_at AS tokenExpiresAt,
+        token_used_at    AS tokenUsedAt,
+        created_at       AS createdAt
+    </sql>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="verificationId" keyColumn="verification_id">
+        INSERT INTO email_verifications (email, purpose, code_hash, expires_at, created_at)
+        VALUES (#{email}, #{purpose}, #{codeHash}, #{expiresAt}, #{createdAt})
+    </insert>
+
+    <select id="findLatest" resultType="com.example.forguide.member.mapper.EmailVerificationRow">
+        SELECT <include refid="columns"/>
+        FROM email_verifications
+        WHERE email = #{email} AND purpose = #{purpose}
+        ORDER BY created_at DESC, verification_id DESC
+        LIMIT 1
+    </select>
+
+    <select id="countSentSince" resultType="int">
+        SELECT COUNT(*) FROM email_verifications
+        WHERE email = #{email} AND purpose = #{purpose} AND created_at &gt;= #{since}
+    </select>
+
+    <update id="increaseFailedAttempts">
+        UPDATE email_verifications SET failed_attempts = failed_attempts + 1
+        WHERE verification_id = #{verificationId}
+    </update>
+
+    <update id="markVerified">
+        UPDATE email_verifications
+        SET verified_at = #{verifiedAt}, token_hash = #{tokenHash}, token_expires_at = #{tokenExpiresAt}
+        WHERE verification_id = #{verificationId}
+    </update>
+
+    <select id="findByTokenHash" resultType="com.example.forguide.member.mapper.EmailVerificationRow">
+        SELECT <include refid="columns"/> FROM email_verifications WHERE token_hash = #{tokenHash}
+    </select>
+
+    <update id="markTokenUsed">
+        UPDATE email_verifications SET token_used_at = #{usedAt}
+        WHERE verification_id = #{verificationId} AND token_used_at IS NULL
+    </update>
+</mapper>

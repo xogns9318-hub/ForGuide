@@ -1,5 +1,7 @@
 package com.example.forguide.member.controller;
 
+import static com.example.forguide.member.controller.EmailVerificationSteps.verifiedToken;
+import static com.example.forguide.member.controller.EmailVerificationSteps.withToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -8,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.forguide.member.service.VerificationMailSender;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,8 +20,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -30,7 +35,7 @@ import org.springframework.web.context.WebApplicationContext;
 class AuthControllerTest {
 
     private static final String SIGNUP_JSON =
-            "{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\",\"name\":\" 홍길동 \",\"email\":\"New@Example.com\"}";
+            "{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\",\"givenName\":\" Van A \",\"familyName\":\" Nguyen \",\"nickname\":\" 데모 \",\"email\":\"New@Example.com\"}";
     private static final String LOGIN_JSON = "{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\"}";
 
     @Autowired
@@ -38,6 +43,10 @@ class AuthControllerTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    // 메일은 실제로 보내지 않고, 보낸 코드를 테스트에서 꺼내 쓴다
+    @MockitoBean
+    private VerificationMailSender mail;
 
     private MockMvc mockMvc;
 
@@ -47,8 +56,14 @@ class AuthControllerTest {
     }
 
     private MockHttpServletResponse signup() throws Exception {
-        return mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON).content(SIGNUP_JSON))
+        return mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content(verified(SIGNUP_JSON, "New@Example.com")))
                 .andReturn().getResponse();
+    }
+
+    // 이메일 인증을 마친 가입 JSON
+    private String verified(String signupJson, String email) throws Exception {
+        return withToken(signupJson, verifiedToken(mockMvc, mail, email));
     }
 
     private MockHttpServletResponse login() throws Exception {
@@ -58,15 +73,44 @@ class AuthControllerTest {
 
     @Test
     void 회원가입_성공_비밀번호는_BCrypt로_저장되고_응답에_없다() throws Exception {
-        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON).content(SIGNUP_JSON))
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content(verified(SIGNUP_JSON, "New@Example.com")))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.loginId").value("newuser1"))
-                .andExpect(jsonPath("$.data.name").value("홍길동"))
+                .andExpect(jsonPath("$.data.name").value("Van A Nguyen"))
+                .andExpect(jsonPath("$.data.givenName").value("Van A"))
+                .andExpect(jsonPath("$.data.familyName").value("Nguyen"))
+                .andExpect(jsonPath("$.data.nickname").value("데모"))
                 .andExpect(jsonPath("$.data.email").value("new@example.com"))
                 .andExpect(jsonPath("$.data.password").doesNotExist());
 
         String saved = jdbcTemplate.queryForObject("SELECT password FROM members WHERE login_id = 'newuser1'", String.class);
         assertThat(saved).startsWith("$2a$").isNotEqualTo("Abcdef1!");
+    }
+
+    @Test
+    void 성은_비워도_가입되고_표시_이름은_이름만() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content(verified("{\"loginId\":\"mono1\",\"password\":\"Abcdef1!\",\"givenName\":\"Sukarno\","
+                                + "\"nickname\":\"수카르노\",\"email\":\"mono@example.com\"}", "mono@example.com")))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.name").value("Sukarno"))
+                .andExpect(jsonPath("$.data.familyName").doesNotExist());
+
+        String family = jdbcTemplate.queryForObject("SELECT family_name FROM members WHERE login_id = 'mono1'", String.class);
+        assertThat(family).isNull();
+    }
+
+    @Test
+    void 닉네임_규칙_위반은_400() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"loginId\":\"nick1\",\"password\":\"Abcdef1!\",\"givenName\":\"A\","
+                                + "\"nickname\":\"ab\u200Bcd\",\"email\":\"nick@example.com\",\"emailVerificationToken\":\"any\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.fieldErrors.nickname").value("닉네임에 쓸 수 없는 문자가 있습니다."));
+
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM members WHERE login_id = 'nick1'", Integer.class);
+        assertThat(count).isZero();
     }
 
     @Test
@@ -84,13 +128,15 @@ class AuthControllerTest {
     @Test
     void 아이디_이메일_중복_가입은_409() throws Exception {
         signup();
-        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON).content(SIGNUP_JSON))
+        // 중복 확인은 인증 토큰 확인보다 먼저 한다 (이미 가입된 이메일은 인증 코드도 받을 수 없으므로)
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content(withToken(SIGNUP_JSON, "any")))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error.code").value("LOGIN_ID_DUPLICATED"));
 
         // 대소문자만 다른 이메일도 중복
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"loginId\":\"other22\",\"password\":\"Abcdef1!\",\"name\":\"A\",\"email\":\"NEW@example.COM\"}"))
+                        .content("{\"loginId\":\"other22\",\"password\":\"Abcdef1!\",\"givenName\":\"A\",\"nickname\":\"닉네임\",\"email\":\"NEW@example.COM\",\"emailVerificationToken\":\"any\"}"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error.code").value("EMAIL_DUPLICATED"))
                 .andExpect(jsonPath("$.error.fieldErrors.email").exists());
@@ -99,13 +145,16 @@ class AuthControllerTest {
     @Test
     void 가입_입력_규칙_위반은_항목별_400() throws Exception {
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"loginId\":\"AB\",\"password\":\"abcdefgh\",\"name\":\"\",\"email\":\"bad\"}"))
+                        .content("{\"loginId\":\"AB\",\"password\":\"abcdefgh\",\"givenName\":\"\",\"familyName\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"email\":\"bad\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.code").value("INVALID_INPUT"))
                 .andExpect(jsonPath("$.error.fieldErrors.loginId").exists())
                 .andExpect(jsonPath("$.error.fieldErrors.password").exists())
-                .andExpect(jsonPath("$.error.fieldErrors.name").exists())
-                .andExpect(jsonPath("$.error.fieldErrors.email").exists());
+                .andExpect(jsonPath("$.error.fieldErrors.givenName").exists())
+                .andExpect(jsonPath("$.error.fieldErrors.familyName").exists())
+                .andExpect(jsonPath("$.error.fieldErrors.nickname").exists())
+                .andExpect(jsonPath("$.error.fieldErrors.email").exists())
+                .andExpect(jsonPath("$.error.fieldErrors.emailVerificationToken").exists());
     }
 
     @Test
@@ -139,6 +188,85 @@ class AuthControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         assertThat(wrongPassword).isEqualTo(noUser).contains("LOGIN_FAILED");
+    }
+
+    private ResultActions loginWith(String loginId, String password) throws Exception {
+        return mockMvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"loginId\":\"" + loginId + "\",\"password\":\"" + password + "\"}"));
+    }
+
+    @Test
+    void 다섯_번_틀리면_잠기고_맞는_비밀번호도_거부된다() throws Exception {
+        signup();
+        for (int i = 0; i < 4; i++) {
+            loginWith("newuser1", "Wrong123!").andExpect(jsonPath("$.error.code").value("LOGIN_FAILED"));
+        }
+        // 5번째 실패에서 바로 잠김 안내
+        loginWith("newuser1", "Wrong123!")
+                .andExpect(status().isTooManyRequests())
+                .andExpect(jsonPath("$.error.code").value("LOGIN_LOCKED"));
+
+        loginWith("newuser1", "Abcdef1!")
+                .andExpect(status().isTooManyRequests())
+                .andExpect(jsonPath("$.error.code").value("LOGIN_LOCKED"));
+    }
+
+    @Test
+    void 잠금_시간이_지나면_다시_로그인할_수_있다() throws Exception {
+        signup();
+        for (int i = 0; i < 5; i++) {
+            loginWith("newuser1", "Wrong123!");
+        }
+        jdbcTemplate.update("UPDATE login_attempts SET locked_until = DATEADD('MINUTE', -1, CURRENT_TIMESTAMP)");
+
+        loginWith("newuser1", "Abcdef1!").andExpect(status().isOk());
+    }
+
+    @Test
+    void 로그인에_성공하면_실패_횟수가_초기화된다() throws Exception {
+        signup();
+        for (int i = 0; i < 4; i++) {
+            loginWith("newuser1", "Wrong123!");
+        }
+        loginWith("newuser1", "Abcdef1!").andExpect(status().isOk());
+
+        // 다시 4번 틀려도 잠기지 않는다 (앞의 4번은 지워졌다)
+        for (int i = 0; i < 4; i++) {
+            loginWith("newuser1", "Wrong123!").andExpect(jsonPath("$.error.code").value("LOGIN_FAILED"));
+        }
+        loginWith("newuser1", "Abcdef1!").andExpect(status().isOk());
+    }
+
+    @Test
+    void 오래된_실패는_다시_센다() throws Exception {
+        signup();
+        for (int i = 0; i < 4; i++) {
+            loginWith("newuser1", "Wrong123!");
+        }
+        jdbcTemplate.update("UPDATE login_attempts SET last_failed_at = DATEADD('MINUTE', -16, CURRENT_TIMESTAMP)");
+
+        // 15분이 지난 실패 기록은 지우고 1번째 실패부터 다시 센다
+        loginWith("newuser1", "Wrong123!").andExpect(jsonPath("$.error.code").value("LOGIN_FAILED"));
+        Integer count = jdbcTemplate.queryForObject("SELECT failed_count FROM login_attempts", Integer.class);
+        assertThat(count).isEqualTo(1);
+    }
+
+    @Test
+    void 없는_아이디도_똑같이_잠긴다() throws Exception {
+        // 잠김 응답으로 가입 여부가 드러나지 않게 한다
+        for (int i = 0; i < 4; i++) {
+            loginWith("nobody99", "Wrong123!").andExpect(jsonPath("$.error.code").value("LOGIN_FAILED"));
+        }
+        loginWith("nobody99", "Wrong123!").andExpect(jsonPath("$.error.code").value("LOGIN_LOCKED"));
+    }
+
+    @Test
+    void 한_아이디가_잠겨도_다른_아이디는_로그인된다() throws Exception {
+        signup();
+        for (int i = 0; i < 5; i++) {
+            loginWith("other123", "Wrong123!");
+        }
+        loginWith("newuser1", "Abcdef1!").andExpect(status().isOk());
     }
 
     @Test

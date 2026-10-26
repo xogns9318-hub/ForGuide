@@ -10,13 +10,7 @@ import com.example.forguide.member.dto.SignupRequest;
 import com.example.forguide.member.mapper.MemberMapper;
 import com.example.forguide.member.mapper.MemberRow;
 import com.example.forguide.member.mapper.RefreshTokenMapper;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HexFormat;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -43,18 +37,23 @@ public class AuthService {
     private final RefreshTokenMapper refreshTokenMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
-    private final SecureRandom secureRandom = new SecureRandom();
+    private final EmailVerificationService emailVerificationService;
+    private final LoginAttemptService loginAttemptService;
 
     // 없는 아이디로 로그인할 때도 비밀번호 비교 시간을 똑같이 쓰기 위한 가짜 해시
     // (응답 시간 차이로 "가입된 아이디인지"를 알아내지 못하게 한다)
     private final String dummyPasswordHash;
 
     public AuthService(MemberMapper memberMapper, RefreshTokenMapper refreshTokenMapper,
-                       PasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
+                       PasswordEncoder passwordEncoder, JwtProvider jwtProvider,
+                       EmailVerificationService emailVerificationService,
+                       LoginAttemptService loginAttemptService) {
         this.memberMapper = memberMapper;
         this.refreshTokenMapper = refreshTokenMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
+        this.emailVerificationService = emailVerificationService;
+        this.loginAttemptService = loginAttemptService;
         this.dummyPasswordHash = passwordEncoder.encode("dummy-password-for-timing");
     }
 
@@ -70,9 +69,17 @@ public class AuthService {
     /** 회원가입 → 가입한 회원 정보 */
     @Transactional
     public MemberResponse signup(SignupRequest request) {
-        // 이메일은 대소문자를 구분하지 않고 비교·저장, 이름은 앞뒤 공백 제거
+        // 이메일은 대소문자를 구분하지 않고 비교·저장, 이름·성·닉네임은 앞뒤 공백 제거
         String email = request.email().trim().toLowerCase(Locale.ROOT);
-        String name = request.name().trim();
+        String givenName = request.givenName().trim();
+        String familyName = request.familyName() == null ? "" : request.familyName().trim();
+
+        // 닉네임은 닉네임 변경과 같은 규칙으로 검사한다
+        String nickname = NicknamePolicy.normalize(request.nickname());
+        String nicknameProblem = NicknamePolicy.check(nickname);
+        if (nicknameProblem != null) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, nicknameProblem, Map.of("nickname", nicknameProblem));
+        }
 
         if (memberMapper.existsByLoginId(request.loginId())) {
             throw duplicated(ErrorCode.LOGIN_ID_DUPLICATED, "loginId");
@@ -81,10 +88,18 @@ public class AuthService {
             throw duplicated(ErrorCode.EMAIL_DUPLICATED, "email");
         }
 
+        // 이 이메일로 인증을 마쳤는지 확인하고 토큰을 사용 처리한다 (한 번만 쓸 수 있음)
+        // 아래 저장이 실패하면 같은 트랜잭션이라 토큰 사용도 되돌려져 다시 가입을 시도할 수 있다
+        emailVerificationService.consume(email, VerificationPurpose.SIGNUP, request.emailVerificationToken());
+
         MemberRow row = new MemberRow();
         row.setLoginId(request.loginId());
         row.setPassword(passwordEncoder.encode(request.password())); // BCrypt 해시만 저장
-        row.setName(name);
+        // 화면 표시용 이름은 "이름 성" 순서 (성이 없으면 이름만)
+        row.setName(familyName.isEmpty() ? givenName : givenName + " " + familyName);
+        row.setGivenName(givenName);
+        row.setFamilyName(familyName.isEmpty() ? null : familyName);
+        row.setNickname(nickname);
         row.setEmail(email);
 
         try {
@@ -99,10 +114,24 @@ public class AuthService {
         return MemberResponse.from(memberMapper.findById(row.getMemberId()));
     }
 
-    /** 로그인 → access token + refresh token */
-    @Transactional
+    /**
+     * 로그인 → access token + refresh token
+     * 실패 기록은 오류를 던져도 저장되어야 하므로 ApiException에는 되돌리지 않는다
+     */
+    @Transactional(noRollbackFor = ApiException.class)
     public AuthTokens login(LoginRequest request) {
-        MemberRow member = memberMapper.findByLoginId(request.loginId());
+        LocalDateTime now = LocalDateTime.now();
+        String loginId = request.loginId();
+
+        // 아이디 형식에 맞지 않으면 가입될 수 없는 아이디이므로 실패 횟수를 세지 않는다
+        boolean trackAttempts = LOGIN_ID_PATTERN.matcher(loginId).matches();
+
+        // 잠긴 아이디는 비밀번호를 확인하지 않고 거부한다 (맞는 비밀번호여도)
+        if (trackAttempts) {
+            loginAttemptService.checkNotLocked(loginId, now);
+        }
+
+        MemberRow member = memberMapper.findByLoginId(loginId);
 
         // 회원이 없어도 비교는 한다 (시간 차이로 가입 여부가 드러나지 않게)
         String hash = (member != null) ? member.getPassword() : dummyPasswordHash;
@@ -110,8 +139,14 @@ public class AuthService {
 
         // 보안: 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는다
         if (member == null || !matches) {
+            // 실패 횟수를 세고, 이번이 5번째면 LOGIN_LOCKED로 바로 알린다
+            if (trackAttempts) {
+                loginAttemptService.recordFailure(loginId, now);
+            }
             throw new ApiException(ErrorCode.LOGIN_FAILED);
         }
+
+        loginAttemptService.reset(loginId);
         return issueTokens(member);
     }
 
@@ -121,7 +156,7 @@ public class AuthService {
         if (refreshToken == null || refreshToken.isBlank()) {
             throw new ApiException(ErrorCode.REFRESH_INVALID);
         }
-        String tokenHash = hash(refreshToken);
+        String tokenHash = SecureTokens.sha256(refreshToken);
 
         Long memberId = refreshTokenMapper.findMemberIdByValidToken(tokenHash, LocalDateTime.now());
 
@@ -142,7 +177,7 @@ public class AuthService {
     @Transactional
     public void logout(String refreshToken) {
         if (refreshToken != null && !refreshToken.isBlank()) {
-            refreshTokenMapper.deleteByToken(hash(refreshToken));
+            refreshTokenMapper.deleteByToken(SecureTokens.sha256(refreshToken));
         }
     }
 
@@ -151,27 +186,12 @@ public class AuthService {
         LocalDateTime now = LocalDateTime.now();
         refreshTokenMapper.deleteExpiredByMemberId(member.getMemberId(), now); // 만료된 토큰 정리
 
-        String refreshToken = newRefreshToken();
-        refreshTokenMapper.insert(member.getMemberId(), hash(refreshToken),
+        String refreshToken = SecureTokens.random(REFRESH_TOKEN_BYTES);
+        refreshTokenMapper.insert(member.getMemberId(), SecureTokens.sha256(refreshToken),
                 now.plus(jwtProvider.getRefreshTokenValidity()));
 
         String accessToken = jwtProvider.createAccessToken(member.getMemberId());
         return new AuthTokens(new AuthResponse(accessToken, MemberResponse.from(member)), refreshToken);
-    }
-
-    private String newRefreshToken() {
-        byte[] bytes = new byte[REFRESH_TOKEN_BYTES];
-        secureRandom.nextBytes(bytes);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-    }
-
-    private static String hash(String value) {
-        try {
-            byte[] digest = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
-            return HexFormat.of().formatHex(digest);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256을 사용할 수 없습니다.", e);
-        }
     }
 
     private static ApiException duplicated(ErrorCode code, String field) {

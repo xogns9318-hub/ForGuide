@@ -1,0 +1,18 @@
+/* 원형 프로필 이미지 (크기는 컴포넌트의 size로 정한다) */
+.avatar {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--surface);
+}
+
+/* 이미지가 없을 때 이름 첫 글자 */
+.initial {
+    background: var(--mint);
+    color: var(--primary);
+    font-weight: 700;
+}
