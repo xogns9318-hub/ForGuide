@@ -9,7 +9,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.example.forguide.member.support.EmailVerificationSteps.verifiedToken;
+import static com.example.forguide.member.support.EmailVerificationSteps.withToken;
 
+import com.example.forguide.member.support.RecordingMailConfig;
+import com.example.forguide.member.support.RecordingMailConfig.RecordingMailSender;
 import com.jayway.jsonpath.JsonPath;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -21,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -35,6 +40,7 @@ import org.springframework.web.context.WebApplicationContext;
  * 닉네임·프로필 이미지 저장과 이미지 주소 공개 (테스트 DB: H2, 이미지는 임시 폴더)
  */
 @SpringBootTest
+@Import(RecordingMailConfig.class)
 @Sql(scripts = "/member/schema.sql")
 class MemberControllerTest {
 
@@ -49,6 +55,9 @@ class MemberControllerTest {
     @Autowired
     private WebApplicationContext context;
 
+    @Autowired
+    private RecordingMailSender mail;
+
     private MockMvc mockMvc;
     private String accessToken;
 
@@ -56,8 +65,9 @@ class MemberControllerTest {
     void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 
+        String token = verifiedToken(mockMvc, mail, "n1@example.com");
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\",\"givenName\":\"길동\",\"familyName\":\"홍\",\"nickname\":\"길동이\",\"email\":\"n1@example.com\"}"));
+                .content(withToken("{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\",\"givenName\":\"길동\",\"familyName\":\"홍\",\"nickname\":\"길동이\",\"email\":\"n1@example.com\"}", token)));
         String body = mockMvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\"}"))
                 .andReturn().getResponse().getContentAsString();

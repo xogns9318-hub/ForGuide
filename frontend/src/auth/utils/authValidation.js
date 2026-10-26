@@ -78,3 +78,12 @@ export function validateNickname(value) {
     if (!/^[\p{L}\p{M}\p{N}\p{P}\p{S} ]+$/u.test(text)) return msg(`${V}.nicknameCharacters`);
     return "";
 }
+
+// 이메일 인증 코드: 메일로 받은 6자리 숫자
+export function validateVerificationCode(value) {
+    const text = typeof value === "string" ? value.trim() : "";
+
+    if (!text) return msg(`${V}.codeRequired`);
+    if (!/^[0-9]{6}$/.test(text)) return msg(`${V}.codeFormat`);
+    return "";
+}

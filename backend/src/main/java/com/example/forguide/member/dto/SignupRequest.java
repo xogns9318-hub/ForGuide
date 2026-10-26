@@ -36,5 +36,9 @@ public record SignupRequest(
         @NotBlank(message = "이메일을 입력해주세요.")
         @Email(message = "올바른 이메일 형식으로 입력해주세요.")
         @Size(max = 254, message = "올바른 이메일 형식으로 입력해주세요.")
-        String email) {
+        String email,
+
+        // 이메일 인증 완료 토큰 (POST /api/v1/auth/email/verify 응답). 없거나 맞지 않으면 가입하지 않는다
+        @NotBlank(message = "이메일 인증을 완료해주세요.")
+        String emailVerificationToken) {
 }

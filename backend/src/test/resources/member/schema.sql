@@ -27,3 +27,19 @@ CREATE TABLE refresh_tokens (
     created_at       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_refresh_tokens_member FOREIGN KEY (member_id) REFERENCES members (member_id) ON DELETE CASCADE
 );
+
+DROP TABLE IF EXISTS email_verifications;
+
+CREATE TABLE email_verifications (
+    verification_id   BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email             VARCHAR(255) NOT NULL,
+    purpose           VARCHAR(20)  NOT NULL,
+    code_hash         CHAR(64)     NOT NULL,
+    expires_at        DATETIME     NOT NULL,
+    failed_attempts   INT          NOT NULL DEFAULT 0,
+    verified_at       DATETIME,
+    token_hash        CHAR(64)     UNIQUE,
+    token_expires_at  DATETIME,
+    token_used_at     DATETIME,
+    created_at        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

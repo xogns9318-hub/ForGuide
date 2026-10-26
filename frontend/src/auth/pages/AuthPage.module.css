@@ -63,6 +63,22 @@
     background: var(--mint-soft);
 }
 
+/* 입력창 + 옆 버튼 한 줄 (이메일 인증 코드 받기·확인) */
+.inputWithButton {
+    display: flex;
+    gap: 8px;
+}
+
+.inputWithButton input {
+    flex: 1;
+    min-width: 0;
+}
+
+.inputWithButton button {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
 /* 사용 가능한 아이디·저장 완료 등 긍정 안내 (오류 안내 FieldError와 같은 크기) */
 .ok {
     margin: 0;

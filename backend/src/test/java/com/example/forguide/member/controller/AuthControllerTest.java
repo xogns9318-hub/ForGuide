@@ -7,12 +7,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.example.forguide.member.support.EmailVerificationSteps.verifiedToken;
+import static com.example.forguide.member.support.EmailVerificationSteps.withToken;
 
+import com.example.forguide.member.support.RecordingMailConfig;
+import com.example.forguide.member.support.RecordingMailConfig.RecordingMailSender;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,6 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
  * 회원가입·로그인·재발급·로그아웃 전체 흐름 (테스트 DB: H2, 스키마: test/resources/member/schema.sql)
  */
 @SpringBootTest
+@Import(RecordingMailConfig.class)
 @Sql(scripts = "/member/schema.sql")
 class AuthControllerTest {
 
@@ -39,6 +45,9 @@ class AuthControllerTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private RecordingMailSender mail;
+
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -47,8 +56,14 @@ class AuthControllerTest {
     }
 
     private MockHttpServletResponse signup() throws Exception {
-        return mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON).content(SIGNUP_JSON))
+        return mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content(verified(SIGNUP_JSON, "New@Example.com")))
                 .andReturn().getResponse();
+    }
+
+    // 이메일 인증을 마친 가입 JSON
+    private String verified(String signupJson, String email) throws Exception {
+        return withToken(signupJson, verifiedToken(mockMvc, mail, email));
     }
 
     private MockHttpServletResponse login() throws Exception {
@@ -58,7 +73,8 @@ class AuthControllerTest {
 
     @Test
     void 회원가입_성공_비밀번호는_BCrypt로_저장되고_응답에_없다() throws Exception {
-        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON).content(SIGNUP_JSON))
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content(verified(SIGNUP_JSON, "New@Example.com")))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.loginId").value("newuser1"))
                 .andExpect(jsonPath("$.data.name").value("Van A Nguyen"))
@@ -75,8 +91,8 @@ class AuthControllerTest {
     @Test
     void 성은_비워도_가입되고_표시_이름은_이름만() throws Exception {
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"loginId\":\"mono1\",\"password\":\"Abcdef1!\",\"givenName\":\"Sukarno\","
-                                + "\"nickname\":\"수카르노\",\"email\":\"mono@example.com\"}"))
+                        .content(verified("{\"loginId\":\"mono1\",\"password\":\"Abcdef1!\",\"givenName\":\"Sukarno\","
+                                + "\"nickname\":\"수카르노\",\"email\":\"mono@example.com\"}", "mono@example.com")))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.name").value("Sukarno"))
                 .andExpect(jsonPath("$.data.familyName").doesNotExist());
@@ -89,7 +105,7 @@ class AuthControllerTest {
     void 닉네임_규칙_위반은_400() throws Exception {
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"loginId\":\"nick1\",\"password\":\"Abcdef1!\",\"givenName\":\"A\","
-                                + "\"nickname\":\"ab\u200Bcd\",\"email\":\"nick@example.com\"}"))
+                                + "\"nickname\":\"ab\u200Bcd\",\"email\":\"nick@example.com\",\"emailVerificationToken\":\"any\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.fieldErrors.nickname").value("닉네임에 쓸 수 없는 문자가 있습니다."));
 
@@ -112,13 +128,15 @@ class AuthControllerTest {
     @Test
     void 아이디_이메일_중복_가입은_409() throws Exception {
         signup();
-        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON).content(SIGNUP_JSON))
+        // 중복 확인은 인증 토큰 확인보다 먼저 한다 (이미 가입된 이메일은 인증 코드도 받을 수 없으므로)
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content(withToken(SIGNUP_JSON, "any")))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error.code").value("LOGIN_ID_DUPLICATED"));
 
         // 대소문자만 다른 이메일도 중복
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"loginId\":\"other22\",\"password\":\"Abcdef1!\",\"givenName\":\"A\",\"nickname\":\"닉네임\",\"email\":\"NEW@example.COM\"}"))
+                        .content("{\"loginId\":\"other22\",\"password\":\"Abcdef1!\",\"givenName\":\"A\",\"nickname\":\"닉네임\",\"email\":\"NEW@example.COM\",\"emailVerificationToken\":\"any\"}"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error.code").value("EMAIL_DUPLICATED"))
                 .andExpect(jsonPath("$.error.fieldErrors.email").exists());
@@ -135,7 +153,8 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.error.fieldErrors.givenName").exists())
                 .andExpect(jsonPath("$.error.fieldErrors.familyName").exists())
                 .andExpect(jsonPath("$.error.fieldErrors.nickname").exists())
-                .andExpect(jsonPath("$.error.fieldErrors.email").exists());
+                .andExpect(jsonPath("$.error.fieldErrors.email").exists())
+                .andExpect(jsonPath("$.error.fieldErrors.emailVerificationToken").exists());
     }
 
     @Test

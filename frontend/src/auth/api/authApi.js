@@ -10,9 +10,29 @@ export async function checkLoginId(loginId) {
     return client.get(`/auth/check-login-id?loginId=${encodeURIComponent(loginId)}`);
 }
 
+// 이메일 인증 코드 보내기 → { expiresInSeconds, resendAfterSeconds }
+// purpose: "SIGNUP"(회원가입) / "PASSWORD_RESET"(비밀번호 재설정)
+export async function sendEmailCode({ email, purpose }) {
+    return client.post("/auth/email/send-code", { email, purpose });
+}
+
+// 이메일 인증 코드 확인 → { verificationToken } (30분 안에 한 번만 쓸 수 있다)
+export async function verifyEmailCode({ email, purpose, code }) {
+    return client.post("/auth/email/verify", { email, purpose, code });
+}
+
 // 회원가입 → member (비밀번호는 응답에 없다)
 // familyName(성)은 선택이라 비워서 보내도 된다. 서버가 표시용 이름 name을 "이름 성"으로 만든다
-export async function signup({ loginId, password, givenName, familyName, nickname, email }) {
+// emailVerificationToken: verifyEmailCode로 받은 토큰 (없으면 가입되지 않는다)
+export async function signup({
+    loginId,
+    password,
+    givenName,
+    familyName,
+    nickname,
+    email,
+    emailVerificationToken,
+}) {
     return client.post("/auth/signup", {
         loginId,
         password,
@@ -20,6 +40,7 @@ export async function signup({ loginId, password, givenName, familyName, nicknam
         familyName,
         nickname,
         email,
+        emailVerificationToken,
     });
 }
 

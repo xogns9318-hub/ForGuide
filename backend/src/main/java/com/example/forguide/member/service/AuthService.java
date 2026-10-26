@@ -43,6 +43,7 @@ public class AuthService {
     private final RefreshTokenMapper refreshTokenMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final EmailVerificationService emailVerificationService;
     private final SecureRandom secureRandom = new SecureRandom();
 
     // 없는 아이디로 로그인할 때도 비밀번호 비교 시간을 똑같이 쓰기 위한 가짜 해시
@@ -50,11 +51,13 @@ public class AuthService {
     private final String dummyPasswordHash;
 
     public AuthService(MemberMapper memberMapper, RefreshTokenMapper refreshTokenMapper,
-                       PasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
+                       PasswordEncoder passwordEncoder, JwtProvider jwtProvider,
+                       EmailVerificationService emailVerificationService) {
         this.memberMapper = memberMapper;
         this.refreshTokenMapper = refreshTokenMapper;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
+        this.emailVerificationService = emailVerificationService;
         this.dummyPasswordHash = passwordEncoder.encode("dummy-password-for-timing");
     }
 
@@ -88,6 +91,10 @@ public class AuthService {
         if (memberMapper.existsByEmail(email)) {
             throw duplicated(ErrorCode.EMAIL_DUPLICATED, "email");
         }
+
+        // 이 이메일로 인증을 마쳤는지 확인하고 토큰을 사용 처리한다 (한 번만 쓸 수 있음)
+        // 아래 저장이 실패하면 같은 트랜잭션이라 토큰 사용도 되돌려져 다시 가입을 시도할 수 있다
+        emailVerificationService.consume(email, VerificationPurpose.SIGNUP, request.emailVerificationToken());
 
         MemberRow row = new MemberRow();
         row.setLoginId(request.loginId());
