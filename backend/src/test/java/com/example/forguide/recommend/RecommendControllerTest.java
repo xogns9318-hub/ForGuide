@@ -66,11 +66,10 @@ class RecommendControllerTest {
     void insuranceFastUsesSexAndAge() throws Exception {
         mockMvc.perform(get("/api/v1/recommend/insurance/fast")
                         .param("health_insurance", "예").param("residence_status", STATUS)
-                        .param("sex", "여").param("age", "35").param("coverage", "기본형만"))
+                        .param("sex", "여").param("age", "35"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.input.sex").value("여"))
-                .andExpect(jsonPath("$.data.input.age").value(35))
-                .andExpect(jsonPath("$.data.input.coverage").value("기본형만"));
+                .andExpect(jsonPath("$.data.input.age").value(35));
     }
 
     @Test
@@ -84,7 +83,7 @@ class RecommendControllerTest {
     void insuranceAgeOutOfRange() throws Exception {
         mockMvc.perform(get("/api/v1/recommend/insurance/fast")
                         .param("health_insurance", "예").param("residence_status", STATUS)
-                        .param("sex", "남").param("age", "18").param("coverage", "비급여까지"))
+                        .param("sex", "남").param("age", "18"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.fieldErrors.age").value("허용값: 19~99"));
     }
@@ -92,8 +91,9 @@ class RecommendControllerTest {
     @Test
     void loanFast() throws Exception {
         mockMvc.perform(get("/api/v1/recommend/loan/fast")
-                        .param("residence_status", STATUS).param("purpose", "전세 보증금"))
+                        .param("residence_status", STATUS).param("purpose", "전세 보증금").param("visit", "원치 않음"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.loan_type").value("jeonse"));
+                .andExpect(jsonPath("$.data.loan_type").value("jeonse"))
+                .andExpect(jsonPath("$.data.input.visit").value("원치 않음"));
     }
 }

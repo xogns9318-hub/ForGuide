@@ -11,6 +11,7 @@ import styles from "../recommend.module.css";
 const EMPTY_FORM = {
     residence_status: "",
     purpose: "",
+    visit: "",
 };
 
 export default function LoanRecommend() {
@@ -88,6 +89,10 @@ export default function LoanRecommend() {
     const purposeOptions = (choices?.choices.purpose ?? []).map((value) => ({
         value,
         label: t(`recommendLoan.purposeOptions.${value}`, { defaultValue: value }),
+    }));
+    const visitOptions = (choices?.choices.visit ?? []).map((value) => ({
+        value,
+        label: t(`recommendLoan.visitOptions.${value}`, { defaultValue: value }),
     }));
     const residenceOptions = [
         { value: "", label: t("recommendForm.choose") },
@@ -189,6 +194,13 @@ export default function LoanRecommend() {
                                 value={form.purpose}
                                 options={purposeOptions}
                                 onChange={(value) => update("purpose", value)}
+                            />
+                            <ChoiceGroup
+                                name="loan-visit"
+                                legend={t("recommendLoan.visit")}
+                                value={form.visit}
+                                options={visitOptions}
+                                onChange={(value) => update("visit", value)}
                             />
                         </div>
 

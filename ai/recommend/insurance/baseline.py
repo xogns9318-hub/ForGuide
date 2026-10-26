@@ -23,8 +23,6 @@ COMPARED_TYPE = "일반"
 SEPARATE_TYPES = ("노후", "유병력자")
 GATE_PASS = "예"
 SEX_COLUMNS = {"남": "male_total", "여": "female_total"}
-BASIC_COLUMNS = {"남": "male_basic", "여": "female_basic"}
-COVERAGE_BASIC = "기본형만"
 
 
 def load_rows(path=None):
@@ -38,10 +36,9 @@ def passes_gate(user):
     return user["health_insurance"] == GATE_PASS
 
 
-def premium_of(row, sex, coverage=None):
-    column = BASIC_COLUMNS[sex] if coverage == COVERAGE_BASIC else SEX_COLUMNS[sex]
-    value = row[column]
-    return int(value) if value and int(value) > 0 else None
+def premium_of(row, sex):
+    value = row[SEX_COLUMNS[sex]]
+    return int(value) if value else None
 
 
 def judge(row, user):
@@ -87,14 +84,14 @@ def recommend_fast(rows, user):
         r for r in rows
         if r["product_type"] == COMPARED_TYPE
         and int(r["age"]) == user["age"]
-        and premium_of(r, user["sex"], user.get("coverage")) is not None
+        and premium_of(r, user["sex"]) is not None
     ]
-    premiums = [premium_of(r, user["sex"], user.get("coverage")) for r in candidates]
+    premiums = [premium_of(r, user["sex"]) for r in candidates]
     cheapest = min(premiums) if premiums else None
 
     results = []
     for row in candidates:
-        premium = premium_of(row, user["sex"], user.get("coverage"))
+        premium = premium_of(row, user["sex"])
         mismatch, check = judge(row, user)
         features = {
             "premium": absolute_score(-cheapest, -premium, cheapest * PREMIUM_FULL_GAP_RATIO),

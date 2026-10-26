@@ -5,12 +5,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from engine import GROUP_CHECK, GROUP_MISMATCH
-from baseline import PURPOSE_TO_LOAN_TYPE, load_products, recommend_fast
+from baseline import PURPOSE_TO_LOAN_TYPE, VISIT_NOT_WANTED, load_products, recommend_fast
 
 RESIDENCE_STATUSES = [
     "비전문취업(E-9)", "방문취업(H-2)", "전문인력", "유학생", "재외동포(F-4)", "영주(F-5)", "결혼이민(F-6)", "기타",
 ]
-CHOICES = {"purpose": list(PURPOSE_TO_LOAN_TYPE)}
+CHOICES = {"purpose": list(PURPOSE_TO_LOAN_TYPE), "visit": ["상관없음", VISIT_NOT_WANTED]}
 TOP_N = 5
 MISMATCH_N = 3
 LOW_RATE_GAP = 0.5
@@ -24,6 +24,8 @@ def validate(user):
     errors = {}
     if user.get("purpose") not in CHOICES["purpose"]:
         errors["purpose"] = CHOICES["purpose"]
+    if user.get("visit") not in CHOICES["visit"]:
+        errors["visit"] = CHOICES["visit"]
     if user.get("residence_status") not in RESIDENCE_STATUSES:
         errors["residence_status"] = RESIDENCE_STATUSES
     if errors:
@@ -31,18 +33,18 @@ def validate(user):
     return user
 
 
-def reason_keys(result, best_rate):
+def reason_keys(result, best_rate, user):
     reasons = []
     if result["rate_avg"] is not None and best_rate is not None and result["rate_avg"] <= best_rate + LOW_RATE_GAP:
         reasons.append("low_rate")
     if result["institution_type"] == "은행":
         reasons.append("bank")
-    if not result["visit_required"]:
+    if not result["visit_required"] and user["visit"] != VISIT_NOT_WANTED:
         reasons.append("no_visit")
     return reasons
 
 
-def card(result, rank, best_rate):
+def card(result, rank, best_rate, user):
     item = {
         "rank": rank,
         "product_id": result["product_id"],
@@ -55,7 +57,7 @@ def card(result, rank, best_rate):
         "join_way": result["join_way"],
         "visit_required": result["visit_required"],
         "contact": {"homepage": result["homepage"], "phone": result["phone"]},
-        "reasons": reason_keys(result, best_rate),
+        "reasons": reason_keys(result, best_rate, user),
         "check_reasons": result["check_reasons"],
     }
     if result["loan_limit_text"]:
@@ -99,14 +101,14 @@ def recommend(user, products=None, top_n=TOP_N):
     leaders, more = one_per_company(results)
     items = []
     for i, r in enumerate(leaders[:top_n], start=1):
-        item = card(r, i, best_rate)
+        item = card(r, i, best_rate, user)
         if more[r["kor_co_nm"]]:
             item["more_from_company"] = more[r["kor_co_nm"]]
         items.append(item)
     months = sorted({r["dcls_month"] for r in results if r["dcls_month"]})
     return {
         "mode": "fast",
-        "input": {"purpose": user["purpose"]},
+        "input": {"purpose": user["purpose"], "visit": user["visit"]},
         "loan_type": LOAN_TYPE_KEYS[loan_type],
         "base_month": months[-1] if months else "",
         "groups": [{
@@ -128,7 +130,7 @@ def recommend(user, products=None, top_n=TOP_N):
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    user = {"residence_status": "비전문취업(E-9)", "purpose": "생활비"}
+    user = {"residence_status": "비전문취업(E-9)", "purpose": "생활비", "visit": "상관없음"}
     print(json.dumps(recommend(user), ensure_ascii=False, indent=1))
 
 

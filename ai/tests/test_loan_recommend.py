@@ -61,7 +61,7 @@ FIXTURE = [
     product("J1", "라은행", 3.5, loan_type="전세자금대출", target="1"),
     product("J2", "마은행", 4.0, loan_type="전세자금대출"),
 ]
-USER = {"residence_status": "유학생", "purpose": "생활비"}
+USER = {"residence_status": "유학생", "purpose": "생활비", "visit": "상관없음"}
 
 
 class LoanTest(unittest.TestCase):
@@ -98,10 +98,18 @@ class LoanTest(unittest.TestCase):
         self.assertEqual(items[0]["reasons"], ["low_rate", "bank", "no_visit"])
         self.assertEqual(items[1]["reasons"], [])
 
+    def test_visit_not_wanted_moves_branch_only_to_mismatch(self):
+        result = self.run_fixture(visit="원치 않음")
+        self.assertNotIn("나저축은행", [i["company"] for i in result["groups"][0]["items"]])
+        reasons = {i["company"]: i["mismatch_reasons"] for i in result["mismatch"]["items"]}
+        self.assertEqual(reasons["나저축은행"], ["visit_required"])
+        self.assertTrue(all("no_visit" not in i["reasons"] for i in result["groups"][0]["items"]))
+        self.assertEqual(result["input"]["visit"], "원치 않음")
+
     def test_validation(self):
         with self.assertRaises(ValueError) as caught:
             recommend_module.validate({"residence_status": "관광", "purpose": "기타"})
-        self.assertEqual(set(caught.exception.args[0]), {"purpose", "residence_status"})
+        self.assertEqual(set(caught.exception.args[0]), {"purpose", "visit", "residence_status"})
 
     def test_every_key_has_korean_text(self):
         text = KO_JS.read_text(encoding="utf-8")
@@ -109,7 +117,7 @@ class LoanTest(unittest.TestCase):
         defined = set(re.findall(r"^\s+([a-z_]+):", block, re.MULTILINE))
         used = {"low_rate", "bank", "no_visit", "foreigner_unspecified", "kakao_withdrawal_only", "limit_after_review",
                 "special_target", "rate_not_disclosed", "kbank_not_yet", "ask_loan_eligibility", "rate_by_credit",
-                "rate_may_change", "reference_only", "check", "mismatch"}
+                "rate_may_change", "reference_only", "check", "mismatch", "visit_required"}
         self.assertEqual(used - defined, set())
 
 
@@ -119,7 +127,8 @@ class LoanRealDataTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             path, count = export_module.export(Path(folder) / "loan_fast.json")
             payload = json.loads(path.read_text(encoding="utf-8"))
-        self.assertEqual(set(payload["results"]), set(recommend_module.CHOICES["purpose"]))
+        choices = recommend_module.CHOICES
+        self.assertEqual(set(payload["results"]), {f"{p}|{v}" for p in choices["purpose"] for v in choices["visit"]})
         for key, result in payload["results"].items():
             items = result["groups"][0]["items"]
             rates = [i["rate_avg"] for i in items if i["rate_avg"] is not None and "special_target" not in i["check_reasons"]]

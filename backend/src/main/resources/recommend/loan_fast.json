@@ -1,23 +1,29 @@
 {
  "product": "loan",
  "mode": "fast",
- "generated_on": "2026-10-23",
+ "generated_on": "2026-10-26",
  "base_month": "202609",
  "key_order": [
-  "purpose"
+  "purpose",
+  "visit"
  ],
  "choices": {
   "purpose": [
    "생활비",
    "전세 보증금"
+  ],
+  "visit": [
+   "상관없음",
+   "원치 않음"
   ]
  },
  "top_n": 20,
  "results": {
-  "생활비": {
+  "생활비|상관없음": {
    "mode": "fast",
    "input": {
-    "purpose": "생활비"
+    "purpose": "생활비",
+    "visit": "상관없음"
    },
    "loan_type": "credit",
    "base_month": "202609",
@@ -622,10 +628,602 @@
     "reference_only"
    ]
   },
-  "전세 보증금": {
+  "생활비|원치 않음": {
    "mode": "fast",
    "input": {
-    "purpose": "전세 보증금"
+    "purpose": "생활비",
+    "visit": "원치 않음"
+   },
+   "loan_type": "credit",
+   "base_month": "202609",
+   "groups": [
+    {
+     "group": "확인 필요",
+     "key": "check",
+     "total": 62,
+     "companies": 48,
+     "guide": "ask_loan_eligibility",
+     "items": [
+      {
+       "rank": 1,
+       "product_id": "0010927-KB200200000002",
+       "company": "국민은행",
+       "product_name": "마이너스한도대출",
+       "product_kind": "마이너스한도대출",
+       "institution_type": "은행",
+       "rate_avg": 5.0,
+       "rate_range": [
+        4.95,
+        7.7
+       ],
+       "join_way": "영업점,인터넷,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.kbstar.com",
+        "phone": "15889999"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 2,
+       "product_id": "0014807-601",
+       "company": "수협은행",
+       "product_name": "개인신용대출",
+       "product_kind": "일반신용대출",
+       "institution_type": "은행",
+       "rate_avg": 5.15,
+       "rate_range": [
+        4.95,
+        7.58
+       ],
+       "join_way": "영업점,인터넷,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.suhyup-bank.com",
+        "phone": "15881515"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 3,
+       "product_id": "0010020-WR0001F",
+       "company": "제주은행",
+       "product_name": "개인신용대출",
+       "product_kind": "일반신용대출",
+       "institution_type": "은행",
+       "rate_avg": 5.31,
+       "rate_range": [
+        5.13,
+        21.74
+       ],
+       "join_way": "영업점,인터넷,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "https://www.jejubank.co.kr/hmpg/main.do",
+        "phone": "15880079"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 4,
+       "product_id": "0011625-CR0001C",
+       "company": "신한은행",
+       "product_name": "개인신용대출(마이너스한도대출)",
+       "product_kind": "마이너스한도대출",
+       "institution_type": "은행",
+       "rate_avg": 5.33,
+       "rate_range": [
+        5.29,
+        8.67
+       ],
+       "join_way": "영업점,인터넷,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.shinhan.com",
+        "phone": "15778000"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 5,
+       "product_id": "0010024-CR0001B",
+       "company": "경남은행",
+       "product_name": "마이너스한도대출",
+       "product_kind": "마이너스한도대출",
+       "institution_type": "은행",
+       "rate_avg": 5.47,
+       "rate_range": [
+        5.42,
+        6.21
+       ],
+       "join_way": "영업점,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "https://www.knbank.co.kr/ib20/mnu/FPMDPT020000000",
+        "phone": "16008585"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 6,
+       "product_id": "0010017-1301",
+       "company": "부산은행",
+       "product_name": "ONE신용대출",
+       "product_kind": "마이너스한도대출",
+       "institution_type": "은행",
+       "rate_avg": 5.53,
+       "rate_range": [
+        5.45,
+        6.48
+       ],
+       "join_way": "영업점,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.busanbank.co.kr",
+        "phone": "15886200"
+       },
+       "reasons": [
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 7,
+       "product_id": "0013909-3",
+       "company": "주식회사 하나은행",
+       "product_name": "마이너스한도대출",
+       "product_kind": "마이너스한도대출",
+       "institution_type": "은행",
+       "rate_avg": 5.58,
+       "rate_range": [
+        5.57,
+        6.12
+       ],
+       "join_way": "영업점,인터넷,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.hanabank.com",
+        "phone": "15991111"
+       },
+       "reasons": [
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 8,
+       "product_id": "0010001-CR0001C",
+       "company": "우리은행",
+       "product_name": "협약금리 外 신용대출상품",
+       "product_kind": "마이너스한도대출",
+       "institution_type": "은행",
+       "rate_avg": 5.59,
+       "rate_range": [
+        5.56,
+        6.22
+       ],
+       "join_way": "영업점,인터넷,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "https://spot.wooribank.com/pot/Dream?withyou=po",
+        "phone": "15885000"
+       },
+       "reasons": [
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 9,
+       "product_id": "0010026-21",
+       "company": "중소기업은행",
+       "product_name": "일반신용 대출",
+       "product_kind": "일반신용대출",
+       "institution_type": "은행",
+       "rate_avg": 5.71,
+       "rate_range": [
+        5.55,
+        7.89
+       ],
+       "join_way": "영업점,스마트폰,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.ibk.co.kr",
+        "phone": "15662566"
+       },
+       "reasons": [
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 10,
+       "product_id": "0017801-20-01-03-021-0001",
+       "company": "토스뱅크 주식회사",
+       "product_name": "토스뱅크 마이너스 통장대출",
+       "product_kind": "마이너스한도대출",
+       "institution_type": "은행",
+       "rate_avg": 5.77,
+       "rate_range": [
+        5.74,
+        7.41
+       ],
+       "join_way": "스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "https://www.tossbank.com/product-service/savings/account",
+        "phone": "16617654"
+       },
+       "reasons": [
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 11,
+       "product_id": "0010019-2",
+       "company": "광주은행",
+       "product_name": "마이너스한도대출",
+       "product_kind": "마이너스한도대출",
+       "institution_type": "은행",
+       "rate_avg": 6.02,
+       "rate_range": [
+        5.94,
+        9.68
+       ],
+       "join_way": "영업점,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.kjbank.com",
+        "phone": "15883388"
+       },
+       "reasons": [
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 12,
+       "product_id": "0010002-SC001217",
+       "company": "한국스탠다드차타드은행",
+       "product_name": "개인신용대출",
+       "product_kind": "일반신용대출",
+       "institution_type": "은행",
+       "rate_avg": 6.12,
+       "rate_range": [
+        5.64,
+        6.55
+       ],
+       "join_way": "영업점,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.standardchartered.co.kr",
+        "phone": "15881599"
+       },
+       "reasons": [
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 13,
+       "product_id": "0015130-030020001",
+       "company": "주식회사 카카오뱅크",
+       "product_name": "일반신용대출",
+       "product_kind": "일반신용대출",
+       "institution_type": "은행",
+       "rate_avg": 6.21,
+       "rate_range": [
+        5.54,
+        10.93
+       ],
+       "join_way": "스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "https://www.kakaobank.com/",
+        "phone": "15993333"
+       },
+       "reasons": [
+        "bank"
+       ],
+       "check_reasons": [
+        "kakao_withdrawal_only",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 14,
+       "product_id": "0010016-WR0002F",
+       "company": "아이엠뱅크",
+       "product_name": "마이너스한도대출",
+       "product_kind": "마이너스한도대출",
+       "institution_type": "은행",
+       "rate_avg": 6.31,
+       "rate_range": [
+        5.19,
+        7.54
+       ],
+       "join_way": "영업점,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "",
+        "phone": ""
+       },
+       "reasons": [
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 15,
+       "product_id": "0013002-BNK2300",
+       "company": "BNK저축은행",
+       "product_name": "개인신용대출",
+       "product_kind": "일반신용대출",
+       "institution_type": "저축은행",
+       "rate_avg": 11.64,
+       "rate_range": [
+        10.99,
+        11.94
+       ],
+       "join_way": "",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.bnksb.com/",
+        "phone": "16449988"
+       },
+       "reasons": [],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ]
+      },
+      {
+       "rank": 16,
+       "product_id": "0010390-760174",
+       "company": "고려저축은행",
+       "product_name": "개인신용대출",
+       "product_kind": "일반신용대출",
+       "institution_type": "저축은행",
+       "rate_avg": 11.95,
+       "rate_range": [
+        10.31,
+        14.78
+       ],
+       "join_way": "인터넷,스마트폰,모집인,전화(텔레뱅킹),기타",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.goryosb.co.kr",
+        "phone": "18779900"
+       },
+       "reasons": [],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ]
+      },
+      {
+       "rank": 17,
+       "product_id": "0010349-0402",
+       "company": "디비저축은행",
+       "product_name": "개인신용대출",
+       "product_kind": "일반신용대출",
+       "institution_type": "저축은행",
+       "rate_avg": 12.08,
+       "rate_range": [
+        11.0,
+        13.04
+       ],
+       "join_way": "스마트폰,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.idbsb.com/",
+        "phone": "16004902"
+       },
+       "reasons": [],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ]
+      },
+      {
+       "rank": 18,
+       "product_id": "0010456-760181",
+       "company": "키움저축은행",
+       "product_name": "개인신용대출",
+       "product_kind": "일반신용대출",
+       "institution_type": "저축은행",
+       "rate_avg": 12.23,
+       "rate_range": [
+        11.16,
+        17.53
+       ],
+       "join_way": "스마트폰,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "www.kiwoombank.com",
+        "phone": "16700077"
+       },
+       "reasons": [],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ]
+      },
+      {
+       "rank": 19,
+       "product_id": "0010537-SJ0001",
+       "company": "한국투자저축은행",
+       "product_name": "개인신용대출",
+       "product_kind": "일반신용대출",
+       "institution_type": "저축은행",
+       "rate_avg": 12.55,
+       "rate_range": [
+        12.37,
+        13.47
+       ],
+       "join_way": "영업점,인터넷,스마트폰,모집인,전화(텔레뱅킹)",
+       "visit_required": false,
+       "contact": {
+        "homepage": "https://sb.koreainvestment.com",
+        "phone": "15776333"
+       },
+       "reasons": [],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ]
+      },
+      {
+       "rank": 20,
+       "product_id": "0012889-760148",
+       "company": "IBK저축은행",
+       "product_name": "개인신용대출",
+       "product_kind": "일반신용대출",
+       "institution_type": "저축은행",
+       "rate_avg": 12.58,
+       "rate_range": [
+        10.03,
+        13.68
+       ],
+       "join_way": "인터넷,스마트폰,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.ibksb.co.kr",
+        "phone": "15227900"
+       },
+       "reasons": [],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ]
+      }
+     ]
+    }
+   ],
+   "mismatch": {
+    "key": "mismatch",
+    "total": 6,
+    "items": [
+     {
+      "rank": 1,
+      "product_id": "0013175-CR0001B",
+      "company": "농협은행주식회사",
+      "product_name": "가계신용대출(마이너스대출)",
+      "product_kind": "마이너스한도대출",
+      "institution_type": "은행",
+      "mismatch_reasons": [
+       "visit_required"
+      ]
+     },
+     {
+      "rank": 2,
+      "product_id": "0013175-CR0001A",
+      "company": "농협은행주식회사",
+      "product_name": "가계신용대출(일반)",
+      "product_kind": "일반신용대출",
+      "institution_type": "은행",
+      "mismatch_reasons": [
+       "visit_required"
+      ]
+     },
+     {
+      "rank": 3,
+      "product_id": "0010022-CR0001C",
+      "company": "전북은행",
+      "product_name": "평생종합통장",
+      "product_kind": "마이너스한도대출",
+      "institution_type": "은행",
+      "mismatch_reasons": [
+       "visit_required"
+      ]
+     }
+    ]
+   },
+   "notices": [
+    "rate_by_credit",
+    "rate_may_change",
+    "reference_only"
+   ]
+  },
+  "전세 보증금|상관없음": {
+   "mode": "fast",
+   "input": {
+    "purpose": "전세 보증금",
+    "visit": "상관없음"
    },
    "loan_type": "jeonse",
    "base_month": "202609",
@@ -1302,6 +1900,480 @@
       "institution_type": "은행",
       "mismatch_reasons": [
        "kbank_not_yet"
+      ]
+     }
+    ]
+   },
+   "notices": [
+    "rate_by_credit",
+    "rate_may_change",
+    "reference_only"
+   ]
+  },
+  "전세 보증금|원치 않음": {
+   "mode": "fast",
+   "input": {
+    "purpose": "전세 보증금",
+    "visit": "원치 않음"
+   },
+   "loan_type": "jeonse",
+   "base_month": "202609",
+   "groups": [
+    {
+     "group": "확인 필요",
+     "key": "check",
+     "total": 29,
+     "companies": 13,
+     "guide": "ask_loan_eligibility",
+     "items": [
+      {
+       "rank": 1,
+       "product_id": "0015130-03004",
+       "company": "주식회사 카카오뱅크",
+       "product_name": "HF 전월세보증금 대출",
+       "product_kind": "전세자금대출",
+       "institution_type": "은행",
+       "rate_avg": 4.05,
+       "rate_range": [
+        4.21,
+        5.41
+       ],
+       "join_way": "스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "https://www.kakaobank.com/",
+        "phone": "15993333"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "kakao_withdrawal_only",
+        "limit_after_review"
+       ],
+       "limit_text": "최대 444백만원",
+       "repay_types": [
+        "만기일시상환방식"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 2,
+       "product_id": "0010927-KB200331500005",
+       "company": "국민은행",
+       "product_name": "KB주택전세자금대출",
+       "product_kind": "전세자금대출",
+       "institution_type": "은행",
+       "rate_avg": 4.08,
+       "rate_range": [
+        4.21,
+        5.61
+       ],
+       "join_way": "영업점,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.kbstar.com",
+        "phone": "15889999"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "limit_text": "4.44억원",
+       "repay_types": [
+        "만기일시상환방식",
+        "분할상환방식"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 3,
+       "product_id": "0010001-10561",
+       "company": "우리은행",
+       "product_name": "우리전세론(주택금융보증)",
+       "product_kind": "전세자금대출",
+       "institution_type": "은행",
+       "rate_avg": 4.17,
+       "rate_range": [
+        3.93,
+        6.16
+       ],
+       "join_way": "영업점,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "https://spot.wooribank.com/pot/Dream?withyou=po",
+        "phone": "15885000"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "limit_text": "최대4.44억원",
+       "repay_types": [
+        "만기일시상환방식",
+        "분할상환방식"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 4,
+       "product_id": "0013175-2001108330001",
+       "company": "농협은행주식회사",
+       "product_name": "NH전세대출(주택금융공사)",
+       "product_kind": "전세자금대출",
+       "institution_type": "은행",
+       "rate_avg": 4.21,
+       "rate_range": [
+        3.69,
+        6.82
+       ],
+       "join_way": "영업점,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "https://banking.nonghyup.com",
+        "phone": "16613000"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "limit_text": "4억 44백만원",
+       "repay_types": [
+        "만기일시상환방식",
+        "분할상환방식"
+       ],
+       "more_from_company": 2
+      },
+      {
+       "rank": 5,
+       "product_id": "0017801-2001040010021",
+       "company": "토스뱅크 주식회사",
+       "product_name": "전월세보증금대출 플러스",
+       "product_kind": "전세자금대출",
+       "institution_type": "은행",
+       "rate_avg": 4.21,
+       "rate_range": [
+        4.36,
+        4.36
+       ],
+       "join_way": "스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "https://www.tossbank.com/product-service/savings/account",
+        "phone": "16617654"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "limit_text": "최대 4억 4,000만원",
+       "repay_types": [
+        "만기일시상환방식"
+       ]
+      },
+      {
+       "rank": 6,
+       "product_id": "0010026-212020112",
+       "company": "중소기업은행",
+       "product_name": "IBK전세대출 (HUG)",
+       "product_kind": "전세자금대출",
+       "institution_type": "은행",
+       "rate_avg": 4.23,
+       "rate_range": [
+        4.88,
+        6.26
+       ],
+       "join_way": "영업점,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.ibk.co.kr",
+        "phone": "15662566"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "limit_text": "최대 4억원",
+       "repay_types": [
+        "만기일시상환방식"
+       ],
+       "more_from_company": 2
+      },
+      {
+       "rank": 7,
+       "product_id": "0010017-1029",
+       "company": "부산은행",
+       "product_name": "BNK전세안심대출",
+       "product_kind": "전세자금대출",
+       "institution_type": "은행",
+       "rate_avg": 4.34,
+       "rate_range": [
+        4.33,
+        6.17
+       ],
+       "join_way": "영업점,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.busanbank.co.kr",
+        "phone": "15886200"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "limit_text": "최대400백만원",
+       "repay_types": [
+        "만기일시상환방식",
+        "분할상환방식"
+       ],
+       "more_from_company": 2
+      },
+      {
+       "rank": 8,
+       "product_id": "0014807-1151",
+       "company": "수협은행",
+       "product_name": "Sh전세보증대출(주택금융공사)",
+       "product_kind": "전세자금대출",
+       "institution_type": "은행",
+       "rate_avg": 4.48,
+       "rate_range": [
+        5.13,
+        6.33
+       ],
+       "join_way": "영업점,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.suhyup-bank.com",
+        "phone": "15881515"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "limit_text": "최대 4.44억원",
+       "repay_types": [
+        "만기일시상환방식"
+       ],
+       "more_from_company": 3
+      },
+      {
+       "rank": 9,
+       "product_id": "0010016-20460801000001001",
+       "company": "아이엠뱅크",
+       "product_name": "DGB 전세자금대출",
+       "product_kind": "전세자금대출",
+       "institution_type": "은행",
+       "rate_avg": 4.51,
+       "rate_range": [
+        5.21,
+        5.71
+       ],
+       "join_way": "영업점,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "",
+        "phone": ""
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "limit_text": "440백만원",
+       "repay_types": [
+        "만기일시상환방식"
+       ],
+       "more_from_company": 3
+      },
+      {
+       "rank": 10,
+       "product_id": "0011625-WR0002B",
+       "company": "신한은행",
+       "product_name": "신한전세대출(서울보증)",
+       "product_kind": "전세자금대출",
+       "institution_type": "은행",
+       "rate_avg": 4.53,
+       "rate_range": [
+        4.5,
+        5.63
+       ],
+       "join_way": "영업점,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.shinhan.com",
+        "phone": "15778000"
+       },
+       "reasons": [
+        "low_rate",
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "limit_text": "- 최대:500백만원",
+       "repay_types": [
+        "만기일시상환방식",
+        "분할상환방식"
+       ],
+       "more_from_company": 1
+      },
+      {
+       "rank": 11,
+       "product_id": "0010002-SC002013SC002003",
+       "company": "한국스탠다드차타드은행",
+       "product_name": "전세담보대출",
+       "product_kind": "전세자금대출",
+       "institution_type": "은행",
+       "rate_avg": 4.99,
+       "rate_range": [
+        4.84,
+        5.24
+       ],
+       "join_way": "영업점,스마트폰",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.standardchartered.co.kr",
+        "phone": "15881599"
+       },
+       "reasons": [
+        "bank"
+       ],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "limit_text": "최대 5억원",
+       "repay_types": [
+        "만기일시상환방식"
+       ]
+      },
+      {
+       "rank": 12,
+       "product_id": "0010528-760055",
+       "company": "라인저축은행",
+       "product_name": "임차보증금대출",
+       "product_kind": "전세자금대출",
+       "institution_type": "저축은행",
+       "rate_avg": 7.15,
+       "rate_range": [
+        4.3,
+        16.0
+       ],
+       "join_way": "모집인,기타",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.linesb.co.kr/557_PrfLovaInfo_004.act",
+        "phone": "0622235506"
+       },
+       "reasons": [],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "limit_text": "1",
+       "repay_types": [
+        "만기일시상환방식"
+       ]
+      },
+      {
+       "rank": 13,
+       "product_id": "0010489-760016",
+       "company": "청주저축은행",
+       "product_name": "임대보증금대출(월수일시)",
+       "product_kind": "전세자금대출",
+       "institution_type": "저축은행",
+       "rate_avg": 8.57,
+       "rate_range": [
+        4.8,
+        13.8
+       ],
+       "join_way": "영업점,모집인",
+       "visit_required": false,
+       "contact": {
+        "homepage": "http://www.cheongjubank.com",
+        "phone": "0432569114"
+       },
+       "reasons": [],
+       "check_reasons": [
+        "foreigner_unspecified",
+        "limit_after_review"
+       ],
+       "limit_text": "임대보증금 최대 120%이내",
+       "repay_types": [
+        "만기일시상환방식"
+       ]
+      }
+     ]
+    }
+   ],
+   "mismatch": {
+    "key": "mismatch",
+    "total": 20,
+    "items": [
+     {
+      "rank": 1,
+      "product_id": "0014674-01021000700000000001",
+      "company": "주식회사 케이뱅크",
+      "product_name": "전월세보증금 대출",
+      "product_kind": "전세자금대출",
+      "institution_type": "은행",
+      "mismatch_reasons": [
+       "kbank_not_yet"
+      ]
+     },
+     {
+      "rank": 2,
+      "product_id": "0013909-0300123202302",
+      "company": "주식회사 하나은행",
+      "product_name": "주택신보위탁발행보증서담보대출",
+      "product_kind": "전세자금대출",
+      "institution_type": "은행",
+      "mismatch_reasons": [
+       "visit_required"
+      ]
+     },
+     {
+      "rank": 3,
+      "product_id": "0013909-0300373201001",
+      "company": "주식회사 하나은행",
+      "product_name": "하나전세금안심대출",
+      "product_kind": "전세자금대출",
+      "institution_type": "은행",
+      "mismatch_reasons": [
+       "visit_required"
       ]
      }
     ]

@@ -17,7 +17,7 @@ spec.loader.exec_module(loan_recommend)
 AI_DIR = LOAN_DIR.parent.parent
 DEFAULT_OUT = AI_DIR.parent / "backend" / "src" / "main" / "resources" / "recommend" / "loan_fast.json"
 EXPORT_TOP_N = 20
-KEY_ORDER = ["purpose"]
+KEY_ORDER = ["purpose", "visit"]
 
 
 def result_key(user):
@@ -28,8 +28,9 @@ def export(out_path=DEFAULT_OUT):
     products = load_products()
     results = {}
     for purpose in loan_recommend.CHOICES["purpose"]:
-        user = {"residence_status": loan_recommend.RESIDENCE_STATUSES[0], "purpose": purpose}
-        results[result_key(user)] = loan_recommend.recommend(user, products=products, top_n=EXPORT_TOP_N)
+        for visit in loan_recommend.CHOICES["visit"]:
+            user = {"residence_status": loan_recommend.RESIDENCE_STATUSES[0], "purpose": purpose, "visit": visit}
+            results[result_key(user)] = loan_recommend.recommend(user, products=products, top_n=EXPORT_TOP_N)
     months = sorted({r["base_month"] for r in results.values() if r["base_month"]})
     payload = {
         "product": "loan",

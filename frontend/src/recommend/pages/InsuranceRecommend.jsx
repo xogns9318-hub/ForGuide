@@ -14,7 +14,6 @@ const EMPTY_FORM = {
     residence_status: "",
     sex: "",
     age: "",
-    coverage: "",
 };
 
 export default function InsuranceRecommend() {
@@ -36,7 +35,7 @@ export default function InsuranceRecommend() {
     const [minAge, maxAge] = choices?.choices.age ?? [19, 99];
     const ageNumber = Number(form.age);
     const ageValid = /^\d+$/.test(form.age) && ageNumber >= minAge && ageNumber <= maxAge;
-    const complete = gateOpen && form.residence_status && form.sex && ageValid && form.coverage;
+    const complete = gateOpen && form.residence_status && form.sex && ageValid;
 
     useEffect(() => {
         let active = true;
@@ -97,10 +96,6 @@ export default function InsuranceRecommend() {
     const healthOptions = ["예", "아니오", "모름"].map((value) => ({
         value,
         label: t(`recommendInsurance.healthOptions.${value}`),
-    }));
-    const coverageOptions = (choices?.choices.coverage ?? []).map((value) => ({
-        value,
-        label: t(`recommendInsurance.coverageOptions.${value}`, { defaultValue: value }),
     }));
     const sexOptions = (choices?.choices.sex ?? []).map((value) => ({
         value,
@@ -250,14 +245,6 @@ export default function InsuranceRecommend() {
                                         </p>
                                     )}
                                 </div>
-                                <ChoiceGroup
-                                    name="insurance-coverage"
-                                    legend={t("recommendInsurance.coverage")}
-                                    value={form.coverage}
-                                    options={coverageOptions}
-                                    onChange={(value) => update("coverage", value)}
-                                    help={t("recommendInsurance.coverageHelp")}
-                                />
                             </div>
 
                             <p className="form-help" aria-live="polite">
@@ -319,7 +306,6 @@ export default function InsuranceRecommend() {
                                 items={shownItems}
                                 sex={result.input.sex}
                                 age={result.input.age}
-                                coverage={result.input.coverage}
                             />
 
                             <ResultGroups

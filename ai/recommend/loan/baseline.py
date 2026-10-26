@@ -14,6 +14,7 @@ PURPOSE_TO_LOAN_TYPE = {
     "생활비": "신용대출",
     "전세 보증금": "전세자금대출",
 }
+VISIT_NOT_WANTED = "원치 않음"
 
 
 def load_products(path=None):
@@ -32,7 +33,9 @@ def judge(product, user):
     note = product.get("foreigner_note", "")
     if product["foreigner_status"] == "불일치":
         mismatch.append(note or "domestic_only")
-    elif product["foreigner_status"] == "확인 필요":
+    if user.get("visit") == VISIT_NOT_WANTED and product["visit_required"] == "1":
+        mismatch.append("visit_required")
+    if product["foreigner_status"] == "확인 필요":
         check.append(note or "foreigner_unspecified")
     check.append("limit_after_review")
     if product.get("target_limited") == "1":

@@ -82,8 +82,8 @@ IntelliJ 실행 설정의 Environment variables에 `JWT_SECRET=만든값`을 넣
 | HTTP | 주소 | 입력 |
 | --- | --- | --- |
 | GET | `/api/v1/recommend/account/fast` | `purpose`(예금 / 적금), `term`(6 / 12 / 24 / 36), `visit`(상관없음 / 원치 않음), `institution`(은행 선호 / 상관없음) |
-| GET | `/api/v1/recommend/insurance/fast` | `health_insurance`(예 / 아니오 / 모름), `sex`(남 / 여), `age`(19~99), `coverage`(기본형만 / 비급여까지). 건강보험이 "예"가 아니면 `{ mode, redirect: "consultation" }` |
-| GET | `/api/v1/recommend/loan/fast` | `purpose`(생활비 / 전세 보증금) |
+| GET | `/api/v1/recommend/insurance/fast` | `health_insurance`(예 / 아니오 / 모름), `sex`(남 / 여), `age`(19~99). 건강보험이 "예"가 아니면 `{ mode, redirect: "consultation" }` |
+| GET | `/api/v1/recommend/loan/fast` | `purpose`(생활비 / 전세 보증금), `visit`(상관없음 / 원치 않음) |
 | GET | `/api/v1/recommend/{account\|insurance\|loan}/choices` | 없음. 서빙 파일의 `key_order`·`choices`와 체류자격 목록 `residence_status`를 돌려준다. 화면은 선택지를 하드코딩하지 않고 이 값을 쓴다 (`getAccountChoices()`, `getInsuranceChoices()`, `getLoanChoices()`) |
 
 프론트는 `src/recommend/api/recommendApi.js`의 `getAccountRecommendation(input)`·`getInsuranceRecommendation(input)`·`getLoanRecommendation(input)`으로 부른다(입력 객체를 그대로 쿼리로 보냄).

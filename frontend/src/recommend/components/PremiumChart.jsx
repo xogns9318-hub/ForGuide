@@ -11,7 +11,7 @@ const PARTS = [
 ];
 const TOTAL_ONLY = [{ key: "total", color: "var(--primary)" }];
 
-export default function PremiumChart({ items, sex, age, coverage }) {
+export default function PremiumChart({ items, sex, age }) {
     const { t } = useTranslation();
     const shown = items.slice(0, CHART_COUNT);
     const stacked = shown.length > 0 && shown.every((item) => item.premium_breakdown);
@@ -36,7 +36,6 @@ export default function PremiumChart({ items, sex, age, coverage }) {
                         sex: t(`recommendInsurance.sexOptions.${sex}`, { defaultValue: sex }),
                         age,
                     })}
-                    {coverage && ` · ${t(`recommendInsurance.coverageOptions.${coverage}`)}`}
                 </span>
             </figcaption>
             <ResponsiveContainer
