@@ -10,9 +10,17 @@ export async function checkLoginId(loginId) {
     return client.get(`/auth/check-login-id?loginId=${encodeURIComponent(loginId)}`);
 }
 
-// 회원가입 → { memberId, loginId, name, email } (비밀번호는 응답에 없다)
-export async function signup({ loginId, password, name, email }) {
-    return client.post("/auth/signup", { loginId, password, name, email });
+// 회원가입 → member (비밀번호는 응답에 없다)
+// familyName(성)은 선택이라 비워서 보내도 된다. 서버가 표시용 이름 name을 "이름 성"으로 만든다
+export async function signup({ loginId, password, givenName, familyName, nickname, email }) {
+    return client.post("/auth/signup", {
+        loginId,
+        password,
+        givenName,
+        familyName,
+        nickname,
+        email,
+    });
 }
 
 // 로그인 → { accessToken, member }

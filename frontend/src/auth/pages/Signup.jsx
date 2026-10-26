@@ -7,21 +7,32 @@ import { msg, messageText, apiErrorMessage, apiFieldErrors } from "../utils/auth
 import {
     validateLoginId,
     validatePassword,
-    validateName,
+    validateGivenName,
+    validateFamilyName,
+    validateNickname,
     validateEmail,
 } from "../utils/authValidation.js";
 import styles from "./AuthPage.module.css";
 
 // 입력 항목 순서 (오류가 있으면 이 순서대로 첫 항목에 포커스)
-const fieldOrder = ["loginId", "password", "name", "email"];
+const fieldOrder = ["loginId", "password", "givenName", "familyName", "nickname", "email"];
 
-const emptyForm = { loginId: "", password: "", name: "", email: "" };
+const emptyForm = {
+    loginId: "",
+    password: "",
+    givenName: "",
+    familyName: "",
+    nickname: "",
+    email: "",
+};
 
 // 항목별 검사 규칙
 const validators = {
     loginId: validateLoginId,
     password: validatePassword,
-    name: validateName,
+    givenName: validateGivenName,
+    familyName: validateFamilyName,
+    nickname: validateNickname,
     email: validateEmail,
 };
 
@@ -275,11 +286,55 @@ export default function Signup() {
                         />
                     </div>
 
-                    {/* 이름 */}
+                    {/* 이름 (필수) */}
                     <div className="form-field">
-                        <label htmlFor="signup-name">{t("auth.signup.name")}</label>
-                        <input {...fieldProps("name")} type="text" autoComplete="name" />
-                        <FieldError id="signup-name-error" message={messageText(t, errors.name)} />
+                        <label htmlFor="signup-givenName">{t("auth.signup.givenName")}</label>
+                        <input
+                            {...fieldProps("givenName")}
+                            type="text"
+                            autoComplete="given-name"
+                            maxLength={50}
+                        />
+                        <FieldError
+                            id="signup-givenName-error"
+                            message={messageText(t, errors.givenName)}
+                        />
+                    </div>
+
+                    {/* 성 (선택: 성이 없는 문화권 사용자는 비워 둔다) */}
+                    <div className="form-field">
+                        <label htmlFor="signup-familyName">
+                            {t("auth.signup.familyName")}{" "}
+                            <span className="text-muted">{t("auth.common.optional")}</span>
+                        </label>
+                        <input
+                            {...fieldProps("familyName")}
+                            type="text"
+                            autoComplete="family-name"
+                            maxLength={50}
+                        />
+                        <FieldError
+                            id="signup-familyName-error"
+                            message={messageText(t, errors.familyName)}
+                        />
+                    </div>
+
+                    {/* 닉네임 (커뮤니티에 보이는 이름) */}
+                    <div className="form-field">
+                        <label htmlFor="signup-nickname">{t("auth.signup.nickname")}</label>
+                        <input
+                            {...fieldProps("nickname")}
+                            type="text"
+                            autoComplete="nickname"
+                            aria-describedby={`signup-nickname-help${errors.nickname ? " signup-nickname-error" : ""}`}
+                        />
+                        <p id="signup-nickname-help" className="form-help">
+                            {t("auth.signup.nicknameHelp")}
+                        </p>
+                        <FieldError
+                            id="signup-nickname-error"
+                            message={messageText(t, errors.nickname)}
+                        />
                     </div>
 
                     {/* 이메일 */}

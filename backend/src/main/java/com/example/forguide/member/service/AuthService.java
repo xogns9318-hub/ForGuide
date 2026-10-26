@@ -70,9 +70,17 @@ public class AuthService {
     /** 회원가입 → 가입한 회원 정보 */
     @Transactional
     public MemberResponse signup(SignupRequest request) {
-        // 이메일은 대소문자를 구분하지 않고 비교·저장, 이름은 앞뒤 공백 제거
+        // 이메일은 대소문자를 구분하지 않고 비교·저장, 이름·성·닉네임은 앞뒤 공백 제거
         String email = request.email().trim().toLowerCase(Locale.ROOT);
-        String name = request.name().trim();
+        String givenName = request.givenName().trim();
+        String familyName = request.familyName() == null ? "" : request.familyName().trim();
+
+        // 닉네임은 닉네임 변경과 같은 규칙으로 검사한다
+        String nickname = NicknamePolicy.normalize(request.nickname());
+        String nicknameProblem = NicknamePolicy.check(nickname);
+        if (nicknameProblem != null) {
+            throw new ApiException(ErrorCode.INVALID_INPUT, nicknameProblem, Map.of("nickname", nicknameProblem));
+        }
 
         if (memberMapper.existsByLoginId(request.loginId())) {
             throw duplicated(ErrorCode.LOGIN_ID_DUPLICATED, "loginId");
@@ -84,7 +92,11 @@ public class AuthService {
         MemberRow row = new MemberRow();
         row.setLoginId(request.loginId());
         row.setPassword(passwordEncoder.encode(request.password())); // BCrypt 해시만 저장
-        row.setName(name);
+        // 화면 표시용 이름은 "이름 성" 순서 (성이 없으면 이름만)
+        row.setName(familyName.isEmpty() ? givenName : givenName + " " + familyName);
+        row.setGivenName(givenName);
+        row.setFamilyName(familyName.isEmpty() ? null : familyName);
+        row.setNickname(nickname);
         row.setEmail(email);
 
         try {

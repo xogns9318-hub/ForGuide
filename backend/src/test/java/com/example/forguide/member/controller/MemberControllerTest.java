@@ -57,7 +57,7 @@ class MemberControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
 
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\",\"name\":\"홍길동\",\"email\":\"n1@example.com\"}"));
+                .content("{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\",\"givenName\":\"길동\",\"familyName\":\"홍\",\"nickname\":\"길동이\",\"email\":\"n1@example.com\"}"));
         String body = mockMvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\"}"))
                 .andReturn().getResponse().getContentAsString();

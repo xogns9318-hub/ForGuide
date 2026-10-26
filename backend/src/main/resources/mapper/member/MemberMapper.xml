@@ -10,6 +10,8 @@
         login_id          AS loginId,
         password          AS password,
         name              AS name,
+        given_name        AS givenName,
+        family_name       AS familyName,
         email             AS email,
         nickname          AS nickname,
         profile_image_url AS profileImageUrl
@@ -32,8 +34,8 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="memberId" keyColumn="member_id">
-        INSERT INTO members (login_id, password, name, email)
-        VALUES (#{loginId}, #{password}, #{name}, #{email})
+        INSERT INTO members (login_id, password, name, given_name, family_name, nickname, email)
+        VALUES (#{loginId}, #{password}, #{name}, #{givenName}, #{familyName}, #{nickname}, #{email})
     </insert>
 
     <update id="updateNickname">

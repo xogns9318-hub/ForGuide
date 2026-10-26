@@ -102,20 +102,19 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 
 ## 인증 (`src/auth/api/authApi.js`)
 
-현재 **실제 API 사용**(`USE_MOCK = false`). mock 코드(300~800ms 지연, `// MOCK:` 주석)는 백엔드 없이 화면만 볼 때를 위해 남겨 두었다. mock 여부는 `src/auth/api/mockConfig.js`의 `USE_MOCK` 하나로 auth의 api 파일이 함께 바꾼다. 함수 시그니처는 유지한다.
-mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아이디 `demouser`, 이메일 `demo@example.com` (공용 DB에도 같은 데모 계정이 있다).
+실제 API만 사용한다(mock 코드는 2026-10-26 삭제). 예시 데이터: 공용 DB의 데모 계정 아이디 `demouser`.
 
 개발 실행: 프론트 `npm --prefix frontend run dev`(5173)가 `/api` 요청을 백엔드(8080)로 전달한다(`vite.config.js` 프록시). 백엔드는 환경변수 `JWT_SECRET`이 있어야 켜진다.
 
 | 함수                                         | 실제 API                            | 요청                      | 응답 `data`                                                             | 실패 코드                                                                     |
 | -------------------------------------------- | ----------------------------------- | ------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | `checkLoginId(loginId)`                      | `GET /auth/check-login-id?loginId=` | 아이디                    | `{ available }`                                                         | `INVALID_INPUT`                                                               |
-| `signup({ loginId, password, name, email })` | `POST /auth/signup`                 | 아래 입력 규칙            | `{ memberId, loginId, name, email }`                                    | `INVALID_INPUT`, `LOGIN_ID_DUPLICATED`, `EMAIL_DUPLICATED`                    |
+| `signup({ loginId, password, givenName, familyName, nickname, email })` | `POST /auth/signup`                 | 아래 입력 규칙            | `member`                                    | `INVALID_INPUT`, `LOGIN_ID_DUPLICATED`, `EMAIL_DUPLICATED`                    |
 | `login({ loginId, password })`               | `POST /auth/login`                  | 아이디·비밀번호           | `{ accessToken, member }` + refresh token 쿠키                          | `INVALID_INPUT`, `LOGIN_FAILED`                                               |
 | `restoreSession()`                           | `POST /auth/refresh`                | 없음 (refresh token 쿠키) | `{ accessToken, member }` → 스토어 저장. 쿠키가 없으면 `data` 없음(200) | 쿠키 없음·실패 = 로그아웃 상태로 시작 (정상). mock에서는 서버를 부르지 않는다 |
 | `logout()`                                   | `POST /auth/logout`                 | 없음 (refresh token 쿠키) | 없음                                                                    | 실패해도 화면의 로그인 상태는 지운다                                          |
 
-- `member`: `{ memberId, loginId, name, email, nickname, profileImageUrl }`. 비밀번호는 어떤 응답에도 넣지 않는다.
+- `member`: `{ memberId, loginId, name, givenName, familyName, email, nickname, profileImageUrl }`. `name`은 표시용 "이름 성"(성이 없으면 이름만), `familyName`은 없으면 `null`. 비밀번호는 어떤 응답에도 넣지 않는다.
 - 백엔드 구현: `member/controller/AuthController`, `member/service/AuthService`, `member/mapper/`(SQL `resources/mapper/member/`). 회원가입 성공은 201.
 - refresh token: 무작위 32바이트(쿠키 `refreshToken`, HttpOnly·SameSite=Strict·Path=/api/v1/auth·Max-Age 14일). DB `refresh_tokens.token`에는 SHA-256 해시만 저장. 재발급 시 교체하고, 같은 토큰은 한 번만 쓸 수 있다.
 - 로그인: 없는 아이디도 비밀번호 비교 시간을 똑같이 써서 응답 시간으로 가입 여부를 알 수 없게 한다.
@@ -129,7 +128,9 @@ mock 가상 회원은 새로고침하면 초기화된다. 예시 데이터: 아�
 | -------- | ------------------------------------------------------------------------------ |
 | loginId  | 4~20자, 영문 소문자·숫자                                                       |
 | password | 8~32자, 영문 소문자·대문자·숫자·특수문자 모두 포함, 공백·비영문 자판 문자 불가 |
-| name     | 1~50자, 문자 종류 제한 없음                                                    |
+| givenName | 이름. 필수, 1~50자, 문자 종류 제한 없음 |
+| familyName | 성. 선택(성이 없는 사용자는 비움), 최대 50자 |
+| nickname | 필수, 2~20자, 다국어 글자·숫자·기호 허용, 보이지 않는 문자 불가, 중복 허용 |
 | email    | 이메일 형식, 최대 254자, 중복 불가                                             |
 
 ## 회원 (`src/auth/api/memberApi.js`)

@@ -36,11 +36,19 @@ export function validatePassword(value) {
     return "";
 }
 
-// 이름: 앞뒤 공백을 뺀 1~50자, 외국인 이름을 고려해 문자 종류 제한 없음
-export function validateName(value) {
+// 이름(given name): 필수, 앞뒤 공백을 뺀 1~50자. 외국인 이름을 고려해 문자 종류 제한 없음
+export function validateGivenName(value) {
     const text = typeof value === "string" ? value.trim() : "";
 
-    if (!text) return msg(`${V}.nameRequired`);
+    if (!text) return msg(`${V}.givenNameRequired`);
+    if (Array.from(text).length > 50) return msg(`${V}.nameLength`, { max: 50 });
+    return "";
+}
+
+// 성(family name): 선택 (성이 없는 문화권 사용자를 위해 비워 둘 수 있음), 최대 50자
+export function validateFamilyName(value) {
+    const text = typeof value === "string" ? value.trim() : "";
+
     if (Array.from(text).length > 50) return msg(`${V}.nameLength`, { max: 50 });
     return "";
 }

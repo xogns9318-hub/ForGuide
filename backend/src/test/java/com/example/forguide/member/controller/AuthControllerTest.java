@@ -30,7 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 class AuthControllerTest {
 
     private static final String SIGNUP_JSON =
-            "{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\",\"name\":\" 홍길동 \",\"email\":\"New@Example.com\"}";
+            "{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\",\"givenName\":\" Van A \",\"familyName\":\" Nguyen \",\"nickname\":\" 데모 \",\"email\":\"New@Example.com\"}";
     private static final String LOGIN_JSON = "{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\"}";
 
     @Autowired
@@ -61,12 +61,40 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON).content(SIGNUP_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.data.loginId").value("newuser1"))
-                .andExpect(jsonPath("$.data.name").value("홍길동"))
+                .andExpect(jsonPath("$.data.name").value("Van A Nguyen"))
+                .andExpect(jsonPath("$.data.givenName").value("Van A"))
+                .andExpect(jsonPath("$.data.familyName").value("Nguyen"))
+                .andExpect(jsonPath("$.data.nickname").value("데모"))
                 .andExpect(jsonPath("$.data.email").value("new@example.com"))
                 .andExpect(jsonPath("$.data.password").doesNotExist());
 
         String saved = jdbcTemplate.queryForObject("SELECT password FROM members WHERE login_id = 'newuser1'", String.class);
         assertThat(saved).startsWith("$2a$").isNotEqualTo("Abcdef1!");
+    }
+
+    @Test
+    void 성은_비워도_가입되고_표시_이름은_이름만() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"loginId\":\"mono1\",\"password\":\"Abcdef1!\",\"givenName\":\"Sukarno\","
+                                + "\"nickname\":\"수카르노\",\"email\":\"mono@example.com\"}"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.data.name").value("Sukarno"))
+                .andExpect(jsonPath("$.data.familyName").doesNotExist());
+
+        String family = jdbcTemplate.queryForObject("SELECT family_name FROM members WHERE login_id = 'mono1'", String.class);
+        assertThat(family).isNull();
+    }
+
+    @Test
+    void 닉네임_규칙_위반은_400() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"loginId\":\"nick1\",\"password\":\"Abcdef1!\",\"givenName\":\"A\","
+                                + "\"nickname\":\"ab\u200Bcd\",\"email\":\"nick@example.com\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.fieldErrors.nickname").value("닉네임에 쓸 수 없는 문자가 있습니다."));
+
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM members WHERE login_id = 'nick1'", Integer.class);
+        assertThat(count).isZero();
     }
 
     @Test
@@ -90,7 +118,7 @@ class AuthControllerTest {
 
         // 대소문자만 다른 이메일도 중복
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"loginId\":\"other22\",\"password\":\"Abcdef1!\",\"name\":\"A\",\"email\":\"NEW@example.COM\"}"))
+                        .content("{\"loginId\":\"other22\",\"password\":\"Abcdef1!\",\"givenName\":\"A\",\"nickname\":\"닉네임\",\"email\":\"NEW@example.COM\"}"))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error.code").value("EMAIL_DUPLICATED"))
                 .andExpect(jsonPath("$.error.fieldErrors.email").exists());
@@ -99,12 +127,14 @@ class AuthControllerTest {
     @Test
     void 가입_입력_규칙_위반은_항목별_400() throws Exception {
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"loginId\":\"AB\",\"password\":\"abcdefgh\",\"name\":\"\",\"email\":\"bad\"}"))
+                        .content("{\"loginId\":\"AB\",\"password\":\"abcdefgh\",\"givenName\":\"\",\"familyName\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\",\"email\":\"bad\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.code").value("INVALID_INPUT"))
                 .andExpect(jsonPath("$.error.fieldErrors.loginId").exists())
                 .andExpect(jsonPath("$.error.fieldErrors.password").exists())
-                .andExpect(jsonPath("$.error.fieldErrors.name").exists())
+                .andExpect(jsonPath("$.error.fieldErrors.givenName").exists())
+                .andExpect(jsonPath("$.error.fieldErrors.familyName").exists())
+                .andExpect(jsonPath("$.error.fieldErrors.nickname").exists())
                 .andExpect(jsonPath("$.error.fieldErrors.email").exists());
     }
 
