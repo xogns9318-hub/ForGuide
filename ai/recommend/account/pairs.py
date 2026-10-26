@@ -16,12 +16,11 @@ AI_DIR = Path(__file__).resolve().parent.parent.parent
 PROCESSED_DIR = AI_DIR / "data" / "processed"
 
 SEED = 20261019
-DIRECTIONS = {"rate": 1, "check_count": -1, "visit_required": -1, "savings_bank": -1, "non_preferred_institution": -1}
+DIRECTIONS = {"rate": 1, "check_count": -1, "visit_required": -1, "non_preferred_institution": -1}
 FEATURE_LABELS = {
     "rate": "금리",
     "check_count": "확인 필요",
     "visit_required": "방문",
-    "savings_bank": "저축은행",
     "non_preferred_institution": "비선호 금융기관",
 }
 AUTO_PAIRS_PER_GROUP = 50
@@ -33,7 +32,7 @@ EVAL_RATIO = 0.3
 CONTEXT_FIELDS = ["purpose", "save_trm", "visit", "institution"]
 SIDE_FIELDS = [
     "product_id", "kor_co_nm", "fin_prdt_nm", "institution_type", "effective_rate",
-    "rate", "check_count", "visit_required", "savings_bank", "non_preferred_institution", "baseline",
+    "rate", "check_count", "visit_required", "non_preferred_institution", "baseline",
 ]
 PAIR_COLUMNS = (
     ["pair_id", "pair_key", "context_id"] + CONTEXT_FIELDS + ["user_count", "weight_sum", "group", "tradeoff"]

@@ -21,8 +21,7 @@ WEIGHTS = {
     "rate": 0.5,
     "check_count": -0.3,
     "visit_required": -0.2,
-    "savings_bank": -0.1,
-    "non_preferred_institution": -0.2,
+    "non_preferred_institution": -0.3,
 }
 RATE_FULL_GAP = 1.0
 VISIT_NOT_WANTED = "원치 않음"
@@ -95,7 +94,6 @@ def recommend_fast(options, user, weights=None):
                 "rate": absolute_score(best_rate_by_group[group], float(product["effective_rate"]), RATE_FULL_GAP),
                 "check_count": 1 if product["foreigner_status"] == "확인 필요" else 0,
                 "visit_required": int(product["visit_required"]),
-                "savings_bank": int(product["institution_type"] != BANK),
                 "non_preferred_institution": int(user["institution"] == PREFER_BANK and product["institution_type"] != BANK),
             }
             score, contributions = weighted_score(features, weights)
@@ -103,6 +101,7 @@ def recommend_fast(options, user, weights=None):
         results.append({
             "product_id": f"{product['fin_co_no']}-{product['fin_prdt_cd']}",
             "kor_co_nm": product["kor_co_nm"],
+            "company_display": product.get("company_display") or product["kor_co_nm"],
             "fin_prdt_nm": product["fin_prdt_nm"],
             "institution_type": product["institution_type"],
             "save_trm": term,

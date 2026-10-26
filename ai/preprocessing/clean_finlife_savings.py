@@ -29,11 +29,13 @@ FOREIGNER_OVERRIDES = {
     "주식회사 카카오뱅크": ("확인 필요", "kakao_withdrawal_only"),
 }
 WHITESPACE = re.compile(r"\s+")
+CORPORATION = re.compile(r"\s*주식회사\s*")
 OUTLIER_IQR_FACTOR = 1.5
 
 COLUMNS = [
     "fin_co_no",
     "kor_co_nm",
+    "company_display",
     "institution_type",
     "fin_prdt_cd",
     "fin_prdt_nm",
@@ -60,6 +62,10 @@ COLUMNS = [
 
 def clean_text(value):
     return WHITESPACE.sub(" ", value or "").strip()
+
+
+def display_company(name):
+    return CORPORATION.sub("(주)", clean_text(name))
 
 
 def classify_foreigner(join_member, company=""):
@@ -152,6 +158,7 @@ def build_rows(collected):
                 rows.append({
                     "fin_co_no": product["fin_co_no"],
                     "kor_co_nm": product["kor_co_nm"],
+                    "company_display": display_company(product["kor_co_nm"]),
                     "institution_type": institution_type,
                     "fin_prdt_cd": product["fin_prdt_cd"],
                     "fin_prdt_nm": name,

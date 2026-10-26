@@ -44,7 +44,7 @@ SEX = {"1": "남", "2": "여"}
 
 ASSUMED_CHOICES = {
     "account_purpose": ["예금", "적금"],
-    "account_term": [6, 12, 24],
+    "account_term": [6, 12, 24, 36],
     "institution": ["은행 선호", "상관없음"],
     "visit": ["상관없음", "원치 않음"],
     "loan_purpose": ["생활비", "주거(전세)", "기타"],

@@ -69,6 +69,8 @@ public class SecurityConfig {
                                 "/api/v1/consultation/institutions",
                                 "/api/v1/consultation/institutions/**"  
                         ).permitAll()
+                        // 추천 결과 조회는 로그인 없이 쓸 수 있다.
+                        .requestMatchers(HttpMethod.GET, "/api/v1/recommend/**").permitAll()
                         // ── 그 밖의 모든 주소는 로그인 필요 ──
                         .anyRequest().authenticated())
 

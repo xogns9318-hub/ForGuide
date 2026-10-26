@@ -9,6 +9,7 @@ import StatusPage from "../components/StatusPage/StatusPage.jsx";
 import Community from "../components/Community/Community.jsx";
 import CommunityPostDetail from "../components/Community/CommunityPostDetail.jsx";
 import { authPaths, authRoutes } from "../auth/authRoutes.jsx";
+import { recommendPaths, recommendRoutes } from "../recommend/recommendRoutes.jsx";
 import "../styles/home.css";
 import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
 import TotalInterest from "../components/TotalInterest/TotalInterest.jsx";
@@ -21,9 +22,6 @@ import RequireAuth from "../auth/components/RequireAuth.jsx";
 // 제작 중 화면을 표시할 서비스 주소만 지정
 const constructionPaths = new Set([
     "/service/preparationCard",
-    "/service/loan",
-    "/service/insurance",
-    "/service/account",
     "/service/simulator",
 ]);
 
@@ -231,7 +229,8 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                         (route) =>
                             route.path !== "/service/community" &&
                             route.path !== "/service/consultation"&&
-                            route.path !== "/service/employment",
+                            route.path !== "/service/employment" &&
+                            !recommendPaths.includes(route.path),
                     )
                     .map((route) => (
                         <Route
@@ -282,6 +281,9 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                         element={<EmploymentResume />}
                     />
                 </Route>
+
+                {/* 추천 화면 */}
+                {recommendRoutes()}
 
                 {/* 회원가입·로그인·마이페이지 */}
                 {authRoutes()}
