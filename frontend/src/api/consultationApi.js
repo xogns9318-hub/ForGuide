@@ -278,8 +278,8 @@ export function filterInstitutions(data, input = {}) {
                 group
                     ? matchesRule(group.rules[keyword])
                     : terms(keyword).some((term) =>
-                          service.keywords.some((actual) => fold(actual) === term),
-                      ),
+                        service.keywords.some((actual) => fold(actual) === term),
+                    ),
             );
 
             if (keywords.length && !matched.length) {
@@ -376,4 +376,68 @@ export async function getConsultationInstitution(id) {
     }
 
     return normalizeInstitution(await client.get(`/consultation/institutions/${id}`));
+}
+
+// 검색 화면과 같은 6개 분야·18개 대표 키워드로 기관 안내를 구성한다.
+// DB 원문과 검색용 업무는 지우지 않고, 화면에 반복되는 운영정보만 묶는다.
+export function getInstitutionGuide(institution) {
+    const services = normalizeInstitution(institution).services;
+    const topicGroups = consultationOptions.topics.flatMap((group) => {
+        const keywords = group.keywords.filter((keyword) => {
+            const rule = group.rules[keyword];
+
+            return services.some(
+                (service) =>
+                    rule.topics.includes(service.topic ?? null) &&
+                    rule.terms.some((term) =>
+                        service.keywords.some((actual) => fold(actual) === fold(term)),
+                    ),
+            );
+        });
+
+        return keywords.length ? [{ code: group.code, name: group.name, keywords }] : [];
+    });
+
+    const usageByContent = new Map();
+
+    for (const service of services) {
+        // 표시되는 조건이나 출처가 다르면 다른 이용 안내로 남긴다.
+        const key = JSON.stringify({
+            phone: service.phone,
+            visit: service.visit,
+            online: service.online,
+            specialPhone: service.specialPhone,
+            languages: service.languages,
+            regions: service.regions,
+            languageNotes: service.languageNotes,
+            contactDescription: service.contactDescription,
+            targetDescription: service.targetDescription,
+            sourceUrl: service.sourceUrl,
+        });
+
+        if (!usageByContent.has(key)) {
+            usageByContent.set(key, { id: service.id, service, labels: [] });
+        }
+
+        usageByContent.get(key).labels.push(service.summary);
+    }
+
+    return {
+        topicGroups,
+        keywords: unique(topicGroups.flatMap((group) => group.keywords)),
+        // 분야를 묶더라도 실제 처리기관이나 상담 범위에 관한 설명은 보존한다.
+        scopeNotes: unique(
+            services
+                .flatMap((service) => [
+                    service.summary,
+                    ...String(service.description ?? "").split(/\r?\n/),
+                ])
+                .map((text) => String(text ?? "").trim())
+                .filter(Boolean),
+        ),
+        usageGroups: [...usageByContent.values()].map((group) => ({
+            ...group,
+            labels: unique(group.labels.filter(Boolean)),
+        })),
+    };
 }

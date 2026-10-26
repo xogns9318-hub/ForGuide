@@ -5,6 +5,7 @@ import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recha
 import {
     getConsultationInstitutions,
     getConsultationInstitution,
+    getInstitutionGuide,
 } from "../../api/consultationApi.js";
 import styles from "../../styles/institutionResults.module.css";
 
@@ -97,20 +98,49 @@ function ServiceInformation({ service, guidance, t, compact = false }) {
               ? t("notRequired")
               : t("unknown");
 
-    // 조건부 운영 설명을 단순 운영/미운영 값보다 우선해 보여준다.
+    // 단순한 운영 여부만 통일하고, 긴급상담·제보 접수 같은 예외 설명은 보존한다.
+    const phoneAvailability = (description, value) => {
+        const normalized = String(description ?? "").trim();
+        const closedDescriptions = [
+            "미운영",
+            "미운영(상담원)",
+            "미운영(일반 상담원)",
+            "미운영(일반 상담)",
+            "미운영(콜센터 상담원)",
+            "미운영(일반 전화상담)",
+            "미운영(평일 상담 안내)",
+            "미운영(공휴일 제외 명시)",
+        ];
+
+        if (closedDescriptions.includes(normalized)) {
+            return t("phoneAgentUnavailable");
+        }
+
+        if (normalized === "가능(24시간)") {
+            return t("phone24Hours");
+        }
+
+        if (["가능(매일 운영)", "가능(상시운영)"].includes(normalized)) {
+            return t("phoneOpenWithinHours");
+        }
+
+        if (normalized) return normalized;
+
+        return value === false ? t("phoneAgentUnavailable") : availability(value, t);
+    };
+    // 카드에는 기본 운영정보만 표시하고, 이용 조건은 상세에서 보여준다.
     const commonFields = [
         ["location", guidance?.location || location],
         ["phoneHours", p.available === false ? t("unavailable") : p.hours || t("unknown")],
         ["visitHours", v.available === false ? t("unavailable") : v.hours || t("unknown")],
-        ["phoneWeekend", guidance?.phoneWeekend || availability(p.weekend, t)],
-        ["phoneHoliday", guidance?.phoneHoliday || availability(p.holiday, t)],
+        ["phoneWeekend", phoneAvailability(guidance?.phoneWeekend, p.weekend)],
+        ["phoneHoliday", phoneAvailability(guidance?.phoneHoliday, p.holiday)],
         ["phoneLanguages", languages("phone")],
-        ...(compact && service.languageNotes ? [["languageNotes", service.languageNotes]] : []),
-        ["methods", guidance?.methods || methods || t("unknown")],
-        ["reservationRequired", guidance?.reservation || reservation],
     ];
 
     const detailFields = [
+        ["methods", guidance?.methods || methods || t("unknown")],
+        ["reservationRequired", guidance?.reservation || reservation],
         ["visitAddress", v.address || t("unknown")],
         ["visitWeekend", guidance?.visitWeekend || availability(v.weekend, t)],
         ["visitHoliday", guidance?.visitHoliday || availability(v.holiday, t)],
@@ -184,13 +214,9 @@ function InstitutionDialog({ id, filters, onClose, t }) {
         };
     }, [id, retry]);
 
-    // 조사 자료가 있으면 새 전체 키워드를 표시한다.
-    // 기존 자료에는 상담 업무별 키워드를 대신 사용한다.
-    const keywords = item
-        ? item.featuredKeywords.length
-            ? item.featuredKeywords
-            : unique(item.services.flatMap((service) => service.keywords))
-        : [];
+    // 대표 키워드와 중복을 제거한 이용 안내를 같은 기관 자료에서 만든다.
+    const guide = item ? getInstitutionGuide(item) : null;
+    const keywords = guide?.keywords ?? [];
 
     return (
         <dialog
@@ -280,20 +306,43 @@ function InstitutionDialog({ id, filters, onClose, t }) {
 
                     <h3>{t("servicesTitle")}</h3>
 
-                    {item.services.map((service, index) => (
-                        <details key={service.id} open={index === 0}>
-                            <summary>
-                                {service.topic ? t(`topics.${service.topic}`) : t("administration")}
-                                {" · "}
-                                {t(`roles.${service.role}`)}
-                            </summary>
+                    <dl className={styles.fields}>
+                        {guide.topicGroups.map((group) => (
+                            <Field key={group.code} label={t(`selectionLabels.${group.name}`)}>
+                                {group.keywords
+                                    .map((keyword) => t(`selectionLabels.${keyword}`))
+                                    .join(", ")}
+                            </Field>
+                        ))}
+                    </dl>
 
-                            <p>{service.summary}</p>
-
-                            {service.description && <p>{service.description}</p>}
-
-                            <ServiceInformation service={service} guidance={item.guidance} t={t} />
+                    {guide.scopeNotes.length > 0 && (
+                        <details>
+                            <summary>{t("scopeNotesTitle")}</summary>
+                            <ul>
+                                {guide.scopeNotes.map((note) => (
+                                    <li key={note}>{note}</li>
+                                ))}
+                            </ul>
                         </details>
+                    )}
+
+                    <h3>{t("usageInfoTitle")}</h3>
+
+                    {guide.usageGroups.map((group, index) => (
+                        <div key={group.id}>
+                            {guide.usageGroups.length > 1 && (
+                                <>
+                                    <h4>{t("usageVariant", { count: index + 1 })}</h4>
+                                    <p>{group.labels.join(" / ")}</p>
+                                </>
+                            )}
+                            <ServiceInformation
+                                service={group.service}
+                                guidance={item.guidance}
+                                t={t}
+                            />
+                        </div>
                     ))}
 
                     <div className={styles.links}>
@@ -452,13 +501,14 @@ export default function ConsultationResults({ filters, visible, reloadKey }) {
                                 <h3>{item.name}</h3>
 
                                 <div className={styles.tags}>
-                                    {item.featuredKeywords.slice(0, 4).map((keyword) => (
-                                        <span key={keyword}>{keyword}</span>
-                                    ))}
+                                    {getInstitutionGuide(item)
+                                        .keywords.slice(0, 4)
+                                        .map((keyword) => (
+                                            <span key={keyword}>
+                                                {t(`selectionLabels.${keyword}`)}
+                                            </span>
+                                        ))}
                                 </div>
-
-                                <p>{t(`roles.${item.match.role}`)}</p>
-
                                 {item.match.selectedCount > 0 && (
                                     <p>
                                         {t("matchCount", {
@@ -485,17 +535,23 @@ export default function ConsultationResults({ filters, visible, reloadKey }) {
                                     </p>
                                 )}
 
-                                <ServiceInformation
-                                    service={item.preview}
-                                    guidance={item.guidance}
-                                    t={t}
-                                    compact
-                                />
+                                <div>
+                                    <ServiceInformation
+                                        service={item.preview}
+                                        guidance={item.guidance}
+                                        t={t}
+                                        compact
+                                    />
 
-                                <p>
-                                    {t("fields.phone")}:{" "}
-                                    <PhoneLink number={item.phone} fallback={t("unknown")} />
-                                </p>
+                                    <dl className={styles.fields}>
+                                        <Field label={t("fields.phone")}>
+                                            <PhoneLink
+                                                number={item.phone}
+                                                fallback={t("unknown")}
+                                            />
+                                        </Field>
+                                    </dl>
+                                </div>
 
                                 <div className={styles.cardActions}>
                                     <button

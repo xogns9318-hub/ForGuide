@@ -3,29 +3,60 @@
         {
             "code": "guide_administration",
             "name": "출입국·행정",
-            "keywords": ["비자·체류", "외국인등록", "민원·증명서"],
+            "keywords": [
+                "비자·체류",
+                "외국인등록",
+                "민원·증명서"
+            ],
             "rules": {
                 "비자·체류": {
-                    "topics": [null],
-                    "terms": ["비자", "출입국", "체류기간 연장", "체류자격 변경"]
+                    "topics": [
+                        null
+                    ],
+                    "terms": [
+                        "비자",
+                        "출입국",
+                        "체류기간 연장",
+                        "체류자격 변경"
+                    ]
                 },
                 "외국인등록": {
-                    "topics": [null],
-                    "terms": ["외국인등록", "외국인등록 사실증명"]
+                    "topics": [
+                        null
+                    ],
+                    "terms": [
+                        "외국인등록",
+                        "외국인등록 사실증명"
+                    ]
                 },
                 "민원·증명서": {
-                    "topics": [null],
-                    "terms": ["증명서 발급", "민원 신청", "정부민원", "기관 안내", "본인인증"]
+                    "topics": [
+                        null
+                    ],
+                    "terms": [
+                        "증명서 발급",
+                        "민원 신청",
+                        "정부민원",
+                        "기관 안내",
+                        "본인인증"
+                    ]
                 }
             }
         },
         {
             "code": "guide_labor",
             "name": "노동·취업",
-            "keywords": ["임금·퇴직금", "근로계약·근무조건", "취업·고용"],
+            "keywords": [
+                "임금·퇴직금",
+                "근로계약·근무조건",
+                "취업·고용"
+            ],
             "rules": {
                 "임금·퇴직금": {
-                    "topics": ["wages", "retirement"],
+                    "topics": [
+                        "wages",
+                        "retirement"
+                    ],
                     "terms": [
                         "급여",
                         "월급",
@@ -40,7 +71,9 @@
                     ]
                 },
                 "근로계약·근무조건": {
-                    "topics": ["employment_contract"],
+                    "topics": [
+                        "employment_contract"
+                    ],
                     "terms": [
                         "근로계약",
                         "근로계약서",
@@ -52,22 +85,49 @@
                     ]
                 },
                 "취업·고용": {
-                    "topics": ["employment", null],
-                    "terms": ["취업", "구직", "취업지원", "사업장 변경", "고용허가제"]
+                    "topics": [
+                        "employment",
+                        null
+                    ],
+                    "terms": [
+                        "취업",
+                        "구직",
+                        "취업지원",
+                        "사업장 변경",
+                        "고용허가제"
+                    ]
                 }
             }
         },
         {
             "code": "guide_finance",
             "name": "금융·채무",
-            "keywords": ["대출·서민금융", "채무·신용회복", "금융민원·피해"],
+            "keywords": [
+                "대출·서민금융",
+                "채무·신용회복",
+                "금융민원·피해"
+            ],
             "rules": {
                 "대출·서민금융": {
-                    "topics": ["loan", "financial_support", "financial_information"],
-                    "terms": ["생활비 대출", "소액대출", "대출 신청", "대출 자격", "서민금융"]
+                    "topics": [
+                        "loan",
+                        "financial_support",
+                        "financial_information"
+                    ],
+                    "terms": [
+                        "생활비 대출",
+                        "소액대출",
+                        "대출 신청",
+                        "대출 자격",
+                        "서민금융"
+                    ]
                 },
                 "채무·신용회복": {
-                    "topics": ["repayment", "credit", "financial_support"],
+                    "topics": [
+                        "repayment",
+                        "credit",
+                        "financial_support"
+                    ],
                     "terms": [
                         "채무",
                         "채무 상환",
@@ -111,10 +171,16 @@
         {
             "code": "guide_insurance",
             "name": "보험·연금",
-            "keywords": ["건강보험", "국민연금", "산재·고용보험"],
+            "keywords": [
+                "건강보험",
+                "국민연금",
+                "산재·고용보험"
+            ],
             "rules": {
                 "건강보험": {
-                    "topics": ["insurance"],
+                    "topics": [
+                        "insurance"
+                    ],
                     "terms": [
                         "건강보험",
                         "건강보험 자격",
@@ -123,22 +189,41 @@
                     ]
                 },
                 "국민연금": {
-                    "topics": ["insurance"],
-                    "terms": ["국민연금", "반환일시금", "국민연금 가입증명"]
+                    "topics": [
+                        "insurance"
+                    ],
+                    "terms": [
+                        "국민연금",
+                        "반환일시금",
+                        "국민연금 가입증명"
+                    ]
                 },
                 "산재·고용보험": {
-                    "topics": ["insurance"],
-                    "terms": ["산재보험", "고용보험", "산재", "실업급여"]
+                    "topics": [
+                        "insurance"
+                    ],
+                    "terms": [
+                        "산재보험",
+                        "고용보험",
+                        "산재",
+                        "실업급여"
+                    ]
                 }
             }
         },
         {
             "code": "guide_tax",
             "name": "세금",
-            "keywords": ["세금신고·납부", "연말정산", "세금환급"],
+            "keywords": [
+                "세금신고·납부",
+                "연말정산",
+                "세금환급"
+            ],
             "rules": {
                 "세금신고·납부": {
-                    "topics": ["tax"],
+                    "topics": [
+                        "tax"
+                    ],
                     "terms": [
                         "소득세",
                         "근로소득세",
@@ -150,22 +235,39 @@
                     ]
                 },
                 "연말정산": {
-                    "topics": ["tax"],
-                    "terms": ["연말정산"]
+                    "topics": [
+                        "tax"
+                    ],
+                    "terms": [
+                        "연말정산"
+                    ]
                 },
                 "세금환급": {
-                    "topics": ["tax"],
-                    "terms": ["세금 환급", "국세 환급"]
+                    "topics": [
+                        "tax"
+                    ],
+                    "terms": [
+                        "세금 환급",
+                        "국세 환급"
+                    ]
                 }
             }
         },
         {
             "code": "guide_living",
             "name": "생활·복지·법률",
-            "keywords": ["복지지원", "가족·생활상담", "법률·주거분쟁"],
+            "keywords": [
+                "복지지원",
+                "가족·생활상담",
+                "법률·주거분쟁"
+            ],
             "rules": {
                 "복지지원": {
-                    "topics": ["living", "housing", "financial_support"],
+                    "topics": [
+                        "living",
+                        "housing",
+                        "financial_support"
+                    ],
                     "terms": [
                         "긴급생활비",
                         "생활비 부족",
@@ -178,7 +280,10 @@
                     ]
                 },
                 "가족·생활상담": {
-                    "topics": [null, "living"],
+                    "topics": [
+                        null,
+                        "living"
+                    ],
                     "terms": [
                         "생활정보",
                         "생활통역",
@@ -189,7 +294,11 @@
                     ]
                 },
                 "법률·주거분쟁": {
-                    "topics": [null, "housing", "repayment"],
+                    "topics": [
+                        null,
+                        "housing",
+                        "repayment"
+                    ],
                     "terms": [
                         "법률상담",
                         "임대차",
@@ -197,7 +306,8 @@
                         "보증금 반환",
                         "월세",
                         "전세",
-                        "개인회생"
+                        "개인회생",
+                        "소비자분쟁"
                     ]
                 }
             }
@@ -319,11 +429,23 @@
         },
         {
             "name": "대전광역시",
-            "districts": ["대덕구", "동구", "서구", "유성구", "중구"]
+            "districts": [
+                "대덕구",
+                "동구",
+                "서구",
+                "유성구",
+                "중구"
+            ]
         },
         {
             "name": "울산광역시",
-            "districts": ["남구", "동구", "북구", "울주군", "중구"]
+            "districts": [
+                "남구",
+                "동구",
+                "북구",
+                "울주군",
+                "중구"
+            ]
         },
         {
             "name": "세종특별자치시",
@@ -495,9 +617,24 @@
         },
         {
             "name": "제주특별자치도",
-            "districts": ["서귀포시", "제주시"]
+            "districts": [
+                "서귀포시",
+                "제주시"
+            ]
         }
     ],
-    "languages": ["한국어", "영어", "중국어", "일본어", "베트남어", "태국어"],
-    "methods": ["전화", "방문", "예약", "모름"]
+    "languages": [
+        "한국어",
+        "영어",
+        "중국어",
+        "일본어",
+        "베트남어",
+        "태국어"
+    ],
+    "methods": [
+        "전화",
+        "방문",
+        "예약",
+        "모름"
+    ]
 }
