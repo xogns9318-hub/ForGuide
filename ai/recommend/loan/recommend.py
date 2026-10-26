@@ -48,7 +48,7 @@ def card(result, rank, best_rate, user):
     item = {
         "rank": rank,
         "product_id": result["product_id"],
-        "company": result["kor_co_nm"],
+        "company": result["company_display"],
         "product_name": result["fin_prdt_nm"],
         "product_kind": result["product_kind"],
         "institution_type": result["institution_type"],
@@ -71,7 +71,7 @@ def mismatch_card(result, rank):
     return {
         "rank": rank,
         "product_id": result["product_id"],
-        "company": result["kor_co_nm"],
+        "company": result["company_display"],
         "product_name": result["fin_prdt_nm"],
         "product_kind": result["product_kind"],
         "institution_type": result["institution_type"],

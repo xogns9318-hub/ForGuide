@@ -113,7 +113,7 @@ export default function LoanRecommend() {
             </div>
             {item.rate_range && (
                 <div>
-                    <dt>{t("recommendLoan.rateRange")}</dt>
+                    <dt>{t(`recommendLoan.rateRange.${result?.loan_type ?? "jeonse"}`)}</dt>
                     <dd>
                         {t("recommendLoan.rateRangeValue", {
                             min: item.rate_range[0],

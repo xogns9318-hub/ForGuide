@@ -11,7 +11,7 @@ sys.path.insert(0, str(AI_DIR / "preprocessing"))
 
 from engine import GROUP_CHECK, GROUP_MATCH, GROUP_MISMATCH, compare_features
 from baseline import PROCESSED_DIR, WEIGHTS, load_options, recommend_fast
-from clean_finlife_savings import classify_foreigner
+from clean_finlife_savings import classify_foreigner, display_company
 from pairs import eval_split, pair_key
 from recommend import CHOICES, recommend, validate
 
@@ -160,6 +160,12 @@ class OverrideTest(unittest.TestCase):
         self.assertEqual(classify_foreigner("실명의 개인", "주식회사 카카오뱅크"), ("확인 필요", "kakao_withdrawal_only"))
         self.assertEqual(classify_foreigner("비거주 외국인 외 제한없음"), ("부합", ""))
         self.assertEqual(classify_foreigner("내국인만 가입 가능"), ("불일치", ""))
+
+    def test_display_company_shortens_corporation(self):
+        self.assertEqual(display_company("주식회사 카카오뱅크"), "(주)카카오뱅크")
+        self.assertEqual(display_company("농협은행주식회사"), "농협은행(주)")
+        self.assertEqual(display_company("토스뱅크 주식회사"), "토스뱅크(주)")
+        self.assertEqual(display_company("국민은행"), "국민은행")
 
 
 @unittest.skipUnless(list(PROCESSED_DIR.glob("finlife_savings_*.csv")), "정제 데이터 없음")

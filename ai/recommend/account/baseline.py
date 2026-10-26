@@ -101,6 +101,7 @@ def recommend_fast(options, user, weights=None):
         results.append({
             "product_id": f"{product['fin_co_no']}-{product['fin_prdt_cd']}",
             "kor_co_nm": product["kor_co_nm"],
+            "company_display": product.get("company_display") or product["kor_co_nm"],
             "fin_prdt_nm": product["fin_prdt_nm"],
             "institution_type": product["institution_type"],
             "save_trm": term,

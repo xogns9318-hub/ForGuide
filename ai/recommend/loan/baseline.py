@@ -42,6 +42,8 @@ def judge(product, user):
         check.append("special_target")
     if rate_of(product) is None:
         check.append("rate_not_disclosed")
+    if product.get("rate_inconsistent") == "1":
+        check.append("rate_inconsistent")
     return mismatch, check
 
 
@@ -56,6 +58,7 @@ def recommend_fast(products, user):
         results.append({
             "product_id": f"{product['fin_co_no']}-{product['fin_prdt_cd']}",
             "kor_co_nm": product["kor_co_nm"],
+            "company_display": product.get("company_display") or product["kor_co_nm"],
             "fin_prdt_nm": product["fin_prdt_nm"],
             "product_kind": product["product_kind"],
             "institution_type": product["institution_type"],
@@ -73,7 +76,7 @@ def recommend_fast(products, user):
             "score": -rate if rate is not None else None,
             "check_reasons": check,
             "mismatch_reasons": mismatch,
-            "sort_last": rate is None or product.get("target_limited") == "1",
+            "sort_last": rate is None or product.get("target_limited") == "1" or product.get("rate_inconsistent") == "1",
             "tiebreak": 0,
             "dcls_month": product["dcls_month"],
         })

@@ -573,9 +573,12 @@ const ko = {
             상관없음: "방문해도 괜찮아요",
             "원치 않음": "방문하고 싶지 않아요",
         },
-        rateAvg: "평균 금리",
+        rateAvg: "지난달 평균 금리",
         rateValue: "연 {{rate}}%",
-        rateRange: "금리 범위",
+        rateRange: {
+            credit: "신용점수별 금리",
+            jeonse: "현재 금리 범위",
+        },
         rateRangeValue: "연 {{min}}~{{max}}%",
         noRate: "공시 안 됨",
         kind: "상품 종류",
@@ -583,7 +586,7 @@ const ko = {
         visitRequired: "영업점 방문 필요",
         limit: "대출 한도",
         repay: "상환 방식",
-        chartTitle: "평균 금리 비교",
+        chartTitle: "지난달 평균 금리 비교",
         chartBasis: "낮을수록 이자 부담이 적어요",
     },
 
@@ -612,6 +615,8 @@ const ko = {
             special_target:
                 "청년·신혼부부처럼 가입 대상이 정해진 상품이에요. 가입 대상인지 확인하세요",
             rate_not_disclosed: "평균 금리가 공시되지 않았어요",
+            rate_inconsistent:
+                "지난달 평균 금리가 현재 금리 범위와 크게 달라요. 금융사에 실제 금리를 확인하세요",
         },
         mismatchReasons: {
             domestic_only: "내국인만 가입할 수 있어요",
