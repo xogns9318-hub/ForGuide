@@ -371,20 +371,19 @@ export default function Signup() {
     // 이메일 인증 화면 표시용 값
     const isEmailVerified =
         emailCheck.status === "verified" && emailCheck.email === normalizeEmail(form.email);
-    const hasCode = isWaitingCode;
     const secondsLeft = Math.max(0, Math.ceil((emailCheck.expiresAt - now) / 1000));
     const resendWait = Math.max(0, Math.ceil((emailCheck.resendAt - now) / 1000));
     const sendDisabled =
         isSubmitting ||
         emailCheck.status === "sending" ||
         isEmailVerified ||
-        (hasCode && resendWait > 0);
+        (isWaitingCode && resendWait > 0);
 
     let sendLabel = t("auth.signup.sendCode");
     if (emailCheck.status === "sending") sendLabel = t("auth.signup.sendingCode");
-    else if (hasCode && resendWait > 0)
+    else if (isWaitingCode && resendWait > 0)
         sendLabel = t("auth.signup.resendIn", { seconds: resendWait });
-    else if (hasCode) sendLabel = t("auth.signup.resendCode");
+    else if (isWaitingCode) sendLabel = t("auth.signup.resendCode");
 
     return (
         <div className="page-stack">
@@ -528,7 +527,7 @@ export default function Signup() {
                                 {sendLabel}
                             </button>
                         </div>
-                        {hasCode && (
+                        {isWaitingCode && (
                             <p className="form-help" role="status">
                                 {t("auth.signup.codeSent", { email: emailCheck.email })}
                             </p>
@@ -545,7 +544,7 @@ export default function Signup() {
                     </div>
 
                     {/* 인증 코드 입력 (코드를 보낸 뒤에만 보인다) */}
-                    {hasCode && (
+                    {isWaitingCode && (
                         <div className="form-field">
                             <label htmlFor="signup-code">{t("auth.signup.code")}</label>
                             <div className={styles.inputWithButton}>

@@ -1,5 +1,7 @@
 package com.example.forguide.member.controller;
 
+import static com.example.forguide.member.controller.EmailVerificationSteps.verifiedToken;
+import static com.example.forguide.member.controller.EmailVerificationSteps.withToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -7,23 +9,21 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.example.forguide.member.support.EmailVerificationSteps.verifiedToken;
-import static com.example.forguide.member.support.EmailVerificationSteps.withToken;
 
-import com.example.forguide.member.support.RecordingMailConfig;
-import com.example.forguide.member.support.RecordingMailConfig.RecordingMailSender;
+import com.example.forguide.member.service.VerificationMailSender;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -31,7 +31,6 @@ import org.springframework.web.context.WebApplicationContext;
  * 회원가입·로그인·재발급·로그아웃 전체 흐름 (테스트 DB: H2, 스키마: test/resources/member/schema.sql)
  */
 @SpringBootTest
-@Import(RecordingMailConfig.class)
 @Sql(scripts = "/member/schema.sql")
 class AuthControllerTest {
 
@@ -45,8 +44,9 @@ class AuthControllerTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private RecordingMailSender mail;
+    // 메일은 실제로 보내지 않고, 보낸 코드를 테스트에서 꺼내 쓴다
+    @MockitoBean
+    private VerificationMailSender mail;
 
     private MockMvc mockMvc;
 
@@ -190,7 +190,7 @@ class AuthControllerTest {
         assertThat(wrongPassword).isEqualTo(noUser).contains("LOGIN_FAILED");
     }
 
-    private org.springframework.test.web.servlet.ResultActions loginWith(String loginId, String password) throws Exception {
+    private ResultActions loginWith(String loginId, String password) throws Exception {
         return mockMvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"loginId\":\"" + loginId + "\",\"password\":\"" + password + "\"}"));
     }

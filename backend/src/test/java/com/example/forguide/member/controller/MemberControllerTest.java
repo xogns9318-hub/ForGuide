@@ -1,5 +1,7 @@
 package com.example.forguide.member.controller;
 
+import static com.example.forguide.member.controller.EmailVerificationSteps.verifiedToken;
+import static com.example.forguide.member.controller.EmailVerificationSteps.withToken;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -9,11 +11,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.example.forguide.member.support.EmailVerificationSteps.verifiedToken;
-import static com.example.forguide.member.support.EmailVerificationSteps.withToken;
 
-import com.example.forguide.member.support.RecordingMailConfig;
-import com.example.forguide.member.support.RecordingMailConfig.RecordingMailSender;
+import com.example.forguide.member.service.VerificationMailSender;
 import com.jayway.jsonpath.JsonPath;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -25,14 +24,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -40,7 +40,6 @@ import org.springframework.web.context.WebApplicationContext;
  * 닉네임·프로필 이미지 저장과 이미지 주소 공개 (테스트 DB: H2, 이미지는 임시 폴더)
  */
 @SpringBootTest
-@Import(RecordingMailConfig.class)
 @Sql(scripts = "/member/schema.sql")
 class MemberControllerTest {
 
@@ -55,8 +54,9 @@ class MemberControllerTest {
     @Autowired
     private WebApplicationContext context;
 
-    @Autowired
-    private RecordingMailSender mail;
+    // 메일은 실제로 보내지 않고, 보낸 코드를 테스트에서 꺼내 쓴다
+    @MockitoBean
+    private VerificationMailSender mail;
 
     private MockMvc mockMvc;
     private String accessToken;
@@ -81,7 +81,7 @@ class MemberControllerTest {
         return out.toByteArray();
     }
 
-    private org.springframework.test.web.servlet.ResultActions upload(byte[] bytes, String fileName, String type)
+    private ResultActions upload(byte[] bytes, String fileName, String type)
             throws Exception {
         return mockMvc.perform(multipart(HttpMethod.PATCH, "/api/v1/members/me/profile-image")
                 .file(new MockMultipartFile("image", fileName, type, bytes))

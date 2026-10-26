@@ -1,23 +1,27 @@
 package com.example.forguide.member.controller;
 
-import static com.example.forguide.member.support.EmailVerificationSteps.verifiedToken;
-import static com.example.forguide.member.support.EmailVerificationSteps.withToken;
+import static com.example.forguide.member.controller.EmailVerificationSteps.lastCode;
+import static com.example.forguide.member.controller.EmailVerificationSteps.verifiedToken;
+import static com.example.forguide.member.controller.EmailVerificationSteps.withToken;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.reset;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.forguide.member.support.RecordingMailConfig;
-import com.example.forguide.member.support.RecordingMailConfig.RecordingMailSender;
-import org.junit.jupiter.api.AfterEach;
+import com.example.forguide.member.service.VerificationMailSender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -25,10 +29,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * 이메일 인증: 코드 보내기 → 확인 → 가입에서 토큰 사용 (테스트 DB: H2, 메일은 RecordingMailSender가 대신 받음)
+ * 이메일 인증: 코드 보내기 → 확인 → 가입에서 토큰 사용 (테스트 DB: H2, 메일 발송은 가짜 객체로 대신함)
  */
 @SpringBootTest
-@Import(RecordingMailConfig.class)
 @Sql(scripts = "/member/schema.sql")
 class EmailVerificationControllerTest {
 
@@ -42,19 +45,15 @@ class EmailVerificationControllerTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private RecordingMailSender mail;
+    // 메일은 실제로 보내지 않고, 보낸 코드를 테스트에서 꺼내 쓴다
+    @MockitoBean
+    private VerificationMailSender mail;
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context).apply(springSecurity()).build();
-    }
-
-    @AfterEach
-    void tearDown() {
-        mail.setFailing(false);
     }
 
     private ResultActions sendCode(String email) throws Exception {
@@ -73,7 +72,7 @@ class EmailVerificationControllerTest {
 
     // 받은 코드와 다른 6자리 코드
     private String wrongCode() {
-        return mail.lastCode(EMAIL).equals("000000") ? "111111" : "000000";
+        return lastCode(mail, EMAIL).equals("000000") ? "111111" : "000000";
     }
 
     @Test
@@ -83,7 +82,7 @@ class EmailVerificationControllerTest {
                 .andExpect(jsonPath("$.data.expiresInSeconds").value(600))
                 .andExpect(jsonPath("$.data.resendAfterSeconds").value(60));
 
-        String code = mail.lastCode(EMAIL);
+        String code = lastCode(mail, EMAIL);
         assertThat(code).matches("[0-9]{6}");
         String stored = jdbcTemplate.queryForObject("SELECT code_hash FROM email_verifications", String.class);
         assertThat(stored).hasSize(64).doesNotContain(code);
@@ -141,7 +140,7 @@ class EmailVerificationControllerTest {
         verify(EMAIL, wrong).andExpect(jsonPath("$.error.code").value("VERIFICATION_ATTEMPTS_EXCEEDED"));
 
         // 이제는 맞는 코드도 받지 않는다
-        verify(EMAIL, mail.lastCode(EMAIL)).andExpect(jsonPath("$.error.code").value("VERIFICATION_ATTEMPTS_EXCEEDED"));
+        verify(EMAIL, lastCode(mail, EMAIL)).andExpect(jsonPath("$.error.code").value("VERIFICATION_ATTEMPTS_EXCEEDED"));
     }
 
     @Test
@@ -149,7 +148,7 @@ class EmailVerificationControllerTest {
         sendCode(EMAIL);
         jdbcTemplate.update("UPDATE email_verifications SET expires_at = DATEADD('MINUTE', -1, CURRENT_TIMESTAMP)");
 
-        verify(EMAIL, mail.lastCode(EMAIL))
+        verify(EMAIL, lastCode(mail, EMAIL))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.code").value("VERIFICATION_EXPIRED"));
     }
@@ -157,7 +156,7 @@ class EmailVerificationControllerTest {
     @Test
     void 확인을_마친_코드는_다시_쓸_수_없다() throws Exception {
         sendCode(EMAIL);
-        String code = mail.lastCode(EMAIL);
+        String code = lastCode(mail, EMAIL);
         verify(EMAIL, code).andExpect(status().isOk());
 
         verify(EMAIL, code).andExpect(jsonPath("$.error.code").value("VERIFICATION_EXPIRED"));
@@ -196,12 +195,13 @@ class EmailVerificationControllerTest {
 
     @Test
     void 메일_발송이_실패하면_503이고_재발송을_막지_않는다() throws Exception {
-        mail.setFailing(true);
+        doThrow(new IllegalStateException("메일 서버 연결 실패(테스트)"))
+                .when(mail).send(anyString(), anyString(), any(), anyLong());
         sendCode(EMAIL)
                 .andExpect(status().isServiceUnavailable())
                 .andExpect(jsonPath("$.error.code").value("MAIL_SEND_FAILED"));
 
-        mail.setFailing(false);
+        reset(mail);
         sendCode(EMAIL).andExpect(status().isOk());
     }
 

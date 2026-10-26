@@ -2,18 +2,11 @@ package com.example.forguide.member.service;
 
 import com.example.forguide.common.exception.ApiException;
 import com.example.forguide.common.exception.ErrorCode;
-import com.example.forguide.member.mail.VerificationMailSender;
 import com.example.forguide.member.mapper.EmailVerificationMapper;
 import com.example.forguide.member.mapper.EmailVerificationRow;
 import com.example.forguide.member.mapper.MemberMapper;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HexFormat;
 import java.util.Locale;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -47,7 +40,6 @@ public class EmailVerificationService {
     private final EmailVerificationMapper verificationMapper;
     private final MemberMapper memberMapper;
     private final VerificationMailSender mailSender;
-    private final SecureRandom secureRandom = new SecureRandom();
 
     public EmailVerificationService(EmailVerificationMapper verificationMapper, MemberMapper memberMapper,
                                     VerificationMailSender mailSender) {
@@ -81,7 +73,7 @@ public class EmailVerificationService {
             throw new ApiException(ErrorCode.VERIFICATION_DAILY_LIMIT);
         }
 
-        String code = newCode();
+        String code = SecureTokens.sixDigits();
         EmailVerificationRow row = new EmailVerificationRow();
         row.setEmail(email);
         row.setPurpose(purpose.name());
@@ -120,7 +112,7 @@ public class EmailVerificationService {
         }
 
         String input = code == null ? "" : code.trim();
-        if (!constantTimeEquals(latest.getCodeHash(), codeHash(email, input))) {
+        if (!SecureTokens.matches(latest.getCodeHash(), codeHash(email, input))) {
             verificationMapper.increaseFailedAttempts(latest.getVerificationId());
             if (latest.getFailedAttempts() + 1 >= MAX_ATTEMPTS) {
                 throw new ApiException(ErrorCode.VERIFICATION_ATTEMPTS_EXCEEDED);
@@ -129,8 +121,8 @@ public class EmailVerificationService {
                     Map.of("code", ErrorCode.VERIFICATION_CODE_INVALID.getDefaultMessage()));
         }
 
-        String token = newToken();
-        verificationMapper.markVerified(latest.getVerificationId(), now, sha256(token), now.plus(TOKEN_TTL));
+        String token = SecureTokens.random(TOKEN_BYTES);
+        verificationMapper.markVerified(latest.getVerificationId(), now, SecureTokens.sha256(token), now.plus(TOKEN_TTL));
         return token;
     }
 
@@ -145,7 +137,7 @@ public class EmailVerificationService {
         String email = normalize(rawEmail);
         LocalDateTime now = LocalDateTime.now();
 
-        EmailVerificationRow row = verificationMapper.findByTokenHash(sha256(token.trim()));
+        EmailVerificationRow row = verificationMapper.findByTokenHash(SecureTokens.sha256(token.trim()));
         boolean valid = row != null
                 && row.getEmail().equals(email)
                 && row.getPurpose().equals(purpose.name())
@@ -168,32 +160,8 @@ public class EmailVerificationService {
         return email == null ? "" : email.trim().toLowerCase(Locale.ROOT);
     }
 
-    // 000000~999999 (앞자리 0 포함 6자리)
-    private String newCode() {
-        return String.format("%06d", secureRandom.nextInt(1_000_000));
-    }
-
-    private String newToken() {
-        byte[] bytes = new byte[TOKEN_BYTES];
-        secureRandom.nextBytes(bytes);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-    }
-
     // 코드는 이메일과 묶어 해시한다 (같은 코드라도 이메일마다 해시가 다르다)
     private static String codeHash(String email, String code) {
-        return sha256(email + ":" + code);
-    }
-
-    private static boolean constantTimeEquals(String a, String b) {
-        return MessageDigest.isEqual(a.getBytes(StandardCharsets.UTF_8), b.getBytes(StandardCharsets.UTF_8));
-    }
-
-    private static String sha256(String value) {
-        try {
-            byte[] digest = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
-            return HexFormat.of().formatHex(digest);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256을 사용할 수 없습니다.", e);
-        }
+        return SecureTokens.sha256(email + ":" + code);
     }
 }

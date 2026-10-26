@@ -6,7 +6,6 @@ import com.example.forguide.member.mapper.LoginAttemptMapper;
 import com.example.forguide.member.mapper.LoginAttemptRow;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.regex.Pattern;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
@@ -18,9 +17,8 @@ import org.springframework.stereotype.Service;
  * - 로그인에 성공하면 실패 기록을 지운다
  * - 마지막 실패 후 15분이 지나면 실패 횟수를 처음부터 센다
  * - 가입되지 않은 아이디도 똑같이 센다 (잠김 응답으로 가입 여부가 드러나지 않게)
- * - 아이디 형식(영문 소문자·숫자 4~20자)에 맞지 않는 값은 가입될 수 없는 아이디라 기록하지 않는다
  *
- * 호출하는 쪽(AuthService.login)의 트랜잭션 안에서 실행된다.
+ * 아이디 형식 확인은 호출하는 쪽(AuthService.login)이 하고, 그 트랜잭션 안에서 실행된다.
  */
 @Service
 public class LoginAttemptService {
@@ -28,8 +26,6 @@ public class LoginAttemptService {
     static final int MAX_FAILURES = 5;
     static final Duration LOCK_DURATION = Duration.ofMinutes(15);
     static final Duration FAILURE_WINDOW = Duration.ofMinutes(15);
-
-    private static final Pattern LOGIN_ID_PATTERN = Pattern.compile("^[a-z0-9]{4,20}$");
 
     private final LoginAttemptMapper loginAttemptMapper;
 
@@ -39,9 +35,6 @@ public class LoginAttemptService {
 
     /** 잠겨 있으면 LOGIN_LOCKED. 잠금이 풀렸거나 실패 기록이 오래됐으면 지우고 새로 센다 */
     public void checkNotLocked(String loginId, LocalDateTime now) {
-        if (!isTracked(loginId)) {
-            return;
-        }
         LoginAttemptRow row = loginAttemptMapper.findByLoginId(loginId);
         if (row == null) {
             return;
@@ -58,9 +51,6 @@ public class LoginAttemptService {
 
     /** 실패 1회 기록. 이번 실패로 잠기면 LOGIN_LOCKED를 던진다 (5번째 실패부터 잠김 안내) */
     public void recordFailure(String loginId, LocalDateTime now) {
-        if (!isTracked(loginId)) {
-            return;
-        }
         LocalDateTime lockUntil = now.plus(LOCK_DURATION);
         if (loginAttemptMapper.increaseFailure(loginId, now, MAX_FAILURES, lockUntil) == 0) {
             try {
@@ -79,12 +69,6 @@ public class LoginAttemptService {
 
     /** 로그인 성공: 실패 기록 삭제 */
     public void reset(String loginId) {
-        if (isTracked(loginId)) {
-            loginAttemptMapper.delete(loginId);
-        }
-    }
-
-    private static boolean isTracked(String loginId) {
-        return loginId != null && LOGIN_ID_PATTERN.matcher(loginId).matches();
+        loginAttemptMapper.delete(loginId);
     }
 }

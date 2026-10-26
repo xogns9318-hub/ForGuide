@@ -10,13 +10,7 @@ import com.example.forguide.member.dto.SignupRequest;
 import com.example.forguide.member.mapper.MemberMapper;
 import com.example.forguide.member.mapper.MemberRow;
 import com.example.forguide.member.mapper.RefreshTokenMapper;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HexFormat;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -45,7 +39,6 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final EmailVerificationService emailVerificationService;
     private final LoginAttemptService loginAttemptService;
-    private final SecureRandom secureRandom = new SecureRandom();
 
     // 없는 아이디로 로그인할 때도 비밀번호 비교 시간을 똑같이 쓰기 위한 가짜 해시
     // (응답 시간 차이로 "가입된 아이디인지"를 알아내지 못하게 한다)
@@ -128,11 +121,17 @@ public class AuthService {
     @Transactional(noRollbackFor = ApiException.class)
     public AuthTokens login(LoginRequest request) {
         LocalDateTime now = LocalDateTime.now();
+        String loginId = request.loginId();
+
+        // 아이디 형식에 맞지 않으면 가입될 수 없는 아이디이므로 실패 횟수를 세지 않는다
+        boolean trackAttempts = LOGIN_ID_PATTERN.matcher(loginId).matches();
 
         // 잠긴 아이디는 비밀번호를 확인하지 않고 거부한다 (맞는 비밀번호여도)
-        loginAttemptService.checkNotLocked(request.loginId(), now);
+        if (trackAttempts) {
+            loginAttemptService.checkNotLocked(loginId, now);
+        }
 
-        MemberRow member = memberMapper.findByLoginId(request.loginId());
+        MemberRow member = memberMapper.findByLoginId(loginId);
 
         // 회원이 없어도 비교는 한다 (시간 차이로 가입 여부가 드러나지 않게)
         String hash = (member != null) ? member.getPassword() : dummyPasswordHash;
@@ -141,11 +140,13 @@ public class AuthService {
         // 보안: 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는다
         if (member == null || !matches) {
             // 실패 횟수를 세고, 이번이 5번째면 LOGIN_LOCKED로 바로 알린다
-            loginAttemptService.recordFailure(request.loginId(), now);
+            if (trackAttempts) {
+                loginAttemptService.recordFailure(loginId, now);
+            }
             throw new ApiException(ErrorCode.LOGIN_FAILED);
         }
 
-        loginAttemptService.reset(request.loginId());
+        loginAttemptService.reset(loginId);
         return issueTokens(member);
     }
 
@@ -155,7 +156,7 @@ public class AuthService {
         if (refreshToken == null || refreshToken.isBlank()) {
             throw new ApiException(ErrorCode.REFRESH_INVALID);
         }
-        String tokenHash = hash(refreshToken);
+        String tokenHash = SecureTokens.sha256(refreshToken);
 
         Long memberId = refreshTokenMapper.findMemberIdByValidToken(tokenHash, LocalDateTime.now());
 
@@ -176,7 +177,7 @@ public class AuthService {
     @Transactional
     public void logout(String refreshToken) {
         if (refreshToken != null && !refreshToken.isBlank()) {
-            refreshTokenMapper.deleteByToken(hash(refreshToken));
+            refreshTokenMapper.deleteByToken(SecureTokens.sha256(refreshToken));
         }
     }
 
@@ -185,27 +186,12 @@ public class AuthService {
         LocalDateTime now = LocalDateTime.now();
         refreshTokenMapper.deleteExpiredByMemberId(member.getMemberId(), now); // 만료된 토큰 정리
 
-        String refreshToken = newRefreshToken();
-        refreshTokenMapper.insert(member.getMemberId(), hash(refreshToken),
+        String refreshToken = SecureTokens.random(REFRESH_TOKEN_BYTES);
+        refreshTokenMapper.insert(member.getMemberId(), SecureTokens.sha256(refreshToken),
                 now.plus(jwtProvider.getRefreshTokenValidity()));
 
         String accessToken = jwtProvider.createAccessToken(member.getMemberId());
         return new AuthTokens(new AuthResponse(accessToken, MemberResponse.from(member)), refreshToken);
-    }
-
-    private String newRefreshToken() {
-        byte[] bytes = new byte[REFRESH_TOKEN_BYTES];
-        secureRandom.nextBytes(bytes);
-        return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
-    }
-
-    private static String hash(String value) {
-        try {
-            byte[] digest = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
-            return HexFormat.of().formatHex(digest);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("SHA-256을 사용할 수 없습니다.", e);
-        }
     }
 
     private static ApiException duplicated(ErrorCode code, String field) {
