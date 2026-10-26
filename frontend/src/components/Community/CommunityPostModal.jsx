@@ -87,7 +87,10 @@ export default function CommunityPostModal({
                 }
             } catch (requestError) {
                 if (isMounted) {
-                    setReactionError(requestError.message || "리액션 정보를 불러오지 못했습니다.");
+                    setReactionError(
+                        requestError.message ||
+                            t("community.postModal.reactionLoadError"),
+                    );
                 }
             } finally {
                 if (isMounted) {
@@ -102,7 +105,7 @@ export default function CommunityPostModal({
         return () => {
             isMounted = false;
         };
-    }, [postId]);
+    }, [postId, t]);
 
     useEffect(() => {
         if (!postId) return undefined;
@@ -126,7 +129,7 @@ export default function CommunityPostModal({
 
     async function handleLikeClick() {
         if (!currentMemberId) {
-            setReactionError("공감을 누르려면 로그인이 필요합니다.");
+            setReactionError(t("community.postModal.likeLoginRequired"));
             return;
         }
 
@@ -138,7 +141,10 @@ export default function CommunityPostModal({
                 : await likeCommunityPost(postId);
             setLikeInfo(response);
         } catch (requestError) {
-            setReactionError(requestError.message || "공감 처리에 실패했습니다.");
+            setReactionError(
+                requestError.message ||
+                    t("community.postModal.likeActionError"),
+            );
         } finally {
             setIsLikeSubmitting(false);
         }
@@ -146,7 +152,7 @@ export default function CommunityPostModal({
 
     async function handleRepostClick() {
         if (!currentMemberId) {
-            setReactionError("리포스트하려면 로그인이 필요합니다.");
+            setReactionError(t("community.postModal.repostLoginRequired"));
             return;
         }
 
@@ -158,7 +164,10 @@ export default function CommunityPostModal({
                 : await repostCommunityPost(postId);
             setRepostInfo(response);
         } catch (requestError) {
-            setReactionError(requestError.message || "리포스트 처리에 실패했습니다.");
+            setReactionError(
+                requestError.message ||
+                    t("community.postModal.repostActionError"),
+            );
         } finally {
             setIsRepostSubmitting(false);
         }
@@ -218,7 +227,9 @@ export default function CommunityPostModal({
                                     <img
                                         key={image.imageId ?? `${image.imageUrl}-${index}`}
                                         src={image.imageUrl}
-                                        alt={`게시글 사진 ${index + 1}`}
+                                        alt={t("community.postModal.imageAlt", {
+                                            index: index + 1,
+                                        })}
                                     />
                                 ))}
                             </div>
@@ -233,7 +244,9 @@ export default function CommunityPostModal({
                                 aria-pressed={likeInfo.likedByMe}
                             >
                                 <span aria-hidden="true">♡</span>
-                                {likeInfo.likedByMe ? "공감 취소" : "공감"}
+                                {likeInfo.likedByMe
+                                    ? t("community.postModal.unlike")
+                                    : t("community.postModal.like")}
                                 <strong>{likeInfo.likeCount}</strong>
                             </button>
                             <button
@@ -244,7 +257,9 @@ export default function CommunityPostModal({
                                 aria-pressed={repostInfo.repostedByMe}
                             >
                                 <span aria-hidden="true">↻</span>
-                                {repostInfo.repostedByMe ? "리포스트 취소" : "리포스트"}
+                                {repostInfo.repostedByMe
+                                    ? t("community.postModal.unrepost")
+                                    : t("community.postModal.repost")}
                                 <strong>{repostInfo.repostCount}</strong>
                             </button>
                             <span className="community-view-count">

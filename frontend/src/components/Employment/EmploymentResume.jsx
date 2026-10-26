@@ -7,6 +7,7 @@ import {
     getResumePhotoPreviewUrl,
     saveResumeDraft,
 } from "../../api/resumeApi.js";
+import { useTranslation } from "react-i18next";
 import ResumeLoadModal from "./ResumeLoadModal.jsx";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import {
@@ -22,26 +23,26 @@ const EMPTY_ROWS = Array.from({ length: 4 });
 const BASIC_SECTIONS = [
     {
         key: "education",
-        title: "학력",
-        columns:["학교명", "전공분야", "학위", "기간"],
+        titleKey: "education",
+        columnKeys: ["schoolName", "major", "degree", "period"],
         fields: ["schoolName", "major", "degree", "period"],
     },
     {
         key: "career",
-        title: "경력",
-        columns: ["근무처", "담당직무", "직위", "기간"],
+        titleKey: "career",
+        columnKeys: ["companyName", "jobDuty", "position", "period"],
         fields: ["companyName", "jobDuty", "position", "period"],
     },
     {
         key: "certificates",
-        title: "자격증",
-        columns: ["자격증명", "등급", "발급기관", "취득일"],
+        titleKey: "certificates",
+        columnKeys: ["certificateName", "grade", "issuer", "acquiredAt"],
         fields: ["name", "grade", "issuer", "acquiredAt"],
     },
     {
         key: "awards",
-        title: "수상내역",
-        columns: ["수상명", "등급", "수여기관", "수상일"],
+        titleKey: "awards",
+        columnKeys: ["awardName", "grade", "organization", "awardedAt"],
         fields: ["name", "grade", "organization", "awardedAt"],
     },
 ];
@@ -49,31 +50,26 @@ const BASIC_SECTIONS = [
 const BLIND_SECTIONS = [
     {
         key: "career",
-        title: "경력",
-        columns: ["직무 분야", "담당업무", "직위", "기간"],
+        titleKey: "career",
+        columnKeys: ["jobField", "jobDuty", "position", "period"],
         fields: ["jobField", "jobDuty", "position", "period"],
     },
     {
         key: "certificates",
-        title: "자격증",
-        columns: ["자격증명", "등급", "발급기관", "취득일"],
+        titleKey: "certificates",
+        columnKeys: ["certificateName", "grade", "issuer", "acquiredAt"],
         fields: ["name", "grade", "issuer", "acquiredAt"],
     },
     {
         key: "jobEducation",
-        title: "직무 관련 교육",
-        columns: ["교육 분야", "교육 과정", "수료 여부", "기간"],
+        titleKey: "jobEducation",
+        columnKeys: ["field", "courseName", "completionStatus", "period"],
         fields: ["field", "courseName", "completionStatus", "period"],
     },
 ];
 
 function createEmptyRows(fields) {
-    return Array.from(
-        { length: 4 },
-        () => Object.fromEntries(
-            fields.map((field) => [field, ""]),
-        ),
-    );
+    return Array.from({ length: 4 }, () => Object.fromEntries(fields.map((field) => [field, ""])));
 }
 
 function createInitialBasicResume() {
@@ -88,33 +84,13 @@ function createInitialBasicResume() {
             address: "",
         },
 
-        education: createEmptyRows([
-            "schoolName",
-            "major",
-            "degree",
-            "period",
-        ]),
+        education: createEmptyRows(["schoolName", "major", "degree", "period"]),
 
-        career: createEmptyRows([
-            "companyName",
-            "jobDuty",
-            "position",
-            "period",
-        ]),
+        career: createEmptyRows(["companyName", "jobDuty", "position", "period"]),
 
-        certificates: createEmptyRows([
-            "name",
-            "grade",
-            "issuer",
-            "acquiredAt",
-        ]),
+        certificates: createEmptyRows(["name", "grade", "issuer", "acquiredAt"]),
 
-        awards: createEmptyRows([
-            "name",
-            "grade",
-            "organization",
-            "awardedAt",
-        ]),
+        awards: createEmptyRows(["name", "grade", "organization", "awardedAt"]),
     };
 }
 
@@ -127,32 +103,18 @@ function createInitialBlindResume() {
             email: "",
         },
 
-        career: createEmptyRows([
-            "jobField",
-            "jobDuty",
-            "position",
-            "period",
-        ]),
+        career: createEmptyRows(["jobField", "jobDuty", "position", "period"]),
 
-        certificates: createEmptyRows([
-            "name",
-            "grade",
-            "issuer",
-            "acquiredAt",
-        ]),
+        certificates: createEmptyRows(["name", "grade", "issuer", "acquiredAt"]),
 
-        jobEducation: createEmptyRows([
-            "field",
-            "courseName",
-            "completionStatus",
-            "period",
-        ]),
+        jobEducation: createEmptyRows(["field", "courseName", "completionStatus", "period"]),
     };
 }
 
 // 한 구역은 요구사항에 맞춰 항상 4행의 빈 입력칸으로 보여 준다.
-function ResumeTable({ title, columns, fields, rows, onChange, })
-{
+function ResumeTable({ title, columns, fields, rows, onChange }) {
+    const { t } = useTranslation();
+
     return (
         <section className="resume-table-section">
             <h3>{title}</h3>
@@ -164,10 +126,7 @@ function ResumeTable({ title, columns, fields, rows, onChange, })
             </div>
 
             {rows.map((row, rowIndex) => (
-                <div
-                    className="resume-table-row"
-                    key={`${title}-${rowIndex}`}
-                >
+                <div className="resume-table-row" key={`${title}-${rowIndex}`}>
                     {columns.map((column, columnIndex) => {
                         const field = fields[columnIndex];
 
@@ -176,16 +135,12 @@ function ResumeTable({ title, columns, fields, rows, onChange, })
                                 key={field}
                                 type="text"
                                 value={row[field]}
-                                onChange={(event) => (
-                                    onChange(
-                                        rowIndex,
-                                        field,
-                                        event.target.value,
-                                    )
-                                )}
-                                aria-label={
-                                    `${title} ${rowIndex + 1}행 ${column}`
-                                }
+                                onChange={(event) => onChange(rowIndex, field, event.target.value)}
+                                aria-label={t("resume.table.cellAria", {
+                                    title,
+                                    row: rowIndex + 1,
+                                    column,
+                                })}
                             />
                         );
                     })}
@@ -203,178 +158,162 @@ function BasicPersonalInfo({
     onPhotoChange,
     onPhotoRemove,
 }) {
+    const { t } = useTranslation();
     return (
-    <section className="resume-personal-section">
-        <h3>인적사항</h3>
+        <section className="resume-personal-section">
+            <h3>{t("resume.personal.basicTitle")}</h3>
 
-        <div className="resume-personal-grid">
-            <div className="resume-photo-control">
-                <label className="resume-photo-slot">
-                    <input
-                        className="resume-photo-input"
-                        type="file"
-                        accept="image/*"
-                        onChange={onPhotoChange}
-                    />
+            <div className="resume-personal-grid">
+                <div className="resume-photo-control">
+                    <label className="resume-photo-slot">
+                        <input
+                            className="resume-photo-input"
+                            type="file"
+                            accept="image/*"
+                            onChange={onPhotoChange}
+                        />
 
-                    <div className="resume-photo-frame">
-                        {photoPreviewUrl && (
-                            <img
-                                src={photoPreviewUrl}
-                                alt="선택한 사진 미리보기"
-                            />
-                        )}
-                    </div>
+                        <div className="resume-photo-frame">
+                            {photoPreviewUrl && (
+                                <img
+                                    src={photoPreviewUrl}
+                                    alt={t("resume.personal.photoPreviewAlt")}
+                                />
+                            )}
+                        </div>
 
-                    {!photoPreviewUrl && <span>사진 선택</span>}
-                    <small>3 * 4cm</small>
-                </label>
+                        {!photoPreviewUrl && <span>{t("resume.personal.selectPhoto")}</span>}
+                        <small>3 * 4cm</small>
+                    </label>
 
-                {photoPreviewUrl && (
-                    <button
-                        type="button"
-                        className="button resume-photo-delete"
-                        onClick={onPhotoRemove}
-                        disabled={isRemovingPhoto}
-                    >
-                        {isRemovingPhoto ? "삭제 중..." : "삭제"}
-                    </button>
-                )}
+                    {photoPreviewUrl && (
+                        <button
+                            type="button"
+                            className="button resume-photo-delete"
+                            onClick={onPhotoRemove}
+                            disabled={isRemovingPhoto}
+                        >
+                            {isRemovingPhoto
+                                ? t("resume.personal.removingPhoto")
+                                : t("resume.personal.removePhoto")}
+                        </button>
+                    )}
+                </div>
+
+                <div className="resume-personal-fields">
+                    <label className="resume-name-field">
+                        <span>{t("resume.personal.name")}</span>
+
+                        <input
+                            type="text"
+                            placeholder={t("resume.personal.koreanNamePlaceholder")}
+                            value={personal.koreanName}
+                            onChange={(event) => onChange("koreanName", event.target.value)}
+                        />
+
+                        <input
+                            type="text"
+                            placeholder={t("resume.personal.englishNamePlaceholder")}
+                            value={personal.englishName}
+                            onChange={(event) => onChange("englishName", event.target.value)}
+                        />
+                    </label>
+
+                    <label>
+                        <span>{t("resume.personal.birthDate")}</span>
+                        <input
+                            type="text"
+                            value={personal.birthDate}
+                            onChange={(event) => onChange("birthDate", event.target.value)}
+                        />
+                    </label>
+
+                    <label>
+                        <span>{t("resume.personal.phone")}</span>
+                        <input
+                            type="tel"
+                            placeholder={t("resume.personal.phonePlaceholder")}
+                            value={personal.phone}
+                            onChange={(event) => onChange("phone", event.target.value)}
+                        />
+                    </label>
+
+                    <label>
+                        <span>{t("resume.personal.email")}</span>
+                        <input
+                            type="email"
+                            value={personal.email}
+                            onChange={(event) => onChange("email", event.target.value)}
+                        />
+                    </label>
+
+                    <label>
+                        <span>{t("resume.personal.address")}</span>
+                        <input
+                            type="text"
+                            value={personal.address}
+                            onChange={(event) => onChange("address", event.target.value)}
+                        />
+                    </label>
+                </div>
             </div>
-
-            <div className="resume-personal-fields">
-                <label className="resume-name-field">
-                    <span>성명</span>
-
-                    <input
-                        type="text"
-                        placeholder="(한글)"
-                        value={personal.koreanName}
-                        onChange={(event) => (
-                            onChange("koreanName", event.target.value)
-                        )}
-                    />
-
-                    <input
-                        type="text"
-                        placeholder="(영문)"
-                        value={personal.englishName}
-                        onChange={(event) => (
-                            onChange("englishName", event.target.value)
-                        )}
-                    />
-                </label>
-
-                <label>
-                    <span>생년월일</span>
-                    <input
-                        type="text"
-                        value={personal.birthDate}
-                        onChange={(event) => (
-                            onChange("birthDate", event.target.value)
-                        )}
-                    />
-                </label>
-
-                <label>
-                    <span>연락처</span>
-                    <input
-                        type="tel"
-                        placeholder="휴대전화"
-                        value={personal.phone}
-                        onChange={(event) => (
-                            onChange("phone", event.target.value)
-                        )}
-                    />
-                </label>
-
-                <label>
-                    <span>이메일</span>
-                    <input
-                        type="email"
-                        value={personal.email}
-                        onChange={(event) => (
-                            onChange("email", event.target.value)
-                        )}
-                    />
-                </label>
-
-                <label>
-                    <span>주소</span>
-                    <input
-                        type="text"
-                        value={personal.address}
-                        onChange={(event) => (
-                            onChange("address", event.target.value)
-                        )}
-                    />
-                </label>
-            </div>
-        </div>
-    </section>
+        </section>
     );
 }
 
 function BlindPersonalInfo({ personal, onChange }) {
+    const { t } = useTranslation();
+
     return (
-    <section className="resume-personal-section">
-        <h3>지원 정보</h3>
+        <section className="resume-personal-section">
+            <h3>{t("resume.personal.blindTitle")}</h3>
 
-        <div className="resume-blind-fields">
-            <label>
-                <span>접수번호</span>
-                <input
-                    type="text"
-                    value={personal.receiptNumber}
-                    onChange={(event) => (
-                        onChange("receiptNumber", event.target.value)
-                    )}
-                />
-            </label>
+            <div className="resume-blind-fields">
+                <label>
+                    <span>{t("resume.personal.receiptNumber")}</span>
+                    <input
+                        type="text"
+                        value={personal.receiptNumber}
+                        onChange={(event) => onChange("receiptNumber", event.target.value)}
+                    />
+                </label>
 
-            <label>
-                <span>지원 직무</span>
-                <input
-                    type="text"
-                    value={personal.targetJob}
-                    onChange={(event) => (
-                        onChange("targetJob", event.target.value)
-                    )}
-                />
-            </label>
+                <label>
+                    <span>{t("resume.personal.targetJob")}</span>
+                    <input
+                        type="text"
+                        value={personal.targetJob}
+                        onChange={(event) => onChange("targetJob", event.target.value)}
+                    />
+                </label>
 
-            <label>
-                <span>연락처</span>
-                <input
-                    type="tel"
-                    placeholder="휴대전화"
-                    value={personal.phone}
-                    onChange={(event) => (
-                        onChange("phone", event.target.value)
-                    )}
-                />
-            </label>
+                <label>
+                    <span>{t("resume.personal.phone")}</span>
+                    <input
+                        type="tel"
+                        placeholder={t("resume.personal.phonePlaceholder")}
+                        value={personal.phone}
+                        onChange={(event) => onChange("phone", event.target.value)}
+                    />
+                </label>
 
-            <label>
-                <span>이메일</span>
-                <input
-                    type="email"
-                    value={personal.email}
-                    onChange={(event) => (
-                        onChange("email", event.target.value)
-                    )}
-                />
-            </label>
-        </div>
-    </section>
+                <label>
+                    <span>{t("resume.personal.email")}</span>
+                    <input
+                        type="email"
+                        value={personal.email}
+                        onChange={(event) => onChange("email", event.target.value)}
+                    />
+                </label>
+            </div>
+        </section>
     );
 }
 
 // 저장·불러오기·인쇄는 다음 작업에서 연결하고, 여기서는 양식과 탭만 제공한다.
 export default function EmploymentResume() {
-    const memberId = useAuthStore(
-        (state) => state.member?.memberId,
-    );
+    const { t } = useTranslation();
+    const memberId = useAuthStore((state) => state.member?.memberId);
 
     const [resumeType, setResumeType] = useState("basic");
     const [isSaving, setIsSaving] = useState(false);
@@ -389,13 +328,9 @@ export default function EmploymentResume() {
     const [hasTemporaryBasicPhoto, setHasTemporaryBasicPhoto] = useState(false);
 
     // 기본,블라인드 이력서의 입력값을 화면이 열려 있는 동안 보관
-    const [basicResume, setBasicResume] = useState(
-        createInitialBasicResume,
-    );
+    const [basicResume, setBasicResume] = useState(createInitialBasicResume);
 
-    const [blindResume, setBlindResume] = useState(
-        createInitialBlindResume,
-    );
+    const [blindResume, setBlindResume] = useState(createInitialBlindResume);
 
     const [restoredMemberId, setRestoredMemberId] = useState(null);
 
@@ -423,13 +358,9 @@ export default function EmploymentResume() {
 
         setBasicResumeId(savedDraft?.basicResumeId ?? null);
         setBasicPhotoUrl(savedDraft?.basicPhotoUrl ?? null);
-        setHasTemporaryBasicPhoto(
-            Boolean(savedDraft?.hasTemporaryBasicPhoto),
-        );
+        setHasTemporaryBasicPhoto(Boolean(savedDraft?.hasTemporaryBasicPhoto));
 
-        setResumeType(
-            savedDraft?.resumeType === "blind" ? "blind" : "basic",
-        );
+        setResumeType(savedDraft?.resumeType === "blind" ? "blind" : "basic");
         setBasicPhotoFile(null);
         setRestoredMemberId(memberId);
     }, [memberId]);
@@ -441,8 +372,7 @@ export default function EmploymentResume() {
         }
 
         // blol: 미리보기 주소는 새로고침 뒤 무효라 저장하지 않음.
-        const { photoPreviewUrl, ...basicResumeWithoutPreview } =
-            basicResume;
+        const { photoPreviewUrl, ...basicResumeWithoutPreview } = basicResume;
 
         const draftToSave = {
             resumeType,
@@ -469,10 +399,10 @@ export default function EmploymentResume() {
     // 저장 전 선택한 사진도 새로고침 뒤 IndexedDB에서 복원한다.
     useEffect(() => {
         if (
-            !memberId
-            || restoredMemberId !== memberId
-            || !hasTemporaryBasicPhoto
-            || basicPhotoFile
+            !memberId ||
+            restoredMemberId !== memberId ||
+            !hasTemporaryBasicPhoto ||
+            basicPhotoFile
         ) {
             return;
         }
@@ -505,23 +435,18 @@ export default function EmploymentResume() {
         return () => {
             isCurrent = false;
         };
-    }, [
-        memberId,
-        restoredMemberId,
-        hasTemporaryBasicPhoto,
-        basicPhotoFile,
-    ]);
+    }, [memberId, restoredMemberId, hasTemporaryBasicPhoto, basicPhotoFile]);
 
     // 저장된 사진은 보호 API를 통해서만 다시 미리보기 주소로 바꾼다.
     useEffect(() => {
         if (
-            !memberId
-            || restoredMemberId !== memberId
-            || !basicResumeId
-            || !basicPhotoUrl
-            || basicPhotoFile
-            || basicResume.photoPreviewUrl
-            || hasTemporaryBasicPhoto
+            !memberId ||
+            restoredMemberId !== memberId ||
+            !basicResumeId ||
+            !basicPhotoUrl ||
+            basicPhotoFile ||
+            basicResume.photoPreviewUrl ||
+            hasTemporaryBasicPhoto
         ) {
             return;
         }
@@ -587,9 +512,7 @@ export default function EmploymentResume() {
             await writeResumeTemporaryPhoto(memberId, selectedFile);
             setHasTemporaryBasicPhoto(true);
         } catch {
-            setSaveMessage(
-                "선택한 사진을 임시 저장하지 못했습니다.",
-            );
+            setSaveMessage(t("resume.messages.temporaryPhotoSaveFailed"));
         }
     }
 
@@ -619,7 +542,7 @@ export default function EmploymentResume() {
 
             setBasicPhotoUrl(null);
             setHasTemporaryBasicPhoto(false);
-            setSaveMessage("사진을 삭제했습니다.");
+            setSaveMessage(t("resume.messages.photoDeleted"));
         } catch {
             // 서버 삭제가 실패한 경우에만 원래 화면 상태로 되돌린다.
             setBasicPhotoUrl(previousPhotoUrl);
@@ -629,7 +552,7 @@ export default function EmploymentResume() {
                 ...previousResume,
                 photoPreviewUrl: previousPhotoPreviewUrl,
             }));
-            setSaveMessage("사진을 삭제하지 못했습니다. 다시 시도해주세요.");
+            setSaveMessage(t("resume.messages.photoDeleteFailed"));
         } finally {
             setIsRemovingPhoto(false);
         }
@@ -654,12 +577,8 @@ export default function EmploymentResume() {
 
         setResume((previousResume) => ({
             ...previousResume,
-            [sectionKey]: previousResume[sectionKey].map(
-                (row, currentRowIndex) => (
-                    currentRowIndex === rowIndex
-                        ? {...row, [field]: value}
-                        : row
-                ),
+            [sectionKey]: previousResume[sectionKey].map((row, currentRowIndex) =>
+                currentRowIndex === rowIndex ? { ...row, [field]: value } : row,
             ),
         }));
     }
@@ -668,18 +587,16 @@ export default function EmploymentResume() {
         setIsSaving(true);
         setSaveMessage("");
 
-        try{
+        try {
             const savedDraft = await saveResumeDraft({
                 resumeType,
                 resume: activeResume,
                 photoFile: isBlind ? null : basicPhotoFile,
             });
 
-            const resumeName = isBlind
-                ? "블라인드 채용 이력서"
-                : "기본 이력서";
+            const resumeName = isBlind ? t("resume.page.blindTab") : t("resume.page.basicTab");
 
-            setSaveMessage(`${resumeName}를 저장했습니다.`);
+            setSaveMessage(t("resume.messages.saved", { resumeName }));
 
             if (!isBlind) {
                 setBasicResumeId(savedDraft.id);
@@ -698,7 +615,7 @@ export default function EmploymentResume() {
                 setBasicPhotoFile(null);
             }
         } catch {
-            setSaveMessage("저장하지 못했습니다. 다시 시도해주세요.");
+            setSaveMessage(t("resume.messages.saveFailed"));
         } finally {
             setIsSaving(false);
         }
@@ -715,9 +632,7 @@ export default function EmploymentResume() {
             setSavedDrafts(drafts);
         } catch {
             setIsLibraryOpen(false);
-            setSaveMessage(
-                "저장한 이력서 목록을 불러오지 못했습니다.",
-            );
+            setSaveMessage(t("resume.messages.libraryLoadFailed"));
         } finally {
             setIsLoadingDrafts(false);
         }
@@ -729,27 +644,25 @@ export default function EmploymentResume() {
         try {
             const selectedDraft = await getResumeDraft(draftId);
 
-            if(!selectedDraft) {
-                throw new Error("저장한 이력서를 찾을 수 없습니다.");
+            if (!selectedDraft) {
+                throw new Error(t("resume.messages.draftNotFound"));
             }
             const resumeWithPreview = {
                 ...selectedDraft.resume,
             };
 
-            if (
-                selectedDraft.resumeType === "basic"
-                && selectedDraft.photoUrl
-            ) {
+            if (selectedDraft.resumeType === "basic" && selectedDraft.photoUrl) {
                 try {
-                    resumeWithPreview.photoPreviewUrl =
-                        await getResumePhotoPreviewUrl(selectedDraft.id);
+                    resumeWithPreview.photoPreviewUrl = await getResumePhotoPreviewUrl(
+                        selectedDraft.id,
+                    );
                 } catch {
                     // 사진 파일이 없거나 접근할 수 없어도 이력서 본문은 불러온다.
                     resumeWithPreview.photoPreviewUrl = "";
                 }
             }
 
-            if(selectedDraft.resumeType === "blind") {
+            if (selectedDraft.resumeType === "blind") {
                 setBlindResume(resumeWithPreview);
                 setResumeType("blind");
             } else {
@@ -761,11 +674,9 @@ export default function EmploymentResume() {
             }
 
             setIsLibraryOpen(false);
-            setSaveMessage("저장한 이력서를 불러왔습니다.");
+            setSaveMessage(t("resume.messages.draftLoaded"));
         } catch {
-            setSaveMessage(
-                "저장한 이력서를 불러오지 못했습니다.",
-            );
+            setSaveMessage(t("resume.messages.draftLoadFailed"));
         } finally {
             setIsLoadingDrafts(false);
         }
@@ -776,91 +687,101 @@ export default function EmploymentResume() {
         window.print();
     }
 
-    return <div className="page-stack employment-resume-page">
-        <Banner title="취업 준비자료" description="지원 방식에 맞는 A4 이력서를 작성하고 저장하거나 출력하세요." />
-        <div className="employment-resume-tabs" role="tablist" aria-label="이력서 양식 선택">
-            <button type="button" role="tab"
-                    aria-selected={!isBlind} className={!isBlind ? "is-active" : ""}
-                    onClick={() => setResumeType("basic")}>기본 이력서
-            </button>
-            <button type="button" role="tab"
-                    aria-selected={isBlind} className={isBlind ? "is-active" : ""}
-                    onClick={() => setResumeType("blind")}>블라인드 채용 이력서
-            </button>
-        </div>
-        
-        <article className="employment-resume-sheet" role="tabpanel">
-            <header className="employment-resume-sheet-title">
-                <h2>{isBlind ? "블라인드 채용 이력서" : "이력서"}</h2>
-            </header>{isBlind ? (
-                <BlindPersonalInfo
-                    personal={blindResume.personal}
-                    onChange={handleBlindPersonalChange}
-                />
-        ) : (
-            <BasicPersonalInfo
-                personal={basicResume.personal}
-                photoPreviewUrl={basicResume.photoPreviewUrl}
-                isRemovingPhoto={isRemovingPhoto}
-                onChange={handleBasicPersonalChange}
-                onPhotoChange={handleBasicPhotoChange}
-                onPhotoRemove={handleBasicPhotoRemove}
-            />
-        )}
-
-            {sections.map(({ key, title, columns, fields }) => (
-                <ResumeTable
-                    key={key}
-                    title={title}
-                    columns={columns}
-                    fields={fields}
-                    rows={activeResume[key]}
-                    onChange={(rowIndex, field, value) => (
-                        handleTableChange(key, rowIndex, field, value)
-                    )}
-                />
-            ))}
-        </article>
-        <div className="employment-resume-actions">
-            <div>
+    return (
+        <div className="page-stack employment-resume-page">
+            <Banner title={t("resume.page.title")} description={t("resume.page.description")} />
+            <div
+                className="employment-resume-tabs"
+                role="tablist"
+                aria-label={t("resume.page.tabListAria")}
+            >
                 <button
                     type="button"
-                    className="button button-primary"
-                    onClick={handleSave}
-                    disabled={isSaving}
+                    role="tab"
+                    aria-selected={!isBlind}
+                    className={!isBlind ? "is-active" : ""}
+                    onClick={() => setResumeType("basic")}
                 >
-                    {isSaving ? "저장 중..." : "저장"}
+                    {t("resume.page.basicTab")}
                 </button>
                 <button
                     type="button"
-                    className="button"
-                    onClick={handleOpenLibrary}
+                    role="tab"
+                    aria-selected={isBlind}
+                    className={isBlind ? "is-active" : ""}
+                    onClick={() => setResumeType("blind")}
                 >
-                    불러오기
-                </button>
-                <button
-                    type="button"
-                    className="button"
-                    onClick={handlePrint}
-                >
-                    인쇄/출력
+                    {t("resume.page.blindTab")}
                 </button>
             </div>
-            <button type="button" className="button">한국어로 변환</button>
+
+            <article className="employment-resume-sheet" role="tabpanel">
+                <header className="employment-resume-sheet-title">
+                    <h2>
+                        {isBlind
+                            ? t("resume.page.blindSheetTitle")
+                            : t("resume.page.basicSheetTitle")}
+                    </h2>
+                </header>
+                {isBlind ? (
+                    <BlindPersonalInfo
+                        personal={blindResume.personal}
+                        onChange={handleBlindPersonalChange}
+                    />
+                ) : (
+                    <BasicPersonalInfo
+                        personal={basicResume.personal}
+                        photoPreviewUrl={basicResume.photoPreviewUrl}
+                        isRemovingPhoto={isRemovingPhoto}
+                        onChange={handleBasicPersonalChange}
+                        onPhotoChange={handleBasicPhotoChange}
+                        onPhotoRemove={handleBasicPhotoRemove}
+                    />
+                )}
+
+                {sections.map(({ key, titleKey, columnKeys, fields }) => (
+                    <ResumeTable
+                        key={key}
+                        title={t(`resume.sections.${titleKey}`)}
+                        columns={columnKeys.map((columnKey) => t(`resume.columns.${columnKey}`))}
+                        fields={fields}
+                        rows={activeResume[key]}
+                        onChange={(rowIndex, field, value) =>
+                            handleTableChange(key, rowIndex, field, value)
+                        }
+                    />
+                ))}
+            </article>
+            <div className="employment-resume-actions">
+                <div>
+                    <button
+                        type="button"
+                        className="button button-primary"
+                        onClick={handleSave}
+                        disabled={isSaving}
+                    >
+                        {isSaving ? t("resume.actions.saving") : t("resume.actions.save")}
+                    </button>
+                    <button type="button" className="button" onClick={handleOpenLibrary}>
+                        {t("resume.actions.load")}
+                    </button>
+                    <button type="button" className="button" onClick={handlePrint}>
+                        {t("resume.actions.print")}
+                    </button>
+                </div>
+                <button type="button" className="button">
+                    {t("resume.actions.translateToKorean")}
+                </button>
+            </div>
+
+            <ResumeLoadModal
+                isOpen={isLibraryOpen}
+                drafts={savedDrafts}
+                isLoading={isLoadingDrafts}
+                onClose={() => setIsLibraryOpen(false)}
+                onSelect={handleSelectDraft}
+            />
+            {saveMessage && <p className="employment-resume-save-message">{saveMessage}</p>}
         </div>
-
-        <ResumeLoadModal
-            isOpen={isLibraryOpen}
-            drafts={savedDrafts}
-            isLoading={isLoadingDrafts}
-            onClose={() => setIsLibraryOpen(false)}
-            onSelect={handleSelectDraft}
-        />
-        {saveMessage && (
-            <p className="employment-resume-save-message">
-                {saveMessage}
-            </p>
-        )}
-    </div>;
-
+    );
 }

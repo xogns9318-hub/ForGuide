@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 @ExtendWith(MockitoExtension.class)
 class CommunityServiceTest {
@@ -28,13 +29,21 @@ class CommunityServiceTest {
 
     @Test
     void 작성자_본인은_게시글을_삭제할_수_있다() {
-        CommunityPostResponse post = postOf(1L);
-        when(communityMapper.findPostById(10L)).thenReturn(post);
-        when(communityMapper.deletePost(10L, 1L)).thenReturn(1);
+        // Mockito 단위 테스트에서도 삭제 뒤 처리 등록에 필요한 동기화 상태를 준비한다.
+        TransactionSynchronizationManager.initSynchronization();
 
-        communityService.deletePost(10L, 1L);
+        try {
+            CommunityPostResponse post = postOf(1L);
+            when(communityMapper.findPostById(10L)).thenReturn(post);
+            when(communityMapper.deletePost(10L, 1L)).thenReturn(1);
 
-        verify(communityMapper).deletePost(10L, 1L);
+            communityService.deletePost(10L, 1L);
+
+            verify(communityMapper).deletePost(10L, 1L);
+        } finally {
+            // 다음 테스트에 현재 스레드의 동기화 상태가 남지 않게 정리한다.
+            TransactionSynchronizationManager.clearSynchronization();
+        }
     }
 
     @Test

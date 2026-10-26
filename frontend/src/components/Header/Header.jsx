@@ -75,9 +75,6 @@ export default function Header({ isLoggedIn = false, onLogout }) {
     const { pathname } = useLocation();
     const { t } = useTranslation();
     const navigationId = useId();
-    // 커뮤니티의 숲·도시 배경은 목록과 상세 화면에서 모두 유지한다.
-    const isCommunityPage = pathname.startsWith("/service/community");
-
     // 넓은 화면에서는 한 메뉴만 펼침
     const [openMenu, setOpenMenu] = useState(null);
 
@@ -392,7 +389,6 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                 ref={headerRef}
                 className={[
                     styles.header,
-                    isCommunityPage ? styles.community : "",
                     isDesktopMenuOpen ? styles.expanded : "",
                 ].join(" ")}
                 style={{ "--header-height": `${headerHeight}px` }}
