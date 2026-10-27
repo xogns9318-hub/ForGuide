@@ -16,6 +16,8 @@ import com.example.forguide.community.dto.CommunityCommentResponse;
 import com.example.forguide.community.dto.CommunityPostLikeResponse;
 import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
 import com.example.forguide.community.dto.CommunityPostRepostResponse;
+import com.example.forguide.translation.cache.TranslationCache;
+import com.example.forguide.translation.cache.TranslationCacheResource;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -39,6 +41,7 @@ public class CommunityService {
 
     private final CommunityMapper communityMapper;
     private final CommunityImageStorage communityImageStorage;
+    private final TranslationCache translationCache;
 
     // 게시글 전체 목록 조회
     public List<CommunityPostResponse> getAllPosts() {
@@ -244,6 +247,15 @@ public class CommunityService {
                 throw new IllegalStateException("게시글을 수정하지 못했습니다.");
             }
 
+            translationCache.evictAfterCommit(
+                    new TranslationCacheResource(
+                            "community-post",
+                            post.getPostId(),
+                            post.getContentVersion()
+                    ),
+                    post.getLanguage()
+            );
+
             for (Long imageId : imageIdsToRemove) {
                 if (communityMapper.deletePostImage(postId, imageId) != 1) {
                     throw new IllegalStateException("게시글 사진을 삭제하지 못했습니다.");
@@ -359,6 +371,11 @@ public class CommunityService {
         List<CommunityPostImageResponse> images =
                 communityMapper.findImagesByPostIds(List.of(postId));
 
+        List<CommunityCommentResponse> comments =
+                communityMapper.findCommentsByPostId(postId, null);
+
+        communityMapper.deletePostLikesByPostId(postId);
+
         communityMapper.deletePostLikesByPostId(postId);
         // community_comments의 게시글 외래키는 CASCADE가 아니므로 먼저 정리한다.
         communityMapper.deleteCommentsByPostId(postId);
@@ -368,6 +385,25 @@ public class CommunityService {
         if (deletedCount == 0) {
             throw new ApiException(ErrorCode.NOT_FOUND, "게시글을 찾을 수 없습니다.");
         }
+        translationCache.evictAfterCommit(
+                new TranslationCacheResource(
+                        "community-post",
+                        post.getPostId(),
+                        post.getContentVersion()
+                ),
+                post.getLanguage()
+        );
+
+        comments.forEach(comment ->
+                translationCache.evictAfterCommit(
+                        new TranslationCacheResource(
+                                "community-comment",
+                                comment.getCommentId(),
+                                comment.getContentVersion()
+                        ),
+                        "auto"
+                )
+        );
 
         // DB 삭제가 최종 저장된 경우에만 실제 사진 파일을 삭제
         // DB 작업이 실패해 롤백되면 기존 사진 파일은 그대로 보존
@@ -525,6 +561,27 @@ public class CommunityService {
         return communityMapper.findCommentsByPostId(postId, memberId);
     }
 
+    // 공개 댓글 번역 전, 댓글이 해당 게시글에 속하는지 확인한다.
+    public CommunityCommentResponse getCommentForTranslation(
+            Long postId,
+            Long commentId
+    ) {
+        CommunityCommentResponse comment = getCommentByPostId(
+                postId,
+                commentId
+        );
+
+        // 이미 삭제된 댓글의 내용은 번역 대상으로 사용하지 않음.
+        if (comment.isDeleted()) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "삭제된 댓글을 번역할 수 없습니다."
+            );
+        }
+
+        return comment;
+    }
+
     // 로그인 회원 댓글 작성
     @Transactional
     public void createComment(Long postId, Long memberId, CommunityCommentCreateRequest request)
@@ -667,6 +724,15 @@ public class CommunityService {
         if (updatedCount != 1) {
             throw new IllegalStateException("댓글을 수정하지 못했습니다.");
         }
+
+        translationCache.evictAfterCommit(
+                new TranslationCacheResource(
+                        "community-comment",
+                        comment.getCommentId(),
+                        comment.getContentVersion()
+                ),
+                "auto"
+        );
     }
 
     // 댓글 작성자 또는 원문 게시글 작성자만 삭제할 수 있다.
@@ -700,5 +766,14 @@ public class CommunityService {
         if (changedCount != 1) {
             throw new IllegalStateException("댓글을 삭제하지 못했습니다.");
         }
+
+        translationCache.evictAfterCommit(
+                new TranslationCacheResource(
+                        "community-comment",
+                        comment.getCommentId(),
+                        comment.getContentVersion()
+                ),
+                "auto"
+        );
     }
 }

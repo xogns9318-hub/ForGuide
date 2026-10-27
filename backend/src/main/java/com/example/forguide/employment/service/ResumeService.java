@@ -6,12 +6,17 @@ import com.example.forguide.employment.dto.ResumeResponse;
 import com.example.forguide.employment.image.ResumeImageStorage;
 import com.example.forguide.employment.mapper.ResumeMapper;
 import com.example.forguide.employment.dto.ResumeSaveRequest;
+import com.example.forguide.translation.dto.TranslationRequest;
+import com.example.forguide.translation.dto.TranslationResponse;
+import com.example.forguide.translation.service.TranslationService;
 import tools.jackson.databind.ObjectMapper;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.List;
 import java.nio.file.Path;
@@ -23,21 +28,46 @@ public class ResumeService {
     private final ResumeMapper resumeMapper;
     private final ResumeImageStorage resumeImageStorage;
     private final ObjectMapper objectMapper;
+    private final TranslationService translationService;
 
     public ResumeService(
             ResumeMapper resumeMapper,
             ResumeImageStorage resumeImageStorage,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper,
+            TranslationService translationService
     ) {
         this.resumeMapper = resumeMapper;
         this.resumeImageStorage = resumeImageStorage;
         this.objectMapper = objectMapper;
+        this.translationService = translationService;
     }
 
     // 로그인한 회원의 일반·블라인드 이력서 목록만 조회
     public List<ResumeResponse> getMyResumes(Long memberId) {
         requireLogin(memberId);
         return resumeMapper.findByMemberId(memberId);
+    }
+
+    /*
+        이력서의 한 입력값을 한국어 초안으로 번역한다.
+        개인정보가 포함될 수 있으므로 Redis 캐시를 사용하지 않는다.
+     */
+
+    @Transactional(propagation =  Propagation.NOT_SUPPORTED)
+    public TranslationResponse translateMyResumeText(
+            Long memberId,
+            TranslationRequest request
+    ) {
+        requireLogin(memberId);
+
+        if (!"ko".equals(request.getTargetLanguage())) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "이력서 번역은 한국어로만 요청할 수 있습니다."
+            );
+        }
+
+        return translationService.translatePrivateText(request);
     }
 
     // 로그인한 회원이 작성한 이력서의 증명사진만 조회

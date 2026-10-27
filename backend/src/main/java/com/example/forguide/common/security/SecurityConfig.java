@@ -58,6 +58,18 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, CommunityImageStorage.URL_PREFIX + "**").permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/posts/**").permitAll()
+                        // 공개 게시글 번역은 비로그인 방문자도 사용할 수 있다.
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/v1/community/posts/*/translation"
+                        ).permitAll()
+
+                        // 공개 댓글 번역은 비로그인 방문다ㅗ 사용할 수 있다.
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/v1/community/posts/*/comments/*/translation"
+                        ).permitAll()
+
                         // 게시글·댓글 작성자의 공개 프로필 미리보기는 로그인 없이도 조회 가능
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/members/*/preview").permitAll()
                         // 프로필 카드에서 작성글 목록을 보는 기능도 공개 조회로 제공한다.

@@ -203,6 +203,11 @@ const th = {
             unlike: "ยกเลิกถูกใจ",
             repost: "รีโพสต์",
             unrepost: "ยกเลิกรีโพสต์",
+            showTranslation: "ดูคำแปล",
+            hideTranslation: "ซ่อนคำแปล",
+            translating: "กำลังแปล...",
+            aiTranslation: "คำแปลโดย AI",
+            translationError: "ไม่สามารถแปลโพสต์ได้ กรุณาลองใหม่อีกครั้งในภายหลัง",
         },
         feedback: {
             popularLoadError: "ไม่สามารถโหลดโพสต์ยอดนิยมได้",
@@ -265,6 +270,11 @@ const th = {
             cancel: "ยกเลิก",
             delete: "ลบ",
             deleting: "กำลังลบ",
+            showTranslation: "ดูคำแปล",
+            hideTranslation: "ซ่อนคำแปล",
+            translating: "กำลังแปล...",
+            aiTranslation: "คำแปลโดย AI",
+            translationError: "ไม่สามารถแปลความคิดเห็นได้ กรุณาลองใหม่อีกครั้งในภายหลัง",
             submit: "ส่ง",
             submitting: "กำลังส่ง",
             replyPlaceholder: "เขียนตอบกลับถึง {{nickname}}",
@@ -338,13 +348,33 @@ const th = {
             basicSheetTitle: "เรซูเม่",
             blindSheetTitle: "เรซูเม่สมัครงานแบบไม่เปิดเผยข้อมูลส่วนตัว",
         },
+
         actions: {
             save: "บันทึก",
             saving: "กำลังบันทึก...",
             load: "โหลด",
             print: "พิมพ์",
-            translateToKorean: "แปลเป็นภาษาเกาหลี",
+            translateToKorean: "สร้างร่างภาษาเกาหลี",
         },
+
+        translation: {
+            eyebrow: "ร่างคำแปลด้วย AI",
+            title: "ตรวจสอบคำแปลภาษาเกาหลี",
+            description: "ตรวจสอบและแก้ไขร่างคำแปลก่อนนำไปใช้",
+            original: "ข้อความต้นฉบับ",
+            koreanDraft: "ร่างคำแปลภาษาเกาหลี",
+            translating: "กำลังสร้างร่างคำแปลภาษาเกาหลี",
+            translate: "แปลเป็นภาษาเกาหลี",
+            cancel: "ยกเลิก",
+            retry: "ลองอีกครั้ง",
+            apply: "ใช้คำแปลนี้",
+            closeAria: "ปิดหน้าตรวจสอบคำแปล",
+            failed: "ไม่สามารถแปลได้ โปรดลองอีกครั้งในภายหลัง",
+            progress: "กำลังตรวจสอบรายการ {{current}} / {{total}}",
+            applyAndNext: "ใช้และดำเนินการต่อ",
+            noContent: "กรุณากรอกเนื้อหาที่ต้องการแปลเป็นภาษาเกาหลีก่อน",
+        },
+
         personal: {
             basicTitle: "ข้อมูลส่วนบุคคล",
             blindTitle: "ข้อมูลการสมัคร",
@@ -363,6 +393,7 @@ const th = {
             receiptNumber: "หมายเลขรับสมัคร",
             targetJob: "ตำแหน่งที่สมัคร",
         },
+
         sections: {
             education: "การศึกษา",
             career: "ประสบการณ์ทำงาน",
@@ -370,6 +401,7 @@ const th = {
             awards: "รางวัล",
             jobEducation: "การอบรมที่เกี่ยวข้องกับงาน",
         },
+
         columns: {
             schoolName: "ชื่อสถานศึกษา",
             major: "สาขาวิชา",

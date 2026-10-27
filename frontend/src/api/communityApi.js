@@ -11,6 +11,12 @@ export async function getCommunityPost(postId) {
     return client.get(`/community/posts/${postId}`);
 }
 
+// 공개 게시글을 현재 선택 언어로 번역한다.
+// 원문은 postId를 통해 서버가 직접 조회한다.
+export async function translateCommunityPost(postId, targetLanguage) {
+    return client.post(`/community/posts/${postId}/translation`, { targetLanguage });
+}
+
 // 무한 스크롤에 사용할 게시글 목록을 가져온다.
 // 첫 요청에는 커서 없이 size만 보내고, 다음 요청부터 마지막 게시글
 // 작성 시간과 번호를 함께 보내자
@@ -22,7 +28,6 @@ export async function getCommunityPostsByCursor({
     topic = null,
     size = 10,
 } = {}) {
-
     //URLSearchParams는 쿼리 파라미터를 안전하게 구성하고 인코딩
     const params = new URLSearchParams();
     params.set("size", String(size));
@@ -68,6 +73,14 @@ export async function updateCommunityPost(postId, formData) {
 // 게시글의 댓글 목록 조회
 export async function getCommunityComments(postId) {
     return client.get(`/community/posts/${postId}/comments`);
+}
+
+// 공개 댓글을 현재 선택 언어로 번역한다.
+// 댓글 원문은 postID,commentId를 이용해 서버가 직접 조회한다.
+export async function translateCommunityComment(postId, commentId, targetLanguage) {
+    return client.post(`/community/posts/${postId}/comments/${commentId}/translation`, {
+        targetLanguage,
+    });
 }
 
 // 로그인한 사용자의 댓글·답글 작성. parentCommentId가 없으면 일반 댓글이다.

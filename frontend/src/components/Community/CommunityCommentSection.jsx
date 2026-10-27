@@ -6,6 +6,7 @@ import {
     likeCommunityComment,
     unlikeCommunityComment,
     updateCommunityComment,
+    translateCommunityComment,
 } from "../../api/communityApi.js";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -15,10 +16,9 @@ import { confirm } from "../Modal/modal.js";
 
 // 서버가 반환한 평면 댓글 목록을 부모-답글 순서의 화면 목록으로 바꾼다.
 function buildCommentRows(comments) {
-    const nodesById = new Map(comments.map((comment) => [
-        comment.commentId,
-        { comment, children: [] },
-    ]));
+    const nodesById = new Map(
+        comments.map((comment) => [comment.commentId, { comment, children: [] }]),
+    );
     const roots = [];
 
     comments.forEach((comment) => {
@@ -56,13 +56,18 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     const [deletingCommentId, setDeletingCommentId] = useState(null);
     const [error, setError] = useState("");
     const [writeError, setWriteError] = useState("");
+    const [commentTranslations, setCommentTranslations] = useState({});
+    const [visibleTranslationIds, setVisibleTranslationIds] = useState(new Set());
+    const [translatingCommentId, setTranslatingCommentId] = useState(null);
+    const [translationErrors, setTranslationErrors] = useState({});
     const replyTextareaRef = useRef(null);
 
     const accessToken = useAuthStore((state) => state.accessToken);
     const member = useAuthStore((state) => state.member);
     const navigate = useNavigate();
     const location = useLocation();
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const targetLanguage = i18n.resolvedLanguage || i18n.language || "ko";
     const commentRows = useMemo(() => buildCommentRows(comments), [comments]);
 
     function moveToLogin() {
@@ -93,6 +98,13 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     }, [postId]);
 
     useEffect(() => {
+        setCommentTranslations({});
+        setVisibleTranslationIds(new Set());
+        setTranslatingCommentId(null);
+        setTranslationErrors({});
+    }, [postId, targetLanguage]);
+
+    useEffect(() => {
         if (!replyTarget || !replyTextareaRef.current) return;
 
         // 답글 폼이 열린 뒤 멘션 마지막 글자 바로 뒤에 커서를 놓는다.
@@ -118,9 +130,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         const trimmedContent = value.trim();
 
         // @닉네임을 제외한 실제 답글 내용 있는지 검사
-        const contentWithoutMention = trimmedContent
-            .replace(/^@\S+\s*/, "")
-            .trim();
+        const contentWithoutMention = trimmedContent.replace(/^@\S+\s*/, "").trim();
 
         if (!contentWithoutMention) {
             setWriteError(t("community.comments.contentRequired"));
@@ -144,19 +154,11 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         setIsSubmitting(true);
         setWriteError("");
         try {
-            await createCommunityComment(
-                postId,
-                trimmedContent,
-                parentCommentId,
-                mentionLoginId,
-            );
+            await createCommunityComment(postId, trimmedContent, parentCommentId, mentionLoginId);
             await loadComments();
             return true;
         } catch (requestError) {
-            setWriteError(
-                requestError.message
-                || t("community.comments.saveError"),
-            );
+            setWriteError(requestError.message || t("community.comments.saveError"));
             return false;
         } finally {
             setIsSubmitting(false);
@@ -204,24 +206,62 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         const mentionLoginId = mentionMatch?.[1] ?? null;
         const replyText = mentionMatch?.[2]?.trim() ?? validReplyContent;
 
-        if (await submitComment(
-            replyText,
-            replyTarget?.parentCommentId,
-            mentionLoginId,
-        )) {
+        if (await submitComment(replyText, replyTarget?.parentCommentId, mentionLoginId)) {
             closeReply();
         }
     }
 
     function handleReplyKeyDown(event) {
         const mentionPrefix = replyContent.match(/^@\S+\s+/)?.[0];
-        const cursorAtMentionEnd = event.currentTarget.selectionStart === mentionPrefix?.length
-            && event.currentTarget.selectionEnd === mentionPrefix?.length;
+        const cursorAtMentionEnd =
+            event.currentTarget.selectionStart === mentionPrefix?.length &&
+            event.currentTarget.selectionEnd === mentionPrefix?.length;
 
         // 멘션 끝에서 Backspace를 한 번 누르면 @아이디와 뒤 공백을 한 번에 지운다.
         if (event.key === "Backspace" && mentionPrefix && cursorAtMentionEnd) {
             event.preventDefault();
             setReplyContent((previousContent) => previousContent.slice(mentionPrefix.length));
+        }
+    }
+
+    async function handleCommentTranslation(commentId) {
+        // 이미 열린 번역은 API 요청 없이 접기만 한다.
+        if (visibleTranslationIds.has(commentId)) {
+            setVisibleTranslationIds((previous) => {
+                const next = new Set(previous);
+                next.delete(commentId);
+                return next;
+            });
+            return;
+        }
+
+        // 같은 댓글, 언어 조합은 현재 화면에 남아 있는 결과를 재사용한다.
+        if (commentTranslations[commentId]) {
+            setVisibleTranslationIds((previous) => new Set(previous).add(commentId));
+            return;
+        }
+
+        setTranslatingCommentId(commentId);
+        setTranslationErrors((previous) => ({
+            ...previous,
+            [commentId]: "",
+        }));
+
+        try {
+            const response = await translateCommunityComment(postId, commentId, targetLanguage);
+
+            setCommentTranslations((previous) => ({
+                ...previous,
+                [commentId]: response.translatedText,
+            }));
+            setVisibleTranslationIds((previous) => new Set(previous).add(commentId));
+        } catch (requestError) {
+            setTranslationErrors((previous) => ({
+                ...previous,
+                [commentId]: requestError.message || t("community.comments.translationError"),
+            }));
+        } finally {
+            setTranslatingCommentId(null);
         }
     }
 
@@ -239,15 +279,17 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                 : await likeCommunityComment(postId, comment.commentId);
 
             // 서버가 돌려준 수치로 해당 댓글의 공감 상태만 즉시 갱신한다.
-            setComments((previousComments) => previousComments.map((previousComment) => (
-                previousComment.commentId === comment.commentId
-                    ? {
-                        ...previousComment,
-                        likeCount: response.likeCount,
-                        likedByMe: response.likedByMe,
-                    }
-                    : previousComment
-            )));
+            setComments((previousComments) =>
+                previousComments.map((previousComment) =>
+                    previousComment.commentId === comment.commentId
+                        ? {
+                              ...previousComment,
+                              likeCount: response.likeCount,
+                              likedByMe: response.likedByMe,
+                          }
+                        : previousComment,
+                ),
+            );
         } catch (requestError) {
             setWriteError(requestError.message || t("community.comments.likeError"));
         } finally {
@@ -292,9 +334,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         try {
             await deleteCommunityComment(postId, commentId);
             setEditingCommentId(null);
-            setReplyTarget((current) => (
-                current?.commentId === commentId ? null : current
-            ));
+            setReplyTarget((current) => (current?.commentId === commentId ? null : current));
             // 삭제 성공 직후 목록과 상단의 댓글 수를 바로 줄인다.
             setComments((previousComments) => {
                 const nextComments = previousComments.filter(
@@ -352,17 +392,24 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                             {isEditing ? (
                                                 <form
                                                     className="community-comment-edit-form"
-                                                    onSubmit={(event) => handleUpdate(event, comment.commentId)}
+                                                    onSubmit={(event) =>
+                                                        handleUpdate(event, comment.commentId)
+                                                    }
                                                 >
                                                     <textarea
                                                         value={editingContent}
-                                                        onChange={(event) => setEditingContent(event.target.value)}
+                                                        onChange={(event) =>
+                                                            setEditingContent(event.target.value)
+                                                        }
                                                         maxLength={1000}
                                                         rows={3}
                                                         disabled={isSubmitting}
                                                     />
                                                     <div>
-                                                        <button type="submit" disabled={isSubmitting}>
+                                                        <button
+                                                            type="submit"
+                                                            disabled={isSubmitting}
+                                                        >
                                                             {t("community.comments.edit")}
                                                         </button>
                                                         <button
@@ -374,8 +421,13 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                                         </button>
                                                         <button
                                                             type="button"
-                                                            onClick={() => handleDelete(comment.commentId)}
-                                                            disabled={deletingCommentId === comment.commentId}
+                                                            onClick={() =>
+                                                                handleDelete(comment.commentId)
+                                                            }
+                                                            disabled={
+                                                                deletingCommentId ===
+                                                                comment.commentId
+                                                            }
                                                         >
                                                             {deletingCommentId === comment.commentId
                                                                 ? t("community.comments.deleting")
@@ -383,28 +435,41 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                                         </button>
                                                     </div>
                                                 </form>
+                                            ) : comment.mentionedMemberId ? (
+                                                <div className="community-comment-text">
+                                                    <CommunityMemberPreview
+                                                        memberId={comment.mentionedMemberId}
+                                                        imageUrl={comment.mentionedProfileImageUrl}
+                                                        loginId={comment.mentionedLoginId}
+                                                        nickname={comment.mentionedLoginId}
+                                                        variant="mention"
+                                                    />{" "}
+                                                    {comment.content}
+                                                </div>
                                             ) : (
-                                                comment.mentionedMemberId ? (
-                                                    <div className="community-comment-text">
-                                                        <CommunityMemberPreview
-                                                            memberId={comment.mentionedMemberId}
-                                                            imageUrl={comment.mentionedProfileImageUrl}
-                                                            loginId={comment.mentionedLoginId}
-                                                            nickname={comment.mentionedLoginId}
-                                                            variant="mention"
-                                                        />
-                                                        {" "}
-                                                        {comment.content}
-                                                    </div>
-                                                ) : (
-                                                    <p>{comment.content}</p>
-                                                )
+                                                <p>{comment.content}</p>
                                             )}
                                         </>
                                     )}
 
                                     {!comment.deleted && !isEditing && (
                                         <div className="community-comment-actions">
+                                            <button
+                                                type="button"
+                                                className="community-comment-translation-button"
+                                                onClick={() =>
+                                                    handleCommentTranslation(comment.commentId)
+                                                }
+                                                disabled={
+                                                    translatingCommentId === comment.commentId
+                                                }
+                                            >
+                                                {translatingCommentId === comment.commentId
+                                                    ? t("community.comments.translating")
+                                                    : visibleTranslationIds.has(comment.commentId)
+                                                      ? t("community.comments.hideTranslation")
+                                                      : t("community.comments.showTranslation")}
+                                            </button>
                                             <button
                                                 type="button"
                                                 className="community-comment-like-button"
@@ -414,10 +479,8 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                             >
                                                 <span aria-hidden="true">
                                                     {comment.likedByMe ? "♥" : "♡"}
-                                                </span>
-                                                {" "}
-                                                {t("community.comments.like")}
-                                                {" "}
+                                                </span>{" "}
+                                                {t("community.comments.like")}{" "}
                                                 {comment.likeCount ?? 0}
                                             </button>
 
@@ -445,7 +508,9 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                                 <button
                                                     type="button"
                                                     onClick={() => handleDelete(comment.commentId)}
-                                                    disabled={deletingCommentId === comment.commentId}
+                                                    disabled={
+                                                        deletingCommentId === comment.commentId
+                                                    }
                                                 >
                                                     {deletingCommentId === comment.commentId
                                                         ? t("community.comments.deleting")
@@ -454,6 +519,31 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                             )}
                                         </div>
                                     )}
+
+                                    {!comment.deleted &&
+                                        !isEditing &&
+                                        translationErrors[comment.commentId] && (
+                                            <p
+                                                className="community-comment-translation-error"
+                                                role="alert"
+                                            >
+                                                {translationErrors[comment.commentId]}
+                                            </p>
+                                        )}
+
+                                    {!comment.deleted &&
+                                        !isEditing &&
+                                        visibleTranslationIds.has(comment.commentId) &&
+                                        commentTranslations[comment.commentId] && (
+                                            <div className="community-comment-translation-result">
+                                                <p className="community-comment-translation-label">
+                                                    {t("community.comments.aiTranslation")}
+                                                </p>
+                                                <p className="community-comment-translation-text">
+                                                    {commentTranslations[comment.commentId]}
+                                                </p>
+                                            </div>
+                                        )}
 
                                     {isReplying && (
                                         <form
@@ -470,7 +560,9 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                                 onKeyDown={handleReplyKeyDown}
                                                 maxLength={1000}
                                                 rows={2}
-                                                placeholder={t("community.comments.writePlaceholder")}
+                                                placeholder={t(
+                                                    "community.comments.writePlaceholder",
+                                                )}
                                                 disabled={isSubmitting}
                                             />
                                             <div>
@@ -488,7 +580,15 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                         </form>
                                     )}
 
-                                    {!isEditing && <small>{comment.createdAt ? new Date(comment.createdAt).toLocaleDateString("ko-KR") : ""}</small>}
+                                    {!isEditing && (
+                                        <small>
+                                            {comment.createdAt
+                                                ? new Date(comment.createdAt).toLocaleDateString(
+                                                      "ko-KR",
+                                                  )
+                                                : ""}
+                                        </small>
+                                    )}
                                 </div>
                             </li>
                         );

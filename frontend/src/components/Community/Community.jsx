@@ -489,28 +489,31 @@ export default function Community() {
                     count: MAX_IMAGE_COUNT,
                 }),
             );
-
-            const invalidImage = selectedImages.find(
-                (file) => !["image/jpeg", "image/png"].includes(file.type) || file.size > MAX_IMAGE_BYTES,
-            );
-            if (invalidImage) {
-                setWriteError(t("community.feedback.imageValidation"));
-                event.target.value = "";
-                return;
-            }
-
-            setWriteError("");
-            setImages((previous) => [...previous, ...selectedImages]);
-            const previews = selectedImages.map((image) => {
-                const url = URL.createObjectURL(image);
-                previewUrlsRef.current.add(url);
-                return {url, name: image.name};
-            });
-            setImagePreviews((previous) => [...previous, ...previews]);
             event.target.value = "";
+            return;
         }
 
-        function removeImage(index) {
+        const invalidImage = selectedImages.find(
+            (file) => !["image/jpeg", "image/png"].includes(file.type) || file.size > MAX_IMAGE_BYTES,
+        );
+        if (invalidImage) {
+            setWriteError(t("community.feedback.imageValidation"));
+            event.target.value = "";
+            return;
+        }
+
+        setWriteError("");
+        setImages((previous) => [...previous, ...selectedImages]);
+        const previews = selectedImages.map((image) => {
+            const url = URL.createObjectURL(image);
+            previewUrlsRef.current.add(url);
+            return {url, name: image.name};
+        });
+        setImagePreviews((previous) => [...previous, ...previews]);
+        event.target.value = "";
+    }
+
+    function removeImage(index) {
             setImages((previous) => previous.filter((_, imageIndex) => imageIndex !== index));
             const preview = imagePreviews[index];
             if (preview) {
@@ -982,4 +985,3 @@ export default function Community() {
             </div>
         );
     }
-}

@@ -6,6 +6,7 @@ import {
     getCommunityPostRepost,
     likeCommunityPost,
     repostCommunityPost,
+    translateCommunityPost,
     unlikeCommunityPost,
     unrepostCommunityPost,
 } from "../../api/communityApi.js";
@@ -20,7 +21,7 @@ export default function CommunityPostModal({
     onPostLoaded,
     onCommentCountChange,
 }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [post, setPost] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
@@ -32,6 +33,11 @@ export default function CommunityPostModal({
     const [isRepostSubmitting, setIsRepostSubmitting] = useState(false);
     const [reactionError, setReactionError] = useState("");
     const currentMemberId = useAuthStore((state) => state.member?.memberId);
+    const targetLanguage = i18n.resolvedLanguage || i18n.language || "ko";
+    const [translatedText, setTranslatedText] = useState("");
+    const [isTranslationVisible, setIsTranslationVisible] = useState(false);
+    const [isTranslating, setIsTranslating] = useState(false);
+    const [translationError, setTranslationError] = useState("");
 
     useEffect(() => {
         if (!postId) return undefined;
@@ -88,8 +94,7 @@ export default function CommunityPostModal({
             } catch (requestError) {
                 if (isMounted) {
                     setReactionError(
-                        requestError.message ||
-                            t("community.postModal.reactionLoadError"),
+                        requestError.message || t("community.postModal.reactionLoadError"),
                     );
                 }
             } finally {
@@ -118,12 +123,48 @@ export default function CommunityPostModal({
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [postId, onClose]);
 
+    // 다른 게시글을 열거나 사이트 언어를 바꾸면 이전 번역 결과를 초기화
+    useEffect(() => {
+        setTranslatedText("");
+        setIsTranslationVisible(false);
+        setIsTranslating(false);
+        setTranslationError("");
+    }, [postId, targetLanguage]);
+
+    async function handleTranslationClick() {
+        // 이미 열린 번역은 API를 다시 호출하지 않고 접기만 한다.
+        if (isTranslationVisible) {
+            setIsTranslationVisible(false);
+            return;
+        }
+
+        // 같은 게시글·언어 조합을 다시 열 때는 화면 상태에 둔 결과를 재사용한다.
+        if (translatedText) {
+            setIsTranslationVisible(true);
+            return;
+        }
+
+        setIsTranslating(true);
+        setTranslationError("");
+
+        try {
+            const response = await translateCommunityPost(postId, targetLanguage);
+
+            setTranslatedText(response.translatedText);
+            setIsTranslationVisible(true);
+        } catch (requestError) {
+            setTranslationError(requestError.message || t("community.postModal.translationError"));
+        } finally {
+            setIsTranslating(false);
+        }
+    }
+
     function handleModalCommentCountChange(changedPostId, commentCount) {
-        setPost((previous) => (
+        setPost((previous) =>
             previous && Number(previous.postId) === Number(changedPostId)
                 ? { ...previous, commentCount }
-                : previous
-        ));
+                : previous,
+        );
         onCommentCountChange?.(changedPostId, commentCount);
     }
 
@@ -141,10 +182,7 @@ export default function CommunityPostModal({
                 : await likeCommunityPost(postId);
             setLikeInfo(response);
         } catch (requestError) {
-            setReactionError(
-                requestError.message ||
-                    t("community.postModal.likeActionError"),
-            );
+            setReactionError(requestError.message || t("community.postModal.likeActionError"));
         } finally {
             setIsLikeSubmitting(false);
         }
@@ -164,10 +202,7 @@ export default function CommunityPostModal({
                 : await repostCommunityPost(postId);
             setRepostInfo(response);
         } catch (requestError) {
-            setReactionError(
-                requestError.message ||
-                    t("community.postModal.repostActionError"),
-            );
+            setReactionError(requestError.message || t("community.postModal.repostActionError"));
         } finally {
             setIsRepostSubmitting(false);
         }
@@ -221,6 +256,39 @@ export default function CommunityPostModal({
                         </header>
 
                         <p className="community-post-content">{post.content}</p>
+                        {post.language !== targetLanguage && (
+                            <section className="community-post-translation">
+                                <button
+                                    type="button"
+                                    className="community-translation-toggle"
+                                    onClick={handleTranslationClick}
+                                    disabled={isTranslating}
+                                >
+                                    {isTranslating
+                                        ? t("community.postModal.translating")
+                                        : isTranslationVisible
+                                          ? t("community.postModal.hideTranslation")
+                                          : t("community.postModal.showTranslation")}
+                                </button>
+
+                                {translationError && (
+                                    <p className="community-translation-error" role="alert">
+                                        {translationError}
+                                    </p>
+                                )}
+
+                                {isTranslationVisible && translatedText && (
+                                    <div className="community-translation-result">
+                                        <p className="community-translation-label">
+                                            {t("community.postModal.aiTranslation")}
+                                        </p>
+                                        <p className="community-translation-text">
+                                            {translatedText}
+                                        </p>
+                                    </div>
+                                )}
+                            </section>
+                        )}
                         {post.images?.length > 0 && (
                             <div className="community-post-images">
                                 {post.images.map((image, index) => (
@@ -263,19 +331,29 @@ export default function CommunityPostModal({
                                 <strong>{repostInfo.repostCount}</strong>
                             </button>
                             <span className="community-view-count">
-                                <svg className="community-view-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <svg
+                                    className="community-view-icon"
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
                                     <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
                                     <circle cx="12" cy="12" r="2.5" />
                                 </svg>
-                                {t("community.postModal.viewCount")} <strong>{post.viewCount ?? 0}</strong>
+                                {t("community.postModal.viewCount")}{" "}
+                                <strong>{post.viewCount ?? 0}</strong>
                             </span>
                             <span className="community-view-count">
                                 <span aria-hidden="true">▱</span>
-                                {t("community.postModal.commentCount")} <strong>{post.commentCount ?? 0}</strong>
+                                {t("community.postModal.commentCount")}{" "}
+                                <strong>{post.commentCount ?? 0}</strong>
                             </span>
                         </div>
 
-                        {reactionError && <p className="community-like-error" role="alert">{reactionError}</p>}
+                        {reactionError && (
+                            <p className="community-like-error" role="alert">
+                                {reactionError}
+                            </p>
+                        )}
 
                         <CommunityCommentSection
                             postId={post.postId}
