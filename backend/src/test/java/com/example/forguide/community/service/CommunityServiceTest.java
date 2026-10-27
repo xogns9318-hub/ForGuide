@@ -11,6 +11,7 @@ import com.example.forguide.community.dto.CommunityPostResponse;
 import com.example.forguide.community.mapper.CommunityMapper;
 import com.example.forguide.common.exception.ApiException;
 import com.example.forguide.common.exception.ErrorCode;
+import com.example.forguide.translation.cache.TranslationCache;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,6 +24,9 @@ class CommunityServiceTest {
 
     @Mock
     private CommunityMapper communityMapper;
+
+    @Mock
+    private TranslationCache translationCache;
 
     @InjectMocks
     private CommunityService communityService;
@@ -74,7 +78,10 @@ class CommunityServiceTest {
 
     private CommunityPostResponse postOf(Long memberId) {
         CommunityPostResponse post = new CommunityPostResponse();
+        post.setPostId(10L);
         post.setMemberId(memberId);
+        post.setLanguage("ko");
+        post.setContentVersion(1);
         return post;
     }
 }
