@@ -1234,12 +1234,26 @@
     background: #fff;
 }
 
+/* 커뮤니티만 3열 탐색 화면이므로 공통 본문보다 넓게 사용한다. */
+.app-layout:has(.community-page) .page-main {
+    max-width: 1680px;
+    padding-right: 24px;
+    padding-left: 24px;
+}
+
 .community-page {
     gap: 22px;
     padding: 20px 0 42px;
     background: #fff;
     box-shadow: 0 0 0 100vmax #fff;
     clip-path: inset(0 -100vmax);
+}
+
+@media (max-width: 760px) {
+    .app-layout:has(.community-page) .page-main {
+        padding-right: var(--page-padding);
+        padding-left: var(--page-padding);
+    }
 }
 
 /* 긴 다국어 문구가 있어도 인기 게시글 제목과 정렬 탭의 행을 안정적으로 유지한다. */
