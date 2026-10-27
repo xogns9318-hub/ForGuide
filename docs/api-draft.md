@@ -140,7 +140,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - `login` 성공 시 스토어에 저장한다. 실패 메시지는 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는다.
 - 이메일은 소문자로 바꿔 비교·저장한다.
 - 이메일 인증(`member/controller/EmailVerificationController`, 테이블 `email_verifications`): 코드 6자리·10분 유효·5번 틀리면 무효, 다시 받기는 60초 간격·하루 10번. 확인하면 30분 동안 한 번만 쓸 수 있는 토큰을 준다. 코드·토큰은 SHA-256 해시만 저장. 가장 최근 코드만 유효.
-- 메일 발송: 환경변수 `MAIL_USERNAME`·`MAIL_PASSWORD`(Gmail 앱 비밀번호)가 있으면 Gmail SMTP로 보내고, 없으면 메일 대신 서버 로그에 코드를 남긴다(개발용, 시작 시 경고).
+- 메일 발송: 환경변수 `FORGUIDE_MAIL_USERNAME`·`FORGUIDE_MAIL_PASSWORD`(Gmail 앱 비밀번호)가 있으면 Gmail SMTP로 보내고, 없으면 메일 대신 서버 로그에 코드를 남긴다(개발용, 시작 시 경고).
 
 입력 규칙 (`src/auth/utils/authValidation.js`, 서버도 같은 규칙으로 다시 검사):
 
