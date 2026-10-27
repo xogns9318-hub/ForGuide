@@ -21,4 +21,8 @@
     <delete id="deleteExpiredByMemberId">
         DELETE FROM refresh_tokens WHERE member_id = #{memberId} AND expires_at &lt;= #{now}
     </delete>
+
+    <delete id="deleteByMemberId">
+        DELETE FROM refresh_tokens WHERE member_id = #{memberId}
+    </delete>
 </mapper>

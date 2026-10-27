@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.forguide.member.service.VerificationMailSender;
 import com.jayway.jsonpath.JsonPath;
+import jakarta.servlet.http.Cookie;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -60,6 +62,7 @@ class MemberControllerTest {
 
     private MockMvc mockMvc;
     private String accessToken;
+    private Cookie refreshCookie; // 로그인한 기기의 refresh token
 
     @BeforeEach
     void setUp() throws Exception {
@@ -68,10 +71,84 @@ class MemberControllerTest {
         String token = verifiedToken(mockMvc, mail, "n1@example.com");
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
                 .content(withToken("{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\",\"givenName\":\"길동\",\"familyName\":\"홍\",\"nickname\":\"길동이\",\"email\":\"n1@example.com\"}", token)));
-        String body = mockMvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"loginId\":\"newuser1\",\"password\":\"Abcdef1!\"}"))
-                .andReturn().getResponse().getContentAsString();
-        accessToken = JsonPath.read(body, "$.data.accessToken");
+        MockHttpServletResponse login = login("Abcdef1!");
+        accessToken = JsonPath.read(login.getContentAsString(), "$.data.accessToken");
+        refreshCookie = login.getCookie("refreshToken");
+    }
+
+    private MockHttpServletResponse login(String password) throws Exception {
+        return mockMvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"loginId\":\"newuser1\",\"password\":\"" + password + "\"}"))
+                .andReturn().getResponse();
+    }
+
+    private ResultActions changePassword(String currentPassword, String newPassword) throws Exception {
+        return mockMvc.perform(patch("/api/v1/members/me/password").header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"currentPassword\":\"" + currentPassword + "\",\"newPassword\":\"" + newPassword + "\"}"));
+    }
+
+    @Test
+    void 비밀번호를_바꾸면_이전_비밀번호로_로그인할_수_없다() throws Exception {
+        changePassword("Abcdef1!", "Newpass2@")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.accessToken").exists());
+
+        assertThat(login("Abcdef1!").getStatus()).isEqualTo(401);
+        assertThat(login("Newpass2@").getStatus()).isEqualTo(200);
+    }
+
+    @Test
+    void 비밀번호를_바꾸면_다른_기기의_로그인이_풀리고_지금_기기는_유지된다() throws Exception {
+        Cookie otherDevice = login("Abcdef1!").getCookie("refreshToken");
+
+        Cookie thisDevice = changePassword("Abcdef1!", "Newpass2@")
+                .andReturn().getResponse().getCookie("refreshToken");
+
+        // 바꾸기 전에 받은 refresh token은 이 기기·다른 기기 모두 무효
+        mockMvc.perform(post("/api/v1/auth/refresh").cookie(otherDevice))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(post("/api/v1/auth/refresh").cookie(refreshCookie))
+                .andExpect(status().isUnauthorized());
+        // 변경 응답으로 받은 새 쿠키로는 계속 로그인 상태
+        mockMvc.perform(post("/api/v1/auth/refresh").cookie(thisDevice))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void 현재_비밀번호가_틀리면_바꾸지_않는다() throws Exception {
+        changePassword("Wrong123!", "Newpass2@")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.code").value("CURRENT_PASSWORD_INVALID"))
+                .andExpect(jsonPath("$.error.fieldErrors.currentPassword").exists());
+
+        assertThat(login("Abcdef1!").getStatus()).isEqualTo(200);
+    }
+
+    @Test
+    void 현재_비밀번호를_5번_틀리면_잠긴다() throws Exception {
+        for (int i = 0; i < 4; i++) {
+            changePassword("Wrong123!", "Newpass2@").andExpect(jsonPath("$.error.code").value("CURRENT_PASSWORD_INVALID"));
+        }
+        changePassword("Wrong123!", "Newpass2@").andExpect(jsonPath("$.error.code").value("LOGIN_LOCKED"));
+        changePassword("Abcdef1!", "Newpass2@").andExpect(jsonPath("$.error.code").value("LOGIN_LOCKED"));
+    }
+
+    @Test
+    void 새_비밀번호가_규칙에_맞지_않거나_현재와_같으면_400() throws Exception {
+        changePassword("Abcdef1!", "short")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.fieldErrors.newPassword").exists());
+        changePassword("Abcdef1!", "Abcdef1!")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.fieldErrors.newPassword").value("현재 비밀번호와 다른 비밀번호를 입력해주세요."));
+    }
+
+    @Test
+    void 로그인_없이는_비밀번호를_바꿀_수_없다() throws Exception {
+        mockMvc.perform(patch("/api/v1/members/me/password").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"currentPassword\":\"Abcdef1!\",\"newPassword\":\"Newpass2@\"}"))
+                .andExpect(status().isUnauthorized());
     }
 
     private static byte[] image(String format, int width, int height) throws Exception {

@@ -32,6 +32,7 @@ export function messageText(t, message) {
 const KNOWN_ERROR_CODES = [
     "LOGIN_FAILED",
     "LOGIN_LOCKED",
+    "CURRENT_PASSWORD_INVALID",
     "LOGIN_ID_DUPLICATED",
     "EMAIL_DUPLICATED",
     "EMAIL_NOT_VERIFIED",

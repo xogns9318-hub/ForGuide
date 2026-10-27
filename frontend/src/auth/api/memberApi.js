@@ -16,6 +16,16 @@ export async function updateProfileImage(file) {
     return member;
 }
 
+// 비밀번호 변경 → { accessToken, member }
+// 다른 기기의 로그인은 풀리고, 이 기기는 서버가 새 refresh token 쿠키를 내려줘 로그인이 유지된다
+// 새 access token으로 스토어를 바꿔 둔다
+export async function changePassword({ currentPassword, newPassword }) {
+    const data = await client.patch("/members/me/password", { currentPassword, newPassword });
+
+    useAuthStore.getState().setAuth({ accessToken: data.accessToken, member: data.member });
+    return data;
+}
+
 // 닉네임 변경 (앞뒤 공백은 빼고 저장, 다른 회원과 중복 허용)
 export async function updateNickname(nickname) {
     const member = await client.patch("/members/me/nickname", { nickname });

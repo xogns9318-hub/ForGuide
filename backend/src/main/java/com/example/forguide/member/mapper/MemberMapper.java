@@ -22,5 +22,8 @@ public interface MemberMapper {
 
     int updateNickname(@Param("memberId") Long memberId, @Param("nickname") String nickname);
 
+    /** 비밀번호 변경 (password는 BCrypt 해시) */
+    int updatePassword(@Param("memberId") Long memberId, @Param("password") String password);
+
     int updateProfileImageUrl(@Param("memberId") Long memberId, @Param("profileImageUrl") String profileImageUrl);
 }

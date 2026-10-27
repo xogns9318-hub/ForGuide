@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import FieldError from "../../components/FieldError/FieldError.jsx";
 import ProfileAvatar from "../components/ProfileAvatar.jsx";
@@ -19,13 +19,18 @@ import styles from "./AuthPage.module.css";
 export default function MyPage() {
     const { t } = useTranslation();
     const member = useAuthStore((state) => state.member);
+    const location = useLocation();
+    const navigate = useNavigate();
 
     // 고른 파일과 미리보기 주소 (저장 전까지는 화면에서만 보인다)
     const [selectedFile, setSelectedFile] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
 
     const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
+    // 비밀번호 변경 화면에서 돌아왔으면 완료 안내부터 보여 준다
+    const [message, setMessage] = useState(() =>
+        location.state?.passwordChanged ? msg("auth.myPage.passwordChanged") : "",
+    );
     const [isSaving, setIsSaving] = useState(false);
 
     const fileInputRef = useRef(null);
@@ -40,6 +45,13 @@ export default function MyPage() {
             mounted.current = false;
         };
     }, []);
+
+    // 완료 안내는 한 번만: 새로고침하면 다시 보이지 않게 주소의 상태 값을 지운다
+    useEffect(() => {
+        if (location.state?.passwordChanged) {
+            navigate(location.pathname, { replace: true, state: null });
+        }
+    }, [location, navigate]);
 
     // 미리보기 주소는 바뀌거나 화면을 떠날 때 메모리에서 해제한다
     useEffect(() => {
@@ -178,6 +190,9 @@ export default function MyPage() {
                     )}
                     <Link to="/mypage/edit" className="button">
                         {t("auth.myPage.goProfileEdit")}
+                    </Link>
+                    <Link to="/mypage/password" className="button">
+                        {t("auth.myPage.goPasswordChange")}
                     </Link>
                 </div>
             </form>

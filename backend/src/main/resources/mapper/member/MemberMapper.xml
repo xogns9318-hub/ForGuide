@@ -42,6 +42,10 @@
         UPDATE members SET nickname = #{nickname} WHERE member_id = #{memberId}
     </update>
 
+    <update id="updatePassword">
+        UPDATE members SET password = #{password} WHERE member_id = #{memberId}
+    </update>
+
     <update id="updateProfileImageUrl">
         UPDATE members SET profile_image_url = #{profileImageUrl} WHERE member_id = #{memberId}
     </update>

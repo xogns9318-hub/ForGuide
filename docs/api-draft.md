@@ -161,6 +161,9 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | -------------------------- | --------------------------------- | ---------------------------------------- | ------------------------------- | -------------------------------- |
 | `updateNickname(nickname)` | `PATCH /members/me/nickname`      | `{ nickname }`                           | `member` (새 `nickname`)        | `AUTH_REQUIRED`, `INVALID_INPUT` |
 | `updateProfileImage(file)` | `PATCH /members/me/profile-image` | `multipart/form-data`, 항목 이름 `image` | `member` (새 `profileImageUrl`) | `AUTH_REQUIRED`, `INVALID_IMAGE` |
+| `changePassword({ currentPassword, newPassword })` | `PATCH /members/me/password` | 현재·새 비밀번호 (새 비밀번호는 가입 규칙) | `{ accessToken, member }` + 새 refresh token 쿠키 → 스토어 저장 | `AUTH_REQUIRED`, `INVALID_INPUT`, `CURRENT_PASSWORD_INVALID`, `LOGIN_LOCKED`(429) |
+
+비밀번호 변경: 이 회원의 refresh token을 모두 지워 다른 기기의 로그인을 풀고, 이 기기에만 새로 발급한다(다른 기기의 access token은 만료될 때까지 최대 30분 남음). 현재 비밀번호를 틀린 횟수는 로그인 실패와 같이 센다. 백엔드: `MemberController` → `AuthService.changePassword`.
 
 닉네임 규칙 (`validateNickname`): 앞뒤 공백 제외 2~20자, 모든 언어의 글자·숫자·문장부호·기호·일반 공백 허용, 제어 문자·보이지 않는 문자 불가, 다른 회원과 중복 허용.
 
