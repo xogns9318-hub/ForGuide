@@ -6,9 +6,11 @@ import {
     getResumeDrafts,
     getResumePhotoPreviewUrl,
     saveResumeDraft,
+    translateResumeText,
 } from "../../api/resumeApi.js";
 import { useTranslation } from "react-i18next";
 import ResumeLoadModal from "./ResumeLoadModal.jsx";
+import ResumeTranslationModal from "./ResumeTranslationModal.jsx";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import {
     readResumeTemporaryDraft,
@@ -20,6 +22,17 @@ import {
 import "../../styles/employment-resume.css";
 
 const EMPTY_ROWS = Array.from({ length: 4 });
+
+const TRANSLATABLE_TABLE_FIELDS = new Set([
+    "major",
+    "jobDuty",
+    "position",
+    "jobField",
+    "field",
+    "courseName",
+    "completionStatus",
+]);
+
 const BASIC_SECTIONS = [
     {
         key: "education",
@@ -131,17 +144,20 @@ function ResumeTable({ title, columns, fields, rows, onChange }) {
                         const field = fields[columnIndex];
 
                         return (
-                            <input
-                                key={field}
-                                type="text"
-                                value={row[field]}
-                                onChange={(event) => onChange(rowIndex, field, event.target.value)}
-                                aria-label={t("resume.table.cellAria", {
-                                    title,
-                                    row: rowIndex + 1,
-                                    column,
-                                })}
-                            />
+                            <div className="resume-table-cell" key={field}>
+                                <input
+                                    type="text"
+                                    value={row[field]}
+                                    onChange={(event) =>
+                                        onChange(rowIndex, field, event.target.value)
+                                    }
+                                    aria-label={t("resume.table.cellAria", {
+                                        title,
+                                        row: rowIndex + 1,
+                                        column,
+                                    })}
+                                />
+                            </div>
                         );
                     })}
                 </div>
@@ -326,6 +342,13 @@ export default function EmploymentResume() {
     const [basicPhotoUrl, setBasicPhotoUrl] = useState(null);
     const [isRemovingPhoto, setIsRemovingPhoto] = useState(false);
     const [hasTemporaryBasicPhoto, setHasTemporaryBasicPhoto] = useState(false);
+    const [translationTarget, setTranslationTarget] = useState(null);
+    const [translationDraft, setTranslationDraft] = useState("");
+    const [isTranslationModalOpen, setIsTranslationModalOpen] = useState(false);
+    const [isTranslating, setIsTranslating] = useState(false);
+    const [translationError, setTranslationError] = useState("");
+    const [translationQueue, setTranslationQueue] = useState([]);
+    const [translationQueueIndex, setTranslationQueueIndex] = useState(0);
 
     // 기본,블라인드 이력서의 입력값을 화면이 열려 있는 동안 보관
     const [basicResume, setBasicResume] = useState(createInitialBasicResume);
@@ -583,6 +606,139 @@ export default function EmploymentResume() {
         }));
     }
 
+    // 현재 양식에서 번역 가능한 서술성 입력값만 순서대로 수집한다.
+    function collectTranslationTargets() {
+        const targets = [];
+
+        sections.forEach(({ key: sectionKey, fields }) => {
+            activeResume[sectionKey].forEach((row, rowIndex) => {
+                fields.forEach((field) => {
+                    const sourceText = row[field]?.trim();
+
+                    if (TRANSLATABLE_TABLE_FIELDS.has(field) && sourceText) {
+                        targets.push({
+                            targetKind: "table",
+                            resumeType,
+                            sectionKey,
+                            rowIndex,
+                            field,
+                            fieldLabel: t(`resume.columns.${field}`),
+                            sourceText,
+                        });
+                    }
+                });
+            });
+        });
+
+        if (isBlind && blindResume.personal.targetJob.trim()) {
+            targets.unshift({
+                targetKind: "personal",
+                resumeType,
+                field: "targetJob",
+                fieldLabel: t("resume.personal.targetJob"),
+                sourceText: blindResume.personal.targetJob.trim(),
+            });
+        }
+
+        return targets;
+    }
+
+    async function requestResumeTranslation(target) {
+        setIsTranslating(true);
+        setTranslationError("");
+        setTranslationDraft("");
+
+        try {
+            const response = await translateResumeText(target.sourceText);
+            setTranslationDraft(response.translatedText);
+        } catch (error) {
+            setTranslationError(error?.message || t("resume.translation.failed"));
+        } finally {
+            setIsTranslating(false);
+        }
+    }
+
+    function handleStartResumeTranslation() {
+        const targets = collectTranslationTargets();
+
+        if (targets.length === 0) {
+            setSaveMessage(t("resume.translation.noContent"));
+            return;
+        }
+
+        const target = targets[0];
+
+        setTranslationQueue(targets);
+        setTranslationQueueIndex(0);
+        setTranslationTarget(target);
+        setTranslationDraft("");
+        setTranslationError("");
+        setIsTranslationModalOpen(true);
+
+        void requestResumeTranslation(target);
+    }
+
+    function handleRetryResumeTranslation() {
+        if (!translationTarget) {
+            return;
+        }
+
+        void requestResumeTranslation(translationTarget);
+    }
+
+    function handleApplyResumeTranslation() {
+        if (!translationTarget || !translationDraft.trim()) {
+            return;
+        }
+
+        const setResume =
+            translationTarget.resumeType === "blind" ? setBlindResume : setBasicResume;
+
+        if (translationTarget.targetKind === "personal") {
+            setResume((previousResume) => ({
+                ...previousResume,
+                personal: {
+                    ...previousResume.personal,
+                    [translationTarget.field]: translationDraft.trim(),
+                },
+            }));
+        } else {
+            setResume((previousResume) => ({
+                ...previousResume,
+                [translationTarget.sectionKey]: previousResume[translationTarget.sectionKey].map(
+                    (row, currentRowIndex) =>
+                        currentRowIndex === translationTarget.rowIndex
+                            ? {
+                                  ...row,
+                                  [translationTarget.field]: translationDraft.trim(),
+                              }
+                            : row,
+                ),
+            }));
+        }
+
+        const nextIndex = translationQueueIndex + 1;
+        const nextTarget = translationQueue[nextIndex];
+
+        if (nextTarget) {
+            setTranslationQueueIndex(nextIndex);
+            setTranslationTarget(nextTarget);
+            void requestResumeTranslation(nextTarget);
+            return;
+        }
+
+        handleCloseResumeTranslation();
+    }
+
+    function handleCloseResumeTranslation() {
+        setIsTranslationModalOpen(false);
+        setTranslationTarget(null);
+        setTranslationDraft("");
+        setTranslationError("");
+        setTranslationQueue([]);
+        setTranslationQueueIndex(0);
+    }
+
     async function handleSave() {
         setIsSaving(true);
         setSaveMessage("");
@@ -769,7 +925,7 @@ export default function EmploymentResume() {
                         {t("resume.actions.print")}
                     </button>
                 </div>
-                <button type="button" className="button">
+                <button type="button" className="button" onClick={handleStartResumeTranslation}>
                     {t("resume.actions.translateToKorean")}
                 </button>
             </div>
@@ -781,6 +937,22 @@ export default function EmploymentResume() {
                 onClose={() => setIsLibraryOpen(false)}
                 onSelect={handleSelectDraft}
             />
+            <ResumeTranslationModal
+                isOpen={isTranslationModalOpen}
+                sourceText={translationTarget?.sourceText ?? ""}
+                fieldLabel={translationTarget?.fieldLabel ?? ""}
+                translatedText={translationDraft}
+                isLoading={isTranslating}
+                error={translationError}
+                currentIndex={translationQueueIndex}
+                totalCount={translationQueue.length}
+                hasNext={translationQueueIndex < translationQueue.length - 1}
+                onTranslatedTextChange={setTranslationDraft}
+                onRetry={handleRetryResumeTranslation}
+                onCancel={handleCloseResumeTranslation}
+                onApply={handleApplyResumeTranslation}
+            />
+
             {saveMessage && <p className="employment-resume-save-message">{saveMessage}</p>}
         </div>
     );

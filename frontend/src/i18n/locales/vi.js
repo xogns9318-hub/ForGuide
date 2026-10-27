@@ -203,6 +203,11 @@ const vi = {
             unlike: "Bỏ đồng cảm",
             repost: "Đăng lại",
             unrepost: "Hủy đăng lại",
+            showTranslation: "Xem bản dịch",
+            hideTranslation: "Ẩn bản dịch",
+            translating: "Đang dịch...",
+            aiTranslation: "Bản dịch AI",
+            translationError: "Không thể dịch bài viết. Vui lòng thử lại sau.",
         },
         feedback: {
             popularLoadError: "Không thể tải bài viết nổi bật.",
@@ -264,6 +269,11 @@ const vi = {
             cancel: "Hủy",
             delete: "Xóa",
             deleting: "Đang xóa",
+            showTranslation: "Xem bản dịch",
+            hideTranslation: "Ẩn bản dịch",
+            translating: "Đang dịch...",
+            aiTranslation: "Bản dịch AI",
+            translationError: "Không thể dịch bình luận. Vui lòng thử lại sau.",
             submit: "Đăng",
             submitting: "Đang đăng",
             replyPlaceholder: "Viết trả lời cho {{nickname}}",
@@ -341,13 +351,33 @@ const vi = {
             basicSheetTitle: "Sơ yếu lý lịch",
             blindSheetTitle: "Sơ yếu lý lịch tuyển dụng ẩn danh",
         },
+
         actions: {
             save: "Lưu",
             saving: "Đang lưu...",
             load: "Tải",
             print: "In",
-            translateToKorean: "Chuyển sang tiếng Hàn",
+            translateToKorean: "Tạo bản nháp tiếng Hàn",
         },
+
+        translation: {
+            eyebrow: "Bản nháp dịch bằng AI",
+            title: "Kiểm tra bản dịch tiếng Hàn",
+            description: "Hãy kiểm tra và chỉnh sửa bản nháp trước khi áp dụng.",
+            original: "Bản gốc",
+            koreanDraft: "Bản nháp dịch tiếng Hàn",
+            translating: "Đang tạo bản nháp dịch tiếng Hàn.",
+            translate: "Dịch sang tiếng Hàn",
+            cancel: "Hủy",
+            retry: "Thử lại",
+            apply: "Áp dụng bản dịch này",
+            closeAria: "Đóng hộp thoại xác nhận bản dịch",
+            failed: "Không thể dịch. Vui lòng thử lại sau.",
+            progress: "Đang kiểm tra mục {{current}} / {{total}}",
+            applyAndNext: "Áp dụng và tiếp tục",
+            noContent: "Hãy nhập nội dung cần dịch sang tiếng Hàn trước.",
+        },
+
         personal: {
             basicTitle: "Thông tin cá nhân",
             blindTitle: "Thông tin ứng tuyển",
@@ -366,6 +396,7 @@ const vi = {
             receiptNumber: "Số tiếp nhận",
             targetJob: "Vị trí ứng tuyển",
         },
+
         sections: {
             education: "Học vấn",
             career: "Kinh nghiệm làm việc",
@@ -373,6 +404,7 @@ const vi = {
             awards: "Giải thưởng",
             jobEducation: "Đào tạo liên quan đến công việc",
         },
+
         columns: {
             schoolName: "Trường",
             major: "Chuyên ngành",
@@ -393,6 +425,7 @@ const vi = {
             courseName: "Khóa học",
             completionStatus: "Tình trạng hoàn thành",
         },
+
         table: { cellAria: "{{title}}, hàng {{row}}, {{column}}" },
         messages: {
             temporaryPhotoSaveFailed: "Không thể lưu tạm ảnh đã chọn.",
@@ -405,6 +438,7 @@ const vi = {
             draftLoaded: "Đã tải sơ yếu lý lịch đã lưu.",
             draftLoadFailed: "Không thể tải sơ yếu lý lịch đã lưu.",
         },
+
         library: {
             title: "Tải sơ yếu lý lịch đã lưu",
             description:

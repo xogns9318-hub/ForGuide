@@ -61,6 +61,19 @@ export async function saveResumeDraft({
     return toResumeDraft(response);
 }
 
+/*
+    이력서 입력값 하나를 한국어 번역 초안으로 받는다.
+    개인정보가 포함될 수 있어 서버 Redis 캐시를 사용하지 않는다.
+ */
+export async function translateResumeText(sourceText) {
+    return client.post("/employment/resumes/translation", {
+        // 화면 언어와 작성 언어가 다를 수 있어 Gemini가 원문 언어를 감지한다.
+        sourceLanguage: "auto",
+        targetLanguage: "ko",
+        sourceText,
+    });
+}
+
 // 현재 로그인한 회원의 일반·블라인드 이력서 목록을 조회한다.
 export async function getResumeDrafts() {
     const responses = await client.get("/employment/resumes");

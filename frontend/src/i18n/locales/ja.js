@@ -201,6 +201,12 @@ const ja = {
             unlike: "共感を取り消す",
             repost: "リポスト",
             unrepost: "リポストを取り消す",
+            showTranslation: "翻訳を見る",
+            hideTranslation: "翻訳を隠す",
+            translating: "翻訳中...",
+            aiTranslation: "AI翻訳",
+            translationError:
+                "投稿を翻訳できませんでした。しばらくしてからもう一度お試しください。",
         },
         feedback: {
             popularLoadError: "人気の投稿を読み込めませんでした。",
@@ -262,6 +268,12 @@ const ja = {
             cancel: "キャンセル",
             delete: "削除",
             deleting: "削除中",
+            showTranslation: "翻訳を見る",
+            hideTranslation: "翻訳を隠す",
+            translating: "翻訳中...",
+            aiTranslation: "AI翻訳",
+            translationError:
+                "コメントを翻訳できませんでした。しばらくしてからもう一度お試しください。",
             submit: "登録",
             submitting: "登録中",
             replyPlaceholder: "{{nickname}}へ返信を書く",
@@ -331,13 +343,33 @@ const ja = {
             basicSheetTitle: "履歴書",
             blindSheetTitle: "ブラインド採用履歴書",
         },
+
         actions: {
             save: "保存",
             saving: "保存中...",
             load: "読み込む",
             print: "印刷",
-            translateToKorean: "韓国語に変換",
+            translateToKorean: "韓国語の下書きを作成",
         },
+
+        translation: {
+            eyebrow: "AI翻訳下書き",
+            title: "韓国語翻訳を確認",
+            description: "翻訳案を確認し、必要な箇所を修正してから適用してください。",
+            original: "原文",
+            koreanDraft: "韓国語翻訳の下書き",
+            translating: "韓国語翻訳の下書きを作成しています。",
+            translate: "韓国語に翻訳",
+            cancel: "キャンセル",
+            retry: "再試行",
+            apply: "この翻訳を適用",
+            closeAria: "翻訳確認画面を閉じる",
+            failed: "翻訳できませんでした。しばらくしてからもう一度お試しください。",
+            progress: "{{total}}件中 {{current}}件目を確認中",
+            applyAndNext: "適用して次へ",
+            noContent: "韓国語に翻訳する内容を先に入力してください。",
+        },
+
         personal: {
             basicTitle: "個人情報",
             blindTitle: "応募情報",

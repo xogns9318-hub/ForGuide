@@ -309,6 +309,70 @@
     text-align: center;
 }
 
+.community-post-translation {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #e3f0eb;
+}
+
+.community-translation-toggle {
+    min-height: 34px;
+    padding: 7px 12px;
+    border: 1px solid #b9ddd1;
+    border-radius: 999px;
+    background: #fff;
+    color: #256b5b;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition:
+        background-color 0.16s ease,
+        border-color 0.16s ease;
+}
+
+.community-translation-toggle:hover:not(:disabled),
+.community-translation-toggle:focus-visible {
+    border-color: #4a9a86;
+    background: #edf8f3;
+    outline: none;
+}
+
+.community-translation-toggle:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.community-translation-result {
+    margin-top: 10px;
+    padding: 14px 16px;
+    border: 1px solid #cfe8df;
+    border-radius: 12px;
+    background: #f5fbf8;
+}
+
+.community-translation-label {
+    margin: 0 0 7px;
+    color: #367766;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.community-translation-text {
+    margin: 0;
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+}
+
+.community-translation-error {
+    margin: 8px 0 0;
+    color: #b54747;
+    font-size: 13px;
+}
+
 .community-comments {
     margin-top: 22px;
     padding-top: 18px;
@@ -398,7 +462,6 @@
     font-size: 12px;
     cursor: pointer;
 }
-
 
 @media (max-width: 768px) {
     .community-write-area {
@@ -836,7 +899,9 @@
     font: inherit;
     text-align: left;
     cursor: pointer;
-    transition: background-color 160ms ease, color 160ms ease;
+    transition:
+        background-color 160ms ease,
+        color 160ms ease;
 }
 
 .community-sidebar-item:hover,
@@ -868,7 +933,9 @@
     border-color: #cfe6dc;
     border-radius: 14px;
     box-shadow: 0 4px 14px rgb(22 79 66 / 4%);
-    transition: border-color 160ms ease, box-shadow 160ms ease;
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease;
 }
 
 .community-search-placeholder:focus-within {
@@ -897,7 +964,9 @@
     background: #e6f5ee;
     color: var(--primary);
     cursor: pointer;
-    transition: background-color 160ms ease, transform 160ms ease;
+    transition:
+        background-color 160ms ease,
+        transform 160ms ease;
 }
 
 .community-search-placeholder button:hover {
@@ -1013,7 +1082,9 @@
     line-height: 1;
     text-decoration: none;
     transform: translateY(-2px);
-    transition: background-color 160ms ease, color 160ms ease;
+    transition:
+        background-color 160ms ease,
+        color 160ms ease;
 }
 
 .community-related-service-link:hover {
@@ -1052,7 +1123,9 @@
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
-    transition: background-color 160ms ease, border-color 160ms ease;
+    transition:
+        background-color 160ms ease,
+        border-color 160ms ease;
 }
 
 .community-edit-image-picker label:hover {
@@ -1169,6 +1242,35 @@
     clip-path: inset(0 -100vmax);
 }
 
+/* 긴 다국어 문구가 있어도 인기 게시글 제목과 정렬 탭의 행을 안정적으로 유지한다. */
+.community-recent-posts-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: 12px;
+}
+
+.community-recent-posts-heading h2 {
+    margin: 0;
+    text-align: center;
+    justify-self: center;
+    white-space: nowrap;
+}
+
+.community-popular-sort {
+    justify-self: center;
+}
+
+/* 영어 메뉴처럼 긴 이름도 사이드바에서 줄바꿈 없이 한 줄로 표시한다. */
+.community-sidebar-item {
+    gap: 8px;
+    padding-right: 8px;
+    padding-left: 8px;
+    font-size: 13px;
+    letter-spacing: -0.15px;
+    white-space: nowrap;
+}
+
 .community-board-title {
     padding: 28px 32px 18px;
 }
@@ -1222,7 +1324,10 @@
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
-    transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease,
+        transform 160ms ease;
 }
 
 .community-image-picker:hover {
@@ -1265,7 +1370,10 @@
     font-weight: 700;
     cursor: pointer;
     box-shadow: 0 5px 12px rgb(23 108 83 / 16%);
-    transition: background-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+    transition:
+        background-color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
 }
 
 .community-write-toolbar > button:hover:not(:disabled),
@@ -1277,7 +1385,7 @@
 
 .community-write-toolbar > button:disabled {
     cursor: not-allowed;
-    opacity: .62;
+    opacity: 0.62;
     box-shadow: none;
 }
 
@@ -1454,7 +1562,10 @@
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
-    transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+    transition:
+        border-color 160ms ease,
+        background-color 160ms ease,
+        color 160ms ease;
 }
 
 .community-post-owner-actions .community-edit-button:hover {
@@ -1544,7 +1655,10 @@
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
-    transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease;
+    transition:
+        background-color 160ms ease,
+        color 160ms ease,
+        box-shadow 160ms ease;
 }
 
 .community-feed-tabs button:hover {
@@ -1853,6 +1967,48 @@
     border: 0;
     background: #e7f5ef;
     color: var(--primary);
+}
+
+.community-comment-translation-button:hover,
+.community-comment-translation-button:focus-visible {
+    border: 0;
+    background: #e7f5ef;
+    color: var(--primary);
+    outline: none;
+}
+
+.community-comment-translation-button:focus-visible {
+    box-shadow: 0 0 0 2px rgb(74 154 134 / 24%);
+}
+
+.community-comment-translation-result {
+    margin-top: 8px;
+    padding: 10px 12px;
+    border: 1px solid #d6ebe3;
+    border-radius: 10px;
+    background: #f6fbf8;
+}
+
+.community-comment-translation-label {
+    margin: 0 0 5px !important;
+    color: #367766 !important;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+.community-comment-translation-text {
+    margin: 0 !important;
+    color: var(--ink) !important;
+    font-size: 13px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+}
+
+.community-comment-translation-error {
+    margin: 7px 0 0 !important;
+    color: #b54747 !important;
+    font-size: 12px;
 }
 
 .community-comment-like-button span {

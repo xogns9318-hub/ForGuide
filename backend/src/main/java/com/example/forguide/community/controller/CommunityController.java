@@ -10,6 +10,13 @@ import com.example.forguide.community.dto.CommunityCommentLikeResponse;
 import com.example.forguide.community.dto.CommunityPostLikeResponse;
 import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
 import com.example.forguide.community.dto.CommunityPostRepostResponse;
+import com.example.forguide.common.exception.ApiException;
+import com.example.forguide.common.exception.ErrorCode;
+import com.example.forguide.translation.dto.TranslationRequest;
+import com.example.forguide.translation.dto.TranslationResponse;
+import com.example.forguide.translation.dto.TranslationTargetRequest;
+import com.example.forguide.translation.service.TranslationService;
+import com.example.forguide.translation.cache.TranslationCacheResource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/v1/community")
 @RequiredArgsConstructor
@@ -37,6 +45,7 @@ import java.util.List;
 public class CommunityController {
 
     private final CommunityService communityService;
+    private final TranslationService translationService;
 
     // 게시글 전체 목록 조회
     @GetMapping("/posts")
@@ -69,6 +78,41 @@ public class CommunityController {
                 communityService.getPostByIdAndRecordView(postId, memberId, visitorToken)
         );
     }
+
+    // 공개 게시글은 비로그인 방문자도 번역할 수 있다.
+    // 원문과 원문 언어는 요청 본문이 아니라 서버가 postId로 직접 조회한다.
+    @PostMapping("/posts/{postId}/translation")
+    public ApiResponse<TranslationResponse> translatePost(
+            @PathVariable Long postId,
+            @Valid @RequestBody TranslationTargetRequest request
+    ) {
+        CommunityPostResponse post = communityService.getPostById(postId);
+
+        if (!List.of("ko", "en", "ja", "zh", "vi", "th")
+                .contains(post.getLanguage())) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "게시글의 원본 언어를 확인할 수 없습니다."
+            );
+        }
+
+        TranslationRequest translationRequest = new TranslationRequest();
+        translationRequest. setSourceLanguage(post.getLanguage());
+        translationRequest. setTargetLanguage(request.getTargetLanguage());
+        translationRequest. setSourceText(post.getContent());
+
+        return ApiResponse.ok(
+                translationService.translatePublicText(
+                        translationRequest,
+                        new TranslationCacheResource(
+                                "community-post",
+                                post.getPostId(),
+                                post.getContentVersion()
+                        )
+                )
+        );
+    }
+
 
     // 무한 스크롤용 게시글 조회
     @GetMapping("/posts/scroll")
@@ -170,6 +214,37 @@ public class CommunityController {
     ) {
         return ApiResponse.ok(
                 communityService.getCommentsByPostId(postId, memberId)
+        );
+    }
+
+    // 공개 댓글은 비로그인 방문자도 번역할 수 있다.
+    // 댓글 언어는 현재 저장·조회 흐름에서 확정하지 않으므로 Gemini가 자동 감지
+    @PostMapping("/posts/{postId}/comments/{commentId}/translation")
+    public ApiResponse<TranslationResponse> translateComment(
+            @PathVariable Long postId,
+            @PathVariable Long commentId,
+            @Valid @RequestBody TranslationTargetRequest request
+    ) {
+        CommunityCommentResponse comment =
+                communityService.getCommentForTranslation(
+                        postId,
+                        commentId
+                );
+
+        TranslationRequest translationRequest = new TranslationRequest();
+        translationRequest.setSourceLanguage("auto");
+        translationRequest.setTargetLanguage(request.getTargetLanguage());
+        translationRequest.setSourceText(comment.getContent());
+
+        return ApiResponse.ok(
+                translationService.translatePublicText(
+                        translationRequest,
+                        new TranslationCacheResource(
+                                "community-comment",
+                                comment.getCommentId(),
+                                comment.getContentVersion()
+                        )
+                )
         );
     }
 

@@ -4,6 +4,9 @@ import com.example.forguide.common.response.ApiResponse;
 import com.example.forguide.employment.dto.ResumeResponse;
 import com.example.forguide.employment.dto.ResumeSaveRequest;
 import com.example.forguide.employment.service.ResumeService;
+import com.example.forguide.translation.dto.TranslationRequest;
+import com.example.forguide.translation.dto.TranslationResponse;
+import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
@@ -42,6 +45,20 @@ public class ResumeController {
     ) {
         return ApiResponse.ok(
                 resumeService.saveResume(memberId, request, photo)
+        );
+    }
+
+    /*
+     * 로그인한 사용자의 이력서 입력값을 한국어 초안으로 번역한다.
+     * 원문과 번역문은 저장하지 않고, 화면에서 사용자가 검토한 뒤 저장한다.
+     */
+    @PostMapping("/translation")
+    public ApiResponse<TranslationResponse> translateResumeText(
+            @AuthenticationPrincipal Long memberId,
+            @Valid @RequestBody TranslationRequest request
+    ) {
+        return ApiResponse.ok(
+                resumeService.translateMyResumeText(memberId, request)
         );
     }
 
