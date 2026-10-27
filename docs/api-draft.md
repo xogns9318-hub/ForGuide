@@ -61,6 +61,54 @@
 
 사진 삭제는 DB의 `photo_url` 연결을 먼저 제거하고 트랜잭션 커밋 뒤 실제 서버 파일을 삭제한다. 이력서 작성 중 텍스트와 활성 탭은 브라우저 세션에만 임시 보관하며, 로그아웃하면 삭제된다. 서버의 저장 버튼을 누른 이력서만 재로그인 뒤에도 유지된다.
 
+## 콘텐츠 번역 API
+
+고정 UI 문구는 프론트엔드 i18next가 처리한다. 아래 API는 게시글·댓글·이력서처럼 사용자가 작성한 원문을 번역할 때만 사용하며, 번역문이 원문을 덮어쓰지 않는다.
+
+| HTTP | 주소 | 권한 | 역할 |
+| --- | --- | --- | --- |
+| POST | `/api/v1/community/posts/{postId}/translation` | 공개 | 게시글 원문을 대상 언어로 번역 |
+| POST | `/api/v1/community/posts/{postId}/comments/{commentId}/translation` | 공개 | 댓글 원문을 대상 언어로 번역 |
+| POST | `/api/v1/employment/resumes/translation` | 로그인 | 이력서의 서술형 입력값을 한국어 초안으로 번역 |
+
+### 커뮤니티 번역 요청
+
+게시글·댓글 원문과 원본 언어는 클라이언트가 보내지 않고 서버가 URL의 ID로 직접 조회한다. 요청에는 대상 언어만 보낸다.
+
+```json
+{
+  "targetLanguage": "en"
+}
+```
+
+응답은 번역문과 Redis 캐시 사용 여부를 반환한다.
+
+```json
+{
+  "success": true,
+  "data": {
+    "translatedText": "Translated text",
+    "cached": false
+  }
+}
+```
+
+지원 언어는 `ko`, `en`, `ja`, `zh`, `vi`, `th`다. 공개 커뮤니티 번역은 `translation:v2:{콘텐츠종류}:{ID}:v{내용버전}:{원문언어}:{대상언어}` 키로 Redis에 7일간 저장한다. 동일한 콘텐츠·버전·언어 요청은 캐시를 반환하며, 게시글 또는 댓글을 수정·삭제하면 DB 커밋 뒤 해당 콘텐츠의 번역 캐시를 제거한다.
+
+### 이력서 한국어 초안 요청
+
+이력서는 개인정보가 포함될 수 있으므로 로그인한 본인만 요청할 수 있고 Redis 캐시를 사용하지 않는다. 원문과 번역문은 이 API에서 저장하지 않으며, 사용자가 화면에서 검토·수정한 뒤 별도 이력서 저장 API를 호출한다.
+
+```json
+{
+  "sourceLanguage": "auto",
+  "targetLanguage": "ko",
+  "sourceText": "Customer service and inventory management"
+}
+```
+
+`sourceLanguage`은 `auto` 또는 지원 언어 코드이며, `sourceText`는 최대 5,000자다. 이름·연락처·날짜·회사명·학교명처럼 공식성이 중요한 값은 프론트엔드에서 한국어 초안 대상에서 제외한다.
+
 ```java
 .requestMatchers(HttpMethod.GET, "/api/v1/기능주소/**").permitAll()
 ```
