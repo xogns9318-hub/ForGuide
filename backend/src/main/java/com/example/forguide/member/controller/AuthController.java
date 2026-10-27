@@ -54,7 +54,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
-        return withRefreshCookie(authService.login(request));
+        return withRefreshCookie(authService.login(request), jwtProperties);
     }
 
     /**
@@ -68,7 +68,7 @@ public class AuthController {
         if (refreshToken == null || refreshToken.isBlank()) {
             return ResponseEntity.ok(ApiResponse.<AuthResponse>ok(null));
         }
-        return withRefreshCookie(authService.refresh(refreshToken));
+        return withRefreshCookie(authService.refresh(refreshToken), jwtProperties);
     }
 
     @PostMapping("/logout")
@@ -77,19 +77,20 @@ public class AuthController {
         authService.logout(refreshToken);
         // 브라우저의 쿠키도 지운다 (Max-Age=0)
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, refreshCookie("", Duration.ZERO).toString())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie("", Duration.ZERO, jwtProperties).toString())
                 .body(ApiResponse.ok());
     }
 
     // 응답 본문에는 access token만, refresh token은 HttpOnly 쿠키로
-    private ResponseEntity<ApiResponse<AuthResponse>> withRefreshCookie(AuthTokens tokens) {
-        ResponseCookie cookie = refreshCookie(tokens.refreshToken(), jwtProperties.refreshTokenValidity());
+    // (비밀번호 변경 후 새 토큰을 내려주는 MemberController도 같이 쓴다)
+    static ResponseEntity<ApiResponse<AuthResponse>> withRefreshCookie(AuthTokens tokens, JwtProperties jwtProperties) {
+        ResponseCookie cookie = refreshCookie(tokens.refreshToken(), jwtProperties.refreshTokenValidity(), jwtProperties);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
                 .body(ApiResponse.ok(tokens.body()));
     }
 
-    private ResponseCookie refreshCookie(String value, Duration maxAge) {
+    private static ResponseCookie refreshCookie(String value, Duration maxAge, JwtProperties jwtProperties) {
         return ResponseCookie.from(REFRESH_COOKIE, value)
                 .httpOnly(true)                        // JavaScript에서 읽을 수 없다
                 .secure(jwtProperties.cookieSecure())  // true면 https에서만 전송 (배포 시 켠다)

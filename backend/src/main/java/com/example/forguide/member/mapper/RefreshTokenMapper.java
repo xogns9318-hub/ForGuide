@@ -23,4 +23,7 @@ public interface RefreshTokenMapper {
 
     /** 회원의 만료된 토큰 정리 */
     int deleteExpiredByMemberId(@Param("memberId") Long memberId, @Param("now") LocalDateTime now);
+
+    /** 회원의 토큰 전부 삭제 (비밀번호 변경 시 모든 기기 로그아웃) */
+    int deleteByMemberId(Long memberId);
 }

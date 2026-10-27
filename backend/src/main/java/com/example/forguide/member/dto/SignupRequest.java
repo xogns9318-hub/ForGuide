@@ -14,10 +14,8 @@ public record SignupRequest(
         @Pattern(regexp = "^[a-z0-9]{4,20}$", message = "4~20자의 영문 소문자와 숫자만 사용할 수 있습니다.")
         String loginId,
 
-        // 8~32자, 영문 소문자·대문자·숫자·특수문자 모두 포함, 공백·비영문 자판 문자 불가
         @NotBlank(message = "비밀번호를 입력해주세요.")
-        @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])[\\x21-\\x7E]{8,32}$",
-                message = "비밀번호는 8~32자, 영문 소문자·대문자·숫자·특수문자를 모두 포함해야 합니다.")
+        @Pattern(regexp = PASSWORD_PATTERN, message = PASSWORD_MESSAGE)
         String password,
 
         // 이름(given name): 필수, 최대 50자. 외국인 이름을 고려해 문자 종류 제한 없음
@@ -41,4 +39,11 @@ public record SignupRequest(
         // 이메일 인증 완료 토큰 (POST /api/v1/auth/email/verify 응답). 없거나 맞지 않으면 가입하지 않는다
         @NotBlank(message = "이메일 인증을 완료해주세요.")
         String emailVerificationToken) {
+
+    // 비밀번호 규칙 (비밀번호 변경 요청도 같은 규칙을 쓴다)
+    // 8~32자, 영문 소문자·대문자·숫자·특수문자 모두 포함, 공백·비영문 자판 문자 불가
+    public static final String PASSWORD_PATTERN =
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])[\\x21-\\x7E]{8,32}$";
+    public static final String PASSWORD_MESSAGE =
+            "비밀번호는 8~32자, 영문 소문자·대문자·숫자·특수문자를 모두 포함해야 합니다.";
 }

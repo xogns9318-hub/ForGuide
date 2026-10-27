@@ -140,7 +140,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - `login` 성공 시 스토어에 저장한다. 실패 메시지는 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는다.
 - 이메일은 소문자로 바꿔 비교·저장한다.
 - 이메일 인증(`member/controller/EmailVerificationController`, 테이블 `email_verifications`): 코드 6자리·10분 유효·5번 틀리면 무효, 다시 받기는 60초 간격·하루 10번. 확인하면 30분 동안 한 번만 쓸 수 있는 토큰을 준다. 코드·토큰은 SHA-256 해시만 저장. 가장 최근 코드만 유효.
-- 메일 발송: 환경변수 `MAIL_USERNAME`·`MAIL_PASSWORD`(Gmail 앱 비밀번호)가 있으면 Gmail SMTP로 보내고, 없으면 메일 대신 서버 로그에 코드를 남긴다(개발용, 시작 시 경고).
+- 메일 발송: 환경변수 `FORGUIDE_MAIL_USERNAME`·`FORGUIDE_MAIL_PASSWORD`(Gmail 앱 비밀번호)가 있으면 Gmail SMTP로 보내고, 없으면 메일 대신 서버 로그에 코드를 남긴다(개발용, 시작 시 경고).
 
 입력 규칙 (`src/auth/utils/authValidation.js`, 서버도 같은 규칙으로 다시 검사):
 
@@ -161,6 +161,13 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | -------------------------- | --------------------------------- | ---------------------------------------- | ------------------------------- | -------------------------------- |
 | `updateNickname(nickname)` | `PATCH /members/me/nickname`      | `{ nickname }`                           | `member` (새 `nickname`)        | `AUTH_REQUIRED`, `INVALID_INPUT` |
 | `updateProfileImage(file)` | `PATCH /members/me/profile-image` | `multipart/form-data`, 항목 이름 `image` | `member` (새 `profileImageUrl`) | `AUTH_REQUIRED`, `INVALID_IMAGE` |
+| `getProfile()` | `GET /members/me/profile` | 없음 | `{ language, residenceTypeCode, visaTypeCode, job, choices }` (저장한 적 없으면 값은 null) | `AUTH_REQUIRED` |
+| `updateProfile({ language, residenceTypeCode, visaTypeCode, job })` | `PATCH /members/me/profile` | 사용 언어 필수, 나머지는 빈 값 = 모름(null) | 조회와 같음 | `AUTH_REQUIRED`, `INVALID_INPUT`(선택지에 없는 값) |
+| `changePassword({ currentPassword, newPassword })` | `PATCH /members/me/password` | 현재·새 비밀번호 (새 비밀번호는 가입 규칙) | `{ accessToken, member }` + 새 refresh token 쿠키 → 스토어 저장 | `AUTH_REQUIRED`, `INVALID_INPUT`, `CURRENT_PASSWORD_INVALID`, `LOGIN_LOCKED`(429) |
+
+프로필(`member_profiles`, 회원당 한 행): `choices`는 사용 언어 6개(화면 언어와 같음), 체류 유형 3개(`residence_types`), 체류자격 8개(`visa_types`, 추천 질문 목록과 같은 이름·순서)이며 선택지 값은 V27에서 넣는다. 체류 유형이 내국인(`KOREAN`)이면 체류자격은 저장하지 않는다. 사용 언어는 저장만 하고 화면 언어는 바꾸지 않는다.
+
+비밀번호 변경: 이 회원의 refresh token을 모두 지워 다른 기기의 로그인을 풀고, 이 기기에만 새로 발급한다(다른 기기의 access token은 만료될 때까지 최대 30분 남음). 현재 비밀번호를 틀린 횟수는 로그인 실패와 같이 센다. 백엔드: `MemberController` → `AuthService.changePassword`.
 
 닉네임 규칙 (`validateNickname`): 앞뒤 공백 제외 2~20자, 모든 언어의 글자·숫자·문장부호·기호·일반 공백 허용, 제어 문자·보이지 않는 문자 불가, 다른 회원과 중복 허용.
 

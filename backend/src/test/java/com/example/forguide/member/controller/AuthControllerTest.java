@@ -22,6 +22,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -31,7 +32,8 @@ import org.springframework.web.context.WebApplicationContext;
  * 회원가입·로그인·재발급·로그아웃 전체 흐름 (테스트 DB: H2, 스키마: test/resources/member/schema.sql)
  */
 @SpringBootTest
-@Sql(scripts = "/member/schema.sql")
+// 스키마에 한글 선택지가 있어 UTF-8로 읽는다 (Windows 기본 인코딩으로 읽으면 깨진다)
+@Sql(scripts = "/member/schema.sql", config = @SqlConfig(encoding = "UTF-8"))
 class AuthControllerTest {
 
     private static final String SIGNUP_JSON =

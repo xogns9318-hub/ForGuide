@@ -23,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -32,7 +33,8 @@ import org.springframework.web.context.WebApplicationContext;
  * 이메일 인증: 코드 보내기 → 확인 → 가입에서 토큰 사용 (테스트 DB: H2, 메일 발송은 가짜 객체로 대신함)
  */
 @SpringBootTest
-@Sql(scripts = "/member/schema.sql")
+// 스키마에 한글 선택지가 있어 UTF-8로 읽는다 (Windows 기본 인코딩으로 읽으면 깨진다)
+@Sql(scripts = "/member/schema.sql", config = @SqlConfig(encoding = "UTF-8"))
 class EmailVerificationControllerTest {
 
     private static final String EMAIL = "verify@example.com";

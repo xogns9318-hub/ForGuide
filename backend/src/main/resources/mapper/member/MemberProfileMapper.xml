@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.forguide.member.mapper.MemberProfileMapper">
+
+    <select id="findByMemberId" resultType="com.example.forguide.member.mapper.MemberProfileRow">
+        SELECT p.language       AS language,
+               r.residence_code AS residenceTypeCode,
+               v.visa_code      AS visaTypeCode,
+               p.job            AS job
+        FROM member_profiles p
+        LEFT JOIN residence_types r ON r.residence_type_id = p.residence_type_id
+        LEFT JOIN visa_types v ON v.visa_type_id = p.visa_type_id
+        WHERE p.member_id = #{memberId}
+    </select>
+
+    <!-- 코드를 번호로 바꿔 저장한다. 없는 코드면 NULL이 되므로 서비스에서 코드를 먼저 확인한다 -->
+    <update id="update">
+        UPDATE member_profiles
+        SET language          = #{row.language},
+            residence_type_id = (SELECT residence_type_id FROM residence_types WHERE residence_code = #{row.residenceTypeCode}),
+            visa_type_id      = (SELECT visa_type_id FROM visa_types WHERE visa_code = #{row.visaTypeCode}),
+            job               = #{row.job},
+            updated_at        = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+    </update>
+
+    <insert id="insert">
+        INSERT INTO member_profiles (member_id, language, residence_type_id, visa_type_id, job)
+        VALUES (#{memberId},
+                #{row.language},
+                (SELECT residence_type_id FROM residence_types WHERE residence_code = #{row.residenceTypeCode}),
+                (SELECT visa_type_id FROM visa_types WHERE visa_code = #{row.visaTypeCode}),
+                #{row.job})
+    </insert>
+
+    <select id="findResidenceTypes" resultType="com.example.forguide.member.dto.MemberProfileResponse$Choice">
+        SELECT residence_code AS code, residence_name AS name FROM residence_types ORDER BY residence_type_id
+    </select>
+
+    <select id="findVisaTypes" resultType="com.example.forguide.member.dto.MemberProfileResponse$Choice">
+        SELECT visa_code AS code, visa_name AS name FROM visa_types ORDER BY visa_type_id
+    </select>
+</mapper>

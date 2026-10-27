@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * 인증 코드 메일 보내기
- * - MAIL_USERNAME(spring.mail.username)이 있으면 Gmail SMTP로 실제 발송 (한국어·영어 함께)
+ * - FORGUIDE_MAIL_USERNAME(spring.mail.username)이 있으면 Gmail SMTP로 실제 발송 (한국어·영어 함께)
  * - 없으면 개발용으로 서버 로그에만 코드를 남긴다. 팀원이 메일 계정 없이도 가입 흐름을 확인할 수 있게 하기 위한 것이며,
  *   배포 환경에서는 반드시 메일 계정을 설정한다 (시작할 때 경고 출력)
  */
@@ -28,7 +28,7 @@ public class VerificationMailSender {
         this.mailSender = configured ? mailSender.getIfAvailable() : null;
         this.from = from;
         if (this.mailSender == null) {
-            log.warn("메일 계정(MAIL_USERNAME)이 없어 인증 코드를 메일 대신 서버 로그에 남깁니다. 배포 환경에서는 설정하세요.");
+            log.warn("메일 계정(FORGUIDE_MAIL_USERNAME)이 없어 인증 코드를 메일 대신 서버 로그에 남깁니다. 배포 환경에서는 설정하세요.");
         }
     }
 

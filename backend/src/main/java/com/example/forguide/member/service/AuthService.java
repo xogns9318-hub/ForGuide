@@ -6,6 +6,7 @@ import com.example.forguide.common.security.JwtProvider;
 import com.example.forguide.member.dto.AuthResponse;
 import com.example.forguide.member.dto.LoginRequest;
 import com.example.forguide.member.dto.MemberResponse;
+import com.example.forguide.member.dto.PasswordChangeRequest;
 import com.example.forguide.member.dto.SignupRequest;
 import com.example.forguide.member.mapper.MemberMapper;
 import com.example.forguide.member.mapper.MemberRow;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 회원가입·로그인·재발급·로그아웃.
+ * 회원가입·로그인·재발급·로그아웃·비밀번호 변경.
  *
  * refresh token 규칙
  * - 원문은 무작위 32바이트, 쿠키로만 내려준다
@@ -179,6 +180,38 @@ public class AuthService {
         if (refreshToken != null && !refreshToken.isBlank()) {
             refreshTokenMapper.deleteByToken(SecureTokens.sha256(refreshToken));
         }
+    }
+
+    /**
+     * 비밀번호 변경 → 지금 기기용 새 토큰
+     * 다른 기기의 로그인을 풀기 위해 이 회원의 refresh token을 모두 지우고, 지금 기기에만 새로 발급한다.
+     * (다른 기기의 access token은 만료될 때까지(최대 30분) 남는다)
+     * 현재 비밀번호를 틀린 횟수는 로그인 실패와 같이 센다 (이 경로로 비밀번호를 대입해 보지 못하게)
+     */
+    @Transactional(noRollbackFor = ApiException.class)
+    public AuthTokens changePassword(Long memberId, PasswordChangeRequest request) {
+        MemberRow member = memberMapper.findById(memberId);
+        if (member == null) {
+            // 토큰은 유효하지만 회원이 사라진 경우
+            throw new ApiException(ErrorCode.AUTH_REQUIRED);
+        }
+        LocalDateTime now = LocalDateTime.now();
+        loginAttemptService.checkNotLocked(member.getLoginId(), now);
+
+        if (!passwordEncoder.matches(request.currentPassword(), member.getPassword())) {
+            loginAttemptService.recordFailure(member.getLoginId(), now);
+            throw new ApiException(ErrorCode.CURRENT_PASSWORD_INVALID,
+                    Map.of("currentPassword", ErrorCode.CURRENT_PASSWORD_INVALID.getDefaultMessage()));
+        }
+        if (passwordEncoder.matches(request.newPassword(), member.getPassword())) {
+            String message = "현재 비밀번호와 다른 비밀번호를 입력해주세요.";
+            throw new ApiException(ErrorCode.INVALID_INPUT, message, Map.of("newPassword", message));
+        }
+
+        loginAttemptService.reset(member.getLoginId());
+        memberMapper.updatePassword(memberId, passwordEncoder.encode(request.newPassword()));
+        refreshTokenMapper.deleteByMemberId(memberId);
+        return issueTokens(member);
     }
 
     // access token(JWT)과 refresh token(무작위)을 함께 발급하고 refresh token 해시를 저장한다
