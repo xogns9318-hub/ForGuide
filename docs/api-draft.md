@@ -161,7 +161,11 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | -------------------------- | --------------------------------- | ---------------------------------------- | ------------------------------- | -------------------------------- |
 | `updateNickname(nickname)` | `PATCH /members/me/nickname`      | `{ nickname }`                           | `member` (새 `nickname`)        | `AUTH_REQUIRED`, `INVALID_INPUT` |
 | `updateProfileImage(file)` | `PATCH /members/me/profile-image` | `multipart/form-data`, 항목 이름 `image` | `member` (새 `profileImageUrl`) | `AUTH_REQUIRED`, `INVALID_IMAGE` |
+| `getProfile()` | `GET /members/me/profile` | 없음 | `{ language, residenceTypeCode, visaTypeCode, job, choices }` (저장한 적 없으면 값은 null) | `AUTH_REQUIRED` |
+| `updateProfile({ language, residenceTypeCode, visaTypeCode, job })` | `PATCH /members/me/profile` | 사용 언어 필수, 나머지는 빈 값 = 모름(null) | 조회와 같음 | `AUTH_REQUIRED`, `INVALID_INPUT`(선택지에 없는 값) |
 | `changePassword({ currentPassword, newPassword })` | `PATCH /members/me/password` | 현재·새 비밀번호 (새 비밀번호는 가입 규칙) | `{ accessToken, member }` + 새 refresh token 쿠키 → 스토어 저장 | `AUTH_REQUIRED`, `INVALID_INPUT`, `CURRENT_PASSWORD_INVALID`, `LOGIN_LOCKED`(429) |
+
+프로필(`member_profiles`, 회원당 한 행): `choices`는 사용 언어 6개(화면 언어와 같음), 체류 유형 3개(`residence_types`), 체류자격 8개(`visa_types`, 추천 질문 목록과 같은 이름·순서)이며 선택지 값은 V27에서 넣는다. 체류 유형이 내국인(`KOREAN`)이면 체류자격은 저장하지 않는다. 사용 언어는 저장만 하고 화면 언어는 바꾸지 않는다.
 
 비밀번호 변경: 이 회원의 refresh token을 모두 지워 다른 기기의 로그인을 풀고, 이 기기에만 새로 발급한다(다른 기기의 access token은 만료될 때까지 최대 30분 남음). 현재 비밀번호를 틀린 횟수는 로그인 실패와 같이 센다. 백엔드: `MemberController` → `AuthService.changePassword`.
 

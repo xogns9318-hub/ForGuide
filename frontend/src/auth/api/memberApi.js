@@ -26,6 +26,18 @@ export async function changePassword({ currentPassword, newPassword }) {
     return data;
 }
 
+// 프로필 조회 → { language, residenceTypeCode, visaTypeCode, job, choices }
+// 아직 저장한 적 없으면 값은 모두 null. choices: { languages, residenceTypes: [{ code, name }], visaTypes: [{ code, name }] }
+export async function getProfile() {
+    return client.get("/members/me/profile");
+}
+
+// 프로필 저장 (처음이면 새로 만든다) → 조회와 같은 모양
+// 모르는 값은 빈 문자열로 보내면 서버가 null(모름)로 저장한다. 내국인(KOREAN)은 체류자격을 저장하지 않는다
+export async function updateProfile({ language, residenceTypeCode, visaTypeCode, job }) {
+    return client.patch("/members/me/profile", { language, residenceTypeCode, visaTypeCode, job });
+}
+
 // 닉네임 변경 (앞뒤 공백은 빼고 저장, 다른 회원과 중복 허용)
 export async function updateNickname(nickname) {
     const member = await client.patch("/members/me/nickname", { nickname });

@@ -3,6 +3,8 @@ package com.example.forguide.member.controller;
 import com.example.forguide.common.response.ApiResponse;
 import com.example.forguide.common.security.JwtProperties;
 import com.example.forguide.member.dto.AuthResponse;
+import com.example.forguide.member.dto.MemberProfileRequest;
+import com.example.forguide.member.dto.MemberProfileResponse;
 import com.example.forguide.member.dto.MemberResponse;
 import com.example.forguide.member.dto.NicknameRequest;
 import com.example.forguide.member.dto.PasswordChangeRequest;
@@ -12,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 로그인한 본인의 닉네임·프로필 이미지·비밀번호 변경 (로그인 필요).
+ * 로그인한 본인의 닉네임·프로필 이미지·비밀번호 변경, 프로필 조회·저장 (로그인 필요).
  * 회원 번호는 요청 값으로 받지 않고 토큰에서만 꺼낸다 (남의 정보를 바꾸지 못하게).
  */
 @RestController
@@ -50,6 +53,17 @@ public class MemberController {
     public ResponseEntity<ApiResponse<AuthResponse>> changePassword(@AuthenticationPrincipal Long memberId,
                                                                     @Valid @RequestBody PasswordChangeRequest request) {
         return AuthController.withRefreshCookie(authService.changePassword(memberId, request), jwtProperties);
+    }
+
+    @GetMapping("/profile")
+    public ApiResponse<MemberProfileResponse> getProfile(@AuthenticationPrincipal Long memberId) {
+        return ApiResponse.ok(memberService.getProfile(memberId));
+    }
+
+    @PatchMapping("/profile")
+    public ApiResponse<MemberProfileResponse> updateProfile(@AuthenticationPrincipal Long memberId,
+                                                            @Valid @RequestBody MemberProfileRequest request) {
+        return ApiResponse.ok(memberService.updateProfile(memberId, request));
     }
 
     @PatchMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
