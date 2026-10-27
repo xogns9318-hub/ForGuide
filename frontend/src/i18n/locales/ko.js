@@ -814,6 +814,7 @@ const ko = {
             MAIL_SEND_FAILED: "인증 메일을 보내지 못했습니다. 잠시 후 다시 시도해주세요.",
             INVALID_IMAGE: "이미지는 JPG·PNG, 4MB 이하로 올려주세요.",
             AUTH_REQUIRED: "로그인이 필요합니다.",
+            INTERNAL_ERROR: "요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요.",
             NETWORK_ERROR: "서버에 연결하지 못했습니다. 네트워크를 확인해주세요.",
             TIMEOUT: "응답이 늦어지고 있습니다. 잠시 후 다시 시도해주세요.",
         },
