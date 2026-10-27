@@ -14,6 +14,26 @@ import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import CommunityCommentSection from "./CommunityCommentSection.jsx";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 
+// relatedService는 사용자가 쓴 본문이 아니라 서비스 식별값이므로 LLM 대신 i18next로 표시한다.
+const RELATED_SERVICE_LINKS = {
+    ACCOUNT_RECOMMEND: {
+        labelKey: "community.relatedServices.account",
+        path: "/service/account",
+    },
+    LOAN_RECOMMEND: {
+        labelKey: "community.relatedServices.loan",
+        path: "/service/loan",
+    },
+    INSURANCE_RECOMMEND: {
+        labelKey: "community.relatedServices.insurance",
+        path: "/service/insurance",
+    },
+    EMPLOYMENT_GUIDE: {
+        labelKey: "community.relatedServices.employment",
+        path: "/service/jobListings",
+    },
+};
+
 // 피드에서 게시글 본문을 누르면 상세 내용을 모달로 보여준다.
 export default function CommunityPostModal({
     postId,
@@ -213,6 +233,7 @@ export default function CommunityPostModal({
     const formattedDate = post?.createdAt
         ? new Date(post.createdAt).toLocaleDateString("ko-KR")
         : "";
+    const relatedServiceLink = post ? RELATED_SERVICE_LINKS[post.relatedService] : null;
 
     return (
         <div
@@ -252,6 +273,14 @@ export default function CommunityPostModal({
                                     <strong>{post.loginId}</strong>
                                     <p>{formattedDate}</p>
                                 </div>
+                                {relatedServiceLink && (
+                                    <a
+                                        className="community-related-service-link"
+                                        href={relatedServiceLink.path}
+                                    >
+                                        {t(relatedServiceLink.labelKey)}
+                                    </a>
+                                )}
                             </div>
                         </header>
 
