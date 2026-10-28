@@ -2,7 +2,6 @@ import { Link, Outlet, Route, Routes, Navigate, useLocation } from "react-router
 import { categories, accountRoutes } from "./routeConfig";
 import { useTranslation } from "react-i18next";
 import Home from "../components/Home/Home.jsx";
-import Banner from "../components/Banner/Banner.jsx";
 import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import StatusPage from "../components/StatusPage/StatusPage.jsx";
@@ -10,7 +9,7 @@ import Community from "../components/Community/Community.jsx";
 import CommunityPostDetail from "../components/Community/CommunityPostDetail.jsx";
 import { authPaths, authRoutes } from "../auth/authRoutes.jsx";
 import { recommendPaths, recommendRoutes } from "../recommend/recommendRoutes.jsx";
-import "../styles/home.css";
+import introductionStyles from "../styles/introduction.module.css";
 import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
 import TotalInterest from "../components/TotalInterest/TotalInterest.jsx";
 import Consultation from "../components/Consultation/Consultation.jsx";
@@ -25,7 +24,7 @@ const constructionPaths = new Set([
     "/service/simulator",
 ]);
 
-// 배너와 세부 기능을 연결할 서비스 주소 목록
+// 소개와 세부 기능을 연결할 서비스 주소 목록
 const serviceRoutes = categories.flatMap((category) => [
     {
         categoryId: category.id,
@@ -81,120 +80,104 @@ const featureIconPaths = {
     "/service/community": "M3 3h13v11H9l-4 4v-4H3z M16 8h5v11h-4l-4 3v-8 M6 7h7 M6 10h4",
 };
 
-// 카테고리 소개와 아직 본문이 없는 서비스의 공통 화면
+// 소개 페이지 문구는 홈 카드와 분리된 번역 항목을 사용한다.
 function PlaceholderPage({ title, description, categoryId, serviceId, children = [] }) {
     const { t } = useTranslation();
+    const isIntroduction = Boolean(categoryId) && !serviceId;
 
-    // 세부 서비스 이름과 주 기능 이름은 기존 번역키를 사용
     const translatedTitle = serviceId
-        ? t(`home.features.${categoryId}.${serviceId}`, {
-            defaultValue: title,
-        })
+        ? t(`home.features.${categoryId}.${serviceId}`, { defaultValue: title })
         : categoryId
-            ? t(`navigation.${categoryId}`, {
-                defaultValue: title,
-            })
+            ? t(`navigation.${categoryId}`, { defaultValue: title })
             : title;
 
-    // 번역된 설명이 없으면 경로 설정의 문구로 표시
+    if (isIntroduction) {
+        return (
+            <article className={introductionStyles.page} aria-labelledby="introduction-title">
+                <header className={introductionStyles.heading}>
+                    <h1 id="introduction-title">{translatedTitle}</h1>
+
+                    <p className={introductionStyles.description}>
+                        {t(`introduction.${categoryId}.description`, {
+                            defaultValue: description ?? "",
+                        })}
+                    </p>
+                </header>
+
+                <section
+                    className={introductionStyles.featureList}
+                    aria-label={t("introduction.featuresLabel", {
+                        name: translatedTitle,
+                    })}
+                >
+                    {/* 세부 기능 수에 따라 카드와 페이지 높이가 함께 바뀐다. */}
+                    {children.map((feature) => {
+                        const key = `introduction.${categoryId}.features.${feature.id}`;
+                        const featureTitle = t(`${key}.title`, {
+                            defaultValue: feature.label,
+                        });
+
+                        return (
+                            <Link
+                                key={feature.path}
+                                to={feature.path}
+                                className={introductionStyles.feature}
+                                aria-labelledby={`introduction-${categoryId}-${feature.id}`}
+                            >
+                                <div className={introductionStyles.featureIdentity}>
+                                    <svg
+                                        className={introductionStyles.icon}
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <path
+                                            d={
+                                                featureIconPaths[feature.path] ??
+                                                "M5 3h14v18H5z M8 8h8 M8 12h8 M8 16h5"
+                                            }
+                                        />
+                                    </svg>
+
+                                    <h2 id={`introduction-${categoryId}-${feature.id}`}>
+                                        {featureTitle}
+                                    </h2>
+                                </div>
+
+                                <p className={introductionStyles.featureDescription}>
+                                    {t(`${key}.description`, {
+                                        defaultValue: feature.description ?? "",
+                                    })}
+                                </p>
+                            </Link>
+                        );
+                    })}
+                </section>
+            </article>
+        );
+    }
+
     const translatedDescription = serviceId
         ? t(`service.${serviceId}.description`, {
-            defaultValue: description,
+            defaultValue: description ?? "",
         })
-        : categoryId
-            ? t(`home.categories.${categoryId}.description`, {
-                defaultValue: description,
-            })
-            : description;
-
-    // 본문이 없는 서비스·회원 임시 화면의 제목 표시 여부
-    const showPlainHeading = children.length === 0 && (!categoryId || Boolean(serviceId));
+        : description;
 
     return (
-        <div className="page-stack">
-            {/* Banner가 주소를 확인하여 소개 화면에서만 표시 */}
-            <Banner title={translatedTitle} description={translatedDescription} />
-
-            {/* 미구현 서비스는 배너 대신 일반 제목·설명 표시 */}
-            {showPlainHeading && (
-                <section className="panel">
-                    <h1>{translatedTitle}</h1>
-
-                    {translatedDescription && <p className="text-muted">{translatedDescription}</p>}
-                </section>
-            )}
-
-            {/* 카테고리 소개에서는 기존 모양의 이동 카드 표시 */}
-            {children.length > 0 && (
-                <section aria-label={`${translatedTitle} 세부 기능`}>
-                    <div className="home-service-grid">
-                        {children.map((feature) => {
-                            // 카드 이름도 기존 다국어 구조 사용
-                            const featureTitle = t(`home.features.${categoryId}.${feature.id}`, {
-                                defaultValue: feature.label,
-                            });
-
-                            return (
-                                <Link
-                                    key={feature.path}
-                                    to={feature.path}
-                                    className="home-service-card feature-guide-card"
-                                    aria-label={featureTitle}
-                                >
-                                    {/* 기존 카드 아이콘과 크기 유지 */}
-                                    <div className="home-service-icon">
-                                        <svg
-                                            viewBox="0 0 24 24"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="1.5"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            aria-hidden="true"
-                                        >
-                                            <path
-                                                d={
-                                                    featureIconPaths[feature.path] ??
-                                                    "M5 3h14v18H5z M8 8h8 M8 12h8 M8 16h5"
-                                                }
-                                            />
-                                        </svg>
-                                    </div>
-
-                                    <h2 className="feature-guide-title">{featureTitle}</h2>
-
-                                    {/* 카드 설명은 기존 경로 설정을 재사용 */}
-                                    <p>
-                                        {t(`service.${feature.id}.description`, {
-                                            defaultValue: feature.description,
-                                        })}
-                                    </p>
-                                </Link>
-                            );
-                        })}
-                    </div>
-                </section>
-            )}
-        </div>
+        <section className="panel">
+            <h1>{translatedTitle}</h1>
+            {translatedDescription && <p className="text-muted">{translatedDescription}</p>}
+        </section>
     );
 }
 
-// 계산기에도 세부 기능과 같은 번역 배너를 표시합니다.
-function CalculatorPage({ categoryId, serviceId, title, description, children }) {
-    const { t } = useTranslation();
-    const translatedTitle = t(`home.features.${categoryId}.${serviceId}`, {
-        defaultValue: title,
-    });
-    const translatedDescription = t(`service.${serviceId}.description`, {
-        defaultValue: description,
-    });
-
-    return (
-        <div className="page-stack">
-            <Banner title={translatedTitle} description={translatedDescription} />
-            {children}
-        </div>
-    );
+// 계산기는 기존 내용과 간격을 유지하고 공통 배너 호출을 제거한다.
+function CalculatorPage({ children }) {
+    return <div className="page-stack">{children}</div>;
 }
 
 // 일반 화면과 전체 상태 화면 연결

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Banner from "../Banner/Banner.jsx";
 import JobListingDetailModal from "./JobListingDetailModal.jsx";
 import { getJobListingSections } from "../../api/jobListingsApi.js";
 import { useTranslation } from "react-i18next";
@@ -243,10 +242,6 @@ export default function JobListings() {
 
     return (
         <div className="page-stack job-listings-page">
-            <Banner
-                title={t("jobListings.page.title")}
-                description={t("jobListings.page.description")}
-            />
 
             {isLoading &&
                 <p className="job-listings-state">

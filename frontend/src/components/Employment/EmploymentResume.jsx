@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import Banner from "../Banner/Banner.jsx";
 import {
     deleteResumePhoto,
     getResumeDraft,
@@ -845,7 +844,6 @@ export default function EmploymentResume() {
 
     return (
         <div className="page-stack employment-resume-page">
-            <Banner title={t("resume.page.title")} description={t("resume.page.description")} />
             <div
                 className="employment-resume-tabs"
                 role="tablist"
