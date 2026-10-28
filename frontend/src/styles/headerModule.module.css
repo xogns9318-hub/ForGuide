@@ -110,13 +110,13 @@
 }
 
 /* 각 항목의 클릭 영역에 왼쪽 여백이 포함되지 않게 한다. */
-.actions>*+* {
+.actions > * + * {
     position: relative;
     padding-left: 0;
 }
 
 /* 구분선은 글씨 영역 밖의 간격 가운데에 표시한다. */
-.actions>*+*::before {
+.actions > * + *::before {
     content: "";
     position: absolute;
     left: -12px;
@@ -128,7 +128,7 @@
     pointer-events: none;
 }
 
-.actions>a:hover,
+.actions > a:hover,
 .logout:hover {
     color: var(--primary);
 }
@@ -173,13 +173,15 @@
     border: 0;
 }
 
-/* 상단 제목 세 개를 같은 너비로 배치 */
+/* 상하 메뉴가 같은 6칸 기준을 사용하고, 상위 메뉴는 두 칸씩 차지한다. */
 .navigation {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 0;
 }
 
 .navItem {
+    grid-column: span 2;
     min-width: 0;
 }
 
@@ -196,8 +198,8 @@
 }
 
 /* 글씨 너비를 기준으로 밑줄 위치 설정 */
-.menuTitle>span,
-.menuLink>span {
+.menuTitle > span,
+.menuLink > span {
     position: relative;
     display: inline-block;
 
@@ -206,8 +208,8 @@
 }
 
 /* 기본 상태에서는 가운데로 접힌 밑줄 */
-.menuTitle>span::after,
-.menuLink>span::after {
+.menuTitle > span::after,
+.menuLink > span::after {
     content: "";
     position: absolute;
     left: 0;
@@ -237,19 +239,18 @@
 }
 
 /* 선택하면 가운데에서 양옆으로 밑줄이 펼쳐짐 */
-.menuTitle[data-open="true"]>span::after,
-.menuTitle:focus-visible>span::after,
-.menuLink:hover>span::after,
-.menuLink:focus-visible>span::after,
-.menuLink[aria-current="page"]>span::after {
+.menuTitle[data-open="true"] > span::after,
+.menuTitle:focus-visible > span::after,
+.menuLink:hover > span::after,
+.menuLink:focus-visible > span::after,
+.menuLink[aria-current="page"] > span::after {
     transform: scaleX(1);
 }
 
 /* 움직임 줄이기 설정에서는 전환 효과 생략 */
 @media (prefers-reduced-motion: reduce) {
-
-    .menuTitle>span::after,
-    .menuLink>span::after {
+    .menuTitle > span::after,
+    .menuLink > span::after {
         transition: none;
     }
 }
@@ -271,7 +272,7 @@
     box-shadow: 0 12px 20px rgb(32 59 51 / 5%);
 }
 
-/* 배경은 전체 너비, 목록 내용은 가운데 정렬 */
+/* 상하 메뉴가 같은 최대 너비와 좌우 여백을 사용한다. */
 .groups {
     display: grid;
     grid-template-columns: repeat(6, minmax(0, 1fr));
@@ -283,9 +284,13 @@
     padding: 32px var(--page-padding) 40px;
 }
 
-/* 소개와 문의는 제목 하나 아래에 세로 목록으로 표시 */
+/* 작은 화면의 기본 배치. 넓은 화면은 아래의 공통 격자로 정렬한다. */
 .singleGroup {
-    grid-template-columns: minmax(0, 280px);
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.twoGroups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .group {
@@ -400,7 +405,7 @@
         background: var(--surface);
     }
 
-    .mobileSection+.mobileSection {
+    .mobileSection + .mobileSection {
         border-top: 1px solid var(--line);
     }
 
@@ -431,13 +436,13 @@
         font-size: 14px;
     }
 
-    .mobileActions> :global(.header-language) {
+    .mobileActions > :global(.header-language) {
         flex-basis: 100%;
         justify-content: center;
         padding-left: 0;
     }
 
-    .mobileActions> :global(.header-language)::before {
+    .mobileActions > :global(.header-language)::before {
         display: none;
     }
 }
@@ -514,7 +519,6 @@
 
 /* 큰 화면에서만 카테고리 3칸의 꾸밈과 드롭다운 효과를 적용 */
 @media (min-width: 1025px) {
-
     /* 아래로 스크롤해도 로고와 카테고리 메뉴를 화면 맨 위에 고정 */
     .header {
         /* 스크롤 중에도 지정한 위치에 고정 */
@@ -667,7 +671,6 @@
 
 /* 바뀐 카테고리의 목록이 살짝 내려오며 나타나는 효과 */
 @keyframes dropdownContentEnter {
-
     /* 목록이 처음 나타나는 상태 */
     from {
         /* 처음에는 투명하게 표시 */
@@ -689,7 +692,6 @@
 
 /* 움직임 줄이기를 설정한 이용자에게는 애니메이션을 생략 */
 @media (prefers-reduced-motion: reduce) {
-
     .dropdown,
     .dropdown[data-open="true"],
     .backdrop,
@@ -703,124 +705,59 @@
 }
 
 @media (min-width: 1025px) {
-
-    /* 드롭다운 목록 전체를 기준으로 세로선 위치 설정 */
+    /* 12등분 중 두 칸씩 사용해 모든 하위 분류의 너비를 1/6로 맞춘다. */
     .dropdownContent .groups {
-        /* 세로선의 위치를 잡기 위한 기준 */
-        position: relative;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 0;
     }
 
-    /* 각 메뉴 그룹을 기준으로 세로선 위치 설정 */
+    /* 소개의 두 분류를 서비스 목록의 가운데 두 칸과 같은 위치에 놓는다. */
+    .dropdownContent .groups.twoGroups > .group:first-child {
+        grid-column: 5 / span 2;
+    }
+
+    .dropdownContent .groups.twoGroups > .group:last-child {
+        grid-column: 7 / span 2;
+    }
+
+    /* 문의 한 분류는 같은 1/6 너비로 화면 중앙에 놓는다. */
+    .dropdownContent .groups.singleGroup > .group {
+        grid-column: 6 / span 2;
+    }
+
+    .dropdownContent .groups::before,
+    .dropdownContent .groups::after {
+        content: none;
+    }
+
     .dropdownContent .group {
-        /* 그룹별 세로선의 위치를 잡기 위한 기준 */
+        grid-column: span 2;
         position: relative;
+        padding-inline: 12px;
     }
 
-    /* 6개 그룹 전체의 가장 왼쪽과 오른쪽 세로선 */
-    .dropdownContent .groups:not(.singleGroup)::before,
-    .dropdownContent .groups:not(.singleGroup)::after {
-        /* 세로선 생성 */
+    /* 모든 선은 여백의 중간이 아닌 실제 칸 경계에 그린다. */
+    .dropdownContent .group::before,
+    .dropdownContent .group::after {
         content: "";
-
-        /* 전체 목록을 기준으로 위치 지정 */
         position: absolute;
-
-        /* 위쪽 여백 24px */
-        top: 24px;
-
-        /* 아래쪽 여백 24px */
-        bottom: 24px;
-
-        /* 세로선 두께 */
-        width: 1px;
-
-        /* 기존 카테고리 구분선과 동일한 색상 */
-        background: var(--line);
-
-        /* 마우스 동작을 방해하지 않도록 설정 */
-        pointer-events: none;
-    }
-
-    /* 가이드 목록 가장 왼쪽 세로선 */
-    .dropdownContent .groups:not(.singleGroup)::before {
-        /* 왼쪽 여백에 맞춰 표시 */
-        left: var(--page-padding);
-    }
-
-    /* 가이드 목록 가장 오른쪽 세로선 */
-    .dropdownContent .groups:not(.singleGroup)::after {
-        /* 오른쪽 여백에 맞춰 표시 */
-        right: var(--page-padding);
-    }
-
-    /* 마지막 그룹을 제외한 각 그룹 오른쪽에 구분선 추가 */
-    .dropdownContent .groups:not(.singleGroup) .group:not(:last-child)::after {
-        /* 세로선 생성 */
-        content: "";
-
-        /* 각 그룹을 기준으로 위치 지정 */
-        position: absolute;
-
-        /* 전체 세로선과 위쪽 시작 위치를 맞춤 */
         top: -8px;
-
-        /* 전체 세로선과 아래쪽 끝 위치를 맞춤 */
         bottom: -16px;
-
-        /* 그룹 사이 간격 24px의 정중앙에 표시 */
-        right: -12px;
-
-        /* 세로선 두께 */
-        width: 1px;
-
-        /* 기존 카테고리 구분선과 동일한 색상 */
-        background: var(--line);
-
-        /* 마우스 동작을 방해하지 않도록 설정 */
+        width: 0;
+        border-left: 1px solid var(--line);
         pointer-events: none;
     }
 
-    /* 기존에 전체 영역 양쪽에 표시되던 세로선 제거 */
-    .dropdownContent .groups.singleGroup::before,
-    .dropdownContent .groups.singleGroup::after {
-        /* 소개와 문의에서는 전체 양쪽 선을 사용하지 않음 */
-        display: none;
-    }
-
-    /* 중앙에 배치된 소개·문의 목록의 양쪽에 구분선 추가 */
-    .dropdownContent .groups.singleGroup .group::before,
-    .dropdownContent .groups.singleGroup .group::after {
-        /* 세로선 생성 */
-        content: "";
-
-        /* 중앙 목록을 기준으로 위치 지정 */
-        position: absolute;
-
-        /* 위쪽 여백을 기존 세로선과 동일하게 설정 */
-        top: -8px;
-
-        /* 아래쪽 여백을 기존 세로선과 동일하게 설정 */
-        bottom: -16px;
-
-        /* 세로선 두께 */
-        width: 1px;
-
-        /* 기존 카테고리 구분선과 동일한 색상 */
-        background: var(--line);
-
-        /* 마우스 동작을 방해하지 않도록 설정 */
-        pointer-events: none;
-    }
-
-    /* 소개·문의 목록 왼쪽 세로선 */
-    .dropdownContent .groups.singleGroup .group::before {
-        /* 중앙 목록의 왼쪽 경계에 표시 */
+    .dropdownContent .group::before {
         left: 0;
     }
 
-    /* 소개·문의 목록 오른쪽 세로선 */
-    .dropdownContent .groups.singleGroup .group::after {
-        /* 중앙 목록의 오른쪽 경계에 표시 */
+    .dropdownContent .group::after {
+        display: none;
+    }
+
+    .dropdownContent .group:last-child::after {
+        display: block;
         right: 0;
     }
 }

@@ -19,9 +19,9 @@ const guideGroups = categories.map((category) => ({
     titleKey: `navigation.${category.id}`,
     items: category.children.length
         ? category.children.map((child) => ({
-            ...child,
-            labelKey: `home.features.${category.id}.${child.id}`,
-        }))
+              ...child,
+              labelKey: `home.features.${category.id}.${child.id}`,
+          }))
         : introductionItems.filter((item) => item.id === category.id),
 }));
 
@@ -29,18 +29,31 @@ const guideGroups = categories.map((category) => ({
 const menus = [
     {
         id: "introduction",
-        titleKey: "header.mega.introduction",
+        titleKey: "header.mega.serviceIntroduction",
         groups: [
             {
-                id: "introduction",
-                titleKey: "header.mega.introductionList",
-                items: introductionItems,
+                id: "guideIntroduction",
+                titleKey: "header.mega.guideIntroduction",
+
+                // 기존 소개 주소를 유지하면서 네 가지 가이드만 묶는다.
+                items: introductionItems.filter((item) =>
+                    ["counseling", "recommendation", "repayment", "employment"].includes(item.id),
+                ),
+            },
+            {
+                id: "extendedServices",
+                titleKey: "header.mega.extendedServices",
+
+                // 시뮬레이터와 커뮤니티는 확장 서비스로 분리한다.
+                items: introductionItems.filter((item) =>
+                    ["simulator", "community"].includes(item.id),
+                ),
             },
         ],
     },
     {
         id: "guides",
-        titleKey: "header.mega.guides",
+        titleKey: "header.mega.serviceList",
         groups: guideGroups,
     },
     {
@@ -249,9 +262,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
         if (!isMobileMenuOpen || event.key !== "Tab") return;
 
         const elements = Array.from(
-            headerRef.current.querySelectorAll(
-                'a[href], button:not(:disabled), [tabindex="0"]',
-            ),
+            headerRef.current.querySelectorAll('a[href], button:not(:disabled), [tabindex="0"]'),
         ).filter((element) => element.getClientRects().length > 0);
 
         const first = elements[0];
@@ -319,15 +330,18 @@ export default function Header({ isLoggedIn = false, onLogout }) {
     function renderGroups(menu) {
         return (
             <div
-                className={`${styles.groups} ${menu.id !== "guides" ? styles.singleGroup : ""
-                    }`}
+                className={[
+                    styles.groups,
+                    menu.groups.length === 1 ? styles.singleGroup : "",
+                    menu.groups.length === 2 ? styles.twoGroups : "",
+                ]
+                    .filter(Boolean)
+                    .join(" ")}
             >
                 {menu.groups.map((group) => (
                     <section key={group.id} className={styles.group}>
                         {/* 연한 제목은 클릭할 수 없는 p 태그 */}
-                        <p className={styles.groupTitle}>
-                            {t(group.titleKey)}
-                        </p>
+                        <p className={styles.groupTitle}>{t(group.titleKey)}</p>
 
                         <ul className={styles.linkList}>
                             {group.items.map((item) => {
@@ -347,21 +361,14 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                                             <Link
                                                 to={item.path}
                                                 className={styles.menuLink}
-                                                aria-current={
-                                                    isCurrent
-                                                        ? "page"
-                                                        : undefined
-                                                }
+                                                aria-current={isCurrent ? "page" : undefined}
                                                 onClick={closeMenus}
                                             >
                                                 <span>{label}</span>
                                             </Link>
                                         ) : (
                                             // 문의는 버튼만 표시하고 페이지는 연결하지 않음
-                                            <button
-                                                type="button"
-                                                className={styles.menuLink}
-                                            >
+                                            <button type="button" className={styles.menuLink}>
                                                 <span>{label}</span>
                                             </button>
                                         )}
@@ -387,10 +394,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
 
             <header
                 ref={headerRef}
-                className={[
-                    styles.header,
-                    isDesktopMenuOpen ? styles.expanded : "",
-                ].join(" ")}
+                className={[styles.header, isDesktopMenuOpen ? styles.expanded : ""].join(" ")}
                 style={{ "--header-height": `${headerHeight}px` }}
                 onMouseEnter={cancelMenuClose}
                 onMouseLeave={() => {
@@ -399,10 +403,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                 }}
                 onBlur={(event) => {
                     // 키보드 포커스가 헤더 밖으로 나가면 닫기
-                    if (
-                        !isMobile &&
-                        !event.currentTarget.contains(event.relatedTarget)
-                    ) {
+                    if (!isMobile && !event.currentTarget.contains(event.relatedTarget)) {
                         setOpenMenu(null);
                     }
                 }}
@@ -421,10 +422,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                                 aria-label={t("header.mega.home")}
                                 onClick={closeMenus}
                             >
-                                <img
-                                    src="/ForGuide_Logo.png"
-                                    alt="ForGuide"
-                                />
+                                <img src="/ForGuide_Logo.png" alt="ForGuide" />
                             </Link>
                         </div>
 
@@ -436,21 +434,13 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                             type="button"
                             className={styles.mobileToggle}
                             aria-label={t(
-                                isMobileMenuOpen
-                                    ? "header.mega.close"
-                                    : "header.mega.open",
+                                isMobileMenuOpen ? "header.mega.close" : "header.mega.open",
                             )}
                             aria-expanded={isMobileMenuOpen}
-                            aria-controls={
-                                isMobileMenuOpen
-                                    ? navigationId
-                                    : undefined
-                            }
+                            aria-controls={isMobileMenuOpen ? navigationId : undefined}
                             onClick={() => {
                                 setOpenMenu(null);
-                                setIsMobileMenuOpen(
-                                    (previous) => !previous,
-                                );
+                                setIsMobileMenuOpen((previous) => !previous);
                             }}
                         >
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -466,15 +456,9 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                     </div>
 
                     {/* 상단 제목은 이동 링크나 클릭 버튼으로 만들지 않음 */}
-                    <nav
-                        className={styles.navigation}
-                        aria-label={t("header.mega.navigation")}
-                    >
+                    <nav className={styles.navigation} aria-label={t("header.mega.navigation")}>
                         {menus.map((menu) => (
-                            <div
-                                key={menu.id}
-                                className={styles.navItem}
-                            >
+                            <div key={menu.id} className={styles.navItem}>
                                 <p
                                     ref={(element) => {
                                         titleRefs.current[menu.id] = element;
@@ -487,9 +471,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                                             ? `${navigationId}-${menu.id}`
                                             : undefined
                                     }
-                                    onMouseEnter={() =>
-                                        openDesktopMenu(menu)
-                                    }
+                                    onMouseEnter={() => openDesktopMenu(menu)}
                                     onFocus={() => openDesktopMenu(menu)}
                                     onKeyDown={(event) => {
                                         // 아래 방향키로 목록의 첫 항목에 이동
@@ -501,12 +483,8 @@ export default function Header({ isLoggedIn = false, onLogout }) {
 
                                         requestAnimationFrame(() => {
                                             document
-                                                .getElementById(
-                                                    `${navigationId}-${menu.id}`,
-                                                )
-                                                ?.querySelector(
-                                                    "a[href], button",
-                                                )
+                                                .getElementById(`${navigationId}-${menu.id}`)
+                                                ?.querySelector("a[href], button")
                                                 ?.focus();
                                         });
                                     }}
@@ -528,14 +506,8 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                         aria-hidden={!isDesktopMenuOpen}
                         inert={!isDesktopMenuOpen}
                     >
-                        <div
-                            ref={dropdownContentRef}
-                            className={styles.dropdownContent}
-                        >
-                            <div
-                                key={visibleMenu.id}
-                                className={styles.dropdownBody}
-                            >
+                        <div ref={dropdownContentRef} className={styles.dropdownContent}>
+                            <div key={visibleMenu.id} className={styles.dropdownBody}>
                                 {renderGroups(visibleMenu)}
                             </div>
                         </div>
@@ -550,13 +522,8 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                         aria-label={t("header.mega.navigation")}
                     >
                         {menus.map((menu) => (
-                            <section
-                                key={menu.id}
-                                className={styles.mobileSection}
-                            >
-                                <p className={styles.mobileTitle}>
-                                    {t(menu.titleKey)}
-                                </p>
+                            <section key={menu.id} className={styles.mobileSection}>
+                                <p className={styles.mobileTitle}>{t(menu.titleKey)}</p>
 
                                 {renderGroups(menu)}
                             </section>

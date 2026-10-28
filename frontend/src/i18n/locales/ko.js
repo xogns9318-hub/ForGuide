@@ -179,12 +179,13 @@ const ko = {
 
         // 새 헤더 메뉴에서 사용할 한국어 문구
         mega: {
-            introduction: "가이드 소개",
-            guides: "가이드 목록",
+            serviceIntroduction: "서비스 소개",
+            serviceList: "서비스 목록",
             contact: "문의하기",
 
             // 클릭할 수 없는 연한 제목
-            introductionList: "소개 목록",
+            guideIntroduction: "가이드 소개",
+            extendedServices: "확장 서비스",
             contactGroup: "문의",
 
             // 아직 페이지를 연결하지 않은 문의 버튼
