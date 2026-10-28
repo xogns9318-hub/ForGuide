@@ -110,13 +110,13 @@
 }
 
 /* 각 항목의 클릭 영역에 왼쪽 여백이 포함되지 않게 한다. */
-.actions > * + * {
+.actions>*+* {
     position: relative;
     padding-left: 0;
 }
 
 /* 구분선은 글씨 영역 밖의 간격 가운데에 표시한다. */
-.actions > * + *::before {
+.actions>*+*::before {
     content: "";
     position: absolute;
     left: -12px;
@@ -128,7 +128,7 @@
     pointer-events: none;
 }
 
-.actions > a:hover,
+.actions>a:hover,
 .logout:hover {
     color: var(--primary);
 }
@@ -198,8 +198,8 @@
 }
 
 /* 글씨 너비를 기준으로 밑줄 위치 설정 */
-.menuTitle > span,
-.menuLink > span {
+.menuTitle>span,
+.menuLink>span {
     position: relative;
     display: inline-block;
 
@@ -208,8 +208,8 @@
 }
 
 /* 기본 상태에서는 가운데로 접힌 밑줄 */
-.menuTitle > span::after,
-.menuLink > span::after {
+.menuTitle>span::after,
+.menuLink>span::after {
     content: "";
     position: absolute;
     left: 0;
@@ -239,18 +239,19 @@
 }
 
 /* 선택하면 가운데에서 양옆으로 밑줄이 펼쳐짐 */
-.menuTitle[data-open="true"] > span::after,
-.menuTitle:focus-visible > span::after,
-.menuLink:hover > span::after,
-.menuLink:focus-visible > span::after,
-.menuLink[aria-current="page"] > span::after {
+.menuTitle[data-open="true"]>span::after,
+.menuTitle:focus-visible>span::after,
+.menuLink:hover>span::after,
+.menuLink:focus-visible>span::after,
+.menuLink[aria-current="page"]>span::after {
     transform: scaleX(1);
 }
 
 /* 움직임 줄이기 설정에서는 전환 효과 생략 */
 @media (prefers-reduced-motion: reduce) {
-    .menuTitle > span::after,
-    .menuLink > span::after {
+
+    .menuTitle>span::after,
+    .menuLink>span::after {
         transition: none;
     }
 }
@@ -405,7 +406,7 @@
         background: var(--surface);
     }
 
-    .mobileSection + .mobileSection {
+    .mobileSection+.mobileSection {
         border-top: 1px solid var(--line);
     }
 
@@ -436,13 +437,13 @@
         font-size: 14px;
     }
 
-    .mobileActions > :global(.header-language) {
+    .mobileActions> :global(.header-language) {
         flex-basis: 100%;
         justify-content: center;
         padding-left: 0;
     }
 
-    .mobileActions > :global(.header-language)::before {
+    .mobileActions> :global(.header-language)::before {
         display: none;
     }
 }
@@ -519,6 +520,7 @@
 
 /* 큰 화면에서만 카테고리 3칸의 꾸밈과 드롭다운 효과를 적용 */
 @media (min-width: 1025px) {
+
     /* 아래로 스크롤해도 로고와 카테고리 메뉴를 화면 맨 위에 고정 */
     .header {
         /* 스크롤 중에도 지정한 위치에 고정 */
@@ -671,6 +673,7 @@
 
 /* 바뀐 카테고리의 목록이 살짝 내려오며 나타나는 효과 */
 @keyframes dropdownContentEnter {
+
     /* 목록이 처음 나타나는 상태 */
     from {
         /* 처음에는 투명하게 표시 */
@@ -692,6 +695,7 @@
 
 /* 움직임 줄이기를 설정한 이용자에게는 애니메이션을 생략 */
 @media (prefers-reduced-motion: reduce) {
+
     .dropdown,
     .dropdown[data-open="true"],
     .backdrop,
@@ -705,24 +709,25 @@
 }
 
 @media (min-width: 1025px) {
-    /* 12등분 중 두 칸씩 사용해 모든 하위 분류의 너비를 1/6로 맞춘다. */
+
+    /* 서비스 목록의 여섯 분류는 기존 1/6 너비를 유지한다. */
     .dropdownContent .groups {
         grid-template-columns: repeat(12, minmax(0, 1fr));
         gap: 0;
     }
 
-    /* 소개의 두 분류를 서비스 목록의 가운데 두 칸과 같은 위치에 놓는다. */
-    .dropdownContent .groups.twoGroups > .group:first-child {
-        grid-column: 5 / span 2;
+    /* 소개의 두 분류는 각각 상위 메뉴와 같은 1/3 너비로 가운데 배치한다. */
+    .dropdownContent .groups.twoGroups>.group:first-child {
+        grid-column: 3 / span 4;
     }
 
-    .dropdownContent .groups.twoGroups > .group:last-child {
-        grid-column: 7 / span 2;
+    .dropdownContent .groups.twoGroups>.group:last-child {
+        grid-column: 7 / span 4;
     }
 
-    /* 문의 한 분류는 같은 1/6 너비로 화면 중앙에 놓는다. */
-    .dropdownContent .groups.singleGroup > .group {
-        grid-column: 6 / span 2;
+    /* 문의도 상위 메뉴와 같은 1/3 너비로 가운데 배치한다. */
+    .dropdownContent .groups.singleGroup>.group {
+        grid-column: 5 / span 4;
     }
 
     .dropdownContent .groups::before,
