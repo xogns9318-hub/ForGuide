@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import FieldError from "../../components/FieldError/FieldError.jsx";
-import { checkLoginId, sendEmailCode, signup, verifyEmailCode } from "../api/authApi.js";
+import EmailVerificationFields from "../components/EmailVerificationFields.jsx";
+import { checkLoginId, signup } from "../api/authApi.js";
+import { useEmailVerification } from "../useEmailVerification.js";
 import { msg, messageText, apiErrorMessage, apiFieldErrors } from "../utils/authMessages.js";
 import {
     validateLoginId,
@@ -11,27 +13,8 @@ import {
     validateFamilyName,
     validateNickname,
     validateEmail,
-    validateVerificationCode,
 } from "../utils/authValidation.js";
 import styles from "./AuthPage.module.css";
-
-// 이메일 비교용 (서버와 같이 앞뒤 공백 제거 + 소문자)
-function normalizeEmail(value) {
-    return value.trim().toLowerCase();
-}
-
-// 남은 초 → "9:05"
-function formatTime(seconds) {
-    const m = Math.floor(seconds / 60);
-    const s = String(seconds % 60).padStart(2, "0");
-    return `${m}:${s}`;
-}
-
-// 이메일 인증 초기 상태
-// status: idle(코드 받기 전) / sending / sent(코드 입력 대기) / verifying / verified
-// email: 코드를 받은 이메일(정규화). 입력칸의 이메일이 바뀌면 인증은 처음부터 다시
-// expiresAt·resendAt: 코드 만료 시각·다시 받기 가능 시각(ms), token: 인증 완료 토큰
-const emptyEmailCheck = { status: "idle", email: "", token: "", expiresAt: 0, resendAt: 0 };
 
 // 입력 항목 순서 (오류가 있으면 이 순서대로 첫 항목에 포커스)
 const fieldOrder = ["loginId", "password", "givenName", "familyName", "nickname", "email"];
@@ -71,23 +54,14 @@ export default function Signup() {
     // checkedId: 확인한 아이디. 입력값이 바뀌면 결과는 무효가 된다
     const [idCheck, setIdCheck] = useState({ status: "idle", checkedId: "" });
 
-    // 이메일 인증 진행 상태와 입력한 인증 코드
-    const [emailCheck, setEmailCheck] = useState(emptyEmailCheck);
-    const [code, setCode] = useState("");
-    const [codeError, setCodeError] = useState("");
-
-    // 남은 시간 표시용 현재 시각 (코드 입력 대기 중에만 1초마다 갱신)
-    const [now, setNow] = useState(() => Date.now());
+    // 이메일 인증 (코드 받기·확인·남은 시간)
+    const verification = useEmailVerification("SIGNUP");
 
     const inputRefs = useRef({});
-    const codeInputRef = useRef(null);
     const mounted = useRef(false);
 
     // 지금 입력칸에 있는 아이디 (중복 확인 응답이 늦게 와도 현재 값과 비교하기 위해)
     const latestLoginId = useRef("");
-
-    // 지금 입력칸에 있는 이메일 (인증 응답이 늦게 와도 현재 값과 비교하기 위해)
-    const latestEmail = useRef("");
 
     // 화면을 떠난 뒤 끝난 요청이 상태를 바꾸지 않도록 표시
     useEffect(() => {
@@ -97,20 +71,12 @@ export default function Signup() {
         };
     }, []);
 
-    // 코드를 보낸 뒤 확인 전까지 1초마다 시계를 돌린다 (남은 시간·다시 받기 대기 표시)
-    const isWaitingCode = emailCheck.status === "sent" || emailCheck.status === "verifying";
+    // 인증을 마치면 이메일 칸의 "인증을 완료해주세요" 안내를 지운다
     useEffect(() => {
-        if (!isWaitingCode) return undefined;
-        const timer = setInterval(() => setNow(Date.now()), 1000);
-        return () => clearInterval(timer);
-    }, [isWaitingCode]);
-
-    // 새 코드를 받으면 코드 입력칸으로 포커스 (입력칸은 코드를 받은 뒤에 그려지므로 그린 다음에 옮긴다)
-    useEffect(() => {
-        if (emailCheck.expiresAt) {
-            codeInputRef.current?.focus();
+        if (verification.status === "verified") {
+            setErrors((prev) => ({ ...prev, email: "" }));
         }
-    }, [emailCheck.expiresAt]);
+    }, [verification.status]);
 
     // 입력값 변경: 해당 항목의 이전 오류와 폼 전체 오류를 지운다
     function handleChange(event) {
@@ -126,101 +92,19 @@ export default function Signup() {
             setIdCheck({ status: "idle", checkedId: "" });
         }
 
-        // 코드를 받은 이메일과 달라지면 인증은 처음부터 다시 (받은 코드·토큰은 그 이메일 전용)
+        // 이메일을 바꾸면 그 이메일로 받은 인증은 무효
         if (name === "email") {
-            latestEmail.current = normalizeEmail(value);
-            if (emailCheck.status !== "idle" && emailCheck.email !== latestEmail.current) {
-                setEmailCheck(emptyEmailCheck);
-                setCode("");
-                setCodeError("");
-            }
+            verification.handleEmailChange(value);
         }
     }
 
-    // 인증 코드 받기 (다시 받기도 같은 함수)
+    // 인증 코드 받기: 실패 안내는 이메일 칸 아래에
     async function handleSendCode() {
-        const message = validateEmail(form.email);
-        if (message) {
-            setErrors((prev) => ({ ...prev, email: message }));
-            inputRefs.current.email?.focus();
-            return;
-        }
-
-        const email = normalizeEmail(form.email);
-        const previous = emailCheck;
-        setEmailCheck((prev) => ({ ...prev, status: "sending", email }));
         setErrors((prev) => ({ ...prev, email: "" }));
-        setCodeError("");
-
-        try {
-            const { expiresInSeconds, resendAfterSeconds } = await sendEmailCode({
-                email,
-                purpose: "SIGNUP",
-            });
-            // 보내는 동안 이메일을 바꿨다면 이 결과는 버린다
-            if (!mounted.current || latestEmail.current !== email) return;
-
-            const sentAt = Date.now();
-            setNow(sentAt);
-            setEmailCheck({
-                status: "sent",
-                email,
-                token: "",
-                expiresAt: sentAt + expiresInSeconds * 1000,
-                resendAt: sentAt + resendAfterSeconds * 1000,
-            });
-            setCode("");
-        } catch (error) {
-            if (!mounted.current || latestEmail.current !== email) return;
-
-            // 보내지 못했으면 이전 상태로 (이미 받은 코드가 있으면 그 코드는 계속 쓸 수 있다)
-            setEmailCheck(previous.status === "sent" ? previous : emptyEmailCheck);
-            const fieldErrors = apiFieldErrors(error);
-            setErrors((prev) => ({
-                ...prev,
-                email: fieldErrors.email ?? apiErrorMessage(error, "auth.signup.failed"),
-            }));
-        }
-    }
-
-    // 인증 코드 확인 → 성공하면 가입 요청에 쓸 토큰을 받아 둔다
-    async function handleVerifyCode() {
-        const message = validateVerificationCode(code);
-        if (message) {
-            setCodeError(message);
-            codeInputRef.current?.focus();
-            return;
-        }
-
-        const email = emailCheck.email;
-        setEmailCheck((prev) => ({ ...prev, status: "verifying" }));
-        setCodeError("");
-
-        try {
-            const { verificationToken } = await verifyEmailCode({
-                email,
-                purpose: "SIGNUP",
-                code: code.trim(),
-            });
-            if (!mounted.current || latestEmail.current !== email) return;
-
-            setEmailCheck((prev) => ({ ...prev, status: "verified", token: verificationToken }));
-            setCode("");
-            setErrors((prev) => ({ ...prev, email: "" }));
-        } catch (error) {
-            if (!mounted.current || latestEmail.current !== email) return;
-
-            setEmailCheck((prev) => ({ ...prev, status: "sent" }));
-            setCodeError(apiErrorMessage(error, "auth.signup.failed"));
-            codeInputRef.current?.focus();
-        }
-    }
-
-    // 인증 코드 입력칸에서 Enter: 가입 제출이 아니라 코드 확인
-    function handleCodeKeyDown(event) {
-        if (event.key === "Enter") {
-            event.preventDefault();
-            handleVerifyCode();
+        const problem = await verification.sendCode(form.email);
+        if (problem && mounted.current) {
+            setErrors((prev) => ({ ...prev, email: problem }));
+            inputRefs.current.email?.focus();
         }
     }
 
@@ -277,8 +161,8 @@ export default function Signup() {
         }
 
         // 형식이 맞는 이메일이라도 인증을 마쳐야 가입 요청을 보낸다
-        if (!next.email && !isEmailVerified) {
-            next.email = msg("auth.signup.emailNotVerified");
+        if (!next.email && !verification.isVerifiedFor(form.email)) {
+            next.email = msg("auth.errors.EMAIL_NOT_VERIFIED");
         }
 
         return next;
@@ -309,17 +193,17 @@ export default function Signup() {
         setIsSubmitting(true);
 
         try {
-            const member = await signup({ ...form, emailVerificationToken: emailCheck.token });
+            const member = await signup({ ...form, emailVerificationToken: verification.token });
             if (!mounted.current) return;
 
             // 가입 완료 후 입력했던 비밀번호·인증 토큰을 화면 상태에 남기지 않는다
             setForm(emptyForm);
-            setEmailCheck(emptyEmailCheck);
+            verification.reset();
 
-            // 다음 행동: 로그인 화면으로 이동 (가입한 아이디를 안내용으로 전달)
+            // 다음 행동: 로그인 화면으로 이동 (가입한 아이디를 미리 채우고 완료 안내)
             navigate("/login", {
                 replace: true,
-                state: { signedUpLoginId: member.loginId },
+                state: { prefillLoginId: member.loginId, notice: "signedUp" },
             });
         } catch (error) {
             if (!mounted.current) return;
@@ -335,7 +219,7 @@ export default function Signup() {
                 }
                 // 토큰이 만료됐거나 이미 쓰였으면 인증을 처음부터 다시 받게 한다
                 if (error.code === "EMAIL_NOT_VERIFIED") {
-                    setEmailCheck(emptyEmailCheck);
+                    verification.reset();
                 }
                 return;
             }
@@ -367,23 +251,6 @@ export default function Signup() {
     }
 
     const isIdAvailable = idCheck.status === "available" && idCheck.checkedId === form.loginId;
-
-    // 이메일 인증 화면 표시용 값
-    const isEmailVerified =
-        emailCheck.status === "verified" && emailCheck.email === normalizeEmail(form.email);
-    const secondsLeft = Math.max(0, Math.ceil((emailCheck.expiresAt - now) / 1000));
-    const resendWait = Math.max(0, Math.ceil((emailCheck.resendAt - now) / 1000));
-    const sendDisabled =
-        isSubmitting ||
-        emailCheck.status === "sending" ||
-        isEmailVerified ||
-        (isWaitingCode && resendWait > 0);
-
-    let sendLabel = t("auth.signup.sendCode");
-    if (emailCheck.status === "sending") sendLabel = t("auth.signup.sendingCode");
-    else if (isWaitingCode && resendWait > 0)
-        sendLabel = t("auth.signup.resendIn", { seconds: resendWait });
-    else if (isWaitingCode) sendLabel = t("auth.signup.resendCode");
 
     return (
         <div className="page-stack">
@@ -507,88 +374,15 @@ export default function Signup() {
                         />
                     </div>
 
-                    {/* 이메일 + 인증 코드 받기 */}
-                    <div className="form-field">
-                        <label htmlFor="signup-email">{t("auth.signup.email")}</label>
-                        <div className={styles.inputWithButton}>
-                            <input
-                                {...fieldProps("email")}
-                                type="email"
-                                autoComplete="email"
-                                inputMode="email"
-                                maxLength={254}
-                            />
-                            <button
-                                type="button"
-                                className="button"
-                                onClick={handleSendCode}
-                                disabled={sendDisabled}
-                            >
-                                {sendLabel}
-                            </button>
-                        </div>
-                        {isWaitingCode && (
-                            <p className="form-help" role="status">
-                                {t("auth.signup.codeSent", { email: emailCheck.email })}
-                            </p>
-                        )}
-                        {isEmailVerified && (
-                            <p className={styles.ok} role="status">
-                                {t("auth.signup.emailVerified")}
-                            </p>
-                        )}
-                        <FieldError
-                            id="signup-email-error"
-                            message={messageText(t, errors.email)}
-                        />
-                    </div>
-
-                    {/* 인증 코드 입력 (코드를 보낸 뒤에만 보인다) */}
-                    {isWaitingCode && (
-                        <div className="form-field">
-                            <label htmlFor="signup-code">{t("auth.signup.code")}</label>
-                            <div className={styles.inputWithButton}>
-                                <input
-                                    id="signup-code"
-                                    ref={codeInputRef}
-                                    value={code}
-                                    onChange={(event) => {
-                                        setCode(event.target.value);
-                                        setCodeError("");
-                                    }}
-                                    onKeyDown={handleCodeKeyDown}
-                                    type="text"
-                                    inputMode="numeric"
-                                    autoComplete="one-time-code"
-                                    maxLength={6}
-                                    aria-invalid={Boolean(codeError)}
-                                    aria-describedby={`signup-code-time${codeError ? " signup-code-error" : ""}`}
-                                    readOnly={emailCheck.status === "verifying"}
-                                />
-                                <button
-                                    type="button"
-                                    className="button button-primary"
-                                    onClick={handleVerifyCode}
-                                    disabled={emailCheck.status === "verifying"}
-                                >
-                                    {emailCheck.status === "verifying"
-                                        ? t("auth.signup.verifyingCode")
-                                        : t("auth.signup.verifyCode")}
-                                </button>
-                            </div>
-                            <p id="signup-code-time" className="form-help">
-                                {secondsLeft > 0
-                                    ? t("auth.signup.codeTimeLeft", {
-                                          time: formatTime(secondsLeft),
-                                      })
-                                    : t("auth.errors.VERIFICATION_EXPIRED")}
-                            </p>
-                            <FieldError
-                                id="signup-code-error"
-                                message={messageText(t, codeError)}
-                            />
-                        </div>
-                    )}
+                    {/* 이메일 + 인증 코드 받기·확인 */}
+                    <EmailVerificationFields
+                        idPrefix="signup"
+                        verification={verification}
+                        emailInputProps={fieldProps("email")}
+                        emailError={errors.email}
+                        onSendCode={handleSendCode}
+                        disabled={isSubmitting}
+                    />
                 </div>
 
                 {formError && (

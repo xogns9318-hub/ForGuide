@@ -3,6 +3,12 @@ package com.example.forguide.member.controller;
 import static com.example.forguide.member.controller.EmailVerificationSteps.verifiedToken;
 import static com.example.forguide.member.controller.EmailVerificationSteps.withToken;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -334,5 +340,88 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/v1/auth/refresh").cookie(cookie))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error.code").value("REFRESH_INVALID"));
+    }
+
+    // ── 비밀번호 찾기(재설정) ──
+
+    private ResultActions resetPassword(String email, String token, String newPassword) throws Exception {
+        return mockMvc.perform(post("/api/v1/auth/password/reset").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"" + email + "\",\"verificationToken\":\"" + token
+                        + "\",\"newPassword\":\"" + newPassword + "\"}"));
+    }
+
+    @Test
+    void 비밀번호를_재설정하면_새_비밀번호로만_로그인되고_모든_기기가_로그아웃된다() throws Exception {
+        signup();
+        Cookie device = login().getCookie("refreshToken");
+        String token = verifiedToken(mockMvc, mail, "new@example.com", "PASSWORD_RESET");
+
+        // 로그인 화면에 미리 채울 아이디를 돌려준다
+        resetPassword("NEW@example.com", token, "Newpass2@")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.loginId").value("newuser1"));
+
+        loginWith("newuser1", "Abcdef1!").andExpect(status().isUnauthorized());
+        loginWith("newuser1", "Newpass2@").andExpect(status().isOk());
+        mockMvc.perform(post("/api/v1/auth/refresh").cookie(device)).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void 재설정하면_로그인_잠금도_풀린다() throws Exception {
+        signup();
+        for (int i = 0; i < 5; i++) {
+            loginWith("newuser1", "Wrong123!");
+        }
+        loginWith("newuser1", "Abcdef1!").andExpect(jsonPath("$.error.code").value("LOGIN_LOCKED"));
+
+        String token = verifiedToken(mockMvc, mail, "new@example.com", "PASSWORD_RESET");
+        resetPassword("new@example.com", token, "Newpass2@").andExpect(status().isOk());
+
+        loginWith("newuser1", "Newpass2@").andExpect(status().isOk());
+    }
+
+    @Test
+    void 가입되지_않은_이메일도_같은_응답이고_메일은_보내지_않는다() throws Exception {
+        signup();
+        String registered = mockMvc.perform(post("/api/v1/auth/email/send-code").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"new@example.com\",\"purpose\":\"PASSWORD_RESET\"}"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        String unknown = mockMvc.perform(post("/api/v1/auth/email/send-code").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"ghost@example.com\",\"purpose\":\"PASSWORD_RESET\"}"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        assertThat(unknown).isEqualTo(registered);
+        verify(mail, never()).send(eq("ghost@example.com"), anyString(), any(), anyLong());
+
+        // 재발송 간격도 똑같이 적용된다
+        mockMvc.perform(post("/api/v1/auth/email/send-code").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"ghost@example.com\",\"purpose\":\"PASSWORD_RESET\"}"))
+                .andExpect(jsonPath("$.error.code").value("VERIFICATION_RESEND_TOO_SOON"));
+    }
+
+    @Test
+    void 가입용_토큰이나_쓴_토큰으로는_재설정할_수_없다() throws Exception {
+        // 가입용(SIGNUP) 토큰은 용도가 달라 거부
+        String signupToken = verifiedToken(mockMvc, mail, "new@example.com");
+        resetPassword("new@example.com", signupToken, "Newpass2@")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.code").value("EMAIL_NOT_VERIFIED"));
+
+        // 한 번 쓴 재설정 토큰은 다시 쓸 수 없다
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                .content(withToken(SIGNUP_JSON, signupToken)));
+        String token = verifiedToken(mockMvc, mail, "new@example.com", "PASSWORD_RESET");
+        resetPassword("new@example.com", token, "Newpass2@").andExpect(status().isOk());
+        resetPassword("new@example.com", token, "Newpass3#")
+                .andExpect(jsonPath("$.error.code").value("EMAIL_NOT_VERIFIED"));
+    }
+
+    @Test
+    void 새_비밀번호가_규칙에_맞지_않으면_400() throws Exception {
+        resetPassword("new@example.com", "any", "short")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.fieldErrors.newPassword").exists());
     }
 }

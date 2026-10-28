@@ -44,6 +44,13 @@ export async function signup({
     });
 }
 
+// 비밀번호 찾기(재설정) → { loginId } (로그인 화면에 미리 채울 아이디)
+// verificationToken: verifyEmailCode({ purpose: "PASSWORD_RESET" })로 받은 토큰
+// 성공하면 모든 기기의 로그인이 풀리고, 로그인 화면에서 새 비밀번호로 다시 로그인한다
+export async function resetPassword({ email, verificationToken, newPassword }) {
+    return client.post("/auth/password/reset", { email, verificationToken, newPassword });
+}
+
 // 로그인 → { accessToken, member }
 // 성공하면 스토어에 로그인 상태를 저장한다. refresh token은 서버가 HttpOnly 쿠키로 내려준다.
 export async function login({ loginId, password }) {

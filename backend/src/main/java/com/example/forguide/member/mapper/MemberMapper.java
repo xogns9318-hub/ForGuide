@@ -13,6 +13,9 @@ public interface MemberMapper {
 
     MemberRow findByLoginId(String loginId);
 
+    /** 이메일로 찾기 (이메일은 소문자로 저장되어 있다) */
+    MemberRow findByEmail(String email);
+
     boolean existsByLoginId(String loginId);
 
     boolean existsByEmail(String email);
