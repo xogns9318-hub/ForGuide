@@ -27,6 +27,13 @@ export async function parseResponse(response) {
         return body?.data ?? null;
     }
 
+    // 백엔드가 꺼져 있으면 앞단 프록시(개발 중 Vite, 배포 시 nginx 등)가 502·503·504를 대신 돌려준다
+    // 이때는 우리 서버 형식의 오류가 본문에 없으므로 "서버에 연결하지 못함"으로 안내한다
+    // (우리 서버가 보낸 503 등은 본문에 error.code가 있어 그대로 쓴다)
+    if (!body?.error && [502, 503, 504].includes(response.status)) {
+        throw toNetworkError(null);
+    }
+
     const error = body?.error ?? {};
     throw new ApiError(
         error.code ?? "UNKNOWN_ERROR",
