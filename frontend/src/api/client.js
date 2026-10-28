@@ -62,7 +62,8 @@ async function send(path, { method, body, headers }) {
     const requestHeaders = {
         Accept: "application/json",
         "Accept-Language": i18n.resolvedLanguage || i18n.language || "ko",
-        ...headers };
+        ...headers,
+    };
 
     // 로그인 상태면 모든 요청에 access token을 붙인다
     if (accessToken) {
