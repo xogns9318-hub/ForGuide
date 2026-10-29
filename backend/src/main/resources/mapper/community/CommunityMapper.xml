@@ -5,6 +5,90 @@
 <mapper namespace="com.example.forguide.community.mapper.CommunityMapper">
 
     <!-- ================================================================
+     커뮤니티 선택 옵션
+     - 실제 코드·활성 여부는 DB에서 관리하고, 화면 문구는 labelKey로 i18next가 표시한다.
+     ================================================================ -->
+
+    <!-- 활성 카테고리 목록 -->
+    <select id="findActiveCategories"
+            resultType="com.example.forguide.community.dto.CommunityOptionResponse">
+        SELECT
+            category_code AS code,
+            label_key AS labelKey,
+            display_order AS displayOrder
+        FROM community_categories
+        WHERE is_active = 1
+        ORDER BY display_order ASC
+    </select>
+
+    <!-- 활성 주요 주제 목록 -->
+    <select id="findActiveTopics"
+            resultType="com.example.forguide.community.dto.CommunityOptionResponse">
+        SELECT
+            topic_code AS code,
+            label_key AS labelKey,
+            display_order AS displayOrder
+        FROM community_topics
+        WHERE is_active = 1
+        ORDER BY display_order ASC
+    </select>
+
+    <!-- 특정 카테고리에 연결된 활성 관련 서비스 목록 -->
+    <select id="findActiveRelatedServicesByCategory"
+            resultType="com.example.forguide.community.dto.CommunityOptionResponse">
+        SELECT
+            service_code AS code,
+            label_key AS labelKey,
+            display_order AS displayOrder
+        FROM community_related_services
+        WHERE category_code = #{categoryCode}
+            AND is_active = 1
+        ORDER BY display_order ASC
+    </select>
+
+    <!-- 활성 카테고리인지 확인 -->
+    <select id="existsActiveCategory" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1
+            FROM community_categories
+            WHERE category_code = #{categoryCode}
+                AND is_active = 1
+        )
+    </select>
+
+    <!-- 해당 카테고리에서 선택 가능한 활성 관련 서비스인지 확인 -->
+    <select id="existsActiveRelatedServiceByCategory" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1
+            FROM community_related_services
+            WHERE service_code = #{serviceCode}
+                AND category_code = #{categoryCode}
+                AND is_active = 1
+        )
+    </select>
+
+    <!-- 활성 주요 주제인지 확인 -->
+    <select id="existsActiveTopic" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1
+            FROM community_topics
+            WHERE topic_code = #{topicCode}
+                AND is_active = 1
+        )
+    </select>
+
+    <!-- 활성 주제에 연결된 본문 검색 키워드 조회 -->
+    <select id="findActiveTopicKeywords" resultType="string">
+        SELECT tk.keyword
+        FROM community_topic_keywords tk
+        INNER JOIN community_topics t
+            ON t.topic_code = tk.topic_code
+        WHERE tk.topic_code = #{topicCode}
+            AND t.is_active = 1
+        ORDER BY tk.keyword ASC
+    </select>
+
+    <!-- ================================================================
          게시글 피드 조회
          - 전체 목록, 상세, 무한 스크롤이 같은 게시글·작성자 JOIN을 사용한다.
          ================================================================ -->

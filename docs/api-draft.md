@@ -16,7 +16,7 @@
 | `common/response/ApiResponse`        | `ApiResponse.ok(data)`, `ApiResponse.ok()`, `ApiResponse.fail(code, message, fieldErrors)`                                                              |
 | `common/exception/ErrorCode`         | 인증·회원 오류 코드·HTTP 상태·기본 문구 목록                                                                                                            |
 | `common/exception/ApiException`      | `throw new ApiException(ErrorCode.EMAIL_DUPLICATED, Map.of("email", "..."))`                                                                            |
-| `member/common/AuthExceptionHandler` | member 컨트롤러 단계 예외 → 실패 응답. `@Valid` 실패는 `INVALID_INPUT` + 항목별 `fieldErrors`, 예상 못 한 오류는 `INTERNAL_ERROR`(원인은 서버 로그에만) |
+| `common/exception/GlobalExceptionHandler` | 전체 컨트롤러 단계 예외 → 실패 응답. `@Valid` 실패는 `INVALID_INPUT` + 항목별 `fieldErrors`, 예상 못 한 오류는 `INTERNAL_ERROR`(원인은 서버 로그에만) |
 
 | 코드                                                                                     | 상태 | 용도                                    |
 | ---------------------------------------------------------------------------------------- | ---- | --------------------------------------- |
@@ -40,7 +40,7 @@
 | `common/security/SecurityConfig`              | 세션 없음(STATELESS), BCrypt, 접근 규칙                                                     |
 
 접근 규칙: **기본 잠금.** 공개할 주소만 열고 나머지는 모두 로그인이 필요하다(`anyRequest().authenticated()`).
-현재 공개 주소: `/api/v1/auth/**`, 프로필·커뮤니티 이미지 조회(GET), 커뮤니티 게시글 조회(GET `/api/v1/community/posts/**`), 작성자 미리보기·작성 글 목록(GET `/api/v1/community/members/*/preview`, `/posts`).
+현재 공개 주소: `/api/v1/auth/**`, 프로필·커뮤니티 이미지 조회(GET), 커뮤니티 게시글 조회(GET `/api/v1/community/posts/**`), 커뮤니티 옵션 조회(GET `/api/v1/community/options/**`), 작성자 미리보기·작성 글 목록(GET `/api/v1/community/members/*/preview`, `/posts`).
 토큰이 실려 오면 `@AuthenticationPrincipal Long memberId`로 회원 번호를 받는다(공개 주소에서 토큰이 없으면 `null`).
 로그인 없이 써야 하는 새 API는 해당 담당자가 `common/security/SecurityConfig`의 "공개 주소" 구역에 한 줄 추가한다. 잊으면 401이 난다.
 
@@ -273,7 +273,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - `community/service/CommunityService.java`
 - `community/mapper/CommunityMapper.java`
 - `resources/mapper/CommunityMapper.xml`
-- `community/exception/CommunityExceptionHandler.java`
+- `common/exception/GlobalExceptionHandler.java`
 
 기본 주소: `/api/v1/community`
 
@@ -292,9 +292,34 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | GET    | `/posts/scroll`             | 커서 기반 게시글 목록 조회                     |
 | GET    | `/my-reposts`               | 로그인 회원이 리포스트한 원본 게시글 목록 조회 |
 | GET    | `/posts/popular?sort=likes` | 공감순 또는 조회순 인기 게시글 상위 10개 조회  |
+| GET    | `/options/categories` | 활성 카테고리 목록 조회 |
+| GET    | `/options/topics` | 활성 주요 주제 목록 조회 |
+| GET    | `/options/categories/{categoryCode}/related-services` | 선택한 카테고리의 활성 관련 서비스 목록 조회 |
 | POST   | `/posts`                    | 게시글 작성                                    |
 | PATCH  | `/posts/{postId}`           | 작성자 본인 게시글 본문·사진 수정              |
 | DELETE | `/posts/{postId}`           | 작성자 본인 게시글 삭제                        |
+
+### 커뮤니티 옵션 조회
+
+카테고리·주제·관련 서비스의 실제 코드, 활성 여부, 표시 순서는 DB 옵션 테이블에서 관리한다. 화면에 보여 줄 문구는 DB의 `labelKey`를 i18next `t()`에 전달해 현재 선택 언어로 표시한다.
+
+| API | 반환 데이터 |
+| --- | --- |
+| `GET /api/v1/community/options/categories` | 활성 카테고리 목록 |
+| `GET /api/v1/community/options/topics` | 활성 주요 주제 목록 |
+| `GET /api/v1/community/options/categories/{categoryCode}/related-services` | 해당 카테고리에 연결된 활성 관련 서비스 목록 |
+
+각 목록 항목은 아래 구조를 반환한다.
+
+```json
+{
+  "code": "REVIEW_RECOMMEND",
+  "labelKey": "community.navigation.reviewRecommend",
+  "displayOrder": 2
+}
+```
+
+카테고리·관련 서비스·주제의 유효성 검증도 같은 DB 활성 옵션을 기준으로 수행한다. 따라서 옵션을 추가하거나 비활성화할 때 Java 하드코딩을 수정하거나 서버를 재배포할 필요가 없다.
 
 ### 무한 스크롤 조회
 
@@ -423,7 +448,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | 404       | `NOT_FOUND`     | 없는 게시글 조회 또는 삭제 요청            |
 
 커뮤니티의 요청 검증 예외는
-`CommunityExceptionHandler`에서 공통 응답 형식으로 처리한다.
+`GlobalExceptionHandler`에서 공통 응답 형식으로 처리한다.
 
 ### 테스트 상태
 

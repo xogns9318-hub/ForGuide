@@ -211,6 +211,7 @@ const vi = {
         },
         feedback: {
             popularLoadError: "Không thể tải bài viết nổi bật.",
+            optionsLoadError: "Không thể tải các tùy chọn cộng đồng. Vui lòng thử lại.",
             myRepostsLoginRequired: "Vui lòng đăng nhập để xem bài đăng lại của bạn.",
             postsLoadError: "Không thể tải bài viết.",
             imageCountLimit: "Bạn có thể đính kèm tối đa {{count}} ảnh.",
