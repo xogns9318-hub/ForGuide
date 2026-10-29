@@ -6,6 +6,8 @@ import com.example.forguide.member.dto.AuthResponse;
 import com.example.forguide.member.dto.LoginIdCheckResponse;
 import com.example.forguide.member.dto.LoginRequest;
 import com.example.forguide.member.dto.MemberResponse;
+import com.example.forguide.member.dto.PasswordResetRequest;
+import com.example.forguide.member.dto.PasswordResetResponse;
 import com.example.forguide.member.dto.SignupRequest;
 import com.example.forguide.member.service.AuthService;
 import com.example.forguide.member.service.AuthTokens;
@@ -24,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 회원가입·로그인·재발급·로그아웃 (로그인 없이 호출 가능: SecurityConfig에서 /api/v1/auth/** 공개)
+ * 회원가입·로그인·재발급·로그아웃·비밀번호 찾기 (로그인 없이 호출 가능: SecurityConfig에서 /api/v1/auth/** 공개)
  */
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -50,6 +52,12 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<MemberResponse>> signup(@Valid @RequestBody SignupRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(authService.signup(request)));
+    }
+
+    /** 비밀번호 찾기(재설정): 이메일 인증 토큰으로 새 비밀번호를 정한다. 끝나면 로그인 화면에서 다시 로그인한다 */
+    @PostMapping("/password/reset")
+    public ApiResponse<PasswordResetResponse> resetPassword(@Valid @RequestBody PasswordResetRequest request) {
+        return ApiResponse.ok(authService.resetPassword(request));
     }
 
     @PostMapping("/login")

@@ -29,12 +29,19 @@ final class EmailVerificationSteps {
         return code.getValue();
     }
 
-    /** 코드 보내기 → 코드 확인까지 진행해 인증 완료 토큰을 받는다 */
+    /** 가입용(SIGNUP): 코드 보내기 → 코드 확인까지 진행해 인증 완료 토큰을 받는다 */
     static String verifiedToken(MockMvc mockMvc, VerificationMailSender mail, String email) throws Exception {
+        return verifiedToken(mockMvc, mail, email, "SIGNUP");
+    }
+
+    /** 용도(SIGNUP·PASSWORD_RESET)를 정해 인증 완료 토큰을 받는다 */
+    static String verifiedToken(MockMvc mockMvc, VerificationMailSender mail, String email, String purpose)
+            throws Exception {
         mockMvc.perform(post("/api/v1/auth/email/send-code").contentType(MediaType.APPLICATION_JSON)
-                .content("{\"email\":\"" + email + "\",\"purpose\":\"SIGNUP\"}"));
+                .content("{\"email\":\"" + email + "\",\"purpose\":\"" + purpose + "\"}"));
         String body = mockMvc.perform(post("/api/v1/auth/email/verify").contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\":\"" + email + "\",\"purpose\":\"SIGNUP\",\"code\":\"" + lastCode(mail, email) + "\"}"))
+                        .content("{\"email\":\"" + email + "\",\"purpose\":\"" + purpose + "\",\"code\":\""
+                                + lastCode(mail, email) + "\"}"))
                 .andReturn().getResponse().getContentAsString();
         return JsonPath.read(body, "$.data.verificationToken");
     }

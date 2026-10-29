@@ -59,7 +59,8 @@ public class EmailVerificationService {
         LocalDateTime now = LocalDateTime.now();
 
         // 가입용: 이미 가입된 이메일이면 코드를 보내지 않는다 (가입 단계의 중복 확인과 같은 안내)
-        if (purpose == VerificationPurpose.SIGNUP && memberMapper.existsByEmail(email)) {
+        boolean registered = memberMapper.existsByEmail(email);
+        if (purpose == VerificationPurpose.SIGNUP && registered) {
             throw new ApiException(ErrorCode.EMAIL_DUPLICATED,
                     Map.of("email", ErrorCode.EMAIL_DUPLICATED.getDefaultMessage()));
         }
@@ -81,6 +82,13 @@ public class EmailVerificationService {
         row.setExpiresAt(now.plus(CODE_TTL));
         row.setCreatedAt(now);
         verificationMapper.insert(row);
+
+        // 비밀번호 재설정: 가입되지 않은 이메일이면 기록만 남기고 실제로 보내지 않는다
+        // 응답·재발송 간격·하루 한도는 가입된 이메일과 같게 둬서, 이 화면으로 가입 여부를 알아낼 수 없게 한다
+        // (메일 발송 시간만큼 응답 시간은 다를 수 있다)
+        if (purpose == VerificationPurpose.PASSWORD_RESET && !registered) {
+            return new SendResult(CODE_TTL.toSeconds(), RESEND_INTERVAL.toSeconds());
+        }
 
         // 발송에 실패하면 예외로 기록 저장도 되돌린다 (보내지 못한 코드가 재발송 간격을 막지 않게)
         try {

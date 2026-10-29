@@ -21,12 +21,14 @@ export default function Login() {
     // 로그인 후 이동할 곳: ?next= 값 중 안전한 내부 경로만, 없으면 홈
     const nextPath = getSafeNextPath(searchParams.get("next"));
 
-    // 회원가입 직후 넘어왔다면 가입한 아이디를 미리 채운다
-    const signedUpLoginId = location.state?.signedUpLoginId ?? "";
+    // 회원가입·비밀번호 재설정 직후 넘어왔다면 아이디를 미리 채우고 완료 안내를 보여 준다
+    // state: { prefillLoginId, notice: "signedUp" | "passwordReset" }
+    const prefillLoginId = location.state?.prefillLoginId ?? "";
+    const notice = location.state?.notice ?? "";
 
     const accessToken = useAuthStore((state) => state.accessToken);
 
-    const [form, setForm] = useState({ loginId: signedUpLoginId, password: "" });
+    const [form, setForm] = useState({ loginId: prefillLoginId, password: "" });
     const [errors, setErrors] = useState({});
     const [formError, setFormError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -39,15 +41,15 @@ export default function Login() {
     useEffect(() => {
         mounted.current = true;
 
-        // 가입 직후라면 아이디가 채워져 있으니 비밀번호 칸부터 입력하게 한다
-        if (signedUpLoginId) {
+        // 아이디가 채워져 있으면 비밀번호 칸부터 입력하게 한다
+        if (prefillLoginId) {
             inputRefs.current.password?.focus();
         }
 
         return () => {
             mounted.current = false;
         };
-    }, [signedUpLoginId]);
+    }, [prefillLoginId]);
 
     // 입력값 변경: 해당 항목의 이전 오류와 폼 전체 오류를 지운다
     function handleChange(event) {
@@ -158,9 +160,14 @@ export default function Login() {
                     <p className={styles.description}>{t("auth.login.heading")}</p>
                 </div>
 
-                {signedUpLoginId && (
+                {notice === "signedUp" && (
                     <p className={styles.ok} role="status">
                         {t("auth.login.signedUp")}
+                    </p>
+                )}
+                {notice === "passwordReset" && (
+                    <p className={styles.ok} role="status">
+                        {t("auth.login.passwordReset")}
                     </p>
                 )}
 
@@ -221,7 +228,10 @@ export default function Login() {
                     </button>
                 </div>
 
-                {/* 계정이 없으면 회원가입으로 */}
+                {/* 비밀번호를 잊었으면 재설정으로, 계정이 없으면 회원가입으로 */}
+                <p className={styles.switch}>
+                    <Link to="/password/reset">{t("auth.login.forgotPassword")}</Link>
+                </p>
                 <p className={styles.switch}>
                     {t("auth.login.noAccount")}
                     <Link to="/signup">{t("auth.login.goSignup")}</Link>

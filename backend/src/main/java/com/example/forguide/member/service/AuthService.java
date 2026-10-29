@@ -7,6 +7,8 @@ import com.example.forguide.member.dto.AuthResponse;
 import com.example.forguide.member.dto.LoginRequest;
 import com.example.forguide.member.dto.MemberResponse;
 import com.example.forguide.member.dto.PasswordChangeRequest;
+import com.example.forguide.member.dto.PasswordResetRequest;
+import com.example.forguide.member.dto.PasswordResetResponse;
 import com.example.forguide.member.dto.SignupRequest;
 import com.example.forguide.member.mapper.MemberMapper;
 import com.example.forguide.member.mapper.MemberRow;
@@ -21,7 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 회원가입·로그인·재발급·로그아웃·비밀번호 변경.
+ * 회원가입·로그인·재발급·로그아웃·비밀번호 변경·비밀번호 찾기.
  *
  * refresh token 규칙
  * - 원문은 무작위 32바이트, 쿠키로만 내려준다
@@ -180,6 +182,33 @@ public class AuthService {
         if (refreshToken != null && !refreshToken.isBlank()) {
             refreshTokenMapper.deleteByToken(SecureTokens.sha256(refreshToken));
         }
+    }
+
+    /**
+     * 비밀번호 찾기(재설정) → 로그인 화면에 미리 채울 아이디
+     * 이메일 인증(PASSWORD_RESET) 토큰으로 본인임을 확인한 뒤 바꾼다.
+     * - 모든 기기의 로그인을 풀고(refresh token 전부 삭제), 새로 발급하지 않는다 (로그인 화면에서 다시 로그인)
+     * - 이메일로 본인임을 확인했으므로 로그인 잠금(5번 실패)도 푼다
+     */
+    @Transactional
+    public PasswordResetResponse resetPassword(PasswordResetRequest request) {
+        String email = request.email().trim().toLowerCase(Locale.ROOT);
+
+        // 토큰 사용 처리 (이메일·목적이 맞고, 만료 전이고, 처음 쓰는 토큰이어야 한다)
+        // 아래가 실패하면 같은 트랜잭션이라 토큰 사용도 되돌려진다
+        emailVerificationService.consume(email, VerificationPurpose.PASSWORD_RESET, request.verificationToken());
+
+        MemberRow member = memberMapper.findByEmail(email);
+        if (member == null) {
+            // 가입되지 않은 이메일에는 코드를 보내지 않으므로 여기까지 올 수 없다. 와도 인증 실패로 본다
+            throw new ApiException(ErrorCode.EMAIL_NOT_VERIFIED,
+                    Map.of("email", ErrorCode.EMAIL_NOT_VERIFIED.getDefaultMessage()));
+        }
+
+        memberMapper.updatePassword(member.getMemberId(), passwordEncoder.encode(request.newPassword()));
+        refreshTokenMapper.deleteByMemberId(member.getMemberId());
+        loginAttemptService.reset(member.getLoginId());
+        return new PasswordResetResponse(member.getLoginId());
     }
 
     /**
