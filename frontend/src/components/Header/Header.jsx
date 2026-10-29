@@ -91,8 +91,8 @@ export default function Header({ isLoggedIn = false, onLogout }) {
     // 넓은 화면에서는 한 메뉴만 펼침
     const [openMenu, setOpenMenu] = useState(null);
 
-    // 닫힐 때도 마지막 목록을 남겨 두어 부드럽게 접히도록 함
-    const [visibleMenu, setVisibleMenu] = useState(menus[0]);
+    // 목록은 처음 열 때 생성하고 닫힐 때는 마지막 내용을 유지한다.
+    const [visibleMenu, setVisibleMenu] = useState(null);
 
     // 목록 길이에 따라 드롭다운 높이를 부드럽게 변경
     const [dropdownHeight, setDropdownHeight] = useState(0);
@@ -284,7 +284,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
         }
     }
 
-    function renderActions(extraClass) {
+    function renderActions(extraClass, includeLanguage = true) {
         return (
             <div className={`${styles.actions} ${extraClass}`}>
                 {/* 기존 회원 메뉴와 로그아웃 동작 유지 */}
@@ -322,7 +322,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                 )}
 
                 {/* 언어 변경과 저장은 기존 컴포넌트에서 처리 */}
-                <LanguageSelector />
+                {includeLanguage && <LanguageSelector />}
             </div>
         );
     }
@@ -415,6 +415,8 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                         onMouseEnter={() => setOpenMenu(null)}
                         onFocus={() => setOpenMenu(null)}
                     >
+                        {renderActions(styles.desktopActions, false)}
+
                         <div className={styles.brand}>
                             <Link
                                 to="/"
@@ -422,11 +424,18 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                                 aria-label={t("header.mega.home")}
                                 onClick={closeMenus}
                             >
-                                <img src="/ForGuide_Logo.png" alt="ForGuide" />
+                                <span className={styles.logoSymbol} aria-hidden="true">
+                                    <img src="/ForGuide_Logo.png" alt="" />
+                                </span>
+                                <span className={styles.logoWordmark} aria-hidden="true">
+                                    <img src="/ForGuide_Logo.png" alt="" />
+                                </span>
                             </Link>
                         </div>
 
-                        {renderActions(styles.desktopActions)}
+                        <div className={`${styles.actions} ${styles.desktopLanguage}`}>
+                            <LanguageSelector />
+                        </div>
 
                         {/* 모바일에서는 버튼으로 전체 목록을 열고 닫음 */}
                         <button
@@ -497,7 +506,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                 </div>
 
                 {/* 데스크톱 공용 목록: 메뉴가 바뀔 때 높이를 스르륵 변경 */}
-                {!isMobile && (
+                {!isMobile && visibleMenu && (
                     <div
                         id={`${navigationId}-${visibleMenu.id}`}
                         className={styles.dropdown}

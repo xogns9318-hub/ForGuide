@@ -77,11 +77,36 @@
 }
 
 .logo {
+    position: relative;
+    display: block;
     flex-shrink: 0;
     width: 192px;
+    aspect-ratio: 3 / 1;
+}
+
+/* 원본 이미지의 심볼과 글자 영역을 각각 표시한다. */
+.logoSymbol,
+.logoWordmark {
+    position: absolute;
+    inset: 0;
+    display: block;
+}
+
+/* G 심볼만 원래 크기의 80%로 줄인다. */
+.logoSymbol {
+    clip-path: inset(0 73.3% 0 0);
+    transform: scale(0.8);
+    transform-origin: 14.7% 48.4%;
+}
+
+/* 글자 크기는 유지하고 심볼 오른쪽으로 가깝게 붙인다. */
+.logoWordmark {
+    clip-path: inset(0 0 0 26.7%);
+    transform: translateX(-4%);
 }
 
 .logo img {
+    display: block;
     width: 100%;
 }
 
@@ -563,87 +588,42 @@
         justify-content: center;
     }
 
-    /* 펼침 창 하나를 유지하며 높이·투명도·위치를 천천히 전환 */
+    /* 패널 높이만 전환하고 글씨의 투명도는 처음부터 유지한다. */
     .dropdown {
-        /* 실제 높이는 Header.jsx에서 측정해서 전달 */
         height: 0;
-
-        /* 기존 최대 높이 제한은 내부 콘텐츠에서 처리 */
         max-height: none;
-
-        /* 애니메이션 중 넘치는 내용은 숨김 */
         overflow: hidden;
-
-        /* 내부 스크롤은 dropdownContent에서 관리 */
         overscroll-behavior: auto;
-
-        /* 기존 상단 테두리는 내부 콘텐츠에서 처리 */
         border-top: 0;
-
-        /* 기본 상태에서는 투명하게 표시 */
-        opacity: 0;
-
-        /* 기본 상태에서는 화면에서 숨김 */
+        opacity: 1;
         visibility: hidden;
-
-        /* 처음 열릴 때 위에서 아래로 내려오는 효과 준비 */
-        transform: translateY(-10px);
-
-        /* 닫힌 상태에서는 마우스 동작을 받지 않음 */
+        transform: none;
         pointer-events: none;
-
-        /* 드롭다운 높이와 위치가 부드럽게 변경되도록 설정 */
         transition:
             height 420ms cubic-bezier(0.22, 1, 0.36, 1),
-            opacity 300ms ease,
-            transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
             visibility 0s linear 420ms;
     }
 
-    /* 처음 열릴 때 위에서 아래로 내려오며 자연스럽게 나타남 */
     .dropdown[data-open="true"] {
-        /* 펼쳐진 목록을 표시 */
-        opacity: 1;
-
-        /* 화면에 보이도록 설정 */
         visibility: visible;
-
-        /* 기존 위치로 내려와 표시 */
-        transform: translateY(0);
-
-        /* 목록의 링크와 버튼을 사용할 수 있도록 설정 */
         pointer-events: auto;
-
-        /* 열리는 과정과 카테고리 높이 변경에 애니메이션 적용 */
         transition:
             height 420ms cubic-bezier(0.22, 1, 0.36, 1),
-            opacity 300ms ease,
-            transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
             visibility 0s linear 0s;
     }
 
-    /* 화면이 낮을 때는 이 영역 내부에서만 목록을 스크롤 */
     .dropdownContent {
-        /* 헤더를 제외한 화면 높이만큼 목록을 표시 */
         max-height: calc(100dvh - var(--header-height));
-
-        /* 목록이 길어지면 내부에서 세로 스크롤 */
         overflow-y: auto;
-
-        /* 스크롤이 바깥 본문으로 전달되는 현상 방지 */
         overscroll-behavior: contain;
-
-        /* 드롭다운 상단에 구분선 표시 */
         border-top: 1px solid var(--line);
-
-        /* 목록 배경색은 기존 흰색 유지 */
         background: var(--surface);
     }
 
-    /* 다른 카테고리에 마우스를 올릴 때 글씨도 부드럽게 등장 */
     .dropdownBody {
-        /* 새로운 목록이 나타나는 애니메이션 적용 */
-        animation: dropdownContentEnter 300ms ease both;
+        opacity: 1;
+        transform: none;
+        animation: none;
     }
 
     /* 가이드 목록 6개 그룹 각각을 자기 칸의 정중앙에 배치 */
@@ -896,5 +876,39 @@
     .actions :global(.header-language .select-box-option),
     .actions :global(.header-language .select-box-option > span)::after {
         transition: none;
+    }
+}
+
+/* 회원 메뉴 길이에 영향을 받지 않고 로고를 화면 중앙에 배치한다. */
+@media (min-width: 1025px) {
+    .top {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 24px;
+    }
+
+    .desktopActions {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: start;
+    }
+
+    .brand {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: center;
+    }
+
+    .desktopLanguage {
+        grid-column: 3;
+        grid-row: 1;
+        justify-self: end;
+    }
+}
+
+/* 모바일 언어 선택은 기존 펼친 메뉴 안에서 표시한다. */
+@media (max-width: 1024px) {
+    .desktopLanguage {
+        display: none;
     }
 }
