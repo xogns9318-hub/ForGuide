@@ -40,3 +40,28 @@
     gap: 8px;
     margin-top: 24px;
 }
+
+/* 상담 준비 카드에서 여는 알림에만 적용한다. */
+.preparation {
+    background: rgb(212 234 226 / 45%);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.preparation .dialog {
+    color: #527b73;
+}
+
+.preparation .confirmButton {
+    color: #527b73;
+    background: #d4eae2;
+    border-color: #d4eae2;
+    transition: color 180ms, background-color 180ms, border-color 180ms;
+}
+
+.preparation .confirmButton:hover,
+.preparation .confirmButton:active {
+    color: #fff;
+    background: #226857;
+    border-color: #226857;
+}

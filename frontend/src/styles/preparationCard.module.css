@@ -1,0 +1,512 @@
+.page {
+    --prep-ink: #527b73;
+    --prep-line: #d4eae2;
+    --prep-strong: #226857;
+    color: var(--prep-ink);
+}
+
+.page .form,
+.page .resultCard {
+    padding: clamp(22px, 3vw, 40px);
+}
+
+.page h1 {
+    font-size: clamp(25px, 2.4vw, 32px);
+    line-height: 1.4;
+}
+
+.page h2 {
+    font-size: 25px;
+    line-height: 1.5;
+}
+
+.page h3 {
+    font-size: 22px;
+    line-height: 1.6;
+}
+
+.institution {
+    margin-top: 12px;
+}
+
+.fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.45fr 1.2fr 1.65fr;
+    gap: 24px;
+    margin: 38px 0;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.field>span,
+.gender legend,
+.problem legend,
+.details>span {
+    font-weight: 700;
+}
+
+.field input {
+    width: 100%;
+    min-width: 0;
+    height: 36px;
+    padding: 7px 0 2px;
+    line-height: 1.35;
+    border: 0;
+    border-bottom: 2px solid var(--prep-line);
+    border-radius: 0;
+    outline: none;
+    color: inherit;
+    background: transparent;
+}
+
+.field input:focus,
+.field input:not([value=""]) {
+    border-bottom-color: var(--prep-ink);
+}
+
+.page fieldset {
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    margin-inline: 0;
+}
+
+.page legend {
+    padding: 0;
+}
+
+.gender {
+    margin-block: 0;
+}
+
+.genderChoices {
+    display: flex;
+    gap: 14px;
+    margin-top: 8px;
+}
+
+.genderOption {
+    position: relative;
+    flex: 1;
+    cursor: pointer;
+}
+
+.genderOption input,
+.srOnly {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.genderOption span {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    height: 36px;
+    padding-bottom: 2px;
+    line-height: 1.35;
+    border-bottom: 2px solid var(--prep-line);
+}
+
+.genderOption input:checked+span {
+    border-color: var(--prep-ink);
+    font-weight: 700;
+}
+
+.genderOption input:focus-visible+span {
+    outline: 2px solid var(--prep-ink);
+    outline-offset: 3px;
+}
+
+.field :global(.select-box-trigger) {
+    min-height: 36px;
+    height: 36px;
+    padding: 7px 0 2px;
+    line-height: 1.35;
+    border: 0;
+    border-bottom: 2px solid var(--prep-line);
+    border-radius: 0;
+    box-shadow: none;
+    color: inherit;
+    background: transparent;
+}
+
+.field :global(.select-box.is-open .select-box-trigger),
+.field :global(.select-box-trigger:focus-visible),
+.field[data-filled="true"] :global(.select-box-trigger) {
+    border-bottom-color: var(--prep-ink);
+    box-shadow: none;
+}
+
+/* 발생시점 선택창이 아래로 부드럽게 내려오며 나타난다. */
+.field :global(.select-box-options) {
+    animation: preparation-dropdown-open 260ms ease-out both;
+}
+
+@keyframes preparation-dropdown-open {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.field :global(.select-box-option) {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 10px 8px;
+    line-height: 24px;
+    color: var(--prep-ink);
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.field :global(.select-box-option > span) {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 2px;
+}
+
+.field :global(.select-box-option > span)::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: currentColor;
+    content: "";
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 220ms ease;
+}
+
+.field :global(.select-box-option.is-active),
+.field :global(.select-box-option[aria-selected="true"]) {
+    color: var(--prep-strong);
+    background: transparent;
+    box-shadow: none;
+}
+
+.field :global(.select-box-option.is-active > span)::after,
+.field :global(.select-box-option[aria-selected="true"] > span)::after {
+    transform: scaleX(1);
+}
+
+.problem {
+    margin-block: 0 30px;
+}
+
+.choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.problem>.choices {
+    margin-top: 16px;
+}
+
+.choice {
+    min-height: 44px;
+    padding: 9px 16px;
+    border: 1px solid var(--prep-line);
+    border-radius: var(--control-radius);
+    background: #fff;
+    color: inherit;
+    transition: border-color 180ms, background-color 180ms;
+}
+
+.choice:hover,
+.choice[aria-pressed="true"] {
+    border-color: var(--prep-ink);
+    background: #fff;
+}
+
+.choice[aria-pressed="true"] {
+    font-weight: 700;
+}
+
+.choice:focus-visible,
+.notice button:focus-visible,
+.complete:focus-visible {
+    outline: 2px solid var(--prep-ink);
+    outline-offset: 3px;
+}
+
+.keywords {
+    margin-top: 20px;
+}
+
+.keywords p {
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.details textarea {
+    width: 100%;
+    min-height: 180px;
+    resize: vertical;
+    padding: 16px;
+    border: 1px solid var(--prep-line);
+    border-radius: var(--control-radius);
+    outline: none;
+    background: #fff;
+    color: inherit;
+    line-height: 1.8;
+}
+
+.details textarea:focus {
+    border-color: var(--prep-ink);
+}
+
+.counter {
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.guidance {
+    margin-top: 32px;
+}
+
+.notices {
+    display: grid;
+    gap: 14px;
+    padding: 0;
+    margin: 18px 0 0;
+    list-style: none;
+}
+
+.notice {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: start;
+    padding: 22px;
+    border: 1px solid var(--prep-line);
+    border-radius: var(--control-radius);
+    color: var(--prep-ink);
+    transition: border-color 200ms;
+}
+
+.notice p {
+    white-space: pre-line;
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+}
+
+.notice>span {
+    padding-top: 1px;
+    font-weight: 700;
+}
+
+.notice button {
+    align-self: center;
+    padding: 7px 0 7px 12px;
+    border: 0;
+    background: none;
+    color: var(--prep-line);
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.notice button:disabled {
+    opacity: 1;
+    cursor: default;
+}
+
+.confirmed {
+    border-color: var(--prep-strong);
+}
+
+.confirmed button {
+    color: var(--prep-strong);
+    font-weight: 700;
+}
+
+.translation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-block: 22px 0;
+    font-weight: 700;
+}
+
+.page .complete,
+.page .complete:hover {
+    margin-top: 26px;
+    min-height: 46px;
+    padding: 10px 20px;
+    color: var(--prep-line);
+    background: #fff;
+    border-color: var(--prep-line);
+    transition: color 180ms, background-color 180ms, border-color 180ms;
+}
+
+.page .complete[aria-disabled="false"] {
+    color: var(--prep-strong);
+    border-color: var(--prep-strong);
+}
+
+.page .complete[aria-disabled="false"]:hover,
+.page .complete[aria-disabled="false"]:active {
+    color: #fff;
+    background: var(--prep-strong);
+    border-color: var(--prep-strong);
+}
+
+.page .complete[aria-disabled="true"],
+.page .complete[aria-disabled="true"]:hover,
+.page .complete[aria-disabled="true"]:active {
+    color: var(--prep-line);
+    background: #fff;
+    border-color: var(--prep-line);
+    cursor: pointer;
+}
+
+.results {
+    display: grid;
+    gap: 24px;
+    margin-top: 28px;
+}
+
+.translationNote {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.resultFields {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 30px;
+    row-gap: 34px;
+    margin: 34px 0 44px;
+}
+
+.resultFields dt {
+    margin-bottom: 12px;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.resultFields dd {
+    margin: 0;
+    font-size: 18px;
+    overflow-wrap: anywhere;
+}
+
+.resultDetails {
+    margin-top: 20px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.9;
+}
+
+.reveal {
+    animation: preparation-enter 320ms ease-out both;
+}
+
+@keyframes preparation-enter {
+    from {
+        opacity: 0;
+        transform: translateX(-18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 1000px) {
+    .fields {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .fields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px 18px;
+        margin-top: 28px;
+    }
+
+    .fields> :nth-child(3),
+    .fields> :last-child {
+        grid-column: 1 / -1;
+    }
+
+    .choice {
+        padding: 9px 12px;
+        font-size: 14px;
+    }
+
+    .notice {
+        grid-template-columns: 20px minmax(0, 1fr);
+        padding: 16px;
+        gap: 6px;
+    }
+
+    .notice button {
+        grid-column: 2;
+        justify-self: end;
+    }
+
+    .translation {
+        flex-wrap: wrap;
+    }
+
+    .resultFields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .resultFields dt {
+        font-size: 18px;
+    }
+
+    .page h2 {
+        font-size: 22px;
+    }
+
+    .page h3 {
+        font-size: 19px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .reveal,
+    .resultReveal,
+    .field :global(.select-box-options) {
+        animation: none;
+    }
+
+    .choice,
+    .notice,
+    .field :global(.select-box-option > span)::after {
+        transition: none;
+    }
+}

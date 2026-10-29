@@ -17,12 +17,9 @@ import EmploymentResume from "../components/Employment/EmploymentResume.jsx";
 import JobListings from "../components/JobListings/JobListings.jsx";
 import UnderConstruction from "../components/UnderConstruction/UnderConstruction.jsx";
 import RequireAuth from "../auth/components/RequireAuth.jsx";
+import PreparationCard from "../components/PreparationCard/PreparationCard.jsx";
 
-// 제작 중 화면을 표시할 서비스 주소만 지정
-const constructionPaths = new Set([
-    "/service/preparationCard",
-    "/service/simulator",
-]);
+const constructionPaths = new Set(["/service/simulator"]);
 
 // 소개와 세부 기능을 연결할 서비스 주소 목록
 const serviceRoutes = categories.flatMap((category) => [
@@ -207,8 +204,9 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                     element={<Navigate to="/service/community" replace />}
                 />
 
-                {/* 도움 기관 안내는 선택 화면으로 연결 */}
+                {/* 상담 기관 안내와 상담 준비 카드 화면 */}
                 <Route path="/service/consultation" element={<Consultation />} />
+                <Route path="/service/preparationCard" element={<PreparationCard />} />
 
                 {/* 별도 화면으로 연결한 경로는 기본 서비스 목록에서 제외 */}
                 {serviceRoutes
@@ -216,6 +214,7 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                         (route) =>
                             route.path !== "/service/community" &&
                             route.path !== "/service/consultation" &&
+                            route.path !== "/service/preparationCard" &&
                             route.path !== "/service/employment" &&
                             !recommendPaths.includes(route.path),
                     )
