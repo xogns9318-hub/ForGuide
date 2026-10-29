@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { categories } from "../../routes/routeConfig.js";
 import styles from "../../styles/home.module.css";
 
-const DURATION = 680;
+const DURATION = 900;
 const ANGLE = 28;
 const TILT = 0.9;
 const WHEEL_THRESHOLD = 32;
@@ -16,6 +16,26 @@ const distanceFrom = (index, active, count) => {
     return distance > count / 2 ? distance - count : distance;
 };
 const visibilityAt = (offset) => Math.max(0, Math.min(1, (2 - Math.abs(offset)) * 2));
+
+// 화면 밖으로 나갈 때만 부드럽게 숨겨 양옆 카드가 일찍 사라지지 않게 한다.
+const cardVisibilityAt = (offset) => {
+    const value = Math.max(0, Math.min(1, (2.5 - Math.abs(offset)) * 4));
+    return value * value * (3 - 2 * value);
+};
+
+// 같은 문서의 새로고침에서만 복원하고 이후 홈 진입은 기본 위치로 시작한다.
+let restoreHomeOnReload =
+    window.location.pathname === "/" &&
+    performance.getEntriesByType("navigation")[0]?.type === "reload";
+
+function readHomeReloadIndex() {
+    if (!restoreHomeOnReload) return 0;
+
+    const savedId = window.history.state?.forguideHomeCard;
+    const index = categories.findIndex((category) => category.id === savedId);
+
+    return index < 0 ? 0 : index;
+}
 
 const iconPaths = {
     counseling: "M4 4h13v10H9l-5 4V4 M10 14v4h7l4 3V9h-4 M7 8h7 M7 11h4",
@@ -73,17 +93,25 @@ function ServiceIcon({ id }) {
 
 export default function Home() {
     const { t } = useTranslation();
+    const location = useLocation();
+
+    const [frame, setFrame] = useState(() => ({
+        index: readHomeReloadIndex(),
+        progress: 0,
+        moving: false,
+    }));
+
     const rootRef = useRef(null);
     const stageRef = useRef(null);
     const introductionRefs = useRef([]);
     const animationRef = useRef(0);
-    const activeRef = useRef(0);
+    const activeRef = useRef(frame.index);
+    const homeEntryRef = useRef(location.key);
     const busyRef = useRef(false);
     const focusAfterMoveRef = useRef(false);
     const wheelRef = useRef({ amount: 0, lockedUntil: 0, lastTime: 0 });
     const touchRef = useRef(null);
     const suppressClickRef = useRef(0);
-    const [frame, setFrame] = useState({ index: 0, progress: 0, moving: false });
     const [reducedMotion, setReducedMotion] = useState(false);
     const [size, setSize] = useState({
         width: 1280,
@@ -96,6 +124,43 @@ export default function Home() {
         stepAngle: ANGLE,
         uiScale: 1,
     });
+
+    // 홈 링크를 다시 누른 경우도 새로운 진입으로 보고 기본 카드로 돌아간다.
+    useLayoutEffect(() => {
+        restoreHomeOnReload = false;
+        if (homeEntryRef.current === location.key) return;
+
+        homeEntryRef.current = location.key;
+        cancelAnimationFrame(animationRef.current);
+        activeRef.current = 0;
+        busyRef.current = false;
+        focusAfterMoveRef.current = false;
+        touchRef.current = null;
+        suppressClickRef.current = 0;
+        Object.assign(wheelRef.current, {
+            amount: 0,
+            lockedUntil: 0,
+            lastTime: 0,
+        });
+        setFrame({ index: 0, progress: 0, moving: false });
+    }, [location.key]);
+
+    // 마지막으로 이동을 마친 카드만 기록하며 라우터의 기존 방문 기록은 보존한다.
+    useEffect(() => {
+        if (frame.moving || activeRef.current !== frame.index) return;
+
+        const savedId = categories[frame.index].id;
+        if (window.history.state?.forguideHomeCard === savedId) return;
+
+        try {
+            window.history.replaceState(
+                { ...window.history.state, forguideHomeCard: savedId },
+                "",
+            );
+        } catch {
+            // 방문 기록 저장이 제한된 환경에서도 카드 이동은 계속 사용할 수 있다.
+        }
+    }, [frame.index, frame.moving, location.key]);
 
     useEffect(() => {
         const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -187,7 +252,8 @@ export default function Home() {
                     finish();
                     return;
                 }
-                const eased = 1 - Math.pow(1 - elapsed, 3);
+                // 출발과 도착에서 속도와 가속도가 부드럽게 이어지도록 계산한다.
+                const eased = elapsed ** 3 * (elapsed * (elapsed * 6 - 15) + 10);
                 setFrame({ index: from, progress: direction * eased, moving: true });
                 animationRef.current = requestAnimationFrame(animate);
             };
@@ -328,7 +394,7 @@ export default function Home() {
                     {categories.map((category, index) => {
                         const distance = distanceFrom(index, frame.index, categories.length);
                         const offset = distance - 0.5 - frame.progress;
-                        const visibility = visibilityAt(offset);
+                        const visibility = cardVisibilityAt(offset);
                         const center = Math.abs(offset) < 1 && !frame.moving;
                         const visible = visibility > 0.005;
                         return (
