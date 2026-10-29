@@ -2386,6 +2386,11 @@
     background: #f7fbf9;
 }
 
+/* 상세 모달의 본인 글 조작 버튼은 작성자 정보 오른쪽에 배치한다. */
+.community-post-modal-author .community-post-owner-actions {
+    margin-left: auto;
+}
+
 .community-post-modal-content .community-comments {
     margin-top: 16px;
 }

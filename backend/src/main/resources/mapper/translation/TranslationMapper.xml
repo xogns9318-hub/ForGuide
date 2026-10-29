@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.forguide.translation.mapper.TranslationMapper">
+
+    <!-- 게시글·댓글의 현재 원문 버전과 대상 언어에 저장된 번역문을 공통 조회 -->
+    <select id="findContentTranslation" resultType="string">
+        SELECT translated_content
+        FROM community_content_translations
+        WHERE resource_type = #{resourceType}
+        AND resource_id = #{resourceId}
+        AND content_version = #{contentVersion}
+        AND target_language = #{targetLanguage}
+        LIMIT 1
+    </select>
+
+    <!--
+        같은 콘텐츠·원문 버전·대상 언어 요청이 동시에 와도
+        UNIQUE KEY를 기준으로 번역문 하나만 유지한다.
+    -->
+    <insert id="upsertContentTranslation">
+        INSERT INTO community_content_translations (
+        resource_type,
+        resource_id,
+        content_version,
+        source_language,
+        target_language,
+        translated_content
+        ) VALUES (
+        #{resourceType},
+        #{resourceId},
+        #{contentVersion},
+        #{sourceLanguage},
+        #{targetLanguage},
+        #{translatedContent}
+        )
+        ON DUPLICATE KEY UPDATE
+        source_language = VALUES(source_language),
+        translated_content = VALUES(translated_content),
+        updated_at = CURRENT_TIMESTAMP
+    </insert>
+
+    <!-- 소프트 삭제를 포함한 콘텐츠 삭제 시, 이전 버전 번역문까지 모두 제거 -->
+    <delete id="deleteContentTranslations">
+        DELETE FROM community_content_translations
+        WHERE resource_type = #{resourceType}
+        AND resource_id = #{resourceId}
+    </delete>
+
+</mapper>

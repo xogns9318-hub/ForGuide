@@ -6,12 +6,10 @@ import com.example.forguide.consultation.institution.dto.InstitutionDocument;
 import com.example.forguide.consultation.institution.mapper.InstitutionMapper;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
 // 기관 조회 중 데이터를 변경하지 않는다.
 @Service
-@Transactional(readOnly = true)
 public class InstitutionService {
 
     private final InstitutionMapper mapper;

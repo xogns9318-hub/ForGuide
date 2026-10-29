@@ -17,10 +17,11 @@ import com.example.forguide.translation.dto.TranslationResponse;
 import com.example.forguide.translation.dto.TranslationTargetRequest;
 import com.example.forguide.translation.service.TranslationService;
 import com.example.forguide.translation.cache.TranslationCacheResource;
+import com.example.forguide.community.dto.CommunityPostCursorRequest;
+import com.example.forguide.community.dto.CommunityCommentCursorRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
-import java.time.LocalDateTime;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.example.forguide.common.response.ApiResponse;
 import jakarta.validation.constraints.Min;
@@ -117,22 +118,10 @@ public class CommunityController {
     // 무한 스크롤용 게시글 조회
     @GetMapping("/posts/scroll")
     public ApiResponse<List<CommunityPostResponse>> getPostsByCursor(
-            @RequestParam(required = false) LocalDateTime cursorCreatedAt,
-            @RequestParam(required = false) Long cursorPostId,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) @Size(max = 100) String keyword,
-            @RequestParam(required = false) String topic,
-            @RequestParam @Min(1) @Max(50) int size
+            @Valid @ModelAttribute CommunityPostCursorRequest cursor
     ) {
         return ApiResponse.ok(
-                communityService.getPostsByCursor(
-                        cursorCreatedAt,
-                        cursorPostId,
-                        category,
-                        keyword,
-                        topic,
-                        size
-                )
+                communityService.getPostsByCursor(cursor)
         );
     }
 
@@ -210,10 +199,11 @@ public class CommunityController {
     @GetMapping("/posts/{postId}/comments")
     public ApiResponse<List<CommunityCommentResponse>> getCommentsByPostId(
             @PathVariable Long postId,
-            @AuthenticationPrincipal Long memberId
+            @AuthenticationPrincipal Long memberId,
+            @Valid @ModelAttribute CommunityCommentCursorRequest cursor
     ) {
         return ApiResponse.ok(
-                communityService.getCommentsByPostId(postId, memberId)
+                communityService.getCommentsByCursor(postId, memberId, cursor)
         );
     }
 
@@ -348,12 +338,15 @@ public class CommunityController {
         return ApiResponse.ok(communityService.getMemberPreview(memberId));
     }
 
-    // 프로필 미리보기의 게시글 수를 누르면 해당 회원이 작성한 글 목록을 반환한다.
+    // 프로필 미리보기의 게시글 수를 누르면 해당 회원의 작성글을 커서 방식으로 반환한다.
     @GetMapping("/members/{memberId}/posts")
     public ApiResponse<List<CommunityPostResponse>> getMemberPosts(
-            @PathVariable Long memberId
+            @PathVariable Long memberId,
+            @Valid @ModelAttribute CommunityPostCursorRequest cursor
     ) {
-        return ApiResponse.ok(communityService.getPostsByMemberId(memberId));
+        return ApiResponse.ok(
+                communityService.getPostsByMemberId(memberId, cursor)
+        );
     }
 
     // 비로그인 사용자도 리포스트 수 볼 수 있고,

@@ -1,12 +1,10 @@
-package com.example.forguide.member.common;
+package com.example.forguide.common.exception;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.forguide.common.exception.ApiException;
-import com.example.forguide.common.exception.ErrorCode;
 import com.example.forguide.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -25,14 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 공통 응답 형식 검증. Security 필터 없이 컨트롤러 + 예외 처리기만 띄운다.
  */
-class AuthExceptionHandlerTest {
+class GlobalExceptionHandlerTest {
 
     private MockMvc mockMvc;
 
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(new TestController())
-                .setControllerAdvice(new AuthExceptionHandler())
+                .setControllerAdvice(new GlobalExceptionHandler())
                 .build();
     }
 
