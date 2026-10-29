@@ -290,6 +290,7 @@ const en = {
 
         feedback: {
             popularLoadError: "Unable to load popular posts.",
+            optionsLoadError: "Unable to load community options. Please try again.",
             myRepostsLoginRequired: "Please log in to view your reposts.",
             postsLoadError: "Unable to load posts.",
             imageCountLimit: "You can attach up to {{count}} images.",

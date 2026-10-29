@@ -210,6 +210,8 @@ const ja = {
         },
         feedback: {
             popularLoadError: "人気の投稿を読み込めませんでした。",
+            optionsLoadError:
+                "コミュニティの選択肢を読み込めませんでした。もう一度お試しください。",
             myRepostsLoginRequired: "自分のリポストを確認するにはログインが必要です。",
             postsLoadError: "投稿を読み込めませんでした。",
             imageCountLimit: "写真は最大{{count}}枚まで添付できます。",

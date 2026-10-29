@@ -1,43 +1,50 @@
 package com.example.forguide.community.controller;
 
+import com.example.forguide.common.exception.ApiException;
+import com.example.forguide.common.exception.ErrorCode;
+import com.example.forguide.common.response.ApiResponse;
+import com.example.forguide.community.dto.CommunityCommentCreateRequest;
+import com.example.forguide.community.dto.CommunityCommentCursorRequest;
+import com.example.forguide.community.dto.CommunityCommentLikeResponse;
+import com.example.forguide.community.dto.CommunityCommentResponse;
+import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
+import com.example.forguide.community.dto.CommunityOptionResponse;
 import com.example.forguide.community.dto.CommunityPostCreateRequest;
+import com.example.forguide.community.dto.CommunityPostCursorRequest;
+import com.example.forguide.community.dto.CommunityPostLikeResponse;
+import com.example.forguide.community.dto.CommunityPostRepostResponse;
 import com.example.forguide.community.dto.CommunityPostResponse;
 import com.example.forguide.community.dto.CommunityPostUpdateRequest;
 import com.example.forguide.community.service.CommunityService;
-import com.example.forguide.community.dto.CommunityCommentCreateRequest;
-import com.example.forguide.community.dto.CommunityCommentResponse;
-import com.example.forguide.community.dto.CommunityCommentLikeResponse;
-import com.example.forguide.community.dto.CommunityPostLikeResponse;
-import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
-import com.example.forguide.community.dto.CommunityPostRepostResponse;
-import com.example.forguide.common.exception.ApiException;
-import com.example.forguide.common.exception.ErrorCode;
+import com.example.forguide.translation.cache.TranslationCacheResource;
 import com.example.forguide.translation.dto.TranslationRequest;
 import com.example.forguide.translation.dto.TranslationResponse;
 import com.example.forguide.translation.dto.TranslationTargetRequest;
 import com.example.forguide.translation.service.TranslationService;
-import com.example.forguide.translation.cache.TranslationCacheResource;
-import com.example.forguide.community.dto.CommunityPostCursorRequest;
-import com.example.forguide.community.dto.CommunityCommentCursorRequest;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import com.example.forguide.common.response.ApiResponse;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Max;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.Pattern;
-import java.util.UUID;
-import org.springframework.validation.annotation.Validated;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/community")
@@ -54,6 +61,33 @@ public class CommunityController {
         return ApiResponse.ok(communityService.getAllPosts());
     }
 
+    // 비로그인 사용자도 작성 화면의 카테고리 선택지를 조회할 수 있다.
+    @GetMapping("/options/categories")
+    public ApiResponse<List<CommunityOptionResponse>> getActiveCategories() {
+        return ApiResponse.ok(
+                communityService.getActiveCategories()
+        );
+    }
+
+    @GetMapping("/options/topics")
+    public ApiResponse<List<CommunityOptionResponse>> getActiveTopics() {
+        return ApiResponse.ok(
+                communityService.getActiveTopics()
+        );
+    }
+
+    @GetMapping("/options/categories/{categoryCode}/related-services")
+    public ApiResponse<List<CommunityOptionResponse>>
+    getActiveRelatedServicesByCategory(
+            @PathVariable String categoryCode
+    ) {
+        return ApiResponse.ok(
+                communityService.getActiveRelatedServicesByCategory(
+                        categoryCode
+                )
+        );
+    }
+
     // 게시글 상세 조회: 조회수는 이 API를 열 때만 집계
     @GetMapping("/posts/{postId}")
     public ApiResponse<CommunityPostResponse> getPostById(
@@ -65,7 +99,7 @@ public class CommunityController {
     ) {
         // 비로그인 첫 방문자에게만 브라우저 식별용 쿠키를 발급
         if (memberId == null
-                && (visitorToken == null ||visitorToken.isBlank())) {
+                && (visitorToken == null || visitorToken.isBlank())) {
             visitorToken = UUID.randomUUID().toString();
 
             Cookie cookie = new Cookie("community_viewer_token", visitorToken);
@@ -98,9 +132,9 @@ public class CommunityController {
         }
 
         TranslationRequest translationRequest = new TranslationRequest();
-        translationRequest. setSourceLanguage(post.getLanguage());
-        translationRequest. setTargetLanguage(request.getTargetLanguage());
-        translationRequest. setSourceText(post.getContent());
+        translationRequest.setSourceLanguage(post.getLanguage());
+        translationRequest.setTargetLanguage(request.getTargetLanguage());
+        translationRequest.setSourceText(post.getContent());
 
         return ApiResponse.ok(
                 translationService.translatePublicText(
@@ -113,8 +147,6 @@ public class CommunityController {
                 )
         );
     }
-
-
     // 무한 스크롤용 게시글 조회
     @GetMapping("/posts/scroll")
     public ApiResponse<List<CommunityPostResponse>> getPostsByCursor(

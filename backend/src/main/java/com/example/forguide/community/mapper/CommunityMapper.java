@@ -77,6 +77,38 @@ public interface CommunityMapper {
             @Param("imageId") Long imageId
     );
 
+    // 활성화된 카테고리를 표시 순서대로 조회
+    List<CommunityOptionResponse> findActiveCategories();
+
+    // 활성화된 주요 주제를 표시 순서대로 조회
+    List<CommunityOptionResponse> findActiveTopics();
+
+    // 특정 카테고리에서 선택 가능한 관련 서비스를 조회
+    List<CommunityOptionResponse> findActiveRelatedServicesByCategory(
+            @Param("categoryCode") String categoryCode
+    );
+
+    // 활성 카테고리인지 확인
+    boolean existsActiveCategory(
+            @Param("categoryCode") String categoryCode
+    );
+
+    // 해당 카테고리에서 활성 관련 서비스인지 확인
+    boolean existsActiveRelatedServiceByCategory(
+            @Param("serviceCode") String serviceCode,
+            @Param("categoryCode") String categoryCode
+    );
+
+    // 활성 주요 주제인지 확인
+    boolean existsActiveTopic(
+            @Param("topicCode") String topicCode
+    );
+
+    // 주제 필터가 본문 검색에 사용할 키워드 조회
+    List<String> findActiveTopicKeywords(
+            @Param("topicCode") String topicCode
+    );
+
     // 댓글
     List<CommunityCommentResponse> findCommentsByPostId(
             @Param("postId") Long postId,
@@ -87,7 +119,7 @@ public interface CommunityMapper {
     List<CommunityCommentResponse> findRootCommentsByCursor(
             @Param("postId") Long postId,
             @Param("memberId") Long memberId,
-            @Param("cursor")CommunityCommentCursorRequest cursor
+            @Param("cursor") CommunityCommentCursorRequest cursor
     );
 
     // 방금 조회한 최상위 댓글에 연결된 답글을 함께 조회한다.

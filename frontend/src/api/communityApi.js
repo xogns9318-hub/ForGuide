@@ -22,13 +22,13 @@ function createCursorParams({
 
 // 게시글 목록 API들이 공통으로 쓰는 커서 쿼리 파라미터를 만든다.
 function createPostCursorParams({
-                                    cursorCreatedAt = null,
-                                    cursorPostId = null,
-                                    category = null,
-                                    keyword = null,
-                                    topic = null,
-                                    size = 10,
-                                } = {}) {
+    cursorCreatedAt = null,
+    cursorPostId = null,
+    category = null,
+    keyword = null,
+    topic = null,
+    size = 10,
+} = {}) {
     const params = createCursorParams({
         cursorCreatedAt,
         cursorId: cursorPostId,
@@ -46,6 +46,21 @@ function createPostCursorParams({
 // Spring Boot에서 실제 게시글 목록을 가져온다.
 export async function getCommunityPosts() {
     return client.get("/community/posts");
+}
+
+// 게시글 작성, 필터 화면에서 사용할 활성 카테고리 목록 조회
+export async function getCommunityCategories() {
+    return client.get("/community/options/categories");
+}
+
+// 게시글 필터 화면에서 사용할 활성 주요 주제 목록 조회
+export async function getCommunityTopics() {
+    return client.get("/community/options/topics");
+}
+
+// 선택한 카테고리에 연결된 활성 관련 서비스 목록 조회
+export async function getCommunityRelatedServices(categoryCode) {
+    return client.get(`/community/options/categories/${categoryCode}/related-services`);
 }
 
 // 게시글 상세 화면을 열 때 사용한다.
@@ -111,11 +126,7 @@ export async function updateCommunityPost(postId, formData) {
 // 게시글의 댓글 목록 조회
 export async function getCommunityComments(
     postId,
-    {
-        cursorCreatedAt = null,
-        cursorCommentId = null,
-        size = 10,
-    } = {},
+    { cursorCreatedAt = null, cursorCommentId = null, size = 10 } = {},
 ) {
     const params = createCursorParams({
         cursorCreatedAt,
@@ -124,9 +135,7 @@ export async function getCommunityComments(
         size,
     });
 
-    return client.get(
-        `/community/posts/${postId}/comments?${params.toString()}`,
-    );
+    return client.get(`/community/posts/${postId}/comments?${params.toString()}`);
 }
 
 // 공개 댓글을 현재 선택 언어로 번역한다.
@@ -196,11 +205,7 @@ export async function getCommunityMemberPreview(memberId) {
 // 프로필 미리보기에서 특정 회원의 작성글을 커서 방식으로 조회한다.
 export async function getCommunityMemberPosts(
     memberId,
-    {
-        cursorCreatedAt = null,
-        cursorPostId = null,
-        size = 10,
-    } = {},
+    { cursorCreatedAt = null, cursorPostId = null, size = 10 } = {},
 ) {
     const params = createPostCursorParams({
         cursorCreatedAt,
@@ -208,9 +213,7 @@ export async function getCommunityMemberPosts(
         size,
     });
 
-    return client.get(
-        `/community/members/${memberId}/posts?${params.toString()}`,
-    );
+    return client.get(`/community/members/${memberId}/posts?${params.toString()}`);
 }
 
 // 게시글의 리포스트 수와 현재 로그인 회원의 리포스트 여부 조회

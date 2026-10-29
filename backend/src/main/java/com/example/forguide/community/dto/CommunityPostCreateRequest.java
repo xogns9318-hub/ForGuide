@@ -2,7 +2,6 @@ package com.example.forguide.community.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,19 +17,9 @@ public class CommunityPostCreateRequest {
     private String content;
 
     @NotBlank(message = "카테고리를 선택해주세요.")
-    @Pattern(
-            regexp = "QUESTION_ANSWER|REVIEW_RECOMMEND|FREE_TALK",
-            message = "올바른 카테고리를 선택해주세요."
-    )
     private String category;
-
-    @Pattern(
-            regexp = "|ACCOUNT_RECOMMEND|LOAN_RECOMMEND|INSURANCE_RECOMMEND|EMPLOYMENT_GUIDE",
-            message = "올바른 관련 서비스를 선택해주세요."
-    )
     private String relatedService;
 
     @NotBlank(message = "언어를 선택해주세요.")
     private String language;
-
 }

@@ -205,6 +205,7 @@ const zh = {
         },
         feedback: {
             popularLoadError: "无法加载热门帖子。",
+            optionsLoadError: "无法加载社区选项，请重试。",
             myRepostsLoginRequired: "请登录后查看我的转发。",
             postsLoadError: "无法加载帖子。",
             imageCountLimit: "最多可添加 {{count}} 张图片。",

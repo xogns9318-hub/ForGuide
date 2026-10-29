@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Link, Outlet, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { categories, accountRoutes } from "./routeConfig";
 import { useTranslation } from "react-i18next";
@@ -5,20 +6,23 @@ import Home from "../components/Home/Home.jsx";
 import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import StatusPage from "../components/StatusPage/StatusPage.jsx";
-import Community from "../components/Community/Community.jsx";
-import CommunityPostDetail from "../components/Community/CommunityPostDetail.jsx";
 import { authPaths, authRoutes } from "../auth/authRoutes.jsx";
 import { recommendPaths, recommendRoutes } from "../recommend/recommendRoutes.jsx";
 import introductionStyles from "../styles/introduction.module.css";
-import MonthlyPayment from "../components/MonthlyPayment/MonthlyPayment.jsx";
-import TotalInterest from "../components/TotalInterest/TotalInterest.jsx";
-import Consultation from "../components/Consultation/Consultation.jsx";
-import EmploymentResume from "../components/Employment/EmploymentResume.jsx";
-import JobListings from "../components/JobListings/JobListings.jsx";
 import UnderConstruction from "../components/UnderConstruction/UnderConstruction.jsx";
 import RequireAuth from "../auth/components/RequireAuth.jsx";
 import PreparationCard from "../components/PreparationCard/PreparationCard.jsx";
 
+// 자주 열지 않는 기능 화면은 해당 경로에 들어갈 때만 내려받아 초기 번들을 줄인다.
+const Community = lazy(() => import("../components/Community/Community.jsx"));
+const CommunityPostDetail = lazy(() => import("../components/Community/CommunityPostDetail.jsx"));
+const MonthlyPayment = lazy(() => import("../components/MonthlyPayment/MonthlyPayment.jsx"));
+const TotalInterest = lazy(() => import("../components/TotalInterest/TotalInterest.jsx"));
+const Consultation = lazy(() => import("../components/Consultation/Consultation.jsx"));
+const EmploymentResume = lazy(() => import("../components/Employment/EmploymentResume.jsx"));
+const JobListings = lazy(() => import("../components/JobListings/JobListings.jsx"));
+
+// 상담 준비 카드는 실제 화면으로 연결하고 시뮬레이터만 제작 중으로 표시한다.
 const constructionPaths = new Set(["/service/simulator"]);
 
 // 소개와 세부 기능을 연결할 서비스 주소 목록
@@ -180,23 +184,27 @@ function CalculatorPage({ children }) {
 // 일반 화면과 전체 상태 화면 연결
 export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLogout }) {
     return (
-        <Routes>
-            <Route
-                element={
-                    <DefaultLayout
-                        language={language}
-                        isLoggedIn={isLoggedIn}
-                        onLanguageChange={onLanguageChange}
-                        onLogout={onLogout}
-                    />
-                }
-            >
+        <Suspense fallback={<StatusPage type="loading" />}>
+            <Routes>
+                <Route
+                    element={
+                        <DefaultLayout
+                            language={language}
+                            isLoggedIn={isLoggedIn}
+                            onLanguageChange={onLanguageChange}
+                            onLogout={onLogout}
+                        />
+                    }
+                >
                 <Route path="/" element={<Home />} />
 
                 {/* 커뮤니티 페이지 */}
                 <Route path="/service/community" element={<Community />} />
 
-                <Route path="/service/community/posts/:postId" element={<CommunityPostDetail />} />
+                <Route
+                    path="/service/community/posts/:postId"
+                    element={<CommunityPostDetail />}
+                />
 
                 {/* 게시글 작성 전용 페이지 */}
                 <Route
@@ -204,7 +212,7 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                     element={<Navigate to="/service/community" replace />}
                 />
 
-                {/* 상담 기관 안내와 상담 준비 카드 화면 */}
+                {/* 도움 기관 안내는 선택 화면으로 연결 */}
                 <Route path="/service/consultation" element={<Consultation />} />
                 <Route path="/service/preparationCard" element={<PreparationCard />} />
 
@@ -262,10 +270,7 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
 
                 {/* 이력서 작성은 로그인한 회원만 가능 */}
                 <Route element={<RequireAuth />}>
-                    <Route
-                        path="/service/employment"
-                        element={<EmploymentResume />}
-                    />
+                    <Route path="/service/employment" element={<EmploymentResume />} />
                 </Route>
 
                 {/* 추천 화면 */}
@@ -294,5 +299,6 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
             <Route path="/error" element={<StatusPage type="error" />} />
             <Route path="*" element={<StatusPage type="error" />} />
         </Routes>
+        </Suspense >
     );
 }

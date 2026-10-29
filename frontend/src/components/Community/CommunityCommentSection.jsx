@@ -113,9 +113,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                     return;
                 }
 
-                const nextComments = Array.isArray(receivedComments)
-                    ? receivedComments
-                    : [];
+                const nextComments = Array.isArray(receivedComments) ? receivedComments : [];
 
                 // 삭제된 부모 댓글도 답글의 연결 구조를 유지하기 위해 목록에 남긴다.
                 setComments((previousComments) => {
@@ -124,19 +122,14 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                     );
                     const mergedComments = [
                         ...previousComments,
-                        ...nextComments.filter(
-                            (comment) => !commentIds.has(comment.commentId),
-                        ),
+                        ...nextComments.filter((comment) => !commentIds.has(comment.commentId)),
                     ];
 
                     // 삭제 표시 댓글은 화면 구조에는 남기되 게시글 댓글 수에는 포함하지 않는다.
                     const visibleCommentCount = mergedComments.filter(
                         (comment) => !comment.deleted,
                     ).length;
-                    commentCountChangeRef.current?.(
-                        postId,
-                        visibleCommentCount,
-                    );
+                    commentCountChangeRef.current?.(postId, visibleCommentCount);
 
                     return mergedComments;
                 });
@@ -152,16 +145,12 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                 cursorCommentIdRef.current =
                     lastRootComment?.commentId ?? cursorCommentIdRef.current;
 
-                const nextHasMore =
-                    rootComments.length === COMMENT_PAGE_SIZE;
+                const nextHasMore = rootComments.length === COMMENT_PAGE_SIZE;
                 hasMoreRef.current = nextHasMore;
                 setHasMore(nextHasMore);
             } catch (requestError) {
                 if (requestVersion === requestVersionRef.current) {
-                    setError(
-                        requestError.message
-                        || t("community.comments.loadError"),
-                    );
+                    setError(requestError.message || t("community.comments.loadError"));
                 }
             } finally {
                 if (requestVersion === requestVersionRef.current) {
@@ -173,7 +162,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         [postId, t],
     );
 
-// 작성·수정·삭제 뒤에는 첫 페이지부터 다시 읽어 최신 상태로 맞춘다.
+    // 작성·수정·삭제 뒤에는 첫 페이지부터 다시 읽어 최신 상태로 맞춘다.
     const loadComments = useCallback(async () => {
         requestVersionRef.current += 1;
         const requestVersion = requestVersionRef.current;
@@ -448,14 +437,8 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
             await deleteCommunityComment(postId, commentId);
             setEditingCommentId(null);
             setReplyTarget((current) => (current?.commentId === commentId ? null : current));
-            // 삭제 성공 직후 목록과 상단의 댓글 수를 바로 줄인다.
-            setComments((previousComments) => {
-                const nextComments = previousComments.filter(
-                    (comment) => comment.commentId !== commentId,
-                );
-                onCommentCountChange?.(postId, nextComments.length);
-                return nextComments;
-            });
+            // 답글이 있는 부모 댓글은 서버가 삭제 표시로 남기므로 목록을 다시 읽는다.
+            await loadComments();
         } catch (requestError) {
             setWriteError(requestError.message || t("community.comments.deleteError"));
         } finally {
@@ -466,12 +449,22 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     return (
         <section className="community-comments">
             <h3>{t("community.comments.title")}</h3>
-            {isLoading && <p>{t("community.comments.loading")}</p>}
-            {!isLoading && error && <p role="alert">{error}</p>}
+            {isLoading && comments.length === 0 && <p>{t("community.comments.loading")}</p>}
+
+            {!isLoading && error && (
+                <div className="community-state-message" role="alert">
+                    <p>{error}</p>
+                    <button type="button" onClick={retryLoadMoreComments}>
+                        {t("community.feed.retry")}
+                    </button>
+                </div>
+            )}
+
             {!isLoading && !error && comments.length === 0 && (
                 <p>{t("community.comments.empty")}</p>
             )}
-            {!isLoading && !error && comments.length > 0 && (
+
+            {comments.length > 0 && (
                 <ul className="community-comment-list">
                     {commentRows.map(({ comment, depth }) => {
                         const isCommentAuthor = comment.memberId === member?.memberId;
@@ -708,6 +701,10 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                     })}
                 </ul>
             )}
+
+            {isLoading && comments.length > 0 && <p>{t("community.comments.loading")}</p>}
+
+            <div ref={observerTarget} aria-hidden="true" />
 
             {/* 일반 댓글은 목록 아래의 별도 입력창에서 작성한다. */}
             <form className="community-comment-form" onSubmit={handleSubmit}>
