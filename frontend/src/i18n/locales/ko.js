@@ -179,12 +179,13 @@ const ko = {
 
         // 새 헤더 메뉴에서 사용할 한국어 문구
         mega: {
-            introduction: "가이드 소개",
-            guides: "가이드 목록",
+            serviceIntroduction: "서비스 소개",
+            serviceList: "서비스 목록",
             contact: "문의하기",
 
             // 클릭할 수 없는 연한 제목
-            introductionList: "소개 목록",
+            guideIntroduction: "가이드 소개",
+            extendedServices: "확장 서비스",
             contactGroup: "문의",
 
             // 아직 페이지를 연결하지 않은 문의 버튼
@@ -210,6 +211,18 @@ const ko = {
     },
 
     home: {
+        landing: {
+            title: "한국 생활의 길잡이, ForGuide",
+            description: "낯선 생활에서 겪는 경제적 어려움을 해결하고, 내 상황에 맞는 도움을 찾아보세요!",
+            carouselLabel: "ForGuide 서비스 소개",
+            carouselRole: "순환 서비스 카드",
+            openIntroduction: "{{name}} 소개 보기",
+            select: "{{name}} 가운데로 이동",
+            indicatorLabel: "서비스 선택",
+            help: "마우스 휠을 내리면 왼쪽 카드, 올리면 오른쪽 카드가 가운데로 이동합니다. 가운데 두 카드는 소개 페이지, 세부 기능 글씨는 해당 서비스로 연결됩니다. 양옆 카드나 원을 누르거나 좌우 방향키로 선택할 수도 있습니다.",
+            current: "{{name}}, 전체 {{total}}개 중 {{current}}번째 서비스",
+            currentPair: "{{left}} · {{right}}, 전체 {{total}}개 서비스",
+        },
         banner: {
             eyebrow: "한국 생활의 길잡이, ForGuide",
             title: "당신의 행복한 한국 생활을 돕는 곳",
@@ -226,21 +239,27 @@ const ko = {
         categories: {
             counseling: {
                 description: "내 상황에 맞는 상담을 찾고, 상담에 필요한 준비와 설명을 정리하세요.",
+                cardDescription: "내 상황에 맞는 상담을 찾고,\n상담에 필요한 준비와 설명을 정리하세요.",
             },
             recommendation: {
                 description: "대출·보험·계좌를 비교하고, 목적에 맞는 금융 서비스를 살펴보세요.",
+                cardDescription: "대출·보험·계좌를 비교하고,\n목적에 맞는 금융 서비스를 살펴보세요.",
             },
             repayment: {
                 description: "월 상환액과 총이자, 상환 일정을 확인하며 자금 계획을 세워보세요.",
+                cardDescription: "월 상환액과 총이자, 상환 일정을 확인하며\n자금 계획을 세워보세요.",
             },
             employment: {
                 description: "취업 준비자료와 일자리 정보를 살펴보고, 다음 단계를 준비하세요.",
+                cardDescription: "취업 준비자료와 일자리 정보를 살펴보고,\n다음 단계를 준비하세요.",
             },
             simulator: {
                 description: "상환일과 수입·지출을 달력에 정리하고 하루 지출 계획을 세워보세요.",
+                cardDescription: "상환일과 수입·지출을 달력에 정리하고,\n하루 지출 계획을 세워보세요.",
             },
             community: {
                 description: "한국 생활의 경험과 정보를 나누고, 서로의 이야기를 만나보세요.",
+                cardDescription: "한국 생활의 경험과 정보를 나누고,\n서로의 이야기를 만나보세요.",
             },
         },
 

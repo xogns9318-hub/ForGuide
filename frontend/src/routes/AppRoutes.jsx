@@ -1,4 +1,4 @@
-import { Link, Outlet, Route, Routes, Navigate } from "react-router-dom";
+import { Link, Outlet, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { categories, accountRoutes } from "./routeConfig";
 import { useTranslation } from "react-i18next";
 import Home from "../components/Home/Home.jsx";
@@ -42,6 +42,10 @@ const serviceRoutes = categories.flatMap((category) => [
 
 // 일반 페이지의 공통 레이아웃
 function DefaultLayout({ language, isLoggedIn, onLanguageChange, onLogout }) {
+    const { pathname } = useLocation();
+    // 홈 화면만 전체 너비로 표시하고 다른 화면의 공통 규격은 유지한다.
+    const isHome = pathname === "/";
+
     return (
         <div className="app-layout">
             <Header
@@ -51,11 +55,11 @@ function DefaultLayout({ language, isLoggedIn, onLanguageChange, onLogout }) {
                 onLogout={onLogout}
             />
 
-            <main className="page-main">
+            <main className={isHome ? "page-main page-main--home" : "page-main"}>
                 <Outlet />
             </main>
 
-            <Footer />
+            {!isHome && <Footer />}
         </div>
     );
 }
@@ -228,7 +232,7 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                     .filter(
                         (route) =>
                             route.path !== "/service/community" &&
-                            route.path !== "/service/consultation"&&
+                            route.path !== "/service/consultation" &&
                             route.path !== "/service/employment" &&
                             !recommendPaths.includes(route.path),
                     )
