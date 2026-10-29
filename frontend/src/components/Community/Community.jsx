@@ -7,6 +7,9 @@ import {
     getMyRepostedCommunityPosts,
     getCommunityPostsByCursor,
     getPopularCommunityPosts,
+    getCommunityCategories,
+    getCommunityRelatedServices,
+    getCommunityTopics,
     likeCommunityPost,
     repostCommunityPost,
     translateCommunityPost,
@@ -28,21 +31,21 @@ import CommunityPostModal from "./CommunityPostModal.jsx";
 const MAX_IMAGE_COUNT = 4;
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 
-// 현재는 화면 탐색을 위한 UI만 제공한다. 실제 카테고리 필터는 데이터 구조가 확정된 뒤 연결한다.
-const COMMUNITY_NAVIGATION_ITEMS = [
-    { icon: "▤", labelKey: "community.navigation.allPosts", value: "" },
-    { icon: "◌", labelKey: "community.navigation.questionAnswer", value: "QUESTION_ANSWER" },
-    { icon: "☆", labelKey: "community.navigation.reviewRecommend", value: "REVIEW_RECOMMEND" },
-    { icon: "◫", labelKey: "community.navigation.freeTalk", value: "FREE_TALK" },
-];
+// 아이콘은 화면 표현 책임이므로 프론트에서 관리한다.
+// 실제 선택 코드·문구 키·표시 순서는 서버 DB에서 받아온다.
+const CATEGORY_ICONS = {
+    QUESTION_ANSWER: "◌",
+    REVIEW_RECOMMEND: "☆",
+    FREE_TALK: "◫",
+};
 
-const COMMUNITY_TOPIC_ITEMS = [
-    { icon: "⌂", labelKey: "community.topics.account", value: "ACCOUNT" },
-    { icon: "◉", labelKey: "community.topics.loan", value: "LOAN" },
-    { icon: "◇", labelKey: "community.topics.insurance", value: "INSURANCE" },
-    { icon: "▣", labelKey: "community.topics.visaStay", value: "VISA_STAY" },
-    { icon: "◌", labelKey: "community.topics.lifeTip", value: "LIFE_TIP" },
-];
+const TOPIC_ICONS = {
+    ACCOUNT: "⌂",
+    LOAN: "◉",
+    INSURANCE: "◇",
+    VISA_STAY: "▣",
+    LIFE_TIP: "◌",
+};
 
 const RELATED_SERVICE_LINKS = {
     ACCOUNT_RECOMMEND: {
@@ -374,6 +377,12 @@ export default function Community() {
     const [feedType, setFeedType] = useState("all");
     const [postCategory, setPostCategory] = useState("FREE_TALK");
     const [relatedService, setRelatedService] = useState("");
+    const [categoryOptions, setCategoryOptions] = useState([]);
+    const [topicOptions, setTopicOptions] = useState([]);
+    const [relatedServiceOptions, setRelatedServiceOptions] = useState([]);
+    const [isOptionsLoading, setIsOptionsLoading] = useState(true);
+    const [optionsLoadError, setOptionsLoadError] = useState(false);
+    const [optionsReloadKey, setOptionsReloadKey] = useState(0);
     const [selectedCategory, setSelectedCategory] = useState("");
     const [selectedTopic, setSelectedTopic] = useState("");
     const [searchInput, setSearchInput] = useState("");
@@ -402,6 +411,97 @@ export default function Community() {
         },
         [],
     );
+
+    // 카테고리·주제는 DB의 활성 옵션을 최초 한 번 조회한다.
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadCommunityOptions() {
+            setIsOptionsLoading(true);
+            setOptionsLoadError(false);
+
+            try {
+                const [categories, topics] = await Promise.all([
+                    getCommunityCategories(),
+                    getCommunityTopics(),
+                ]);
+
+                if (!isMounted) {
+                    return;
+                }
+
+                const nextCategories = Array.isArray(categories) ? categories : [];
+                const nextTopics = Array.isArray(topics) ? topics : [];
+
+                setCategoryOptions(nextCategories);
+                setTopicOptions(nextTopics);
+
+                // 기본 카테고리가 DB에서 비활성화됐다면 첫 활성 카테고리를 선택한다.
+                setPostCategory((previous) =>
+                    nextCategories.some((option) => option.code === previous)
+                        ? previous
+                        : (nextCategories[0]?.code ?? ""),
+                );
+            } catch {
+                if (isMounted) {
+                    setCategoryOptions([]);
+                    setTopicOptions([]);
+                    setPostCategory("");
+                    setOptionsLoadError(true);
+                }
+            } finally {
+                if (isMounted) {
+                    setIsOptionsLoading(false);
+                }
+            }
+        }
+
+        loadCommunityOptions();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [optionsReloadKey]);
+
+    // 옵션 조회가 실패한 경우 사용자가 같은 요청을 다시 보낼 수 있게 한다.
+    function retryLoadCommunityOptions() {
+        setOptionsReloadKey((previous) => previous + 1);
+    }
+
+    // 선택한 카테고리에 연결된 관련 서비스만 다시 조회한다.
+    useEffect(() => {
+        let isMounted = true;
+
+        async function loadRelatedServices() {
+            if (!postCategory) {
+                setRelatedService("");
+                setRelatedServiceOptions([]);
+                return;
+            }
+
+            // 카테고리가 바뀌면 이전 카테고리의 서비스 선택을 초기화한다.
+            setRelatedService("");
+            setRelatedServiceOptions([]);
+
+            try {
+                const response = await getCommunityRelatedServices(postCategory);
+
+                if (isMounted) {
+                    setRelatedServiceOptions(Array.isArray(response) ? response : []);
+                }
+            } catch {
+                if (isMounted) {
+                    setRelatedServiceOptions([]);
+                }
+            }
+        }
+
+        loadRelatedServices();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [postCategory]);
 
     // 오른쪽 인기 게시글은 전체 글을 기준으로 공감순 또는 조회순을 서버에서 정렬해 가져온다.
     const loadPopularPosts = useCallback(async () => {
@@ -595,6 +695,11 @@ export default function Community() {
             window.setTimeout(() => navigate("/login"), 900);
             return;
         }
+        // 서버 옵션을 확인할 수 없으면 잘못된 카테고리로 게시글을 저장하지 않는다.
+        if (isOptionsLoading || optionsLoadError || !postCategory) {
+            setWriteError(t("community.feedback.optionsLoadError"));
+            return;
+        }
         // 글 또는 사진 중 하나는 있어야 게시글을 작성할 수 있다.
         if (!trimmedContent && images.length === 0) {
             setWriteError(t("community.feedback.contentRequired"));
@@ -687,7 +792,18 @@ export default function Community() {
                         className="community-sidebar-navigation"
                         aria-label={t("community.accessibility.postTypeNavigation")}
                     >
-                        {COMMUNITY_NAVIGATION_ITEMS.map((item) => (
+                        {[
+                            {
+                                icon: "▤",
+                                labelKey: "community.navigation.allPosts",
+                                value: "",
+                            },
+                            ...categoryOptions.map((option) => ({
+                                icon: CATEGORY_ICONS[option.code] ?? "•",
+                                labelKey: option.labelKey,
+                                value: option.code,
+                            })),
+                        ].map((item) => (
                             <button
                                 key={item.value}
                                 type="button"
@@ -718,22 +834,22 @@ export default function Community() {
                             <h2 id="community-topic-title">{t("community.topics.title")}</h2>
 
                             <div className="community-topic-list">
-                                {COMMUNITY_TOPIC_ITEMS.map((topic) => (
+                                {topicOptions.map((topic) => (
                                     <button
-                                        key={topic.value}
+                                        key={topic.code}
                                         type="button"
                                         className={`community-topic-item${
-                                            selectedTopic === topic.value ? " is-active" : ""
+                                            selectedTopic === topic.code ? " is-active" : ""
                                         }`}
                                         onClick={() => {
                                             setSelectedTopic((previous) =>
-                                                previous === topic.value ? "" : topic.value,
+                                                previous === topic.code ? "" : topic.code,
                                             );
                                         }}
-                                        aria-pressed={selectedTopic === topic.value}
+                                        aria-pressed={selectedTopic === topic.code}
                                     >
                                         <span className="community-topic-icon" aria-hidden="true">
-                                            {topic.icon}
+                                            {TOPIC_ICONS[topic.code] ?? "•"}
                                         </span>
                                         {t(topic.labelKey)}
                                     </button>
@@ -791,38 +907,40 @@ export default function Community() {
                                 maxLength={5000}
                                 aria-label={t("community.board.writeAria")}
                             />
+                            {optionsLoadError && (
+                                <div className="community-options-error" role="alert">
+                                    <p>{t("community.feedback.optionsLoadError")}</p>
+                                    <button type="button" onClick={retryLoadCommunityOptions}>
+                                        {t("community.feed.retry")}
+                                    </button>
+                                </div>
+                            )}
                             <div className="community-write-selects">
                                 <label>
                                     {t("community.board.categoryLabel")}
                                     <select
                                         value={postCategory}
+                                        disabled={isOptionsLoading || optionsLoadError}
                                         onChange={(event) => {
                                             const nextCategory = event.target.value;
 
                                             setPostCategory(nextCategory);
-
-                                            if (nextCategory !== "REVIEW_RECOMMEND") {
-                                                setRelatedService("");
-                                            }
                                         }}
                                     >
-                                        <option value="QUESTION_ANSWER">
-                                            {t("community.board.questionAnswer")}
-                                        </option>
-                                        <option value="REVIEW_RECOMMEND">
-                                            {t("community.board.reviewRecommend")}
-                                        </option>
-                                        <option value="FREE_TALK">
-                                            {t("community.board.freeTalk")}
-                                        </option>
+                                        {categoryOptions.map((option) => (
+                                            <option key={option.code} value={option.code}>
+                                                {t(option.labelKey)}
+                                            </option>
+                                        ))}
                                     </select>
                                 </label>
 
-                                {postCategory === "REVIEW_RECOMMEND" && (
+                                {relatedServiceOptions.length > 0 && (
                                     <label>
                                         {t("community.board.relatedServiceLabel")}
                                         <select
                                             value={relatedService}
+                                            disabled={isOptionsLoading}
                                             onChange={(event) =>
                                                 setRelatedService(event.target.value)
                                             }
@@ -830,18 +948,11 @@ export default function Community() {
                                             <option value="">
                                                 {t("community.board.noRelatedService")}
                                             </option>
-                                            <option value="ACCOUNT_RECOMMEND">
-                                                {t("community.relatedServices.account")}
-                                            </option>
-                                            <option value="LOAN_RECOMMEND">
-                                                {t("community.relatedServices.loan")}
-                                            </option>
-                                            <option value="INSURANCE_RECOMMEND">
-                                                {t("community.relatedServices.insurance")}
-                                            </option>
-                                            <option value="EMPLOYMENT_GUIDE">
-                                                {t("community.relatedServices.employment")}
-                                            </option>
+                                            {relatedServiceOptions.map((option) => (
+                                                <option key={option.code} value={option.code}>
+                                                    {t(option.labelKey)}
+                                                </option>
+                                            ))}
                                         </select>
                                     </label>
                                 )}
@@ -870,7 +981,15 @@ export default function Community() {
                                     {t("community.board.imageGuide")}
                                 </span>
 
-                                <button type="submit" disabled={isSubmitting}>
+                                <button
+                                    type="submit"
+                                    disabled={
+                                        isSubmitting ||
+                                        isOptionsLoading ||
+                                        optionsLoadError ||
+                                        !postCategory
+                                    }
+                                >
                                     {isSubmitting
                                         ? t("community.board.submitting")
                                         : t("community.board.submit")}{" "}

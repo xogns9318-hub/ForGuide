@@ -1,28 +1,26 @@
 package com.example.forguide.community.service;
 
-import com.example.forguide.community.dto.*;
-import com.example.forguide.community.mapper.CommunityMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import com.example.forguide.common.exception.ApiException;
 import com.example.forguide.common.exception.ErrorCode;
+import com.example.forguide.common.transaction.AfterCommitExecutor;
+import com.example.forguide.community.dto.*;
 import com.example.forguide.community.image.CommunityImageStorage;
-import com.example.forguide.translation.service.PublicTranslationInvalidator;
+import com.example.forguide.community.mapper.CommunityMapper;
 import com.example.forguide.translation.cache.TranslationCacheResource;
-import com.example.forguide.community.dto.CommunityCommentCursorRequest;
+import com.example.forguide.translation.service.PublicTranslationInvalidator;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.Set;
-import org.springframework.transaction.annotation.Transactional;
-import com.example.forguide.common.transaction.AfterCommitExecutor;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.dao.DuplicateKeyException;
+import java.util.List;
 import java.util.Map;
-import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +34,27 @@ public class CommunityService {
     // 게시글 전체 목록 조회
     public List<CommunityPostResponse> getAllPosts() {
         return attachImages(communityMapper.findAllPosts());
+    }
+
+    // 화면에서 사용할 활성 카테고리 목록 조회
+    public List<CommunityOptionResponse> getActiveCategories() {
+        return communityMapper.findActiveCategories();
+    }
+
+    // 화면에서 사용할 활성 주요 주제 목록 조회
+    public List<CommunityOptionResponse> getActiveTopics() {
+        return communityMapper.findActiveTopics();
+    }
+
+    // 선택한 카테고리에 연결된 활성 관련 서비스 목록 조회
+    public List<CommunityOptionResponse> getActiveRelatedServicesByCategory(
+            String categoryCode
+    ) {
+        validateCategory(categoryCode);
+
+        return communityMapper.findActiveRelatedServicesByCategory(
+                categoryCode
+        );
     }
 
     // 게시글 상세 조회
@@ -158,6 +177,8 @@ public class CommunityService {
 
         // memberId는 요청값을 믿지 않고 로그인 정보로 항상 덮어쓴다.
         request.setMemberId(memberId);
+
+        validateCategory(request.getCategory());
         validateRelatedService(request);
 
         int insertedCount = communityMapper.insertPost(request);
@@ -294,61 +315,11 @@ public class CommunityService {
         }
     }
 
-    // 카테고리는 정해진 세 가지 값만 허용해 필터 조건과 저장 값이 어긋나지 않게 한다.
-    private void validateCategory(String category) {
-        if (category == null || category.isBlank()) {
-            return;
-        }
-
-        Set<String> categories = Set.of("QUESTION_ANSWER", "REVIEW_RECOMMEND", "FREE_TALK");
-        if (!categories.contains(category)) {
-            throw new ApiException(ErrorCode.INVALID_INPUT, "올바른 카테고리를 선택해주세요.");
-        }
-    }
-
-    // 관련 서비스는 후기·추천 글에서만 선택할 수 있다.
-    private void validateRelatedService(CommunityPostCreateRequest request) {
-        String relatedService = request.getRelatedService();
-
-        if (relatedService == null || relatedService.isBlank()) {
-            request.setRelatedService(null);
-            return;
-        }
-
-        Set<String> services = Set.of(
-                "ACCOUNT_RECOMMEND", "LOAN_RECOMMEND", "INSURANCE_RECOMMEND","EMPLOYMENT_GUIDE"
-        );
-        if (!"REVIEW_RECOMMEND".equals(request.getCategory()) || !services.contains(relatedService)) {
-            throw new ApiException(ErrorCode.INVALID_INPUT, "후기·추천 글에서만 관련 서비스를 연결할 수 있습니다.");
-        }
-    }
-
     private String normalizeKeyword(String keyword) {
         if (keyword == null || keyword.isBlank()) {
             return null;
         }
         return keyword.trim();
-    }
-
-    // 주요 주제는 별도 분류로 저장하지 않고, 본문에 자연스럽게 등장한 단어를 찾는다.
-    private List<String> getTopicKeywords(String topic) {
-        if (topic == null || topic.isBlank()) {
-            return List.of();
-        }
-
-        Map<String, List<String>> keywordsByTopic = Map.of(
-                "ACCOUNT", List.of("계좌", "은행", "통장", "개설"),
-                "LOAN", List.of("대출", "금리", "상환", "보증"),
-                "INSURANCE", List.of("보험", "보장", "보험료", "가입"),
-                "VISA_STAY", List.of("비자", "체류", "외국인등록", "연장"),
-                "LIFE_TIP", List.of("교통", "병원", "휴대폰", "주거", "쓰레기")
-        );
-
-        List<String> keywords = keywordsByTopic.get(topic.toUpperCase(Locale.ROOT));
-        if (keywords == null) {
-            throw new ApiException(ErrorCode.INVALID_INPUT, "올바른 주요 주제를 선택해주세요.");
-        }
-        return keywords;
     }
 
     // 작성자를 확인한 뒤 본인 게시글만 삭제
@@ -409,6 +380,55 @@ public class CommunityService {
         );
     }
 
+    // DB에서 현재 활성화된 카테고리인지 확인한다
+    private void validateCategory(String category) {
+        if (category == null || category.isBlank()) {
+            return;
+        }
+
+        if (!communityMapper.existsActiveCategory(category)) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "올바른 카테고리를 선택해주세요."
+            );
+        }
+    }
+
+    // DB에서 해당 카테고리에 연결된 활성 관련 서비스인지 확인한다.
+    private void validateRelatedService(CommunityPostCreateRequest request) {
+        String relatedService = request.getRelatedService();
+
+        if (relatedService == null || relatedService.isBlank()) {
+            request.setRelatedService(null);
+            return;
+        }
+
+        if (!communityMapper.existsActiveRelatedServiceByCategory(
+                relatedService,
+                request.getCategory()
+        )) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "선택한 카테고리에서 사용할 수 없는 관련 서비스입니다."
+            );
+        }
+    }
+
+    // DB에 등록된 활성 주제의 검색 키워드를 조회한다.
+    private List<String> getTopicKeywords(String topic) {
+        if (topic == null || topic.isBlank()) {
+            return List.of();
+        }
+
+        if (!communityMapper.existsActiveTopic(topic)) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "올바른 주요 주제를 선택해주세요."
+            );
+        }
+
+        return communityMapper.findActiveTopicKeywords(topic);
+    }
     // 게시글 좋아요 수와 현재 로그인 회원의 좋아요 여부를 조사한다.
     // memberId가 null 이면 비로그인 조회이므로 LikeByME는 false
     public CommunityPostLikeResponse getPostLikeStatus(Long postId, Long memberId) {

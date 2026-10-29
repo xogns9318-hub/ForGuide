@@ -9,13 +9,11 @@ const ko = {
             features: {
                 consultation: {
                     title: "상담 기관 안내",
-                    description:
-                        "내 상황에 맞는 상담 기관을 찾고,\n이용 방법을 알아보세요.",
+                    description: "내 상황에 맞는 상담 기관을 찾고,\n이용 방법을 알아보세요.",
                 },
                 preparationCard: {
                     title: "상담 준비 카드 만들기",
-                    description:
-                        "상담할 내용과 필요한 준비 사항을\n카드로 정리해 보세요.",
+                    description: "상담할 내용과 필요한 준비 사항을\n카드로 정리해 보세요.",
                 },
             },
         },
@@ -26,18 +24,15 @@ const ko = {
             features: {
                 loan: {
                     title: "대출 상품",
-                    description:
-                        "다양한 대출 상품의 조건과 특징을\n비교해 보세요.",
+                    description: "다양한 대출 상품의 조건과 특징을\n비교해 보세요.",
                 },
                 insurance: {
                     title: "보험 상품",
-                    description:
-                        "보험의 보장 내용과 가입 조건을\n확인하고 비교해 보세요.",
+                    description: "보험의 보장 내용과 가입 조건을\n확인하고 비교해 보세요.",
                 },
                 account: {
                     title: "계좌 개설",
-                    description:
-                        "은행 계좌 개설에 필요한 서류와\n절차를 알아보세요.",
+                    description: "은행 계좌 개설에 필요한 서류와\n절차를 알아보세요.",
                 },
             },
         },
@@ -48,13 +43,11 @@ const ko = {
             features: {
                 monthlyPayment: {
                     title: "월 상환액",
-                    description:
-                        "매달 갚아야 할 대출금과 이자를\n간편하게 계산해 보세요.",
+                    description: "매달 갚아야 할 대출금과 이자를\n간편하게 계산해 보세요.",
                 },
                 totalInterest: {
                     title: "총 이자",
-                    description:
-                        "대출 기간 동안 내야 할 총이자와\n상환 금액을 확인해 보세요.",
+                    description: "대출 기간 동안 내야 할 총이자와\n상환 금액을 확인해 보세요.",
                 },
             },
         },
@@ -65,13 +58,11 @@ const ko = {
             features: {
                 jobListings: {
                     title: "일자리 찾기",
-                    description:
-                        "다양한 채용 정보를 확인하고,\n나에게 맞는 일자리를 찾아보세요.",
+                    description: "다양한 채용 정보를 확인하고,\n나에게 맞는 일자리를 찾아보세요.",
                 },
                 employment: {
                     title: "취업 준비 자료",
-                    description:
-                        "취업에 필요한 서류와 절차,\n준비 방법을 알아보세요.",
+                    description: "취업에 필요한 서류와 절차,\n준비 방법을 알아보세요.",
                 },
             },
         },
@@ -82,8 +73,7 @@ const ko = {
             features: {
                 simulator: {
                     title: "시뮬레이터",
-                    description:
-                        "다양한 경제 상황을 체험하고,\n선택에 따른 결과를 확인해 보세요.",
+                    description: "다양한 경제 상황을 체험하고,\n선택에 따른 결과를 확인해 보세요.",
                 },
             },
         },
@@ -94,8 +84,7 @@ const ko = {
             features: {
                 community: {
                     title: "커뮤니티",
-                    description:
-                        "궁금한 점을 질문하고,\n다른 이용자들과 경험과 정보를 나눠보세요.",
+                    description: "궁금한 점을 질문하고,\n다른 이용자들과 경험과 정보를 나눠보세요.",
                 },
             },
         },
@@ -314,7 +303,8 @@ const ko = {
     home: {
         landing: {
             title: "한국 생활의 길잡이, ForGuide",
-            description: "낯선 생활에서 겪는 경제적 어려움을 해결하고, 내 상황에 맞는 도움을 찾아보세요!",
+            description:
+                "낯선 생활에서 겪는 경제적 어려움을 해결하고, 내 상황에 맞는 도움을 찾아보세요!",
             carouselLabel: "ForGuide 서비스 소개",
             carouselRole: "순환 서비스 카드",
             openIntroduction: "{{name}} 소개 보기",
@@ -340,15 +330,18 @@ const ko = {
         categories: {
             counseling: {
                 description: "내 상황에 맞는 상담을 찾고, 상담에 필요한 준비와 설명을 정리하세요.",
-                cardDescription: "내 상황에 맞는 상담을 찾고,\n상담에 필요한 준비와 설명을 정리하세요.",
+                cardDescription:
+                    "내 상황에 맞는 상담을 찾고,\n상담에 필요한 준비와 설명을 정리하세요.",
             },
             recommendation: {
                 description: "대출·보험·계좌를 비교하고, 목적에 맞는 금융 서비스를 살펴보세요.",
-                cardDescription: "대출·보험·계좌를 비교하고,\n목적에 맞는 금융 서비스를 살펴보세요.",
+                cardDescription:
+                    "대출·보험·계좌를 비교하고,\n목적에 맞는 금융 서비스를 살펴보세요.",
             },
             repayment: {
                 description: "월 상환액과 총이자, 상환 일정을 확인하며 자금 계획을 세워보세요.",
-                cardDescription: "월 상환액과 총이자, 상환 일정을 확인하며\n자금 계획을 세워보세요.",
+                cardDescription:
+                    "월 상환액과 총이자, 상환 일정을 확인하며\n자금 계획을 세워보세요.",
             },
             employment: {
                 description: "취업 준비자료와 일자리 정보를 살펴보고, 다음 단계를 준비하세요.",
@@ -356,7 +349,8 @@ const ko = {
             },
             simulator: {
                 description: "상환일과 수입·지출을 달력에 정리하고 하루 지출 계획을 세워보세요.",
-                cardDescription: "상환일과 수입·지출을 달력에 정리하고,\n하루 지출 계획을 세워보세요.",
+                cardDescription:
+                    "상환일과 수입·지출을 달력에 정리하고,\n하루 지출 계획을 세워보세요.",
             },
             community: {
                 description: "한국 생활의 경험과 정보를 나누고, 서로의 이야기를 만나보세요.",
@@ -572,6 +566,7 @@ const ko = {
 
         feedback: {
             popularLoadError: "인기 게시글을 불러오지 못했습니다.",
+            optionsLoadError: "커뮤니티 옵션을 불러오지 못했습니다. 다시 시도해주세요.",
             myRepostsLoginRequired: "내 리포스트는 로그인 후 확인할 수 있습니다.",
             postsLoadError: "게시글을 불러오지 못했습니다.",
             imageCountLimit: "사진은 최대 {{count}}장까지 첨부할 수 있습니다.",
@@ -857,7 +852,8 @@ const ko = {
         passwordReset: {
             title: "비밀번호 찾기",
             description: "가입한 이메일로 인증 코드를 받아 새 비밀번호를 정하세요.",
-            allDevicesNotice: "변경하면 모든 기기에서 로그아웃되고, 새 비밀번호로 다시 로그인해야 합니다.",
+            allDevicesNotice:
+                "변경하면 모든 기기에서 로그아웃되고, 새 비밀번호로 다시 로그인해야 합니다.",
             submit: "비밀번호 변경하기",
             backToLogin: "로그인으로 돌아가기",
             failed: "비밀번호를 변경하지 못했습니다. 잠시 후 다시 시도해주세요.",

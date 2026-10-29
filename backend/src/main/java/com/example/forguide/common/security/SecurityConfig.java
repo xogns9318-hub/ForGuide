@@ -1,5 +1,6 @@
 package com.example.forguide.common.security;
 
+import com.example.forguide.community.image.CommunityImageStorage;
 import com.example.forguide.member.image.ProfileImageStorage;
 import jakarta.servlet.DispatcherType;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -12,7 +13,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.example.forguide.community.image.CommunityImageStorage;
 
 /**
  * 토큰 기반 인증 설정. 서비스 전체 API에 적용된다.
@@ -56,15 +56,16 @@ public class SecurityConfig {
                         // 프로필 이미지 조회 (다른 사람의 프로필 이미지도 볼 수 있어야 하므로 조회만 공개)
                         .requestMatchers(HttpMethod.GET, ProfileImageStorage.URL_PREFIX + "**").permitAll()
                         .requestMatchers(HttpMethod.GET, CommunityImageStorage.URL_PREFIX + "**").permitAll()
-
                         .requestMatchers(HttpMethod.GET, "/api/v1/community/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/community/options/**").permitAll()
+
                         // 공개 게시글 번역은 비로그인 방문자도 사용할 수 있다.
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/v1/community/posts/*/translation"
                         ).permitAll()
 
-                        // 공개 댓글 번역은 비로그인 방문다ㅗ 사용할 수 있다.
+                        // 공개 댓글 번역은 비로그인 방문자도 사용할 수 있다.
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/v1/community/posts/*/comments/*/translation"
@@ -79,7 +80,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/v1/consultation/institutions",
-                                "/api/v1/consultation/institutions/**"  
+                                "/api/v1/consultation/institutions/**"
                         ).permitAll()
                         // 추천 결과 조회는 로그인 없이 쓸 수 있다.
                         .requestMatchers(HttpMethod.GET, "/api/v1/recommend/**").permitAll()

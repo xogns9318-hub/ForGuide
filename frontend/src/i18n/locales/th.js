@@ -211,6 +211,7 @@ const th = {
         },
         feedback: {
             popularLoadError: "ไม่สามารถโหลดโพสต์ยอดนิยมได้",
+            optionsLoadError: "ไม่สามารถโหลดตัวเลือกชุมชนได้ โปรดลองอีกครั้ง",
             myRepostsLoginRequired: "กรุณาเข้าสู่ระบบเพื่อดูรีโพสต์ของคุณ",
             postsLoadError: "ไม่สามารถโหลดโพสต์ได้",
             imageCountLimit: "คุณสามารถแนบรูปภาพได้สูงสุด {{count}} รูป",
