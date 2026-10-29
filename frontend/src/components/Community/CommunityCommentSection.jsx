@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import {
     createCommunityComment,
     deleteCommunityComment,
@@ -9,10 +9,13 @@ import {
     translateCommunityComment,
 } from "../../api/communityApi.js";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
+import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 import { useTranslation } from "react-i18next";
 import { confirm } from "../Modal/modal.js";
+
+const COMMENT_PAGE_SIZE = 10;
 
 // 서버가 반환한 평면 댓글 목록을 부모-답글 순서의 화면 목록으로 바꾼다.
 function buildCommentRows(comments) {
@@ -49,6 +52,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     const [replyTarget, setReplyTarget] = useState(null);
     const [replyContent, setReplyContent] = useState("");
     const [isLoading, setIsLoading] = useState(true);
+    const [hasMore, setHasMore] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [likingCommentId, setLikingCommentId] = useState(null);
     const [editingCommentId, setEditingCommentId] = useState(null);
@@ -61,6 +65,11 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     const [translatingCommentId, setTranslatingCommentId] = useState(null);
     const [translationErrors, setTranslationErrors] = useState({});
     const replyTextareaRef = useRef(null);
+    const loadingRef = useRef(false);
+    const cursorCreatedAtRef = useRef(null);
+    const cursorCommentIdRef = useRef(null);
+    const hasMoreRef = useRef(true);
+    const requestVersionRef = useRef(0);
 
     const accessToken = useAuthStore((state) => state.accessToken);
     const member = useAuthStore((state) => state.member);
@@ -69,6 +78,11 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     const { t, i18n } = useTranslation();
     const targetLanguage = i18n.resolvedLanguage || i18n.language || "ko";
     const commentRows = useMemo(() => buildCommentRows(comments), [comments]);
+    const commentCountChangeRef = useRef(onCommentCountChange);
+
+    useEffect(() => {
+        commentCountChangeRef.current = onCommentCountChange;
+    }, [onCommentCountChange]);
 
     function moveToLogin() {
         const next = `${location.pathname}${location.search}${location.hash}`;
@@ -76,26 +90,125 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         navigate(`/login?next=${encodeURIComponent(next)}`);
     }
 
-    // 댓글·답글 작성 뒤에도 재사용해 목록과 게시글의 댓글 수를 즉시 최신 상태로 맞춘다.
-    async function loadComments() {
-        setIsLoading(true);
-        setError("");
-        try {
-            const nextComments = await getCommunityComments(postId);
-            // 서버의 삭제 기록은 보존하되, 화면 목록과 댓글 수에는 포함하지 않는다.
-            const visibleComments = nextComments.filter((comment) => !comment.deleted);
-            setComments(visibleComments);
-            onCommentCountChange?.(postId, visibleComments.length);
-        } catch (requestError) {
-            setError(requestError.message || t("community.comments.loadError"));
-        } finally {
-            setIsLoading(false);
-        }
-    }
+    // 다음 댓글 페이지를 추가한다. 답글은 서버에서 같은 부모 댓글 묶음으로 함께 받는다.
+    const loadMoreComments = useCallback(
+        async (requestVersion = requestVersionRef.current) => {
+            if (loadingRef.current || !hasMoreRef.current) {
+                return;
+            }
+
+            loadingRef.current = true;
+            setIsLoading(true);
+            setError("");
+
+            try {
+                const receivedComments = await getCommunityComments(postId, {
+                    cursorCreatedAt: cursorCreatedAtRef.current,
+                    cursorCommentId: cursorCommentIdRef.current,
+                    size: COMMENT_PAGE_SIZE,
+                });
+
+                // 다른 게시글로 이동한 뒤 이전 요청이 늦게 끝난 경우 결과를 버린다.
+                if (requestVersion !== requestVersionRef.current) {
+                    return;
+                }
+
+                const nextComments = Array.isArray(receivedComments)
+                    ? receivedComments
+                    : [];
+
+                // 삭제된 부모 댓글도 답글의 연결 구조를 유지하기 위해 목록에 남긴다.
+                setComments((previousComments) => {
+                    const commentIds = new Set(
+                        previousComments.map((comment) => comment.commentId),
+                    );
+                    const mergedComments = [
+                        ...previousComments,
+                        ...nextComments.filter(
+                            (comment) => !commentIds.has(comment.commentId),
+                        ),
+                    ];
+
+                    // 삭제 표시 댓글은 화면 구조에는 남기되 게시글 댓글 수에는 포함하지 않는다.
+                    const visibleCommentCount = mergedComments.filter(
+                        (comment) => !comment.deleted,
+                    ).length;
+                    commentCountChangeRef.current?.(
+                        postId,
+                        visibleCommentCount,
+                    );
+
+                    return mergedComments;
+                });
+
+                // 답글이 아니라 마지막 최상위 댓글을 다음 조회의 기준점으로 사용한다.
+                const rootComments = nextComments.filter(
+                    (comment) => comment.parentCommentId == null,
+                );
+                const lastRootComment = rootComments.at(-1);
+
+                cursorCreatedAtRef.current =
+                    lastRootComment?.createdAt ?? cursorCreatedAtRef.current;
+                cursorCommentIdRef.current =
+                    lastRootComment?.commentId ?? cursorCommentIdRef.current;
+
+                const nextHasMore =
+                    rootComments.length === COMMENT_PAGE_SIZE;
+                hasMoreRef.current = nextHasMore;
+                setHasMore(nextHasMore);
+            } catch (requestError) {
+                if (requestVersion === requestVersionRef.current) {
+                    setError(
+                        requestError.message
+                        || t("community.comments.loadError"),
+                    );
+                }
+            } finally {
+                if (requestVersion === requestVersionRef.current) {
+                    loadingRef.current = false;
+                    setIsLoading(false);
+                }
+            }
+        },
+        [postId, t],
+    );
+
+// 작성·수정·삭제 뒤에는 첫 페이지부터 다시 읽어 최신 상태로 맞춘다.
+    const loadComments = useCallback(async () => {
+        requestVersionRef.current += 1;
+        const requestVersion = requestVersionRef.current;
+
+        loadingRef.current = false;
+        cursorCreatedAtRef.current = null;
+        cursorCommentIdRef.current = null;
+        hasMoreRef.current = true;
+
+        setComments([]);
+        setHasMore(true);
+
+        await loadMoreComments(requestVersion);
+    }, [loadMoreComments]);
 
     useEffect(() => {
         loadComments();
-    }, [postId]);
+
+        // 모달을 닫거나 다른 게시글을 열면 진행 중인 이전 요청 결과를 무시한다.
+        return () => {
+            requestVersionRef.current += 1;
+        };
+    }, [loadComments]);
+
+    const observerTarget = useInfiniteScroll({
+        enabled: hasMore && !isLoading && !error,
+        onLoadMore: loadMoreComments,
+    });
+
+    function retryLoadMoreComments() {
+        setError("");
+        hasMoreRef.current = true;
+        setHasMore(true);
+        void loadMoreComments();
+    }
 
     useEffect(() => {
         setCommentTranslations({});

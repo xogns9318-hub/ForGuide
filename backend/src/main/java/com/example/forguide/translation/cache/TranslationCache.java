@@ -2,8 +2,7 @@ package com.example.forguide.translation.cache;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import com.example.forguide.common.transaction.AfterCommitExecutor;
 
 import java.time.Duration;
 import java.util.List;
@@ -29,10 +28,7 @@ public class TranslationCache {
     );
 
     private final StringRedisTemplate redisTemplate;
-
-    public TranslationCache(StringRedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
+    private final AfterCommitExecutor afterCommitExecutor;
 
     /*
      * 예:
@@ -56,6 +52,14 @@ public class TranslationCache {
                 + sourceLanguage
                 + ":"
                 + targetLanguage;
+    }
+
+    public TranslationCache(
+            StringRedisTemplate redisTemplate,
+            AfterCommitExecutor afterCommitExecutor
+    ) {
+        this.redisTemplate = redisTemplate;
+        this.afterCommitExecutor = afterCommitExecutor;
     }
 
     // 캐시에 있으면 번역문을 반환하고, 없으면 Optional.empty()를 반환한다.
@@ -93,22 +97,18 @@ public class TranslationCache {
         DB 변경이 실제로 커밋된 뒤에만 캐시를 제거한다.
         Mockito 단위 테스트처럼 트랜잭션이 없는 환경에서는 즉시 제거한다.
      */
+
+
+    /*
+    DB 변경이 실제로 커밋된 뒤에만 캐시를 제거한다.
+    Mockito 단위 테스트처럼 트랜잭션이 없는 환경에서는 즉시 제거한다.
+    */
     public void evictAfterCommit(
             TranslationCacheResource resource,
             String sourceLanguage
     ) {
-        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
-            evict(resource, sourceLanguage);
-            return;
-        }
-
-        TransactionSynchronizationManager.registerSynchronization(
-                new TransactionSynchronization() {
-                @Override
-                public void afterCommit() {
-                    evict(resource, sourceLanguage);
-                }
-            }
+        afterCommitExecutor.runAfterCommitOrNow(
+                () -> evict(resource, sourceLanguage)
         );
     }
 }

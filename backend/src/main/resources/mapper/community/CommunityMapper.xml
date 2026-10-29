@@ -86,11 +86,14 @@
         <include refid="postFrom"/>
 
         <where>
-            <if test="category != null and category != ''">
-                AND p.category = #{category}
+            <if test="memberId != null">
+                AND p.member_id = #{memberId}
             </if>
-            <if test="keyword != null and keyword != ''">
-                AND p.content LIKE CONCAT('%', #{keyword}, '%')
+            <if test="cursor.category != null and cursor.category != ''">
+                AND p.category = #{cursor.category}
+            </if>
+            <if test="cursor.keyword != null and cursor.keyword != ''">
+                AND p.content LIKE CONCAT('%', #{cursor.keyword}, '%')
             </if>
             <if test="topicKeywords != null and topicKeywords.size() > 0">
                 AND (
@@ -100,12 +103,12 @@
                 )
             </if>
             <!-- 첫 페이지에는 커서가 없으므로 커서 조건을 추가하지 않는다. -->
-            <if test="cursorCreatedAt != null and cursorPostId != null">
+            <if test="cursor.cursorCreatedAt != null and cursor.cursorPostId != null">
                 AND (
-                    p.created_at &lt; #{cursorCreatedAt}
+                    p.created_at &lt; #{cursor.cursorCreatedAt}
                     OR (
-                        p.created_at = #{cursorCreatedAt}
-                        AND p.post_id &lt; #{cursorPostId}
+                        p.created_at = #{cursor.cursorCreatedAt}
+                        AND p.post_id &lt; #{cursor.cursorPostId}
                     )
                 )
             </if>
@@ -113,7 +116,7 @@
 
         <!-- 최신 게시글부터 정렬하고 요청한 개수만 조회 -->
         ORDER BY p.created_at DESC, p.post_id DESC
-        LIMIT #{size}
+        LIMIT #{cursor.size}
 
     </select>
 
@@ -160,16 +163,6 @@
         p.post_id DESC
         LIMIT #{size}
 
-    </select>
-
-    <!-- 프로필 미리보기에서 특정 회원이 작성한 게시글만 최신순으로 조회 -->
-    <select id="findPostsByMemberId"
-            resultType="com.example.forguide.community.dto.CommunityPostResponse">
-        SELECT
-        <include refid="columns"/>
-        <include refid="postFrom"/>
-        WHERE p.member_id = #{memberId}
-        ORDER BY p.created_at DESC, p.post_id DESC
     </select>
 
     <!-- 생성: 게시글 저장 후 생성된 postId를 request.postId에 넣는다. -->
@@ -305,46 +298,95 @@
          댓글
          ================================================================ -->
 
-    <!-- 게시글의 댓글과 작성자 정보를 오래된 순서대로 조회 -->
-    <select id="findCommentsByPostId"
-            resultType="com.example.forguide.community.dto.CommunityCommentResponse">
-        SELECT
-            c.comment_id AS commentId,
-            c.post_id AS postId,
-            c.parent_comment_id AS parentCommentId,
-            c.member_id AS memberId,
-            m.login_id AS loginId,
-            m.nickname AS nickname,
-            m.profile_image_url AS profileImageUrl,
-            mentioned.member_id AS mentionedMemberId,
-            mentioned.login_id AS mentionedLoginId,
-            mentioned.profile_image_url AS mentionedProfileImageUrl,
-            c.content AS content,
-            c.content_version AS contentVersion,
-            c.is_deleted AS deleted,
-            (
-                SELECT COUNT(*)
+    <!-- 댓글 목록 조회들이 공통으로 사용하는 응답 컬럼 -->
+    <sql id="commentListColumns">
+        c.comment_id AS commentId,
+        c.post_id AS postId,
+        c.parent_comment_id AS parentCommentId,
+        c.member_id AS memberId,
+        m.login_id AS loginId,
+        m.nickname AS nickname,
+        m.profile_image_url AS profileImageUrl,
+        mentioned.member_id AS mentionedMemberId,
+        mentioned.login_id AS mentionedLoginId,
+        mentioned.profile_image_url AS mentionedProfileImageUrl,
+        c.content AS content,
+        c.content_version AS contentVersion,
+        c.is_deleted AS deleted,
+        (
+            SELECT COUNT(*)
+            FROM community_comment_likes cl
+            WHERE cl.comment_id = c.comment_id
+        ) AS likeCount,
+        CASE
+            WHEN #{memberId} IS NOT NULL AND EXISTS(
+                SELECT 1
                 FROM community_comment_likes cl
                 WHERE cl.comment_id = c.comment_id
-            ) AS likeCount,
-            CASE
-                WHEN #{memberId} IS NOT NULL AND EXISTS(
-                    SELECT 1
-                    FROM community_comment_likes cl
-                    WHERE cl.comment_id = c.comment_id
-                      AND cl.member_id = #{memberId}
-                ) THEN TRUE
-                ELSE FALSE
-            END AS likedByMe,
-            c.created_at AS createdAt,
-            c.updated_at AS updatedAt
+                  AND cl.member_id = #{memberId}
+            ) THEN TRUE
+            ELSE FALSE
+        END AS likedByMe,
+        c.created_at AS createdAt,
+        c.updated_at AS updatedAt
+    </sql>
+
+    <!-- 댓글 목록 조회들이 공통으로 사용하는 테이블 연결 -->
+    <sql id="commentListFrom">
         FROM community_comments c
         INNER JOIN members m
             ON c.member_id = m.member_id
         LEFT JOIN members mentioned
             ON c.mentioned_member_id = mentioned.member_id
+    </sql>
+
+    <!-- 기존 전체 댓글 조회. 새 화면 연결 전까지 유지한다. -->
+    <select id="findCommentsByPostId"
+            resultType="com.example.forguide.community.dto.CommunityCommentResponse">
+        SELECT
+            <include refid="commentListColumns"/>
+        <include refid="commentListFrom"/>
         WHERE c.post_id = #{postId}
         ORDER BY c.created_at ASC, c.comment_id ASC
+    </select>
+
+    <!-- 최상위 댓글만 오래된 순서로 커서 조회한다. -->
+    <select id="findRootCommentsByCursor"
+            resultType="com.example.forguide.community.dto.CommunityCommentResponse">
+        SELECT
+            <include refid="commentListColumns"/>
+        <include refid="commentListFrom"/>
+        WHERE c.post_id = #{postId}
+          AND c.parent_comment_id IS NULL
+        <if test="cursor.cursorCreatedAt != null and cursor.cursorCommentId != null">
+            AND (
+                c.created_at &gt; #{cursor.cursorCreatedAt}
+                OR (
+                    c.created_at = #{cursor.cursorCreatedAt}
+                    AND c.comment_id &gt; #{cursor.cursorCommentId}
+                )
+            )
+        </if>
+        ORDER BY c.created_at ASC, c.comment_id ASC
+        LIMIT #{cursor.size}
+    </select>
+
+    <!-- 현재 페이지의 최상위 댓글에 딸린 답글을 모두 함께 가져온다. -->
+    <select id="findRepliesByParentCommentIds"
+            resultType="com.example.forguide.community.dto.CommunityCommentResponse">
+        SELECT
+            <include refid="commentListColumns"/>
+        <include refid="commentListFrom"/>
+        WHERE c.post_id = #{postId}
+          AND c.parent_comment_id IN
+        <foreach collection="parentCommentIds"
+                 item="parentCommentId"
+                 open="("
+                 separator=","
+                 close=")">
+            #{parentCommentId}
+        </foreach>
+        ORDER BY c.parent_comment_id ASC, c.created_at ASC, c.comment_id ASC
     </select>
 
     <!-- 댓글 번호로 댓글 하나 조회 -->

@@ -3,9 +3,6 @@ package com.example.forguide.common.exception;
 import java.util.Map;
 
 /**
- * 서비스 코드에서 의도적으로 던지는 예외. AuthExceptionHandler(컨트롤러 단계)나
- * JwtAuthenticationEntryPoint(필터 단계)가 공통 실패 응답으로 바꿔 내려준다.
- *
  * <pre>
  * throw new ApiException(ErrorCode.LOGIN_FAILED);
  * throw new ApiException(ErrorCode.EMAIL_DUPLICATED, Map.of("email", "이미 가입된 이메일입니다."));

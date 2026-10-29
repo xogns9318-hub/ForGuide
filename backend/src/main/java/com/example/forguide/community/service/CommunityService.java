@@ -1,36 +1,25 @@
 package com.example.forguide.community.service;
 
-import com.example.forguide.community.dto.CommunityPostResponse;
+import com.example.forguide.community.dto.*;
 import com.example.forguide.community.mapper.CommunityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.example.forguide.community.dto.CommunityPostCreateRequest;
-import com.example.forguide.community.dto.CommunityPostUpdateRequest;
 import com.example.forguide.common.exception.ApiException;
 import com.example.forguide.common.exception.ErrorCode;
-import com.example.forguide.community.dto.CommunityPostImageResponse;
 import com.example.forguide.community.image.CommunityImageStorage;
-import com.example.forguide.community.dto.CommunityCommentCreateRequest;
-import com.example.forguide.community.dto.CommunityCommentLikeResponse;
-import com.example.forguide.community.dto.CommunityCommentResponse;
-import com.example.forguide.community.dto.CommunityPostLikeResponse;
-import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
-import com.example.forguide.community.dto.CommunityPostRepostResponse;
-import com.example.forguide.translation.cache.TranslationCache;
+import com.example.forguide.translation.service.PublicTranslationInvalidator;
 import com.example.forguide.translation.cache.TranslationCacheResource;
+import com.example.forguide.community.dto.CommunityCommentCursorRequest;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import com.example.forguide.common.transaction.AfterCommitExecutor;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.dao.DuplicateKeyException;
 import java.util.Map;
 import java.util.Locale;
 import java.util.stream.Collectors;
-import java.time.LocalDateTime;
-
 
 
 import java.util.List;
@@ -41,7 +30,8 @@ public class CommunityService {
 
     private final CommunityMapper communityMapper;
     private final CommunityImageStorage communityImageStorage;
-    private final TranslationCache translationCache;
+    private final PublicTranslationInvalidator publicTranslationInvalidator;
+    private final AfterCommitExecutor afterCommitExecutor;
 
     // 게시글 전체 목록 조회
     public List<CommunityPostResponse> getAllPosts() {
@@ -57,6 +47,45 @@ public class CommunityService {
             throw new ApiException(ErrorCode.NOT_FOUND, "게시글을 찾을 수 없습니다.");
         }
         return attachImages(List.of(post)).get(0);
+    }
+
+    // 전체 게시글은 회원 조건 없이 공통 커서 조회를 사용한다.
+    public List<CommunityPostResponse> getPostsByCursor(
+            CommunityPostCursorRequest cursor
+    ) {
+        return getPostsByCursor(cursor, null);
+    }
+
+    // 프로필 모달은 회원 번호만 추가해 동일한 커서 조회를 사용한다.
+    public List<CommunityPostResponse> getPostsByMemberId(
+            Long memberId,
+            CommunityPostCursorRequest cursor
+    ) {
+        // 첫 페이지에서만 존재하지 않는 회원을 404로 구분
+        if (cursor.getCursorCreatedAt() == null || cursor.getCursorPostId() == null) {
+            getMemberPreview(memberId);
+        }
+
+        return getPostsByCursor(cursor, memberId);
+    }
+
+    // 전체 목록, 회원 목록이 공유하는 실제 조회 로직
+    private List<CommunityPostResponse> getPostsByCursor(
+            CommunityPostCursorRequest cursor,
+            Long memberId
+    ) {
+        validateCategory(cursor.getCategory());
+
+        // 공백 검색어를 null로 정리해 SQL 조건에 포함되지 않게 한다.
+        cursor.setKeyword(normalizeKeyword(cursor.getKeyword()));
+
+        return attachImages(
+                communityMapper.findPostsByCursor(
+                        cursor,
+                        memberId,
+                        getTopicKeywords(cursor.getTopic())
+                )
+        );
     }
 
     // 게시글 상세 화면을 열 때만 조회 기록을 남긴다.
@@ -91,27 +120,6 @@ public class CommunityService {
         return getPostById(postId);
     }
 
-
-    // 무한 스크롤용 게시글 조회
-    public List<CommunityPostResponse> getPostsByCursor(
-            LocalDateTime cursorCreatedAt,
-            Long cursorPostId,
-            String category,
-            String keyword,
-            String topic,
-            int size
-    ) {
-        validateCategory(category);
-        return attachImages(communityMapper.findPostsByCursor(
-                cursorCreatedAt,
-                cursorPostId,
-                category,
-                normalizeKeyword(keyword),
-                getTopicKeywords(topic),
-                size
-        ));
-    }
-
     // 허용한 정렬값만 Mapper에 전달하고, 인기 게시글은 상위 10개로 고정한다.
     public List<CommunityPostResponse> getPopularPosts(String sortBy) {
         String normalizedSortBy = "views".equals(sortBy) ? "views" : "likes";
@@ -119,13 +127,6 @@ public class CommunityService {
         return attachImages(
                 communityMapper.findPopularPosts(normalizedSortBy, 10)
         );
-    }
-
-    // 프로필 카드에서 회원이 작성한 게시글 목록을 보여준다.
-    public List<CommunityPostResponse> getPostsByMemberId(Long memberId) {
-        // 존재하지 않는 회원과 게시글이 없는 회원을 구분한다.
-        getMemberPreview(memberId);
-        return attachImages(communityMapper.findPostsByMemberId(memberId));
     }
 
     // 내 리포스트 탭에는 내가 리포스트한 원본 게시글만 최신 리포스트 순으로 보여 준다.
@@ -247,8 +248,7 @@ public class CommunityService {
                 throw new IllegalStateException("게시글을 수정하지 못했습니다.");
             }
 
-            translationCache.evictAfterCommit(
-                    new TranslationCacheResource(
+            publicTranslationInvalidator.invalidate(                    new TranslationCacheResource(
                             "community-post",
                             post.getPostId(),
                             post.getContentVersion()
@@ -280,13 +280,10 @@ public class CommunityService {
             }
 
             // DB 커밋이 성공한 뒤에만 기존 서버 파일을 지운다.
-            TransactionSynchronizationManager.registerSynchronization(
-                    new TransactionSynchronization() {
-                        @Override
-                        public void afterCommit() {
-                            removedImageUrls.forEach(communityImageStorage::deleteIfOwned);
-                        }
-                    }
+            afterCommitExecutor.run(
+                    () -> removedImageUrls.forEach(
+                            communityImageStorage::deleteIfOwned
+                    )
             );
 
             return getPostById(postId);
@@ -375,8 +372,6 @@ public class CommunityService {
                 communityMapper.findCommentsByPostId(postId, null);
 
         communityMapper.deletePostLikesByPostId(postId);
-
-        communityMapper.deletePostLikesByPostId(postId);
         // community_comments의 게시글 외래키는 CASCADE가 아니므로 먼저 정리한다.
         communityMapper.deleteCommentsByPostId(postId);
 
@@ -385,8 +380,7 @@ public class CommunityService {
         if (deletedCount == 0) {
             throw new ApiException(ErrorCode.NOT_FOUND, "게시글을 찾을 수 없습니다.");
         }
-        translationCache.evictAfterCommit(
-                new TranslationCacheResource(
+        publicTranslationInvalidator.invalidate(                new TranslationCacheResource(
                         "community-post",
                         post.getPostId(),
                         post.getContentVersion()
@@ -395,8 +389,7 @@ public class CommunityService {
         );
 
         comments.forEach(comment ->
-                translationCache.evictAfterCommit(
-                        new TranslationCacheResource(
+                publicTranslationInvalidator.invalidate(                        new TranslationCacheResource(
                                 "community-comment",
                                 comment.getCommentId(),
                                 comment.getContentVersion()
@@ -407,17 +400,12 @@ public class CommunityService {
 
         // DB 삭제가 최종 저장된 경우에만 실제 사진 파일을 삭제
         // DB 작업이 실패해 롤백되면 기존 사진 파일은 그대로 보존
-        TransactionSynchronizationManager.registerSynchronization(
-                new TransactionSynchronization() {
-                    @Override
-                    public void afterCommit() {
-                        images.forEach(image ->
-                                communityImageStorage.deleteIfOwned(
-                                        image.getImageUrl()
-                                )
-                        );
-                    }
-                }
+        afterCommitExecutor.run(
+                () -> images.forEach(
+                        image -> communityImageStorage.deleteIfOwned(
+                                image.getImageUrl()
+                        )
+                )
         );
     }
 
@@ -559,6 +547,53 @@ public class CommunityService {
     public List<CommunityCommentResponse> getCommentsByPostId(Long postId, Long memberId) {
         validatePostExists(postId);
         return communityMapper.findCommentsByPostId(postId, memberId);
+    }
+
+    // 최상위 댓글 페이지와 해당 답글을 함께 반환
+    public List<CommunityCommentResponse> getCommentsByCursor(
+            Long postId,
+            Long memberId,
+            CommunityCommentCursorRequest cursor
+    ) {
+        validatePostExists(postId);
+
+        boolean hasCreatedAt = cursor.getCursorCreatedAt() != null;
+        boolean hasCommentId = cursor.getCursorCommentId() != null;
+
+        // 커서는 작성 시각과 번호를 항상 함께 사용해야 같은 댓글 중복 조회하지 않음
+        if (hasCreatedAt != hasCommentId) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "댓글 커서 정보가 올바르지 않습니다."
+            );
+        }
+
+        List<CommunityCommentResponse> rootComments =
+                communityMapper.findRootCommentsByCursor(
+                        postId, memberId, cursor
+                );
+
+        if (rootComments.isEmpty()) {
+            return  List.of();
+        }
+
+        List<Long> parentCommentIds = rootComments.stream()
+                .map(CommunityCommentResponse::getCommentId)
+                .toList();
+
+        List<CommunityCommentResponse> replies =
+                communityMapper.findRepliesByParentCommentIds(
+                        postId, memberId, parentCommentIds
+                );
+
+        // 프론트의 기존 buildCommentRows가 부모,답글 구조를 그대로 구성할 수 있게 평면 목록으로 반환
+        List<CommunityCommentResponse> comments = new ArrayList<>(
+                rootComments.size() + replies.size()
+        );
+        comments.addAll(rootComments);
+        comments.addAll(replies);
+
+        return comments;
     }
 
     // 공개 댓글 번역 전, 댓글이 해당 게시글에 속하는지 확인한다.
@@ -725,8 +760,7 @@ public class CommunityService {
             throw new IllegalStateException("댓글을 수정하지 못했습니다.");
         }
 
-        translationCache.evictAfterCommit(
-                new TranslationCacheResource(
+        publicTranslationInvalidator.invalidate(                new TranslationCacheResource(
                         "community-comment",
                         comment.getCommentId(),
                         comment.getContentVersion()
@@ -767,8 +801,7 @@ public class CommunityService {
             throw new IllegalStateException("댓글을 삭제하지 못했습니다.");
         }
 
-        translationCache.evictAfterCommit(
-                new TranslationCacheResource(
+        publicTranslationInvalidator.invalidate(                new TranslationCacheResource(
                         "community-comment",
                         comment.getCommentId(),
                         comment.getContentVersion()

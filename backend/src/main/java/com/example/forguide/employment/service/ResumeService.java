@@ -10,8 +10,7 @@ import com.example.forguide.translation.dto.TranslationRequest;
 import com.example.forguide.translation.dto.TranslationResponse;
 import com.example.forguide.translation.service.TranslationService;
 import tools.jackson.databind.ObjectMapper;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import com.example.forguide.common.transaction.AfterCommitExecutor;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,24 +21,26 @@ import java.util.List;
 import java.nio.file.Path;
 
 @Service
-@Transactional(readOnly = true)
 public class ResumeService {
 
     private final ResumeMapper resumeMapper;
     private final ResumeImageStorage resumeImageStorage;
     private final ObjectMapper objectMapper;
     private final TranslationService translationService;
+    private final AfterCommitExecutor afterCommitExecutor;
 
     public ResumeService(
             ResumeMapper resumeMapper,
             ResumeImageStorage resumeImageStorage,
             ObjectMapper objectMapper,
-            TranslationService translationService
+            TranslationService translationService,
+            AfterCommitExecutor afterCommitExecutor
     ) {
         this.resumeMapper = resumeMapper;
         this.resumeImageStorage = resumeImageStorage;
         this.objectMapper = objectMapper;
         this.translationService = translationService;
+        this.afterCommitExecutor = afterCommitExecutor;
     }
 
     // 로그인한 회원의 일반·블라인드 이력서 목록만 조회
@@ -104,13 +105,8 @@ public class ResumeService {
             );
         }
 
-        TransactionSynchronizationManager.registerSynchronization(
-                new TransactionSynchronization() {
-                    @Override
-                    public void afterCommit() {
-                        resumeImageStorage.deleteIfOwned(resume.getPhotoUrl());
-                    }
-                }
+        afterCommitExecutor.run(
+                () -> resumeImageStorage.deleteIfOwned(resume.getPhotoUrl())
         );
     }
 
@@ -190,15 +186,8 @@ public class ResumeService {
             // DB 저장이 성공한 뒤에만 이전 사진 파일을 삭제한다.
             if (previousPhotoUrl != null
                     && !previousPhotoUrl.equals(nextPhotoUrl)) {
-                TransactionSynchronizationManager.registerSynchronization(
-                        new TransactionSynchronization() {
-                            @Override
-                            public void afterCommit() {
-                                resumeImageStorage.deleteIfOwned(
-                                        previousPhotoUrl
-                                );
-                            }
-                        }
+                afterCommitExecutor.run(
+                        () -> resumeImageStorage.deleteIfOwned(previousPhotoUrl)
                 );
             }
 
@@ -240,15 +229,8 @@ public class ResumeService {
 
         // DB 삭제가 최종 반영된 뒤에만 서버 사진 파일을 삭제한다.
         if (resume.getPhotoUrl() != null) {
-            TransactionSynchronizationManager.registerSynchronization(
-                    new TransactionSynchronization() {
-                        @Override
-                        public void afterCommit() {
-                            resumeImageStorage.deleteIfOwned(
-                                    resume.getPhotoUrl()
-                            );
-                        }
-                    }
+            afterCommitExecutor.run(
+                    () -> resumeImageStorage.deleteIfOwned(resume.getPhotoUrl())
             );
         }
     }

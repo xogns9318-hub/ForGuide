@@ -1,5 +1,48 @@
 import { client } from "./client.js";
 
+// 커서 기반 목록 API들이 공통으로 쓰는 기본 쿼리 파라미터를 만든다.
+function createCursorParams({
+    cursorCreatedAt = null,
+    cursorId = null,
+    cursorIdName,
+    size = 10,
+} = {}) {
+    const params = new URLSearchParams();
+
+    params.set("size", String(size));
+
+    // 첫 페이지에서는 커서를 보내지 않는다.
+    if (cursorCreatedAt != null && cursorId != null) {
+        params.set("cursorCreatedAt", cursorCreatedAt);
+        params.set(cursorIdName, String(cursorId));
+    }
+
+    return params;
+}
+
+// 게시글 목록 API들이 공통으로 쓰는 커서 쿼리 파라미터를 만든다.
+function createPostCursorParams({
+                                    cursorCreatedAt = null,
+                                    cursorPostId = null,
+                                    category = null,
+                                    keyword = null,
+                                    topic = null,
+                                    size = 10,
+                                } = {}) {
+    const params = createCursorParams({
+        cursorCreatedAt,
+        cursorId: cursorPostId,
+        cursorIdName: "cursorPostId",
+        size,
+    });
+
+    if (category) params.set("category", category);
+    if (keyword?.trim()) params.set("keyword", keyword.trim());
+    if (topic) params.set("topic", topic);
+
+    return params;
+}
+
 // Spring Boot에서 실제 게시글 목록을 가져온다.
 export async function getCommunityPosts() {
     return client.get("/community/posts");
@@ -29,19 +72,14 @@ export async function getCommunityPostsByCursor({
     size = 10,
 } = {}) {
     //URLSearchParams는 쿼리 파라미터를 안전하게 구성하고 인코딩
-    const params = new URLSearchParams();
-    params.set("size", String(size));
-
-    // 첫 페이지에서는 커서가 없으므로 두 값을 모두 전달하지 않음
-    if (cursorCreatedAt != null && cursorPostId != null) {
-        params.set("cursorCreatedAt", cursorCreatedAt);
-        params.set("cursorPostId", String(cursorPostId));
-    }
-
-    // 카테고리와 본문 검색어는 선택했을 때만 서버에 전달한다.
-    if (category) params.set("category", category);
-    if (keyword?.trim()) params.set("keyword", keyword.trim());
-    if (topic) params.set("topic", topic);
+    const params = createPostCursorParams({
+        cursorCreatedAt,
+        cursorPostId,
+        category,
+        keyword,
+        topic,
+        size,
+    });
 
     return client.get(`/community/posts/scroll?${params.toString()}`);
 }
@@ -71,8 +109,24 @@ export async function updateCommunityPost(postId, formData) {
 }
 
 // 게시글의 댓글 목록 조회
-export async function getCommunityComments(postId) {
-    return client.get(`/community/posts/${postId}/comments`);
+export async function getCommunityComments(
+    postId,
+    {
+        cursorCreatedAt = null,
+        cursorCommentId = null,
+        size = 10,
+    } = {},
+) {
+    const params = createCursorParams({
+        cursorCreatedAt,
+        cursorId: cursorCommentId,
+        cursorIdName: "cursorCommentId",
+        size,
+    });
+
+    return client.get(
+        `/community/posts/${postId}/comments?${params.toString()}`,
+    );
 }
 
 // 공개 댓글을 현재 선택 언어로 번역한다.
@@ -139,9 +193,24 @@ export async function getCommunityMemberPreview(memberId) {
     return client.get(`/community/members/${memberId}/preview`);
 }
 
-// 프로필 미리보기에서 특정 회원이 작성한 게시글 목록 조회
-export async function getCommunityMemberPosts(memberId) {
-    return client.get(`/community/members/${memberId}/posts`);
+// 프로필 미리보기에서 특정 회원의 작성글을 커서 방식으로 조회한다.
+export async function getCommunityMemberPosts(
+    memberId,
+    {
+        cursorCreatedAt = null,
+        cursorPostId = null,
+        size = 10,
+    } = {},
+) {
+    const params = createPostCursorParams({
+        cursorCreatedAt,
+        cursorPostId,
+        size,
+    });
+
+    return client.get(
+        `/community/members/${memberId}/posts?${params.toString()}`,
+    );
 }
 
 // 게시글의 리포스트 수와 현재 로그인 회원의 리포스트 여부 조회

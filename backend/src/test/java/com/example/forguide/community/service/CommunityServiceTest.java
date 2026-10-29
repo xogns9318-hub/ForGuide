@@ -11,7 +11,9 @@ import com.example.forguide.community.dto.CommunityPostResponse;
 import com.example.forguide.community.mapper.CommunityMapper;
 import com.example.forguide.common.exception.ApiException;
 import com.example.forguide.common.exception.ErrorCode;
-import com.example.forguide.translation.cache.TranslationCache;
+import com.example.forguide.translation.service.PublicTranslationInvalidator;
+import com.example.forguide.common.transaction.AfterCommitExecutor;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,7 +28,10 @@ class CommunityServiceTest {
     private CommunityMapper communityMapper;
 
     @Mock
-    private TranslationCache translationCache;
+    private PublicTranslationInvalidator publicTranslationInvalidator;
+
+    @Mock
+    private AfterCommitExecutor afterCommitExecutor;
 
     @InjectMocks
     private CommunityService communityService;

@@ -1,11 +1,6 @@
 package com.example.forguide.community.mapper;
 
-import com.example.forguide.community.dto.CommunityCommentResponse;
-import com.example.forguide.community.dto.CommunityMemberPreviewResponse;
-import com.example.forguide.community.dto.CommunityPostCreateRequest;
-import com.example.forguide.community.dto.CommunityPostImageResponse;
-import com.example.forguide.community.dto.CommunityPostResponse;
-import java.time.LocalDateTime;
+import com.example.forguide.community.dto.*;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -18,17 +13,9 @@ public interface CommunityMapper {
     CommunityPostResponse findPostById(Long postId);
 
     List<CommunityPostResponse> findPostsByCursor(
-            @Param("cursorCreatedAt") LocalDateTime cursorCreatedAt,
-            @Param("cursorPostId") Long cursorPostId,
-            @Param("category") String category,
-            @Param("keyword") String keyword,
-            @Param("topicKeywords") List<String> topicKeywords,
-            @Param("size") int size
-    );
-
-    // 프로필 미리보기의 작성글 목록 모달에 표시할 게시글 조회
-    List<CommunityPostResponse> findPostsByMemberId(
-            @Param("memberId") Long memberId
+            @Param("cursor") CommunityPostCursorRequest cursor,
+            @Param("memberId") Long memberId,
+            @Param("topicKeywords") List<String> topicKeywords
     );
 
     // 로그인 회원이 리포스트한 원본 게시글 목록
@@ -94,6 +81,20 @@ public interface CommunityMapper {
     List<CommunityCommentResponse> findCommentsByPostId(
             @Param("postId") Long postId,
             @Param("memberId") Long memberId
+    );
+
+    // 최상위 댓글만 커서 기준으로 필요한 만큼 조회한다.
+    List<CommunityCommentResponse> findRootCommentsByCursor(
+            @Param("postId") Long postId,
+            @Param("memberId") Long memberId,
+            @Param("cursor")CommunityCommentCursorRequest cursor
+    );
+
+    // 방금 조회한 최상위 댓글에 연결된 답글을 함께 조회한다.
+    List<CommunityCommentResponse> findRepliesByParentCommentIds(
+            @Param("postId") Long postId,
+            @Param("memberId") Long memberId,
+            @Param("parentCommentIds") List<Long> parentCommentIds
     );
 
     CommunityCommentResponse findCommentById(Long commentId);

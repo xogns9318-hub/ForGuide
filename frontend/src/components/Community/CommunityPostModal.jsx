@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+    deleteCommunityPost,
     getCommunityPost,
     getCommunityPostLike,
     getCommunityPostRepost,
@@ -10,8 +11,10 @@ import {
     unlikeCommunityPost,
     unrepostCommunityPost,
 } from "../../api/communityApi.js";
+import { confirm } from "../Modal/modal.js";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import CommunityCommentSection from "./CommunityCommentSection.jsx";
+import CommunityPostEditForm from "./CommunityPostEditForm.jsx";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 
 // relatedService는 사용자가 쓴 본문이 아니라 서비스 식별값이므로 LLM 대신 i18next로 표시한다.
@@ -40,6 +43,7 @@ export default function CommunityPostModal({
     onClose,
     onPostLoaded,
     onCommentCountChange,
+    onPostDeleted,
 }) {
     const { t, i18n } = useTranslation();
     const [post, setPost] = useState(null);
@@ -58,6 +62,9 @@ export default function CommunityPostModal({
     const [isTranslationVisible, setIsTranslationVisible] = useState(false);
     const [isTranslating, setIsTranslating] = useState(false);
     const [translationError, setTranslationError] = useState("");
+    const [isEditing, setIsEditing] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [ownerActionError, setOwnerActionError] = useState("");
 
     useEffect(() => {
         if (!postId) return undefined;
@@ -188,6 +195,30 @@ export default function CommunityPostModal({
         onCommentCountChange?.(changedPostId, commentCount);
     }
 
+    // 상세 모달에서 수정한 결과도 부모 목록과 같은 최신 데이터로 교체한다.
+    function handlePostUpdated(updatedPost) {
+        setPost(updatedPost);
+        setIsEditing(false);
+        onPostLoaded?.(updatedPost);
+    }
+
+    async function handlePostDelete() {
+        if (!(await confirm(t("community.feedback.deleteConfirm")))) return;
+
+        setIsDeleting(true);
+        setOwnerActionError("");
+
+        try {
+            await deleteCommunityPost(post.postId);
+            onPostDeleted?.(post.postId);
+            onClose();
+        } catch (requestError) {
+            setOwnerActionError(requestError.message || t("community.feedback.deleteFailed"));
+        } finally {
+            setIsDeleting(false);
+        }
+    }
+
     async function handleLikeClick() {
         if (!currentMemberId) {
             setReactionError(t("community.postModal.likeLoginRequired"));
@@ -234,6 +265,7 @@ export default function CommunityPostModal({
         ? new Date(post.createdAt).toLocaleDateString("ko-KR")
         : "";
     const relatedServiceLink = post ? RELATED_SERVICE_LINKS[post.relatedService] : null;
+    const isOwner = post && Number(post.memberId) === Number(currentMemberId);
 
     return (
         <div
@@ -282,10 +314,39 @@ export default function CommunityPostModal({
                                     </a>
                                 )}
                             </div>
+                            {isOwner && !isEditing && (
+                                <div className="community-post-owner-actions">
+                                    <button
+                                        type="button"
+                                        className="community-edit-button"
+                                        onClick={() => setIsEditing(true)}
+                                    >
+                                        {t("community.post.edit")}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="community-delete-button"
+                                        onClick={handlePostDelete}
+                                        disabled={isDeleting}
+                                    >
+                                        {isDeleting
+                                            ? t("community.post.deleting")
+                                            : t("community.post.delete")}
+                                    </button>
+                                </div>
+                            )}
                         </header>
 
-                        <p className="community-post-content">{post.content}</p>
-                        {post.language !== targetLanguage && (
+                        {isEditing ? (
+                            <CommunityPostEditForm
+                                post={post}
+                                onCancel={() => setIsEditing(false)}
+                                onUpdated={handlePostUpdated}
+                            />
+                        ) : (
+                            <p className="community-post-content">{post.content}</p>
+                        )}
+                        {!isEditing && post.language !== targetLanguage && (
                             <section className="community-post-translation">
                                 <button
                                     type="button"
@@ -318,7 +379,7 @@ export default function CommunityPostModal({
                                 )}
                             </section>
                         )}
-                        {post.images?.length > 0 && (
+                        {!isEditing && post.images?.length > 0 && (
                             <div className="community-post-images">
                                 {post.images.map((image, index) => (
                                     <img
@@ -332,63 +393,73 @@ export default function CommunityPostModal({
                             </div>
                         )}
 
-                        <div className="community-post-actions">
-                            <button
-                                type="button"
-                                className="community-like-button"
-                                onClick={handleLikeClick}
-                                disabled={isLikeLoading || isLikeSubmitting}
-                                aria-pressed={likeInfo.likedByMe}
-                            >
-                                <span aria-hidden="true">♡</span>
-                                {likeInfo.likedByMe
-                                    ? t("community.postModal.unlike")
-                                    : t("community.postModal.like")}
-                                <strong>{likeInfo.likeCount}</strong>
-                            </button>
-                            <button
-                                type="button"
-                                className="community-repost-button"
-                                onClick={handleRepostClick}
-                                disabled={isRepostLoading || isRepostSubmitting}
-                                aria-pressed={repostInfo.repostedByMe}
-                            >
-                                <span aria-hidden="true">↻</span>
-                                {repostInfo.repostedByMe
-                                    ? t("community.postModal.unrepost")
-                                    : t("community.postModal.repost")}
-                                <strong>{repostInfo.repostCount}</strong>
-                            </button>
-                            <span className="community-view-count">
-                                <svg
-                                    className="community-view-icon"
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
+                        {!isEditing && (
+                            <div className="community-post-actions">
+                                <button
+                                    type="button"
+                                    className="community-like-button"
+                                    onClick={handleLikeClick}
+                                    disabled={isLikeLoading || isLikeSubmitting}
+                                    aria-pressed={likeInfo.likedByMe}
                                 >
-                                    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-                                    <circle cx="12" cy="12" r="2.5" />
-                                </svg>
-                                {t("community.postModal.viewCount")}{" "}
-                                <strong>{post.viewCount ?? 0}</strong>
-                            </span>
-                            <span className="community-view-count">
-                                <span aria-hidden="true">▱</span>
-                                {t("community.postModal.commentCount")}{" "}
-                                <strong>{post.commentCount ?? 0}</strong>
-                            </span>
-                        </div>
+                                    <span aria-hidden="true">♡</span>
+                                    {likeInfo.likedByMe
+                                        ? t("community.postModal.unlike")
+                                        : t("community.postModal.like")}
+                                    <strong>{likeInfo.likeCount}</strong>
+                                </button>
+                                <button
+                                    type="button"
+                                    className="community-repost-button"
+                                    onClick={handleRepostClick}
+                                    disabled={isRepostLoading || isRepostSubmitting}
+                                    aria-pressed={repostInfo.repostedByMe}
+                                >
+                                    <span aria-hidden="true">↻</span>
+                                    {repostInfo.repostedByMe
+                                        ? t("community.postModal.unrepost")
+                                        : t("community.postModal.repost")}
+                                    <strong>{repostInfo.repostCount}</strong>
+                                </button>
+                                <span className="community-view-count">
+                                    <svg
+                                        className="community-view-icon"
+                                        viewBox="0 0 24 24"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+                                        <circle cx="12" cy="12" r="2.5" />
+                                    </svg>
+                                    {t("community.postModal.viewCount")}{" "}
+                                    <strong>{post.viewCount ?? 0}</strong>
+                                </span>
+                                <span className="community-view-count">
+                                    <span aria-hidden="true">▱</span>
+                                    {t("community.postModal.commentCount")}{" "}
+                                    <strong>{post.commentCount ?? 0}</strong>
+                                </span>
+                            </div>
+                        )}
 
-                        {reactionError && (
+                        {!isEditing && reactionError && (
                             <p className="community-like-error" role="alert">
                                 {reactionError}
                             </p>
                         )}
 
-                        <CommunityCommentSection
-                            postId={post.postId}
-                            postMemberId={post.memberId}
-                            onCommentCountChange={handleModalCommentCountChange}
-                        />
+                        {!isEditing && (
+                            <CommunityCommentSection
+                                postId={post.postId}
+                                postMemberId={post.memberId}
+                                onCommentCountChange={handleModalCommentCountChange}
+                            />
+                        )}
+
+                        {ownerActionError && (
+                            <p className="community-like-error" role="alert">
+                                {ownerActionError}
+                            </p>
+                        )}
                     </article>
                 )}
             </section>
