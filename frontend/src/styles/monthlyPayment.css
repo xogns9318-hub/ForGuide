@@ -240,6 +240,77 @@
     box-shadow: none;
 }
 
+/* 두 계산기의 상환 방식 목록을 아래로 부드럽게 표시한다. */
+.monthly-payment .loan-method-field .select-box-options {
+    animation: loan-method-dropdown-open 260ms ease-out both;
+}
+
+/* 항목 높이를 통일하고 사각 강조를 제거한다. */
+.monthly-payment .loan-method-field .select-box-option {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 10px 8px;
+    line-height: 24px;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.monthly-payment .loan-method-field .select-box-option > span {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 2px;
+}
+
+/* 글자 아래의 2px 밑줄을 가운데에서 펼친다. */
+.monthly-payment .loan-method-field .select-box-option > span::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: currentColor;
+    content: "";
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 220ms ease;
+}
+
+.monthly-payment .loan-method-field .select-box-option.is-active,
+.monthly-payment .loan-method-field .select-box-option[aria-selected="true"] {
+    color: var(--primary);
+    background: transparent;
+    box-shadow: none;
+}
+
+.monthly-payment .loan-method-field .select-box-option.is-active > span::after,
+.monthly-payment .loan-method-field .select-box-option[aria-selected="true"] > span::after {
+    transform: scaleX(1);
+}
+
+@keyframes loan-method-dropdown-open {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .monthly-payment .loan-method-field .select-box-options {
+        animation: none;
+    }
+
+    .monthly-payment .loan-method-field .select-box-option > span::after {
+        transition: none;
+    }
+}
+
 /* 결과에는 선택 버튼 대신 상환 방식 이름만 표시 */
 .loan-method-heading {
     /* 제목의 기본 여백 제거 */
