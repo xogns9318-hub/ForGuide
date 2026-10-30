@@ -3,7 +3,6 @@ export const categories = [
     {
         id: "counseling",
         label: "상담 가이드",
-        path: "/introduction/counseling",
         description: "내 상황에 맞는 상담을 찾고, 상담에 필요한 준비와 설명을 정리하세요.",
         children: [
             {
@@ -24,7 +23,6 @@ export const categories = [
     {
         id: "recommendation",
         label: "추천 가이드",
-        path: "/introduction/recommendation",
         description: "대출·보험·계좌를 비교하고, 목적에 맞는 금융 서비스를 살펴보세요.",
         children: [
             {
@@ -50,7 +48,6 @@ export const categories = [
     {
         id: "repayment",
         label: "계산 가이드",
-        path: "/introduction/repayment",
         description: "월 상환액과 총이자, 상환 일정을 확인하며 자금 계획을 세워보세요.",
         children: [
             {
@@ -70,7 +67,6 @@ export const categories = [
     {
         id: "employment",
         label: "취업 가이드",
-        path: "/introduction/employment",
         description: "취업 준비자료와 일자리 정보를 살펴보고, 다음 단계를 준비하세요.",
         children: [
             {
@@ -91,8 +87,6 @@ export const categories = [
         id: "simulator",
         label: "시뮬레이터",
 
-        // 소개 페이지 주소
-        path: "/introduction/simulator",
         description: "상환일과 수입·지출을 달력에 정리하고 하루 지출 계획을 세워보세요.",
 
         children: [
@@ -100,7 +94,7 @@ export const categories = [
                 id: "simulator",
                 label: "시뮬레이터",
 
-                // 소개 페이지의 카드에서 이동할 서비스 주소
+                // 세부 서비스 주소
                 path: "/service/simulator",
                 description: "상환일과 수입·지출을 달력에 정리하고 하루 지출 계획을 세워보세요.",
             },
@@ -110,8 +104,6 @@ export const categories = [
         id: "community",
         label: "커뮤니티",
 
-        // 커뮤니티 소개 페이지 주소
-        path: "/introduction/community",
         description: "한국 생활의 경험과 정보를 나누고, 서로의 이야기를 만나보세요.",
 
         children: [
@@ -119,7 +111,7 @@ export const categories = [
                 id: "community",
                 label: "커뮤니티",
 
-                // 소개 페이지의 카드에서 게시판으로 이동
+                // 커뮤니티 게시판 주소
                 path: "/service/community",
                 description: "한국 생활의 경험과 정보를 나누고, 서로의 이야기를 만나보세요.",
             },
