@@ -700,13 +700,13 @@
         gap: 0;
     }
 
-    /* 문의 하위 목록은 기존처럼 전체 너비의 1/3을 중앙에 배치한다. */
+    /* 문의도 서비스 목록의 한 분류와 같은 1/5 너비로 가운데 배치한다. */
     .dropdownContent .groups.singleGroup {
-        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 
     .dropdownContent .groups.singleGroup > .group {
-        grid-column: 3 / span 2;
+        grid-column: 3;
     }
 
     .dropdownContent .groups::before,

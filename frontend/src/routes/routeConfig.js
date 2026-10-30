@@ -137,3 +137,22 @@ export const languages = [
     { value: "vi", label: "Tiếng Việt" },
     { value: "th", label: "ไทย" },
 ];
+
+// 문의 메뉴와 홈에서 같은 주소를 사용한다.
+export const contactRoutes = [
+    {
+        id: "myInquiries",
+        labelKey: "header.mega.myInquiries",
+        path: "/contact/my-inquiries",
+    },
+    {
+        id: "privateInquiry",
+        labelKey: "header.mega.privateInquiry",
+        path: "/contact/inquiry",
+    },
+    {
+        id: "faq",
+        labelKey: "header.mega.faq",
+        path: "/contact/faq",
+    },
+];

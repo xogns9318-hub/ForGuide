@@ -148,3 +148,350 @@
         --home-logo-width: 128px;
     }
 }
+
+.hero,
+.section {
+    scroll-margin-top: calc(var(--header-height, 88px) + 16px);
+}
+
+/* 첫 화면은 흰 배경에서 오리와 설명만 표시한다. */
+.hero {
+    --home-duck-width: clamp(160px, 19vw, 260px);
+
+    width: calc(100% - 32px);
+    min-height: max(520px, calc(100svh - var(--header-height, 88px) - 24px));
+    margin: 8px auto 16px;
+    padding: 48px 24px;
+    overflow: hidden;
+    border-radius: var(--panel-radius);
+    background: var(--background);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 32px;
+}
+
+.duckStage {
+    position: relative;
+    width: 100%;
+    height: calc(var(--home-duck-width) * 1.2 + 16px);
+}
+
+.duckWalker {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: var(--home-duck-width);
+    height: calc(var(--home-duck-width) * 1.2);
+    margin-left: calc(var(--home-duck-width) / -2);
+    transform: translateX(calc(-50vw - var(--home-duck-width)));
+    animation: duckTravel 8s linear infinite;
+}
+
+.frontPose,
+.sidePose {
+    position: absolute;
+    inset: 0;
+}
+
+.frontPose {
+    opacity: 0;
+    animation: frontPose 8s linear infinite;
+}
+
+.sidePose {
+    animation: sidePose 8s linear infinite;
+}
+
+.frontPose .heroDuck,
+.walkingDuck {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.walkingDuck {
+    animation: walkingBob 160ms ease-in-out infinite alternate;
+}
+
+.nearWing,
+.farWing,
+.nearFoot,
+.farFoot {
+    transform-box: view-box;
+}
+
+.nearWing {
+    transform-origin: 20px 28px;
+    animation: wingSwing 320ms ease-in-out infinite alternate;
+}
+
+.farWing {
+    transform-origin: 18px 28px;
+    animation: wingSwing 320ms ease-in-out infinite alternate-reverse;
+}
+
+.nearFoot {
+    animation: footStep 320ms ease-in-out infinite alternate-reverse;
+}
+
+.farFoot {
+    animation: footStep 320ms ease-in-out infinite alternate;
+}
+
+.heroDuck [data-duck-part="head"] {
+    animation: homeHeadBow 8s steps(6, end) infinite;
+}
+
+.heroDuck [data-duck-part="body"] {
+    animation: homeBodyBow 8s steps(6, end) infinite;
+}
+
+.heroDuck [data-duck-part="faceUp"] {
+    animation: homeFaceUp 8s steps(1, end) infinite;
+}
+
+.heroDuck [data-duck-part="faceDown"] {
+    animation: homeFaceDown 8s steps(1, end) infinite;
+}
+
+.heroMessage {
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.heroMessage p {
+    margin: 0;
+    color: var(--muted);
+    font-size: clamp(16px, 1.7vw, 20px);
+    line-height: 1.8;
+    word-break: keep-all;
+}
+
+/* 원 사이 중심 간격을 20px로 맞춘다. */
+.sectionNav {
+    position: fixed;
+    top: 50%;
+    left: max(4px, calc((100vw - var(--page-width)) / 2 - 44px));
+    z-index: 40;
+    display: grid;
+    gap: 0;
+    transform: translateY(-50%);
+}
+
+.sectionJump {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.sectionDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--line);
+    transition: transform 180ms ease, background-color 180ms ease;
+}
+
+.sectionJump[aria-current="location"] .sectionDot,
+.sectionJump:hover .sectionDot,
+.sectionJump:focus-visible .sectionDot {
+    background: var(--primary);
+    transform: scale(1.5);
+}
+
+.sectionLabel {
+    position: absolute;
+    left: calc(100% + 6px);
+    top: 50%;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgb(255 255 255 / 96%);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.6;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translate(4px, -50%);
+    transition: opacity 180ms ease, transform 180ms ease;
+    pointer-events: none;
+}
+
+/* 현재 구역 이름은 항상 표시한다. */
+.sectionJump[aria-current="location"] .sectionLabel,
+.sectionJump:hover .sectionLabel,
+.sectionJump:focus-visible .sectionLabel {
+    opacity: 1;
+    transform: translate(0, -50%);
+}
+
+/* 2초 입장 → 3초 인사 → 2초 퇴장 → 1초 대기 */
+@keyframes duckTravel {
+    0% {
+        transform: translateX(calc(-50vw - var(--home-duck-width)));
+    }
+
+    25%,
+    62.5% {
+        transform: translateX(0);
+    }
+
+    87.5%,
+    100% {
+        transform: translateX(calc(50vw + var(--home-duck-width)));
+    }
+}
+
+/* 이동할 때는 옆모습, 중앙에서는 기존 정면 오리로 전환한다. */
+@keyframes sidePose {
+    0%, 25%, 62.5%, 100% {
+        opacity: 1;
+    }
+
+    29%, 58% {
+        opacity: 0;
+    }
+}
+
+@keyframes frontPose {
+    0%, 25%, 62.5%, 100% {
+        opacity: 0;
+    }
+
+    29%, 58% {
+        opacity: 1;
+    }
+}
+
+@keyframes walkingBob {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-2px);
+    }
+}
+
+@keyframes wingSwing {
+    from {
+        transform: rotate(-18deg);
+    }
+
+    to {
+        transform: rotate(18deg);
+    }
+}
+
+@keyframes footStep {
+    from {
+        transform: translate(-1px, 0);
+    }
+
+    to {
+        transform: translate(1px, -1px);
+    }
+}
+
+@keyframes homeHeadBow {
+    0%, 29%, 58%, 100% {
+        transform: translateY(0) scaleY(1);
+    }
+
+    38%, 47% {
+        transform: translateY(7px) scaleY(0.8);
+    }
+}
+
+@keyframes homeBodyBow {
+    0%, 29%, 58%, 100% {
+        transform: scaleY(1);
+    }
+
+    38%, 47% {
+        transform: scaleY(0.94);
+    }
+}
+
+@keyframes homeFaceUp {
+    0%, 34%, 52%, 100% {
+        opacity: 1;
+    }
+
+    35%, 51% {
+        opacity: 0;
+    }
+}
+
+@keyframes homeFaceDown {
+    0%, 34%, 52%, 100% {
+        opacity: 0;
+    }
+
+    35%, 51% {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        width: calc(100% - 16px);
+        min-height: max(440px, calc(100svh - var(--header-height, 88px) - 16px));
+        padding: 32px 20px;
+        gap: 24px;
+    }
+
+    .sectionNav {
+        left: 2px;
+    }
+
+    .sectionJump {
+        width: 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .duckWalker,
+    .frontPose,
+    .sidePose,
+    .walkingDuck,
+    .nearWing,
+    .farWing,
+    .nearFoot,
+    .farFoot,
+    .heroDuck [data-duck-part] {
+        animation: none;
+    }
+
+    .duckWalker {
+        transform: translateX(0);
+    }
+
+    .sidePose {
+        opacity: 0;
+    }
+
+    .frontPose {
+        opacity: 1;
+    }
+
+    .heroDuck [data-duck-part="faceUp"] {
+        opacity: 1;
+    }
+
+    .heroDuck [data-duck-part="faceDown"] {
+        opacity: 0;
+    }
+
+    .sectionDot,
+    .sectionLabel {
+        transition: none;
+    }
+}

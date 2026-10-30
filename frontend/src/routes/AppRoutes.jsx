@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Outlet, Route, Routes, Navigate, useLocation } from "react-router-dom";
-import { categories, accountRoutes } from "./routeConfig";
+import { categories, accountRoutes, contactRoutes } from "./routeConfig";
 import { useTranslation } from "react-i18next";
 import Home from "../components/Home/Home.jsx";
 import Header from "../components/Header/Header.jsx";
@@ -62,14 +62,14 @@ function PlaceholderPage({ title, description, categoryId, serviceId }) {
 
     const translatedTitle = serviceId
         ? t(`home.features.${categoryId}.${serviceId}`, {
-              defaultValue: title,
-          })
+            defaultValue: title,
+        })
         : title;
 
     const translatedDescription = serviceId
         ? t(`service.${serviceId}.description`, {
-              defaultValue: description ?? "",
-          })
+            defaultValue: description ?? "",
+        })
         : description;
 
     return (
@@ -103,6 +103,15 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                     }
                 >
                     <Route path="/" element={<Home />} />
+
+                    {/* 문의 세 항목은 공통 제작 중 안내로 연결한다. */}
+                    {contactRoutes.map((route) => (
+                        <Route
+                            key={route.path}
+                            path={route.path}
+                            element={<UnderConstruction />}
+                        />
+                    ))}
 
                     {/* 커뮤니티 페이지 */}
                     <Route path="/service/community" element={<Community />} />

@@ -1,7 +1,7 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { categories } from "../../routes/routeConfig.js";
+import { categories, contactRoutes } from "../../routes/routeConfig.js";
 import LanguageSelector from "../LanguageSelector/LanguageSelector.jsx";
 import styles from "../../styles/headerModule.module.css";
 
@@ -47,12 +47,8 @@ const menus = [
                 id: "contact",
                 titleKey: "header.mega.contactGroup",
 
-                // 기존 문의 메뉴는 연결할 페이지가 없어 버튼으로 유지한다.
-                items: [
-                    { id: "myInquiries", labelKey: "header.mega.myInquiries" },
-                    { id: "privateInquiry", labelKey: "header.mega.privateInquiry" },
-                    { id: "faq", labelKey: "header.mega.faq" },
-                ],
+                // 홈과 같은 문의 주소를 사용한다.
+                items: contactRoutes,
             },
         ],
     },

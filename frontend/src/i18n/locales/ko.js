@@ -46,6 +46,22 @@ const ko = {
             5: "대리인이 신청할 때 필요한 서류는 업무마다 다릅니다.\n위임장, 본인·대리인 신분증 등 해당 업무의 구비서류와 대리 신청 가능 여부를 미리 확인해주세요.",
         },
     },
+    homeMain: {
+        description:
+            "낯선 생활에서 겪는 경제적 어려움을 해결하고, 내 상황에 맞는 도움을 찾아보세요!",
+        duckLabel: "옆모습으로 걸어와 가운데에서 인사하는 오리",
+        navigationLabel: "홈 구역 이동",
+        sections: {
+            main: "메인",
+            translation: "번역",
+            counseling: "상담",
+            recommendation: "추천",
+            repayment: "계산",
+            employment: "취업",
+            extendedServices: "확장",
+            contact: "문의",
+        },
+    },
     // 홈 안내 문구는 실제 서비스 화면의 설명과 분리한다.
     homeOverview: {
         translation: {
