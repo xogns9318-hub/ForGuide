@@ -8,7 +8,7 @@ import styles from "./Modal.module.css";
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 // 확인창·알림 한 개. 버튼 문구를 따로 주지 않으면 t("modal.confirm")·t("modal.cancel")
-export function Modal({ type, title, message, confirmText, cancelText, onClose }) {
+export function Modal({ type, title, message, confirmText, cancelText, onClose, theme }) {
     const { t } = useTranslation();
     const dialogRef = useRef(null);
     const confirmRef = useRef(null);
@@ -52,7 +52,11 @@ export function Modal({ type, title, message, confirmText, cancelText, onClose }
     }
 
     return (
-        <div className={styles.backdrop} onClick={handleBackdropClick} onKeyDown={handleKeyDown}>
+        <div
+            className={`${styles.backdrop} ${theme === "preparation" ? styles.preparation : ""}`}
+            onClick={handleBackdropClick}
+            onKeyDown={handleKeyDown}
+        >
             <div
                 ref={dialogRef}
                 className={styles.dialog}
@@ -78,7 +82,7 @@ export function Modal({ type, title, message, confirmText, cancelText, onClose }
                     <button
                         ref={confirmRef}
                         type="button"
-                        className="button button-primary"
+                        className={`button button-primary ${styles.confirmButton}`}
                         onClick={() => onClose(true)}
                     >
                         {confirmText ?? t("modal.confirm")}
@@ -105,6 +109,7 @@ export default function ModalHost() {
             message={current.message}
             confirmText={current.confirmText}
             cancelText={current.cancelText}
+            theme={current.theme}
             onClose={close}
         />,
         document.body,
