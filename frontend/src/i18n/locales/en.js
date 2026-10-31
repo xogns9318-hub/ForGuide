@@ -8,10 +8,7 @@ const en = {
         language: "Language",
 
         mega: {
-            introduction: "Guide Introduction",
-            guides: "Guide List",
             contact: "Contact",
-            introductionList: "Introduction List",
             contactGroup: "Inquiries",
             myInquiries: "My Inquiries",
             privateInquiry: "1-on-1 Inquiry",
@@ -33,46 +30,6 @@ const en = {
     },
 
     home: {
-        banner: {
-            eyebrow: "Your Guide to Life in Korea, ForGuide",
-            title: "Helping You Build a Happier Life in Korea",
-            description:
-                "From wages and banking to living expenses, loan repayments, and employment. Find the support you need to navigate life in Korea.",
-        },
-
-        services: {
-            eyebrow: "ForGuide Services",
-            title: "How Can We Help You?",
-            description: "Explore six services designed to support your life in Korea.",
-        },
-
-        categories: {
-            counseling: {
-                description:
-                    "Find guidance for your situation and prepare the information you need for a consultation.",
-            },
-            recommendation: {
-                description:
-                    "Compare loans, insurance, and bank accounts to find financial services that suit your needs.",
-            },
-            repayment: {
-                description:
-                    "Check monthly payments, total interest, and repayment schedules to plan your finances.",
-            },
-            employment: {
-                description:
-                    "Explore job opportunities and employment resources to prepare for your next step.",
-            },
-            simulator: {
-                description:
-                    "Organize repayment dates, income, and expenses on a calendar to plan your daily spending.",
-            },
-            community: {
-                description:
-                    "Share experiences and information about life in Korea and connect with others.",
-            },
-        },
-
         features: {
             counseling: {
                 consultation: "Find Support Organizations",
