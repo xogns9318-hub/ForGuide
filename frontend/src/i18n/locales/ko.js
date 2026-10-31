@@ -161,13 +161,10 @@ const ko = {
         // 도움 기관 안내의 검색 조건과 제출 버튼 문구다.
         topicLabel: "상담 분야",
         keywordLabel: "상담 키워드",
-        requiredSuffix: " · 필수",
         chooseTopicAndKeywords: "상담 분야와 키워드를 선택해주세요.",
         chooseKeywords: "상담 키워드를 한 개 이상 선택해주세요.",
         selectedKeywords: "키워드 {{count}}개 선택됨",
         submit: "안내받기",
-        dbNotice:
-            "공식 출처를 바탕으로 등록한 기관을 조회합니다. 확인되지 않은 이용 조건은 ‘확인 필요’로 표시합니다.",
         searchLabel: "기관명·상담 내용 검색",
         searchPlaceholder: "예: 임금체불, 통장 만들기, 외국인등록",
         queryReady: "검색어와 현재 선택 조건으로 기관을 조회합니다.",
@@ -257,8 +254,7 @@ const ko = {
             keywords: "대표 상담 키워드",
             checkedAt: "자료 기준일",
         },
-        chooseTopicFirst: "상담 분야를 먼저 선택해주세요.",
-        multipleKeywords: "(여러 개 선택 가능)",
+        multipleKeywords: "(중복 선택 가능)",
 
         selectionLabels: {
             "출입국·행정": "출입국·행정",

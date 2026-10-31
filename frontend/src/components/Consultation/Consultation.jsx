@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SelectBox from "../SelectBox/SelectBox.jsx";
 import { initialConsultationOptions, getConsultationOptions } from "../../api/consultationApi.js";
 import "../../styles/consultation.css";
+import styles from "../../styles/consultationControls.module.css";
 import { useTranslation } from "react-i18next";
 import ConsultationResults from "./ConsultationResults.jsx";
 
@@ -36,7 +37,7 @@ export default function Consultation() {
     const [loadError, setLoadError] = useState("");
     const [retryCount, setRetryCount] = useState(0);
 
-    // 상담 분야는 하나, 키워드는 여러 개 선택
+    // 상담 분야는 하나, 키워드는 중복 선택 가능
     const [topic, setTopic] = useState("");
     const [keywords, setKeywords] = useState([]);
 
@@ -100,7 +101,13 @@ export default function Consultation() {
     // 기존 공통 선택창에 전달할 목록 구성
     const provinceOptions = makeOptions(options?.regions.map((item) => item.name));
     const districtOptions = makeOptions(selectedRegion?.districts);
-    const languageOptions = makeOptions(options?.languages);
+    // 지정한 여섯 언어를 먼저 표시하고 '전체'는 맨 아래에 둔다.
+    const languageOptions = [
+        ...["한국어", "영어", "중국어", "일본어", "베트남어", "태국어"]
+            .filter((value) => options?.languages.includes(value))
+            .map((value) => ({ value, label: value })),
+        { value: "", label: t("institutionGuide.all") },
+    ];
     const methodOptions = makeOptions(options?.methods);
 
     // 검색어만 입력하거나 분야와 키워드를 함께 선택하면 조회할 수 있다.
@@ -259,14 +266,11 @@ export default function Consultation() {
     }
 
     return (
-        <div className="page-stack">
+        <div className={`page-stack ${styles.page}`}>
             <section className="panel consultation-panel" aria-labelledby="consultation-title">
                 <div className="consultation-heading">
                     <h2 id="consultation-title">어떤 상담이 필요하신가요?</h2>
                 </div>
-
-                {/* 선택 목록과 별개로 기관 결과는 실제 DB에서 조회한다. */}
-                <p className="form-help consultation-notice">{t("institutionGuide.dbNotice")}</p>
 
                 {/* 표시할 목록이 이미 있으면 조회 중에도 선택창을 계속 보여준다. */}
                 {isLoading && !options ? null : loadError ? (
@@ -314,7 +318,6 @@ export default function Consultation() {
                         <fieldset className="consultation-group">
                             <legend>
                                 {t("institutionGuide.topicLabel")}
-                                {!query.trim() && t("institutionGuide.requiredSuffix")}
                             </legend>
 
                             <div className="consultation-choices">
@@ -335,15 +338,17 @@ export default function Consultation() {
                             </div>
                         </fieldset>
 
-                        {/* 선택한 분야의 대표 키워드 세 개를 표시하고 복수 선택한다. */}
-                        <fieldset className="consultation-group">
-                            <legend>
-                                {t("institutionGuide.keywordLabel")}
-                                {!query.trim() && t("institutionGuide.requiredSuffix")}
-                                <small> {t("institutionGuide.multipleKeywords")}</small>
-                            </legend>
+                        {/* 분야를 선택했을 때만 연결된 키워드를 펼친다. */}
+                        {selectedTopic && (
+                            <fieldset
+                                key={topic}
+                                className={`consultation-group ${styles.keywords}`}
+                            >
+                                <legend>
+                                    {t("institutionGuide.keywordLabel")}
+                                    <small> {t("institutionGuide.multipleKeywords")}</small>
+                                </legend>
 
-                            {selectedTopic ? (
                                 <div className="consultation-choices">
                                     {selectedTopic.keywords.map((keyword) => (
                                         <label key={keyword} className="consultation-choice">
@@ -360,12 +365,8 @@ export default function Consultation() {
                                         </label>
                                     ))}
                                 </div>
-                            ) : (
-                                <p className="form-help">
-                                    {t("institutionGuide.chooseTopicFirst")}
-                                </p>
-                            )}
-                        </fieldset>
+                            </fieldset>
+                        )}
 
                         {/* 지역·언어·상담 방식은 기존 공통 선택창 사용 */}
                         <div className="consultation-filters">
@@ -373,6 +374,7 @@ export default function Consultation() {
                                 <span id="consultation-province-label">희망 지역 · 시·도</span>
                                 <SelectBox
                                     id="consultation-province"
+                                    maxVisibleOptions={6}
                                     labelledBy="consultation-province-label"
                                     value={province}
                                     options={provinceOptions}
@@ -386,6 +388,7 @@ export default function Consultation() {
                                     // 시·도 변경 시 열린 목록 상태도 초기화
                                     key={province}
                                     id="consultation-district"
+                                    maxVisibleOptions={6}
                                     labelledBy="consultation-district-label"
                                     value={district}
                                     options={districtOptions}
@@ -398,6 +401,7 @@ export default function Consultation() {
                                 <span id="consultation-language-label">상담 언어</span>
                                 <SelectBox
                                     id="consultation-language"
+                                    maxVisibleOptions={6}
                                     labelledBy="consultation-language-label"
                                     value={language}
                                     options={languageOptions}
@@ -410,6 +414,7 @@ export default function Consultation() {
                                 <span id="consultation-method-label">상담 방식</span>
                                 <SelectBox
                                     id="consultation-method"
+                                    maxVisibleOptions={6}
                                     labelledBy="consultation-method-label"
                                     value={method}
                                     options={methodOptions}
