@@ -47,7 +47,7 @@ const sections = [
     },
     {
         id: "contact",
-        titleKey: "header.mega.contact",
+        titleKey: "header.mega.contactMenu",
         items: contactRoutes,
     },
 ];
@@ -127,6 +127,59 @@ export default function Home() {
     const [activeId, setActiveId] = useState("main");
     const syncedHash = useRef(null);
     const movingTo = useRef(null);
+    const homeRef = useRef(null);
+
+    useLayoutEffect(() => {
+        const root = homeRef.current;
+        if (!root) return;
+
+        const contents = root.querySelectorAll("[data-home-reveal]");
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+        let frame = 0;
+
+        function updateReveal() {
+            frame = 0;
+
+            // 화면 아래쪽에서 등장해 소개 제목이 세로 중앙에 도달하면 완전히 표시한다.
+            const revealStart = window.innerHeight - 64;
+            const revealEnd = window.innerHeight * 0.2;
+            const revealDistance = Math.max(1, revealStart - revealEnd);
+
+            contents.forEach((element) => {
+                const top = element.getBoundingClientRect().top;
+                const progress =
+                    reducedMotion.matches || element.contains(document.activeElement)
+                        ? 1
+                        : Math.max(
+                            0,
+                            Math.min(1, (revealStart - top) / revealDistance),
+                        );
+
+                // 스크롤을 되돌리면 등장 효과도 같은 경로로 되돌린다.
+                element.style.setProperty("--home-reveal-progress", String(progress));
+            });
+        }
+
+        function scheduleReveal() {
+            if (!frame) frame = requestAnimationFrame(updateReveal);
+        }
+
+        updateReveal();
+        window.addEventListener("scroll", scheduleReveal, { passive: true });
+        window.addEventListener("resize", scheduleReveal);
+        root.addEventListener("focusin", scheduleReveal);
+        root.addEventListener("focusout", scheduleReveal);
+        reducedMotion.addEventListener("change", scheduleReveal);
+
+        return () => {
+            cancelAnimationFrame(frame);
+            window.removeEventListener("scroll", scheduleReveal);
+            window.removeEventListener("resize", scheduleReveal);
+            root.removeEventListener("focusin", scheduleReveal);
+            root.removeEventListener("focusout", scheduleReveal);
+            reducedMotion.removeEventListener("change", scheduleReveal);
+        };
+    }, []);
 
     const scrollToSection = useCallback((id, behavior) => {
         const element = document.getElementById(id);
@@ -147,9 +200,9 @@ export default function Home() {
             Math.max(
                 0,
                 element.getBoundingClientRect().top +
-                    window.scrollY -
-                    headerHeight -
-                    16,
+                window.scrollY -
+                headerHeight -
+                16,
             ),
         );
 
@@ -334,11 +387,15 @@ export default function Home() {
                 </div>
 
                 <div className={styles.heroMessage}>
-                    <p>{t("homeMain.description")}</p>
+                    <img
+                        className={styles.heroLogo}
+                        src="/ForGuide_Logo.png"
+                        alt={t("header.mega.home")}
+                    />
                 </div>
             </section>
 
-            <div className={styles.home}>
+            <div ref={homeRef} className={styles.home}>
                 {sections.map((section, index) => (
                     <section
                         key={section.id}
@@ -346,7 +403,7 @@ export default function Home() {
                         className={`${styles.section} ${index % 2 ? styles.right : ""}`}
                         aria-labelledby={`home-${section.id}`}
                     >
-                        <div className={styles.content}>
+                        <div className={styles.content} data-home-reveal>
                             <h2 id={`home-${section.id}`} className={styles.sectionTitle}>
                                 {t(section.titleKey)}
                             </h2>

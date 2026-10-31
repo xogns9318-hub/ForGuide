@@ -51,7 +51,7 @@ function DefaultLayout({ language, isLoggedIn, onLanguageChange, onLogout }) {
                 <Outlet />
             </main>
 
-            {!isHome && <Footer />}
+            <Footer />
         </div>
     );
 }
@@ -104,7 +104,7 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                 >
                     <Route path="/" element={<Home />} />
 
-                    {/* 문의 세 항목은 공통 제작 중 안내로 연결한다. */}
+                    {/* 문의하기는 공통 제작 중 안내로 연결한다. */}
                     {contactRoutes.map((route) => (
                         <Route
                             key={route.path}

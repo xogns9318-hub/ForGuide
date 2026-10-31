@@ -138,13 +138,15 @@
 }
 
 @media (max-width: 1024px) {
-    .home {
+    .home,
+    .hero {
         --home-logo-width: 160px;
     }
 }
 
 @media (max-width: 480px) {
-    .home {
+    .home,
+    .hero {
         --home-logo-width: 128px;
     }
 }
@@ -154,14 +156,20 @@
     scroll-margin-top: calc(var(--header-height, 88px) + 16px);
 }
 
-/* 첫 화면은 흰 배경에서 오리와 설명만 표시한다. */
+/* 헤더·아래 본문과 같은 공통 너비를 사용한다. */
 .hero {
     --home-duck-width: clamp(160px, 19vw, 260px);
+    --home-logo-width: 192px;
 
-    width: calc(100% - 32px);
+    /* 오리 이동 영역의 양쪽 추가 여백 */
+    --home-path-inset: 0px;
+
+    width: 100%;
+    max-width: var(--page-width);
     min-height: max(520px, calc(100svh - var(--header-height, 88px) - 24px));
     margin: 8px auto 16px;
-    padding: 48px 24px;
+    padding: 48px var(--page-padding);
+    padding-left: calc(var(--page-padding) + var(--home-logo-width) * 0.064);
     overflow: hidden;
     border-radius: var(--panel-radius);
     background: var(--background);
@@ -174,18 +182,20 @@
 
 .duckStage {
     position: relative;
-    width: 100%;
+    width: calc(100% - var(--home-path-inset) * 2);
     height: calc(var(--home-duck-width) * 1.2 + 16px);
+    margin-inline: auto;
+    overflow: hidden;
 }
 
 .duckWalker {
     position: absolute;
-    left: 50%;
+    left: calc(var(--home-duck-width) / -2);
     top: 0;
     width: var(--home-duck-width);
     height: calc(var(--home-duck-width) * 1.2);
-    margin-left: calc(var(--home-duck-width) / -2);
-    transform: translateX(calc(-50vw - var(--home-duck-width)));
+    margin-left: 0;
+    transform: translateX(-50%);
     animation: duckTravel 8s linear infinite;
 }
 
@@ -258,24 +268,23 @@
 
 .heroMessage {
     width: 100%;
-    max-width: 980px;
     margin: 0 auto;
     text-align: center;
 }
 
-.heroMessage p {
-    margin: 0;
-    color: var(--muted);
-    font-size: clamp(16px, 1.7vw, 20px);
-    line-height: 1.8;
-    word-break: keep-all;
+.heroLogo {
+    display: block;
+    width: clamp(200px, 24vw, 340px);
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
 }
 
 /* 원 사이 중심 간격을 20px로 맞춘다. */
 .sectionNav {
     position: fixed;
     top: 50%;
-    left: max(4px, calc((100vw - var(--page-width)) / 2 - 44px));
+    left: max(4px, calc((100vw - var(--page-width)) / 2 - 120px));
     z-index: 40;
     display: grid;
     gap: 0;
@@ -332,20 +341,20 @@
     transform: translate(0, -50%);
 }
 
-/* 2초 입장 → 3초 인사 → 2초 퇴장 → 1초 대기 */
+/* 공통 너비의 왼쪽에서 입장 → 중앙 인사 → 오른쪽으로 퇴장 */
 @keyframes duckTravel {
     0% {
-        transform: translateX(calc(-50vw - var(--home-duck-width)));
+        left: calc(var(--home-duck-width) / -2);
     }
 
     25%,
     62.5% {
-        transform: translateX(0);
+        left: 50%;
     }
 
     87.5%,
     100% {
-        transform: translateX(calc(50vw + var(--home-duck-width)));
+        left: calc(100% + var(--home-duck-width) / 2);
     }
 }
 
@@ -442,9 +451,8 @@
 
 @media (max-width: 768px) {
     .hero {
-        width: calc(100% - 16px);
         min-height: max(440px, calc(100svh - var(--header-height, 88px) - 16px));
-        padding: 32px 20px;
+        padding-block: 32px;
         gap: 24px;
     }
 
@@ -471,7 +479,8 @@
     }
 
     .duckWalker {
-        transform: translateX(0);
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .sidePose {
@@ -494,4 +503,33 @@
     .sectionLabel {
         transition: none;
     }
+}
+
+/* 홈 소개를 배치된 방향에서 화면 안으로 이동시킨다. */
+.content {
+    --home-reveal-offset: -56px;
+    --home-reveal-progress: 1;
+
+    opacity: var(--home-reveal-progress);
+    transform: translate3d(
+        calc(var(--home-reveal-offset) * (1 - var(--home-reveal-progress))),
+        0,
+        0
+    );
+}
+
+.right .content {
+    --home-reveal-offset: 56px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .content {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* 마지막 문의 소개도 화면 중앙까지 올라올 수 있도록 여백을 확보한다. */
+.home {
+    padding-bottom: max(clamp(80px, 9vw, 128px), calc(50svh - 200px));
 }

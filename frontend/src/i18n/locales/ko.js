@@ -47,8 +47,6 @@ const ko = {
         },
     },
     homeMain: {
-        description:
-            "낯선 생활에서 겪는 경제적 어려움을 해결하고, 내 상황에 맞는 도움을 찾아보세요!",
         duckLabel: "옆모습으로 걸어와 가운데에서 인사하는 오리",
         navigationLabel: "홈 구역 이동",
         sections: {
@@ -125,20 +123,10 @@ const ko = {
             description:
                 "한국 생활에서 궁금한 점을 물어보고,\n서로의 경험과 유용한 정보를 나눠보세요.",
         },
-        myInquiries: {
-            headline: "내가 남긴 문의를 한눈에",
-            description:
-                "이전에 남긴 문의와 답변을 확인하고,\n궁금했던 내용을 언제든 다시 살펴보세요.",
-        },
-        privateInquiry: {
+        inquiry: {
             headline: "궁금한 점이 있다면 편하게 물어보세요",
             description:
-                "서비스를 이용하다 궁금한 점이 생기면,\n1:1 문의를 통해 질문을 남겨보세요.",
-        },
-        faq: {
-            headline: "자주 묻는 질문은 빠르게 찾아보고",
-            description:
-                "다른 이용자들이 자주 묻는 질문과 답변을\n한곳에서 쉽고 빠르게 확인해 보세요.",
+                "서비스를 이용하다 궁금한 점이 생기면,\n문의하기를 통해 질문을 남겨보세요.",
         },
     },
     // 두 계산기의 결과 요약 막대그래프 문구
@@ -319,15 +307,12 @@ const ko = {
         mega: {
             serviceList: "서비스 목록",
             contact: "문의하기",
+            contactMenu: "문의",
+            inquiry: "문의하기",
 
             // 클릭할 수 없는 연한 제목
             extendedServices: "확장 가이드",
             contactGroup: "문의 가이드",
-
-            // 아직 페이지를 연결하지 않은 문의 버튼
-            myInquiries: "내 문의",
-            privateInquiry: "1:1 문의",
-            faq: "자주하는 질문",
 
             // 화면 읽기와 모바일 메뉴용 이름
             home: "ForGuide 홈",

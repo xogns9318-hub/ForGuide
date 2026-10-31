@@ -41,13 +41,13 @@ const menus = [
     },
     {
         id: "contact",
-        titleKey: "header.mega.contact",
+        titleKey: "header.mega.contactMenu",
         groups: [
             {
                 id: "contact",
                 titleKey: "header.mega.contactGroup",
 
-                // 홈과 같은 문의 주소를 사용한다.
+                // 헤더와 홈에서 같은 문의하기 항목을 사용한다.
                 items: contactRoutes,
             },
         ],
