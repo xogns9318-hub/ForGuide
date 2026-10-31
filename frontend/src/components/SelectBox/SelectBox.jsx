@@ -1,5 +1,5 @@
 // 화면 상태와 생명주기를 관리하는 React 기능 사용
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 // 이 화면에서 사용할 스타일 연결
 import "../../styles/selectBox.css";
 
@@ -15,9 +15,15 @@ export default function SelectBox({
     compact = false,
     // 언어 선택에만 마우스 올림으로 여는 동작을 사용한다.
     openOnHover = false,
+    // 지정한 화면에서만 목록 개수와 화면 경계를 제한한다.
+    maxVisibleOptions = 0,
 }) {
     // 선택창 바깥 클릭을 판별할 전체 영역 참조
     const rootRef = useRef(null);
+    const listRef = useRef(null);
+    const keyboardMoveRef = useRef(false);
+    const [keyboardMove, setKeyboardMove] = useState(0);
+    const [listStyle, setListStyle] = useState({});
     // 선택 후 강조를 해제할 버튼 참조
     const triggerRef = useRef(null);
     // 마우스 올림과 모바일 터치를 구분한다.
@@ -94,6 +100,8 @@ export default function SelectBox({
 
         // 방향키로 목록을 열거나 가리킨 항목 변경
         if (key === "ArrowDown" || key === "ArrowUp") {
+            keyboardMoveRef.current = true;
+            setKeyboardMove((previous) => previous + 1);
             // 페이지 새로고침이나 브라우저 기본 키 동작 방지
             event.preventDefault();
 
@@ -115,7 +123,9 @@ export default function SelectBox({
 
         // 열린 목록의 첫 항목 또는 마지막 항목으로 이동
         if (isOpen && (key === "Home" || key === "End")) {
-            // 페이지 새로고침이나 브라우저 기본 키 동작 방지
+            keyboardMoveRef.current = true;
+            setKeyboardMove((previous) => previous + 1);
+
             event.preventDefault();
             setActiveIndex(key === "Home" ? 0 : options.length - 1);
             return;
@@ -137,6 +147,70 @@ export default function SelectBox({
             }
         }
     }
+
+    // 이 옵션을 요청한 화면에서만 목록을 화면 안에 최대 지정 개수로 표시한다.
+    useLayoutEffect(() => {
+        if (!isOpen || !maxVisibleOptions) return;
+
+        function fitOptions() {
+            const trigger = triggerRef.current?.getBoundingClientRect();
+            const list = listRef.current;
+            if (!trigger || !list) return;
+
+            const optionHeight =
+                list.firstElementChild?.getBoundingClientRect().height || 48;
+            const listStyle = getComputedStyle(list);
+            const frameHeight =
+                parseFloat(listStyle.paddingTop) +
+                parseFloat(listStyle.paddingBottom) +
+                parseFloat(listStyle.borderTopWidth) +
+                parseFloat(listStyle.borderBottomWidth);
+            const desiredHeight =
+                Math.min(maxVisibleOptions, options.length) * optionHeight + frameHeight;
+            const below = Math.max(0, window.innerHeight - trigger.bottom - 14);
+            const above = Math.max(0, trigger.top - 14);
+
+            // 아래 공간이 모자라고 위 공간이 더 넓으면 위쪽으로 연다.
+            const openAbove = below < desiredHeight && above > below;
+
+            setListStyle({
+                top: openAbove ? "auto" : "calc(100% + 6px)",
+                bottom: openAbove ? "calc(100% + 6px)" : "auto",
+                maxHeight: Math.min(desiredHeight, openAbove ? above : below),
+                overflowY: "auto",
+                overscrollBehaviorY: "contain",
+            });
+        }
+
+        fitOptions();
+        window.addEventListener("resize", fitOptions);
+        window.addEventListener("scroll", fitOptions, true);
+
+        return () => {
+            window.removeEventListener("resize", fitOptions);
+            window.removeEventListener("scroll", fitOptions, true);
+        };
+    }, [isOpen, maxVisibleOptions, options.length]);
+
+    // 방향키로 이동할 때만 목록 내부를 스크롤한다.
+    // 열자마자 '전체' 위치로 이동하지 않아 첫 여섯 언어가 그대로 보인다.
+    useLayoutEffect(() => {
+        if (!isOpen || !maxVisibleOptions || !keyboardMoveRef.current) return;
+
+        keyboardMoveRef.current = false;
+        const list = listRef.current;
+        const option = list?.children[activeIndex];
+        if (!option) return;
+
+        const listRect = list.getBoundingClientRect();
+        const optionRect = option.getBoundingClientRect();
+
+        if (optionRect.top < listRect.top) {
+            list.scrollTop -= listRect.top - optionRect.top;
+        } else if (optionRect.bottom > listRect.bottom) {
+            list.scrollTop += optionRect.bottom - listRect.bottom;
+        }
+    }, [activeIndex, isOpen, maxVisibleOptions, keyboardMove]);
 
     return (
         <div
@@ -214,6 +288,8 @@ export default function SelectBox({
 
             {isOpen && (
                 <div
+                    ref={listRef}
+                    style={maxVisibleOptions ? listStyle : undefined}
                     id={`${id}-options`}
                     className="select-box-options"
                     role="listbox"

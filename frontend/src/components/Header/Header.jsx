@@ -1,56 +1,39 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { categories } from "../../routes/routeConfig.js";
+import { categories, contactRoutes } from "../../routes/routeConfig.js";
 import LanguageSelector from "../LanguageSelector/LanguageSelector.jsx";
 import styles from "../../styles/headerModule.module.css";
 
-// 주 기능 이름과 기존 주소를 소개 메뉴에서 재사용
-const introductionItems = categories.map((category) => ({
-    id: category.id,
-    path: category.path,
-    labelKey: `navigation.${category.id}`,
-    label: category.label,
-}));
+// 시뮬레이터와 커뮤니티는 하나의 확장 가이드 분류로 묶는다.
+const extendedIds = new Set(["simulator", "community"]);
 
-// 하위 기능이 없으면 기존 서비스 주소를 그대로 사용
-const guideGroups = categories.map((category) => ({
-    id: category.id,
-    titleKey: `navigation.${category.id}`,
-    items: category.children.length
-        ? category.children.map((child) => ({
-              ...child,
-              labelKey: `home.features.${category.id}.${child.id}`,
-          }))
-        : introductionItems.filter((item) => item.id === category.id),
-}));
-
-// 상단 제목은 이동 주소 없이 펼칠 목록만 구분
-const menus = [
+const guideGroups = [
+    ...categories
+        .filter((category) => !extendedIds.has(category.id))
+        .map((category) => ({
+            id: category.id,
+            titleKey: `navigation.${category.id}`,
+            items: category.children.map((child) => ({
+                ...child,
+                labelKey: `home.features.${category.id}.${child.id}`,
+            })),
+        })),
     {
-        id: "introduction",
-        titleKey: "header.mega.serviceIntroduction",
-        groups: [
-            {
-                id: "guideIntroduction",
-                titleKey: "header.mega.guideIntroduction",
-
-                // 기존 소개 주소를 유지하면서 네 가지 가이드만 묶는다.
-                items: introductionItems.filter((item) =>
-                    ["counseling", "recommendation", "repayment", "employment"].includes(item.id),
-                ),
-            },
-            {
-                id: "extendedServices",
-                titleKey: "header.mega.extendedServices",
-
-                // 시뮬레이터와 커뮤니티는 확장 서비스로 분리한다.
-                items: introductionItems.filter((item) =>
-                    ["simulator", "community"].includes(item.id),
-                ),
-            },
-        ],
+        id: "extendedServices",
+        titleKey: "header.mega.extendedServices",
+        items: categories
+            .filter((category) => extendedIds.has(category.id))
+            .flatMap((category) =>
+                category.children.map((child) => ({
+                    ...child,
+                    labelKey: `home.features.${category.id}.${child.id}`,
+                })),
+            ),
     },
+];
+
+const menus = [
     {
         id: "guides",
         titleKey: "header.mega.serviceList",
@@ -64,21 +47,8 @@ const menus = [
                 id: "contact",
                 titleKey: "header.mega.contactGroup",
 
-                // 문의 페이지가 없으므로 주소 없이 버튼으로 표시
-                items: [
-                    {
-                        id: "myInquiries",
-                        labelKey: "header.mega.myInquiries",
-                    },
-                    {
-                        id: "privateInquiry",
-                        labelKey: "header.mega.privateInquiry",
-                    },
-                    {
-                        id: "faq",
-                        labelKey: "header.mega.faq",
-                    },
-                ],
+                // 홈과 같은 문의 주소를 사용한다.
+                items: contactRoutes,
             },
         ],
     },
@@ -106,6 +76,8 @@ export default function Header({ isLoggedIn = false, onLogout }) {
 
     // 펼친 목록의 최대 높이를 계산할 실제 헤더 높이
     const [headerHeight, setHeaderHeight] = useState(133);
+    // 아래로 스크롤하면 숨기고 위로 스크롤하면 표시할 상태다.
+    const [isHeaderHidden, setIsHeaderHidden] = useState(false);
 
     // 높이 측정과 키보드 포커스 복원에 사용할 요소 보관
     const headerRef = useRef(null);
@@ -195,6 +167,81 @@ export default function Header({ isLoggedIn = false, onLogout }) {
             observer.disconnect();
         };
     }, []);
+    // 실제 페이지의 이동 방향을 기준으로 헤더를 숨기거나 다시 표시한다.
+    useEffect(() => {
+        const header = headerRef.current;
+        if (!header) return;
+
+        let previousY = Math.max(0, window.scrollY);
+        let distance = 0;
+        let frame = 0;
+
+        // 페이지나 화면 구간이 바뀌면 헤더를 다시 표시한다.
+        setIsHeaderHidden(false);
+
+        function updateVisibility() {
+            frame = 0;
+
+            // 모바일의 맨 위·맨 아래 튕김은 스크롤 방향으로 계산하지 않는다.
+            const maxY = Math.max(
+                0,
+                document.documentElement.scrollHeight - window.innerHeight,
+            );
+            const currentY = Math.min(maxY, Math.max(0, window.scrollY));
+            const delta = currentY - previousY;
+            previousY = currentY;
+
+            const hasOpenSelector =
+                header.querySelector('[aria-expanded="true"]') !== null;
+            const hasHeaderFocus = header.contains(document.activeElement);
+
+            // 화면 상단이나 메뉴·언어 선택·키보드 조작 중에는 헤더를 유지한다.
+            if (
+                currentY <= headerHeight ||
+                isDesktopMenuOpen ||
+                isMobileMenuOpen ||
+                hasOpenSelector ||
+                hasHeaderFocus
+            ) {
+                distance = 0;
+                setIsHeaderHidden(false);
+                return;
+            }
+
+            if (delta === 0) return;
+
+            // 같은 방향의 이동을 누적해 터치패드의 작은 흔들림을 걸러낸다.
+            distance =
+                Math.sign(distance) === Math.sign(delta)
+                    ? distance + delta
+                    : delta;
+
+            if (Math.abs(distance) < 8) return;
+
+            setIsHeaderHidden(distance > 0);
+            distance = 0;
+        }
+
+        function handleScroll() {
+            if (frame === 0) {
+                frame = window.requestAnimationFrame(updateVisibility);
+            }
+        }
+
+        function handleFocus() {
+            distance = 0;
+            setIsHeaderHidden(false);
+        }
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        header.addEventListener("focusin", handleFocus);
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            header.removeEventListener("focusin", handleFocus);
+            window.cancelAnimationFrame(frame);
+        };
+    }, [pathname, headerHeight, isDesktopMenuOpen, isMobileMenuOpen]);
 
     // 열려 있는 메뉴의 실제 높이를 측정해서 CSS 높이 애니메이션에 전달
     useLayoutEffect(() => {
@@ -286,7 +333,11 @@ export default function Header({ isLoggedIn = false, onLogout }) {
 
     function renderActions(extraClass, includeLanguage = true) {
         return (
-            <div className={`${styles.actions} ${extraClass}`}>
+            <div
+                className={`${styles.actions} ${extraClass}`}
+                onMouseEnter={() => setOpenMenu(null)}
+                onFocus={() => setOpenMenu(null)}
+            >
                 {/* 기존 회원 메뉴와 로그아웃 동작 유지 */}
                 {isLoggedIn ? (
                     <>
@@ -333,7 +384,6 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                 className={[
                     styles.groups,
                     menu.groups.length === 1 ? styles.singleGroup : "",
-                    menu.groups.length === 2 ? styles.twoGroups : "",
                 ]
                     .filter(Boolean)
                     .join(" ")}
@@ -394,7 +444,11 @@ export default function Header({ isLoggedIn = false, onLogout }) {
 
             <header
                 ref={headerRef}
-                className={[styles.header, isDesktopMenuOpen ? styles.expanded : ""].join(" ")}
+                className={[
+                    styles.header,
+                    isDesktopMenuOpen ? styles.expanded : "",
+                    isHeaderHidden ? styles.headerHidden : "",
+                ].join(" ")}
                 style={{ "--header-height": `${headerHeight}px` }}
                 onMouseEnter={cancelMenuClose}
                 onMouseLeave={() => {
@@ -415,7 +469,6 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                         onMouseEnter={() => setOpenMenu(null)}
                         onFocus={() => setOpenMenu(null)}
                     >
-                        {renderActions(styles.desktopActions, false)}
 
                         <div className={styles.brand}>
                             <Link
@@ -431,10 +484,6 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                                     <img src="/ForGuide_Logo.png" alt="" />
                                 </span>
                             </Link>
-                        </div>
-
-                        <div className={`${styles.actions} ${styles.desktopLanguage}`}>
-                            <LanguageSelector />
                         </div>
 
                         {/* 모바일에서는 버튼으로 전체 목록을 열고 닫음 */}
@@ -503,6 +552,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                             </div>
                         ))}
                     </nav>
+                    {renderActions(styles.desktopActions)}
                 </div>
 
                 {/* 데스크톱 공용 목록: 메뉴가 바뀔 때 높이를 스르륵 변경 */}

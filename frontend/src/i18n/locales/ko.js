@@ -46,94 +46,99 @@ const ko = {
             5: "대리인이 신청할 때 필요한 서류는 업무마다 다릅니다.\n위임장, 본인·대리인 신분증 등 해당 업무의 구비서류와 대리 신청 가능 여부를 미리 확인해주세요.",
         },
     },
-    // 소개 페이지 전용 문구이며 홈 카드 설명과 분리한다.
-    introduction: {
-        featuresLabel: "{{name}} 세부 기능",
-
-        counseling: {
-            description:
-                "한국에서 생활하며 도움이 필요한 일이 있나요?\n어디에 도움을 요청해야 할지 함께 알아봐요.\n지금 내 상황에 맞는 상담 기관을 찾아보세요.\n상담 방법과 필요한 준비 사항도 쉽게 확인할 수 있어요.\n혼자 고민하지 말고, 필요한 도움을 받아보세요.",
-            features: {
-                consultation: {
-                    title: "상담 기관 안내",
-                    description: "내 상황에 맞는 상담 기관을 찾고,\n이용 방법을 알아보세요.",
-                },
-                preparationCard: {
-                    title: "상담 준비 카드 만들기",
-                    description: "상담할 내용과 필요한 준비 사항을\n카드로 정리해 보세요.",
-                },
-            },
+    homeMain: {
+        description:
+            "낯선 생활에서 겪는 경제적 어려움을 해결하고, 내 상황에 맞는 도움을 찾아보세요!",
+        duckLabel: "옆모습으로 걸어와 가운데에서 인사하는 오리",
+        navigationLabel: "홈 구역 이동",
+        sections: {
+            main: "메인",
+            translation: "번역",
+            counseling: "상담",
+            recommendation: "추천",
+            repayment: "계산",
+            employment: "취업",
+            extendedServices: "확장",
+            contact: "문의",
         },
-
-        recommendation: {
+    },
+    // 홈 안내 문구는 실제 서비스 화면의 설명과 분리한다.
+    homeOverview: {
+        translation: {
+            title: "번역",
+            headline: "언어가 달라도 걱정 없이",
             description:
-                "한국에서 어떤 금융 서비스를 이용해야 할지 고민인가요?\n대출, 보험, 계좌 개설에 필요한 정보를 모았어요.\n각 상품의 특징과 이용 조건을 쉽게 알아보세요.\n다양한 상품을 비교하며 나에게 맞는 선택지를 찾아보세요.\n복잡한 금융 정보도 이제 하나씩 알아갈 수 있어요.",
-            features: {
-                loan: {
-                    title: "대출 상품",
-                    description: "다양한 대출 상품의 조건과 특징을\n비교해 보세요.",
-                },
-                insurance: {
-                    title: "보험 상품",
-                    description: "보험의 보장 내용과 가입 조건을\n확인하고 비교해 보세요.",
-                },
-                account: {
-                    title: "계좌 개설",
-                    description: "은행 계좌 개설에 필요한 서류와\n절차를 알아보세요.",
-                },
-            },
+                "익숙한 언어로 ForGuide를 이용해 보세요.\n언어를 선택하면 모든 페이지가 자동으로 번역돼요.",
         },
-
-        repayment: {
+        consultation: {
+            headline: "어디에 도움을 요청해야 할지 막막하다면",
             description:
-                "대출을 받으면 매달 얼마씩 갚아야 할까요?\n이자는 얼마나 내야 하는지도 궁금하신가요?\n대출 금액과 이자율을 입력해 간편하게 계산해 보세요.\n갚는 방법에 따라 달라지는 금액도 비교할 수 있어요.\n미리 계산하고, 내 상황에 맞는 상환 계획을 세워보세요.",
-            features: {
-                monthlyPayment: {
-                    title: "월 상환액",
-                    description: "매달 갚아야 할 대출금과 이자를\n간편하게 계산해 보세요.",
-                },
-                totalInterest: {
-                    title: "총 이자",
-                    description: "대출 기간 동안 내야 할 총이자와\n상환 금액을 확인해 보세요.",
-                },
-            },
+                "내 상황에 맞는 상담 기관을 찾아보고,\n어떤 도움을 받을 수 있는지 확인해 보세요.",
         },
-
+        preparationCard: {
+            headline: "상담 준비도 어렵지 않게",
+            description:
+                "상담할 내용과 궁금한 점을 미리 정리하고,\n나만의 상담 준비 카드를 만들어보세요.",
+        },
+        loan: {
+            headline: "나에게 맞는 대출 상품을 찾아보고",
+            description:
+                "다양한 대출 상품의 조건을 비교하고,\n내 상황에 맞는 상품을 살펴보세요.",
+        },
+        insurance: {
+            headline: "보험, 어렵게 생각하지 마세요",
+            description:
+                "보험 상품의 보장 내용과 조건을 비교하고,\n나에게 필요한 보험을 찾아보세요.",
+        },
+        account: {
+            headline: "한국에서 은행 계좌를 만들고 싶다면",
+            description:
+                "계좌 개설에 필요한 준비물부터 절차까지,\n처음부터 하나씩 알아보세요.",
+        },
+        monthlyPayment: {
+            headline: "매달 얼마씩 갚아야 할까?",
+            description:
+                "대출 금액과 이자율 등을 입력하면,\n매달 갚아야 할 금액을 계산할 수 있어요.",
+        },
+        totalInterest: {
+            headline: "이자는 얼마나 내게 될까?",
+            description:
+                "대출 기간 동안 내야 할 총이자를 확인하고,\n앞으로의 상환 계획을 세워보세요.",
+        },
+        jobListings: {
+            headline: "한국에서 일자리를 찾고 있다면",
+            description:
+                "다양한 채용 정보를 한곳에서 살펴보고,\n나에게 맞는 일자리를 찾아보세요.",
+        },
         employment: {
+            headline: "취업 준비, 어디서부터 시작할지 고민이라면",
             description:
-                "한국에서 새로운 일자리를 찾고 계신가요?\n어디서부터 시작해야 할지 함께 알아봐요.\n다양한 채용 정보를 살펴보고 원하는 일을 찾아보세요.\n취업에 필요한 서류와 준비 방법도 확인할 수 있어요.\n한국에서의 새로운 시작을 차근차근 준비해 보세요.",
-            features: {
-                jobListings: {
-                    title: "일자리 찾기",
-                    description: "다양한 채용 정보를 확인하고,\n나에게 맞는 일자리를 찾아보세요.",
-                },
-                employment: {
-                    title: "취업 준비 자료",
-                    description: "취업에 필요한 서류와 절차,\n준비 방법을 알아보세요.",
-                },
-            },
+                "한국에서 일할 때 알아두면 좋은 정보와\n취업에 필요한 준비 자료를 확인해 보세요.",
         },
-
         simulator: {
+            headline: "오늘은 얼마까지 써도 될까?",
             description:
-                "한국에서 경제적인 선택을 해야 할 때 고민되시나요?\n어떤 선택이 좋을지 미리 경험해 보세요.\n다양한 경제 상황을 직접 체험할 수 있어요.\n내 선택에 따라 어떤 결과가 나오는지도 확인해 보세요.\n직접 경험하며 생활에 필요한 경제 지식을 쌓아보세요.",
-            features: {
-                simulator: {
-                    title: "시뮬레이터",
-                    description: "다양한 경제 상황을 체험하고,\n선택에 따른 결과를 확인해 보세요.",
-                },
-            },
+                "매달 나가는 지출과 대출 금액, 이자를 입력하면\n하루에 쓸 수 있는 금액을 달력에서 확인할 수 있어요.",
         },
-
         community: {
+            headline: "궁금한 것도, 고민도 함께 나눠요",
             description:
-                "한국 생활에 대해 궁금한 점이 있나요?\n나와 비슷한 경험을 가진 사람들과 이야기해 보세요.\n궁금한 점을 질문하고 다양한 경험을 들어보세요.\n내가 알고 있는 유용한 정보도 자유롭게 나눌 수 있어요.\n서로 돕고 소통하며 더 편안한 한국 생활을 만들어가요.",
-            features: {
-                community: {
-                    title: "커뮤니티",
-                    description: "궁금한 점을 질문하고,\n다른 이용자들과 경험과 정보를 나눠보세요.",
-                },
-            },
+                "한국 생활에서 궁금한 점을 물어보고,\n서로의 경험과 유용한 정보를 나눠보세요.",
+        },
+        myInquiries: {
+            headline: "내가 남긴 문의를 한눈에",
+            description:
+                "이전에 남긴 문의와 답변을 확인하고,\n궁금했던 내용을 언제든 다시 살펴보세요.",
+        },
+        privateInquiry: {
+            headline: "궁금한 점이 있다면 편하게 물어보세요",
+            description:
+                "서비스를 이용하다 궁금한 점이 생기면,\n1:1 문의를 통해 질문을 남겨보세요.",
+        },
+        faq: {
+            headline: "자주 묻는 질문은 빠르게 찾아보고",
+            description:
+                "다른 이용자들이 자주 묻는 질문과 답변을\n한곳에서 쉽고 빠르게 확인해 보세요.",
         },
     },
     // 두 계산기의 결과 요약 막대그래프 문구
@@ -156,13 +161,10 @@ const ko = {
         // 도움 기관 안내의 검색 조건과 제출 버튼 문구다.
         topicLabel: "상담 분야",
         keywordLabel: "상담 키워드",
-        requiredSuffix: " · 필수",
         chooseTopicAndKeywords: "상담 분야와 키워드를 선택해주세요.",
         chooseKeywords: "상담 키워드를 한 개 이상 선택해주세요.",
         selectedKeywords: "키워드 {{count}}개 선택됨",
         submit: "안내받기",
-        dbNotice:
-            "공식 출처를 바탕으로 등록한 기관을 조회합니다. 확인되지 않은 이용 조건은 ‘확인 필요’로 표시합니다.",
         searchLabel: "기관명·상담 내용 검색",
         searchPlaceholder: "예: 임금체불, 통장 만들기, 외국인등록",
         queryReady: "검색어와 현재 선택 조건으로 기관을 조회합니다.",
@@ -252,8 +254,7 @@ const ko = {
             keywords: "대표 상담 키워드",
             checkedAt: "자료 기준일",
         },
-        chooseTopicFirst: "상담 분야를 먼저 선택해주세요.",
-        multipleKeywords: "(여러 개 선택 가능)",
+        multipleKeywords: "(중복 선택 가능)",
 
         selectionLabels: {
             "출입국·행정": "출입국·행정",
@@ -316,14 +317,12 @@ const ko = {
 
         // 새 헤더 메뉴에서 사용할 한국어 문구
         mega: {
-            serviceIntroduction: "서비스 소개",
             serviceList: "서비스 목록",
             contact: "문의하기",
 
             // 클릭할 수 없는 연한 제목
-            guideIntroduction: "가이드 소개",
-            extendedServices: "확장 서비스",
-            contactGroup: "문의",
+            extendedServices: "확장 가이드",
+            contactGroup: "문의 가이드",
 
             // 아직 페이지를 연결하지 않은 문의 버튼
             myInquiries: "내 문의",
@@ -348,63 +347,6 @@ const ko = {
     },
 
     home: {
-        landing: {
-            title: "한국 생활의 길잡이, ForGuide",
-            description:
-                "낯선 생활에서 겪는 경제적 어려움을 해결하고, 내 상황에 맞는 도움을 찾아보세요!",
-            carouselLabel: "ForGuide 서비스 소개",
-            carouselRole: "순환 서비스 카드",
-            openIntroduction: "{{name}} 소개 보기",
-            select: "{{name}} 가운데로 이동",
-            indicatorLabel: "서비스 선택",
-            help: "마우스 휠을 내리면 왼쪽 카드, 올리면 오른쪽 카드가 가운데로 이동합니다. 가운데 두 카드는 소개 페이지, 세부 기능 글씨는 해당 서비스로 연결됩니다. 양옆 카드나 원을 누르거나 좌우 방향키로 선택할 수도 있습니다.",
-            current: "{{name}}, 전체 {{total}}개 중 {{current}}번째 서비스",
-            currentPair: "{{left}} · {{right}}, 전체 {{total}}개 서비스",
-        },
-        banner: {
-            eyebrow: "한국 생활의 길잡이, ForGuide",
-            title: "당신의 행복한 한국 생활을 돕는 곳",
-            description:
-                "임금·계좌·생활비·상환·취업까지. 낯선 생활에서 겪는 어려움을 정리하고, 내 상황에 맞는 도움을 찾아보세요.",
-        },
-
-        services: {
-            eyebrow: "ForGuide 서비스",
-            title: "어떤 도움이 필요하세요?",
-            description: "한국 생활에 필요한 여섯 가지 서비스를 한눈에 살펴보세요.",
-        },
-
-        categories: {
-            counseling: {
-                description: "내 상황에 맞는 상담을 찾고, 상담에 필요한 준비와 설명을 정리하세요.",
-                cardDescription:
-                    "내 상황에 맞는 상담을 찾고,\n상담에 필요한 준비와 설명을 정리하세요.",
-            },
-            recommendation: {
-                description: "대출·보험·계좌를 비교하고, 목적에 맞는 금융 서비스를 살펴보세요.",
-                cardDescription:
-                    "대출·보험·계좌를 비교하고,\n목적에 맞는 금융 서비스를 살펴보세요.",
-            },
-            repayment: {
-                description: "월 상환액과 총이자, 상환 일정을 확인하며 자금 계획을 세워보세요.",
-                cardDescription:
-                    "월 상환액과 총이자, 상환 일정을 확인하며\n자금 계획을 세워보세요.",
-            },
-            employment: {
-                description: "취업 준비자료와 일자리 정보를 살펴보고, 다음 단계를 준비하세요.",
-                cardDescription: "취업 준비자료와 일자리 정보를 살펴보고,\n다음 단계를 준비하세요.",
-            },
-            simulator: {
-                description: "상환일과 수입·지출을 달력에 정리하고 하루 지출 계획을 세워보세요.",
-                cardDescription:
-                    "상환일과 수입·지출을 달력에 정리하고,\n하루 지출 계획을 세워보세요.",
-            },
-            community: {
-                description: "한국 생활의 경험과 정보를 나누고, 서로의 이야기를 만나보세요.",
-                cardDescription: "한국 생활의 경험과 정보를 나누고,\n서로의 이야기를 만나보세요.",
-            },
-        },
-
         features: {
             counseling: {
                 consultation: "도움 기관 안내",

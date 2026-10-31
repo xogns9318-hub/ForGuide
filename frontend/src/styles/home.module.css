@@ -1,476 +1,497 @@
 .home {
-    --logo-strong: #78d5bc;
-    --logo-light: #b6eada;
-    --intro-top-gap: 48px;
-    --cards-top-gap: 48px;
-    display: flex;
-    flex: 1;
-    flex-direction: column;
+    /* 헤더 로고의 투명 여백과 심볼 축소 비율을 반영한다. */
+    --home-logo-width: 192px;
+
     width: 100%;
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: clamp(56px, 7vw, 96px) var(--page-padding) clamp(80px, 9vw, 128px);
+    padding-left: calc(var(--page-padding) + var(--home-logo-width) * 0.064);
+}
+
+.section {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: clamp(32px, 6vw, 88px);
+}
+
+.section + .section {
+    margin-top: clamp(80px, 9vw, 128px);
+}
+
+.content {
+    grid-column: 1;
     min-width: 0;
-    min-height: 0;
-    overflow: clip;
-    container-type: size;
-    background: var(--background);
+    text-align: left;
 }
 
-.intro {
-    flex-shrink: 0;
-    padding:
-        min(var(--intro-top-gap), 7cqh) min(32px, 4vw) min(8px, 1.2cqh);
-    text-align: center;
+.right .content {
+    grid-column: 2;
+    text-align: right;
 }
 
-.intro h1 {
-    margin: 0;
+.sectionTitle {
+    margin: 0 0 36px;
     color: var(--primary);
-    font-size: min(34px, 5.5vw, 7cqh);
+    font-size: clamp(30px, 3vw, 42px);
     font-weight: 800;
-    line-height: 1.25;
-    word-break: keep-all;
-    text-wrap: balance;
+    line-height: 1.3;
 }
 
-.intro p {
-    max-width: 1040px;
-    margin: min(10px, 1.5cqh) auto 0;
-    color: var(--muted);
-    font-size: min(19px, 3.6vw, 3.8cqh);
-    line-height: 1.6;
-    word-break: keep-all;
-    text-wrap: balance;
+.features {
+    display: grid;
+    gap: 42px;
 }
 
-.carousel {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    min-width: 0;
-    min-height: 0;
-}
-
-.stage {
-    position: relative;
-    flex: 1;
-    width: 100%;
-    min-height: 0;
-    overflow: visible;
-    isolation: isolate;
-    touch-action: pan-y pinch-zoom;
-    outline: none;
-}
-
-.stage:focus-visible {
-    outline: 1px solid var(--primary);
-    outline-offset: -5px;
-}
-
-.card {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: var(--home-card-width);
-    height: var(--home-card-height);
-    border: 1px solid var(--logo-light);
-    border-radius: calc(24px * var(--home-card-scale));
-    background: #ffffff;
+.featureTitle {
+    margin: 0 0 16px;
     color: var(--primary);
-    box-shadow: 0 18px 44px rgb(28 91 70 / 7%);
-    overflow: hidden;
-    transform-origin: center;
-    will-change: transform, opacity;
+    font-size: clamp(23px, 2vw, 28px);
+    font-weight: 750;
+    line-height: 1.45;
 }
 
-.card::after {
-    position: absolute;
-    right: calc(-44px * var(--home-card-scale));
-    bottom: calc(-66px * var(--home-card-scale));
-    width: calc(180px * var(--home-card-scale));
-    height: calc(180px * var(--home-card-scale));
-    border: calc(24px * var(--home-card-scale)) solid var(--logo-light);
-    border-top-color: var(--logo-strong);
-    border-radius: 50%;
-    opacity: 0.28;
-    content: "";
-    pointer-events: none;
+.headline {
+    margin: 0 0 12px;
+    color: var(--primary);
+    font-size: clamp(19px, 1.6vw, 22px);
+    font-weight: 700;
+    line-height: 1.6;
 }
 
-.cardContent {
+.description {
+    margin: 0;
+    color: var(--muted);
+    font-size: clamp(16px, 1.35vw, 18px);
+    line-height: 1.85;
+    white-space: pre-line;
+}
+
+.sectionTitle,
+.featureTitle,
+.headline,
+.description {
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+}
+
+.featureLink {
     position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    width: var(--home-base-width);
-    height: var(--home-base-height);
-    padding: 32px;
-    transform: scale(var(--home-card-scale));
-    transform-origin: top left;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
-    border-radius: 24px;
-}
-
-.introductionLink {
-    display: block;
+    display: inline-block;
     color: inherit;
     text-decoration: none;
 }
 
-.introductionLink::after {
-    position: absolute;
-    z-index: 1;
-    inset: 0;
-    border-radius: inherit;
-    content: "";
-}
-
-.introductionLink:focus-visible {
-    outline: none;
-}
-
-.introductionLink:focus-visible::after {
-    outline: 2px solid var(--primary);
-    outline-offset: -5px;
-}
-
-.icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, rgb(120 213 188 / 24%), rgb(182 234 218 / 48%));
-    margin-bottom: 18px;
-    color: var(--primary);
-}
-
-.icon svg {
-    width: 30px;
-    height: 30px;
-}
-
-.introductionLink h2 {
-    margin: 0;
-    font-size: 32px;
-    line-height: 1.4;
-    word-break: keep-all;
-}
-
-.introductionLink p {
-    margin: 14px 0 0;
-    font-size: 17px;
-    line-height: 1.75;
-    word-break: keep-all;
-}
-
-.features {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 20px;
-    margin: auto 0 0;
-    padding: 22px 0 0;
-    list-style: none;
-    pointer-events: none;
-}
-
-.features a {
-    position: relative;
-    pointer-events: auto;
-    display: inline-block;
-    padding: 3px 0;
-    border: 0;
-    background: transparent;
-    color: var(--primary);
-    font-size: 15px;
-    font-weight: 600;
-    line-height: 1.65;
-    text-decoration: none;
-    word-break: keep-all;
-}
-
-/* 글자 가운데에서 양옆으로 밑줄을 펼친다. */
-.features a::after {
+.featureLink::after {
     position: absolute;
     right: 0;
-    bottom: 0;
+    bottom: -4px;
     left: 0;
-    height: 1px;
+    height: 2px;
     background: currentColor;
+    content: "";
     transform: scaleX(0);
     transform-origin: center;
-    transition: transform 260ms ease;
-    content: "";
-    pointer-events: none;
+    transition: transform 220ms ease;
 }
 
-.features a:hover::after,
-.features a:focus-visible::after {
+.featureLink:hover::after,
+.featureLink:focus-visible::after {
     transform: scaleX(1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .features a::after {
-        transition: none;
-    }
-}
-
-.sideSelect {
-    position: absolute;
-    z-index: 3;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    border: 0;
-    border-radius: inherit;
-    background: transparent;
-    cursor: pointer;
-}
-
-.sideSelect:focus-visible {
-    outline: 2px solid var(--primary);
-    outline-offset: -5px;
-}
-
-.indicators {
-    position: relative;
-    flex-shrink: 0;
-    width: calc(124px * var(--home-ui-scale));
-    height: calc(44px * var(--home-ui-scale));
-    margin: 0 auto calc(8px * var(--home-ui-scale));
-    overflow: hidden;
-}
-
-.indicator {
-    position: absolute;
-    top: calc(2px * var(--home-ui-scale));
-    left: 50%;
-    display: grid;
-    place-items: center;
-    width: calc(24px * var(--home-ui-scale));
-    height: calc(24px * var(--home-ui-scale));
-    margin: 0;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: transparent;
-    cursor: pointer;
-    will-change: transform, opacity;
-}
-
-.indicator::after {
-    width: var(--dot-size);
-    height: var(--dot-size);
-    border-radius: 50%;
-    background: var(--dot-color);
-    content: "";
-}
-
-.indicator:disabled {
-    cursor: default;
-}
-
-.indicator:focus-visible {
-    outline: 1px solid var(--primary);
-    outline-offset: 1px;
 }
 
 .srOnly {
     position: absolute;
     width: 1px;
     height: 1px;
-    margin: -1px;
-    padding: 0;
     overflow: hidden;
-    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
     white-space: nowrap;
-    border: 0;
 }
 
 @media (max-width: 768px) {
-    .card {
-        border-radius: calc(20px * var(--home-card-scale));
+    .section {
+        grid-template-columns: minmax(0, 1fr);
     }
 
-    .cardContent {
-        padding: 24px;
-        border-radius: 20px;
+    .right .content {
+        grid-column: 1;
     }
 
-    .icon {
-        margin-bottom: 12px;
+    .section + .section {
+        margin-top: 72px;
     }
 
-    .introductionLink h2 {
-        font-size: 26px;
-    }
-
-    .introductionLink p {
-        font-size: 15px;
+    .sectionTitle {
+        margin-bottom: 28px;
     }
 
     .features {
-        gap: 6px 14px;
-        padding-top: 18px;
+        gap: 36px;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-
-    .card,
-    .indicator {
-        will-change: auto;
+    .featureLink::after {
+        transition: none;
     }
 }
 
-/* 홈 카드 최종 크기와 가독성 조정 */
-.carousel {
-    padding-top: min(var(--cards-top-gap), 12cqh);
+@media (max-width: 1024px) {
+    .home {
+        --home-logo-width: 160px;
+    }
 }
 
-.card {
-    box-shadow:
-        0 3px 8px rgb(28 91 70 / 4%),
-        0 28px 32px -18px rgb(28 91 70 / 26%);
+@media (max-width: 480px) {
+    .home {
+        --home-logo-width: 128px;
+    }
 }
 
-/* 보이는 원호 중간에서 두 민트색이 바뀌도록 배치 */
-.card::before {
+.hero,
+.section {
+    scroll-margin-top: calc(var(--header-height, 88px) + 16px);
+}
+
+/* 첫 화면은 흰 배경에서 오리와 설명만 표시한다. */
+.hero {
+    --home-duck-width: clamp(160px, 19vw, 260px);
+
+    width: calc(100% - 32px);
+    min-height: max(520px, calc(100svh - var(--header-height, 88px) - 24px));
+    margin: 8px auto 16px;
+    padding: 48px 24px;
+    overflow: hidden;
+    border-radius: var(--panel-radius);
+    background: var(--background);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 32px;
+}
+
+.duckStage {
+    position: relative;
+    width: 100%;
+    height: calc(var(--home-duck-width) * 1.2 + 16px);
+}
+
+.duckWalker {
     position: absolute;
-    z-index: 0;
-    top: calc(-110px * var(--home-card-scale));
-    right: calc(-100px * var(--home-card-scale));
-    bottom: auto;
-    left: auto;
-    width: calc(320px * var(--home-card-scale));
-    height: calc(320px * var(--home-card-scale));
-    border: calc(24px * var(--home-card-scale)) solid var(--logo-light);
-    border-top-color: var(--logo-strong);
+    left: 50%;
+    top: 0;
+    width: var(--home-duck-width);
+    height: calc(var(--home-duck-width) * 1.2);
+    margin-left: calc(var(--home-duck-width) / -2);
+    transform: translateX(calc(-50vw - var(--home-duck-width)));
+    animation: duckTravel 8s linear infinite;
+}
+
+.frontPose,
+.sidePose {
+    position: absolute;
+    inset: 0;
+}
+
+.frontPose {
+    opacity: 0;
+    animation: frontPose 8s linear infinite;
+}
+
+.sidePose {
+    animation: sidePose 8s linear infinite;
+}
+
+.frontPose .heroDuck,
+.walkingDuck {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.walkingDuck {
+    animation: walkingBob 160ms ease-in-out infinite alternate;
+}
+
+.nearWing,
+.farWing,
+.nearFoot,
+.farFoot {
+    transform-box: view-box;
+}
+
+.nearWing {
+    transform-origin: 20px 28px;
+    animation: wingSwing 320ms ease-in-out infinite alternate;
+}
+
+.farWing {
+    transform-origin: 18px 28px;
+    animation: wingSwing 320ms ease-in-out infinite alternate-reverse;
+}
+
+.nearFoot {
+    animation: footStep 320ms ease-in-out infinite alternate-reverse;
+}
+
+.farFoot {
+    animation: footStep 320ms ease-in-out infinite alternate;
+}
+
+.heroDuck [data-duck-part="head"] {
+    animation: homeHeadBow 8s steps(6, end) infinite;
+}
+
+.heroDuck [data-duck-part="body"] {
+    animation: homeBodyBow 8s steps(6, end) infinite;
+}
+
+.heroDuck [data-duck-part="faceUp"] {
+    animation: homeFaceUp 8s steps(1, end) infinite;
+}
+
+.heroDuck [data-duck-part="faceDown"] {
+    animation: homeFaceDown 8s steps(1, end) infinite;
+}
+
+.heroMessage {
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.heroMessage p {
+    margin: 0;
+    color: var(--muted);
+    font-size: clamp(16px, 1.7vw, 20px);
+    line-height: 1.8;
+    word-break: keep-all;
+}
+
+/* 원 사이 중심 간격을 20px로 맞춘다. */
+.sectionNav {
+    position: fixed;
+    top: 50%;
+    left: max(4px, calc((100vw - var(--page-width)) / 2 - 44px));
+    z-index: 40;
+    display: grid;
+    gap: 0;
+    transform: translateY(-50%);
+}
+
+.sectionJump {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 20px;
     border-radius: 50%;
-    background: none;
-    opacity: 0.28;
-    transform: rotate(-90deg);
-    content: "";
+}
+
+.sectionDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--line);
+    transition: transform 180ms ease, background-color 180ms ease;
+}
+
+.sectionJump[aria-current="location"] .sectionDot,
+.sectionJump:hover .sectionDot,
+.sectionJump:focus-visible .sectionDot {
+    background: var(--primary);
+    transform: scale(1.5);
+}
+
+.sectionLabel {
+    position: absolute;
+    left: calc(100% + 6px);
+    top: 50%;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgb(255 255 255 / 96%);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.6;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translate(4px, -50%);
+    transition: opacity 180ms ease, transform 180ms ease;
     pointer-events: none;
 }
 
-/* 각 요소를 실제 표시 크기로 그린다. */
-.cardContent {
-    width: 100%;
-    height: 100%;
-    padding:
-        calc(40px * var(--home-card-scale)) calc(34px * var(--home-card-scale)) calc(30px * var(--home-card-scale));
-    transform: none;
+/* 현재 구역 이름은 항상 표시한다. */
+.sectionJump[aria-current="location"] .sectionLabel,
+.sectionJump:hover .sectionLabel,
+.sectionJump:focus-visible .sectionLabel {
+    opacity: 1;
+    transform: translate(0, -50%);
 }
 
-.icon {
-    justify-content: flex-start;
-    width: calc(60px * var(--home-card-scale));
-    height: calc(60px * var(--home-card-scale));
-    margin:
-        calc(8px * var(--home-card-scale)) 0 calc(20px * var(--home-card-scale));
-    border-radius: 0;
-    background: none;
+/* 2초 입장 → 3초 인사 → 2초 퇴장 → 1초 대기 */
+@keyframes duckTravel {
+    0% {
+        transform: translateX(calc(-50vw - var(--home-duck-width)));
+    }
+
+    25%,
+    62.5% {
+        transform: translateX(0);
+    }
+
+    87.5%,
+    100% {
+        transform: translateX(calc(50vw + var(--home-duck-width)));
+    }
 }
 
-.icon svg {
-    width: calc(44px * var(--home-card-scale));
-    height: calc(44px * var(--home-card-scale));
+/* 이동할 때는 옆모습, 중앙에서는 기존 정면 오리로 전환한다. */
+@keyframes sidePose {
+    0%, 25%, 62.5%, 100% {
+        opacity: 1;
+    }
+
+    29%, 58% {
+        opacity: 0;
+    }
 }
 
-.introductionLink h2 {
-    margin: calc(8px * var(--home-card-scale)) 0 0;
-    font-size: calc(36px * var(--home-card-scale));
-    line-height: 1.3;
+@keyframes frontPose {
+    0%, 25%, 62.5%, 100% {
+        opacity: 0;
+    }
+
+    29%, 58% {
+        opacity: 1;
+    }
 }
 
-.introductionLink p {
-    margin: calc(20px * var(--home-card-scale)) 0 0;
-    font-size: calc(23px * var(--home-card-scale));
-    line-height: 1.6;
-    white-space: pre-line;
+@keyframes walkingBob {
+    from {
+        transform: translateY(0);
+    }
+
+    to {
+        transform: translateY(-2px);
+    }
 }
 
-.features {
-    gap:
-        calc(12px * var(--home-card-scale)) calc(32px * var(--home-card-scale));
-    padding-top: calc(22px * var(--home-card-scale));
+@keyframes wingSwing {
+    from {
+        transform: rotate(-18deg);
+    }
+
+    to {
+        transform: rotate(18deg);
+    }
 }
 
-.features a {
-    padding: calc(3px * var(--home-card-scale)) 0;
-    font-size: calc(19px * var(--home-card-scale));
-    line-height: 1.5;
+@keyframes footStep {
+    from {
+        transform: translate(-1px, 0);
+    }
+
+    to {
+        transform: translate(1px, -1px);
+    }
 }
 
-.indicators {
-    margin: 0 auto calc(24px * var(--home-ui-scale));
+@keyframes homeHeadBow {
+    0%, 29%, 58%, 100% {
+        transform: translateY(0) scaleY(1);
+    }
+
+    38%, 47% {
+        transform: translateY(7px) scaleY(0.8);
+    }
+}
+
+@keyframes homeBodyBow {
+    0%, 29%, 58%, 100% {
+        transform: scaleY(1);
+    }
+
+    38%, 47% {
+        transform: scaleY(0.94);
+    }
+}
+
+@keyframes homeFaceUp {
+    0%, 34%, 52%, 100% {
+        opacity: 1;
+    }
+
+    35%, 51% {
+        opacity: 0;
+    }
+}
+
+@keyframes homeFaceDown {
+    0%, 34%, 52%, 100% {
+        opacity: 0;
+    }
+
+    35%, 51% {
+        opacity: 1;
+    }
 }
 
 @media (max-width: 768px) {
-    .card::before {
-        top: calc(-68px * var(--home-card-scale));
-        right: calc(-64px * var(--home-card-scale));
-        width: calc(220px * var(--home-card-scale));
-        height: calc(220px * var(--home-card-scale));
+    .hero {
+        width: calc(100% - 16px);
+        min-height: max(440px, calc(100svh - var(--header-height, 88px) - 16px));
+        padding: 32px 20px;
+        gap: 24px;
     }
 
-    .cardContent {
-        padding:
-            calc(32px * var(--home-card-scale)) calc(24px * var(--home-card-scale)) calc(24px * var(--home-card-scale));
+    .sectionNav {
+        left: 2px;
     }
 
-    .icon {
-        width: calc(56px * var(--home-card-scale));
-        height: calc(56px * var(--home-card-scale));
-        margin:
-            calc(6px * var(--home-card-scale)) 0 calc(18px * var(--home-card-scale));
-    }
-
-    .icon svg {
-        width: calc(40px * var(--home-card-scale));
-        height: calc(40px * var(--home-card-scale));
-    }
-
-    .introductionLink h2 {
-        font-size: calc(30px * var(--home-card-scale));
-    }
-
-    .introductionLink p {
-        font-size: calc(15px * var(--home-card-scale));
-    }
-
-    .features {
-        gap:
-            calc(10px * var(--home-card-scale)) calc(24px * var(--home-card-scale));
-        padding-top: calc(18px * var(--home-card-scale));
-    }
-
-    .features a {
-        font-size: calc(16px * var(--home-card-scale));
+    .sectionJump {
+        width: 20px;
     }
 }
 
-/* 일반 노트북 화면에서 지나친 글씨 축소 방지 */
-@media (min-width: 1200px) and (min-height: 700px) {
-    .icon svg {
-        width: clamp(28px, calc(44px * var(--home-card-scale)), 42px);
-        height: clamp(28px, calc(44px * var(--home-card-scale)), 42px);
+@media (prefers-reduced-motion: reduce) {
+    .duckWalker,
+    .frontPose,
+    .sidePose,
+    .walkingDuck,
+    .nearWing,
+    .farWing,
+    .nearFoot,
+    .farFoot,
+    .heroDuck [data-duck-part] {
+        animation: none;
     }
 
-    .introductionLink h2 {
-        font-size: clamp(22px, calc(36px * var(--home-card-scale)), 34px);
+    .duckWalker {
+        transform: translateX(0);
     }
 
-    .introductionLink p {
-        font-size: clamp(15px, calc(23px * var(--home-card-scale)), 22px);
+    .sidePose {
+        opacity: 0;
     }
 
-    .features a {
-        font-size: clamp(13px, calc(19px * var(--home-card-scale)), 18px);
+    .frontPose {
+        opacity: 1;
+    }
+
+    .heroDuck [data-duck-part="faceUp"] {
+        opacity: 1;
+    }
+
+    .heroDuck [data-duck-part="faceDown"] {
+        opacity: 0;
+    }
+
+    .sectionDot,
+    .sectionLabel {
+        transition: none;
     }
 }
