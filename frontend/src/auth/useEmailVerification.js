@@ -15,7 +15,7 @@ export function normalizeEmail(value) {
 const emptyCheck = { status: "idle", email: "", token: "", expiresAt: 0, resendAt: 0 };
 
 // 이메일 인증 코드 받기·확인 (회원가입·비밀번호 찾기 공통)
-// purpose: "SIGNUP" | "PASSWORD_RESET"
+// purpose: "SIGNUP" | "PASSWORD_RESET" | "FIND_ID"
 // 이메일 칸의 오류는 화면이 관리한다: sendCode가 돌려준 메시지를 화면이 이메일 칸 아래에 보여 준다
 export function useEmailVerification(purpose) {
     const [check, setCheck] = useState(emptyCheck);

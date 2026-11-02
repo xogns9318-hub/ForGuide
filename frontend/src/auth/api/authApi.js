@@ -51,6 +51,12 @@ export async function resetPassword({ email, verificationToken, newPassword }) {
     return client.post("/auth/password/reset", { email, verificationToken, newPassword });
 }
 
+// 아이디 찾기 → { maskedLoginId } (예: demouser → demo***)
+// verificationToken: verifyEmailCode({ purpose: "FIND_ID" })로 받은 토큰 (한 번만 쓸 수 있다)
+export async function findLoginId({ email, verificationToken }) {
+    return client.post("/auth/find-id", { email, verificationToken });
+}
+
 // 로그인 → { accessToken, member }
 // 성공하면 스토어에 로그인 상태를 저장한다. refresh token은 서버가 HttpOnly 쿠키로 내려준다.
 export async function login({ loginId, password }) {

@@ -4,6 +4,8 @@ import com.example.forguide.common.exception.ApiException;
 import com.example.forguide.common.exception.ErrorCode;
 import com.example.forguide.common.security.JwtProvider;
 import com.example.forguide.member.dto.AuthResponse;
+import com.example.forguide.member.dto.FindIdRequest;
+import com.example.forguide.member.dto.FindIdResponse;
 import com.example.forguide.member.dto.LoginRequest;
 import com.example.forguide.member.dto.MemberResponse;
 import com.example.forguide.member.dto.PasswordChangeRequest;
@@ -23,7 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * 회원가입·로그인·재발급·로그아웃·비밀번호 변경·비밀번호 찾기.
+ * 회원가입·로그인·재발급·로그아웃·비밀번호 변경·비밀번호 찾기·아이디 찾기.
  *
  * refresh token 규칙
  * - 원문은 무작위 32바이트, 쿠키로만 내려준다
@@ -193,11 +195,30 @@ public class AuthService {
      */
     @Transactional
     public PasswordResetResponse resetPassword(PasswordResetRequest request) {
-        String email = request.email().trim().toLowerCase(Locale.ROOT);
+        MemberRow member = verifiedMember(request.email(), VerificationPurpose.PASSWORD_RESET,
+                request.verificationToken());
 
-        // 토큰 사용 처리 (이메일·목적이 맞고, 만료 전이고, 처음 쓰는 토큰이어야 한다)
-        // 아래가 실패하면 같은 트랜잭션이라 토큰 사용도 되돌려진다
-        emailVerificationService.consume(email, VerificationPurpose.PASSWORD_RESET, request.verificationToken());
+        memberMapper.updatePassword(member.getMemberId(), passwordEncoder.encode(request.newPassword()));
+        refreshTokenMapper.deleteByMemberId(member.getMemberId());
+        loginAttemptService.reset(member.getLoginId());
+        return new PasswordResetResponse(member.getLoginId());
+    }
+
+    /**
+     * 아이디 찾기 → 일부를 가린 아이디
+     * 이메일 인증(FIND_ID) 토큰으로 본인임을 확인한 뒤 알려 준다. 토큰은 한 번만 쓸 수 있다.
+     */
+    @Transactional
+    public FindIdResponse findLoginId(FindIdRequest request) {
+        MemberRow member = verifiedMember(request.email(), VerificationPurpose.FIND_ID, request.verificationToken());
+        return new FindIdResponse(maskLoginId(member.getLoginId()));
+    }
+
+    // 계정 찾기 공통: 인증 토큰을 사용 처리하고 그 이메일의 회원을 찾는다
+    // (이메일·목적이 맞고, 만료 전이고, 처음 쓰는 토큰이어야 한다. 이후가 실패하면 같은 트랜잭션이라 토큰 사용도 되돌려진다)
+    private MemberRow verifiedMember(String rawEmail, VerificationPurpose purpose, String token) {
+        String email = rawEmail.trim().toLowerCase(Locale.ROOT);
+        emailVerificationService.consume(email, purpose, token);
 
         MemberRow member = memberMapper.findByEmail(email);
         if (member == null) {
@@ -205,11 +226,13 @@ public class AuthService {
             throw new ApiException(ErrorCode.EMAIL_NOT_VERIFIED,
                     Map.of("email", ErrorCode.EMAIL_NOT_VERIFIED.getDefaultMessage()));
         }
+        return member;
+    }
 
-        memberMapper.updatePassword(member.getMemberId(), passwordEncoder.encode(request.newPassword()));
-        refreshTokenMapper.deleteByMemberId(member.getMemberId());
-        loginAttemptService.reset(member.getLoginId());
-        return new PasswordResetResponse(member.getLoginId());
+    // 아이디 가리기: 앞 4자(아이디가 6자 이하면 앞 2자)만 보이고 뒤는 항상 "***" (길이도 드러나지 않게)
+    static String maskLoginId(String loginId) {
+        int visible = loginId.length() <= 6 ? 2 : 4;
+        return loginId.substring(0, visible) + "***";
     }
 
     /**

@@ -228,9 +228,11 @@ export default function Login() {
                     </button>
                 </div>
 
-                {/* 비밀번호를 잊었으면 재설정으로, 계정이 없으면 회원가입으로 */}
+                {/* 아이디·비밀번호를 잊었으면 계정 찾기로, 계정이 없으면 회원가입으로 */}
                 <p className={styles.switch}>
-                    <Link to="/password/reset">{t("auth.login.forgotPassword")}</Link>
+                    <Link to="/find-id">{t("auth.login.findId")}</Link>
+                    <span aria-hidden="true"> · </span>
+                    <Link to="/password/reset">{t("auth.login.findPassword")}</Link>
                 </p>
                 <p className={styles.switch}>
                     {t("auth.login.noAccount")}

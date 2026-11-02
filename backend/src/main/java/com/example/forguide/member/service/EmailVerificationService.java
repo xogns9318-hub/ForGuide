@@ -83,10 +83,10 @@ public class EmailVerificationService {
         row.setCreatedAt(now);
         verificationMapper.insert(row);
 
-        // 비밀번호 재설정: 가입되지 않은 이메일이면 기록만 남기고 실제로 보내지 않는다
+        // 계정 찾기(비밀번호 재설정·아이디 찾기): 가입되지 않은 이메일이면 기록만 남기고 실제로 보내지 않는다
         // 응답·재발송 간격·하루 한도는 가입된 이메일과 같게 둬서, 이 화면으로 가입 여부를 알아낼 수 없게 한다
         // (메일 발송 시간만큼 응답 시간은 다를 수 있다)
-        if (purpose == VerificationPurpose.PASSWORD_RESET && !registered) {
+        if (purpose != VerificationPurpose.SIGNUP && !registered) {
             return new SendResult(CODE_TTL.toSeconds(), RESEND_INTERVAL.toSeconds());
         }
 
