@@ -8,10 +8,7 @@ const ja = {
         language: "言語",
 
         mega: {
-            introduction: "ガイド紹介",
-            guides: "ガイド一覧",
             contact: "お問い合わせ",
-            introductionList: "紹介一覧",
             contactGroup: "お問い合わせ",
             myInquiries: "お問い合わせ履歴",
             privateInquiry: "1対1お問い合わせ",
@@ -21,6 +18,32 @@ const ja = {
             open: "メニューを開く",
             close: "メニューを閉じる",
         },
+    },
+
+    notification: {
+        bellAria: "通知、未読 {{count}} 件",
+        title: "通知",
+        markAllRead: "すべて既読にする",
+        loading: "通知を読み込んでいます。",
+        empty: "新しい通知はありません。",
+        loadError: "通知を読み込めませんでした。",
+        retry: "再試行",
+        loadMore: "通知をもっと見る",
+        unread: "未読",
+        unknownActor: "不明なユーザー",
+
+        postLiked: "{{actor}}さんがあなたの投稿に共感しました。",
+        postUnliked: "{{actor}}さんがあなたの投稿の共感を取り消しました。",
+        postReposted: "{{actor}}さんがあなたの投稿をリポストしました。",
+        postUnreposted: "{{actor}}さんがあなたの投稿のリポストを取り消しました。",
+        postCommented: "{{actor}}さんがあなたの投稿にコメントしました。",
+        commentReplied: "{{actor}}さんがあなたのコメントに返信しました。",
+        commentMentioned: "{{actor}}さんがあなたをメンションしました。",
+
+        popularTop10: "あなたの投稿が人気投稿の10位になりました。",
+        popularTop3: "あなたの投稿が人気投稿の3位になりました。",
+        popularTop2: "あなたの投稿が人気投稿の2位になりました。",
+        popularTop1: "あなたの投稿が人気投稿の1位になりました。",
     },
 
     navigation: {
@@ -33,44 +56,6 @@ const ja = {
     },
 
     home: {
-        banner: {
-            eyebrow: "韓国生活のガイド、ForGuide",
-            title: "あなたの幸せな韓国生活をサポート",
-            description:
-                "給与・銀行口座・生活費・ローン返済・就職まで。慣れない生活で直面する困りごとを整理し、ご自身の状況に合ったサポートを見つけましょう。",
-        },
-
-        services: {
-            eyebrow: "ForGuideのサービス",
-            title: "どのようなサポートが必要ですか？",
-            description: "韓国生活に役立つ6つのサービスをまとめてご紹介します。",
-        },
-
-        categories: {
-            counseling: {
-                description:
-                    "ご自身の状況に合った相談先を探し、相談に必要な準備や説明を整理しましょう。",
-            },
-            recommendation: {
-                description:
-                    "ローン・保険・銀行口座を比較し、目的に合った金融サービスを確認しましょう。",
-            },
-            repayment: {
-                description:
-                    "毎月の返済額、利息総額、返済スケジュールを確認し、資金計画を立てましょう。",
-            },
-            employment: {
-                description: "就職準備に役立つ資料や求人情報を確認し、次のステップに備えましょう。",
-            },
-            simulator: {
-                description:
-                    "返済日や収入・支出をカレンダーに記録し、毎日の支出計画を立てましょう。",
-            },
-            community: {
-                description: "韓国生活の経験や情報を共有し、さまざまな人と交流しましょう。",
-            },
-        },
-
         features: {
             counseling: {
                 consultation: "相談窓口のご案内",

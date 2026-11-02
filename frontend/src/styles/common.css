@@ -150,26 +150,11 @@ h3 {
     padding: 28px var(--page-padding) 38px;
 }
 
-/* 홈 화면만 전체 너비를 사용하고 기존 페이지 여백을 해제한다. */
+/* 홈도 콘텐츠 길이에 따라 자연스럽게 세로로 스크롤한다. */
 .page-main.page-main--home {
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
+    min-width: 0;
     max-width: none;
     padding: 0;
-    overflow: clip;
-}
-
-/* 홈에서만 한 화면 높이를 사용한다. 다른 페이지의 푸터·스크롤은 유지한다. */
-.app-layout:has(> .page-main--home) {
-    height: 100dvh;
-    min-height: 0;
-}
-
-/* 홈에서는 바깥 스크롤만 숨기고 공통 가로 기준은 유지한다. */
-html:has(.page-main--home),
-html:has(.page-main--home) body {
-    overflow: hidden;
 }
 
 /* 배너와 본문 사이 간격 */

@@ -8,10 +8,7 @@ const zh = {
         language: "语言",
 
         mega: {
-            introduction: "指南介绍",
-            guides: "指南目录",
             contact: "联系我们",
-            introductionList: "介绍目录",
             contactGroup: "咨询",
             myInquiries: "我的咨询",
             privateInquiry: "一对一咨询",
@@ -21,6 +18,32 @@ const zh = {
             open: "打开菜单",
             close: "关闭菜单",
         },
+    },
+
+    notification: {
+        bellAria: "通知，{{count}} 条未读",
+        title: "通知",
+        markAllRead: "全部标为已读",
+        loading: "正在加载通知。",
+        empty: "没有新通知。",
+        loadError: "无法加载通知。",
+        retry: "重试",
+        loadMore: "查看更多通知",
+        unread: "未读",
+        unknownActor: "未知用户",
+
+        postLiked: "{{actor}} 对您的帖子表示了共鸣。",
+        postUnliked: "{{actor}} 取消了对您帖子的共鸣。",
+        postReposted: "{{actor}} 转发了您的帖子。",
+        postUnreposted: "{{actor}} 取消了对您帖子的转发。",
+        postCommented: "{{actor}} 评论了您的帖子。",
+        commentReplied: "{{actor}} 回复了您的评论。",
+        commentMentioned: "{{actor}} 提到了您。",
+
+        popularTop10: "您的帖子成为热门帖子第10名。",
+        popularTop3: "您的帖子成为热门帖子第3名。",
+        popularTop2: "您的帖子成为热门帖子第2名。",
+        popularTop1: "您的帖子成为热门帖子第1名。",
     },
 
     navigation: {
@@ -33,40 +56,6 @@ const zh = {
     },
 
     home: {
-        banner: {
-            eyebrow: "韩国生活指南，ForGuide",
-            title: "助您在韩国开启更幸福的生活",
-            description:
-                "从工资、银行账户、生活费、贷款还款到就业，帮助您梳理在陌生环境中遇到的困难，找到适合自身情况的支持与帮助。",
-        },
-
-        services: {
-            eyebrow: "ForGuide 服务",
-            title: "您需要什么帮助？",
-            description: "一站式了解为您在韩国生活提供支持的六项服务。",
-        },
-
-        categories: {
-            counseling: {
-                description: "寻找适合您当前情况的咨询服务，并整理咨询所需的准备事项和说明。",
-            },
-            recommendation: {
-                description: "比较贷款、保险和银行账户，了解符合您需求的金融服务。",
-            },
-            repayment: {
-                description: "查看每月还款额、总利息和还款计划，合理规划资金。",
-            },
-            employment: {
-                description: "了解求职准备资料和招聘信息，为下一步做好准备。",
-            },
-            simulator: {
-                description: "在日历中记录还款日期、收入和支出，制定每日支出计划。",
-            },
-            community: {
-                description: "分享在韩国生活的经验和信息，交流彼此的故事。",
-            },
-        },
-
         features: {
             counseling: {
                 consultation: "帮助机构指南",

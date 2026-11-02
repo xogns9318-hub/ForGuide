@@ -8,10 +8,7 @@ const vi = {
         language: "Ngôn ngữ",
 
         mega: {
-            introduction: "Giới thiệu hướng dẫn",
-            guides: "Danh sách hướng dẫn",
             contact: "Liên hệ",
-            introductionList: "Danh sách giới thiệu",
             contactGroup: "Liên hệ",
             myInquiries: "Yêu cầu của tôi",
             privateInquiry: "Tư vấn 1:1",
@@ -21,6 +18,32 @@ const vi = {
             open: "Mở menu",
             close: "Đóng menu",
         },
+    },
+
+    notification: {
+        bellAria: "Thông báo, {{count}} chưa đọc",
+        title: "Thông báo",
+        markAllRead: "Đánh dấu tất cả đã đọc",
+        loading: "Đang tải thông báo.",
+        empty: "Không có thông báo mới.",
+        loadError: "Không thể tải thông báo.",
+        retry: "Thử lại",
+        loadMore: "Xem thêm thông báo",
+        unread: "Chưa đọc",
+        unknownActor: "Người dùng không xác định",
+
+        postLiked: "{{actor}} đã đồng cảm với bài viết của bạn.",
+        postUnliked: "{{actor}} đã bỏ đồng cảm với bài viết của bạn.",
+        postReposted: "{{actor}} đã đăng lại bài viết của bạn.",
+        postUnreposted: "{{actor}} đã hủy đăng lại bài viết của bạn.",
+        postCommented: "{{actor}} đã bình luận về bài viết của bạn.",
+        commentReplied: "{{actor}} đã trả lời bình luận của bạn.",
+        commentMentioned: "{{actor}} đã nhắc đến bạn.",
+
+        popularTop10: "Bài viết của bạn đã đạt vị trí thứ 10 trong các bài viết phổ biến.",
+        popularTop3: "Bài viết của bạn đã đạt vị trí thứ 3 trong các bài viết phổ biến.",
+        popularTop2: "Bài viết của bạn đã đạt vị trí thứ 2 trong các bài viết phổ biến.",
+        popularTop1: "Bài viết của bạn đã đạt vị trí thứ 1 trong các bài viết phổ biến.",
     },
 
     navigation: {
@@ -33,46 +56,6 @@ const vi = {
     },
 
     home: {
-        banner: {
-            eyebrow: "Cẩm nang cuộc sống tại Hàn Quốc, ForGuide",
-            title: "Đồng hành cùng bạn xây dựng cuộc sống hạnh phúc tại Hàn Quốc",
-            description:
-                "Từ tiền lương, tài khoản ngân hàng, chi phí sinh hoạt, trả nợ đến việc làm. Hãy tìm sự hỗ trợ phù hợp với hoàn cảnh của bạn để giải quyết những khó khăn khi sinh sống tại Hàn Quốc.",
-        },
-
-        services: {
-            eyebrow: "Dịch vụ ForGuide",
-            title: "Bạn cần hỗ trợ điều gì?",
-            description: "Khám phá sáu dịch vụ hỗ trợ cuộc sống của bạn tại Hàn Quốc.",
-        },
-
-        categories: {
-            counseling: {
-                description:
-                    "Tìm dịch vụ tư vấn phù hợp với hoàn cảnh của bạn và chuẩn bị thông tin cần thiết trước khi tư vấn.",
-            },
-            recommendation: {
-                description:
-                    "So sánh các khoản vay, bảo hiểm và tài khoản ngân hàng để tìm dịch vụ tài chính phù hợp với nhu cầu của bạn.",
-            },
-            repayment: {
-                description:
-                    "Kiểm tra số tiền trả hằng tháng, tổng lãi và lịch trả nợ để lập kế hoạch tài chính.",
-            },
-            employment: {
-                description:
-                    "Tìm hiểu thông tin tuyển dụng và tài liệu chuẩn bị xin việc để sẵn sàng cho bước tiếp theo.",
-            },
-            simulator: {
-                description:
-                    "Ghi lại ngày trả nợ, thu nhập và chi tiêu trên lịch để lập kế hoạch chi tiêu hằng ngày.",
-            },
-            community: {
-                description:
-                    "Chia sẻ kinh nghiệm, thông tin về cuộc sống tại Hàn Quốc và kết nối với mọi người.",
-            },
-        },
-
         features: {
             counseling: {
                 consultation: "Hướng dẫn tìm cơ quan hỗ trợ",
