@@ -180,9 +180,10 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | 함수                                         | 실제 API                            | 요청                      | 응답 `data`                                                             | 실패 코드                                                                     |
 | -------------------------------------------- | ----------------------------------- | ------------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | `checkLoginId(loginId)`                      | `GET /auth/check-login-id?loginId=` | 아이디                    | `{ available }`                                                         | `INVALID_INPUT`                                                               |
-| `sendEmailCode({ email, purpose })` | `POST /auth/email/send-code` | 이메일, `purpose`(`SIGNUP`·`PASSWORD_RESET`) | `{ expiresInSeconds, resendAfterSeconds }` | `INVALID_INPUT`, `EMAIL_DUPLICATED`(가입용), `VERIFICATION_RESEND_TOO_SOON`(429), `VERIFICATION_DAILY_LIMIT`(429), `MAIL_SEND_FAILED`(503) |
+| `sendEmailCode({ email, purpose })` | `POST /auth/email/send-code` | 이메일, `purpose`(`SIGNUP`·`PASSWORD_RESET`·`FIND_ID`) | `{ expiresInSeconds, resendAfterSeconds }` | `INVALID_INPUT`, `EMAIL_DUPLICATED`(가입용), `VERIFICATION_RESEND_TOO_SOON`(429), `VERIFICATION_DAILY_LIMIT`(429), `MAIL_SEND_FAILED`(503) |
 | `verifyEmailCode({ email, purpose, code })` | `POST /auth/email/verify` | 이메일, 목적, 6자리 코드 | `{ verificationToken }` | `INVALID_INPUT`, `VERIFICATION_CODE_INVALID`, `VERIFICATION_EXPIRED`, `VERIFICATION_ATTEMPTS_EXCEEDED` |
 | `resetPassword({ email, verificationToken, newPassword })` | `POST /auth/password/reset` | 이메일, `PASSWORD_RESET` 인증 토큰, 새 비밀번호(가입 규칙) | `{ loginId }` | `INVALID_INPUT`, `EMAIL_NOT_VERIFIED` |
+| `findLoginId({ email, verificationToken })` | `POST /auth/find-id` | 이메일, `FIND_ID` 인증 토큰 | `{ maskedLoginId }` (예: `demo***`) | `INVALID_INPUT`, `EMAIL_NOT_VERIFIED` |
 | `signup({ loginId, password, givenName, familyName, nickname, email, emailVerificationToken })` | `POST /auth/signup`                 | 아래 입력 규칙 + 인증 완료 토큰 | `member`                                    | `INVALID_INPUT`, `LOGIN_ID_DUPLICATED`, `EMAIL_DUPLICATED`, `EMAIL_NOT_VERIFIED` |
 | `login({ loginId, password })`               | `POST /auth/login`                  | 아이디·비밀번호           | `{ accessToken, member }` + refresh token 쿠키                          | `INVALID_INPUT`, `LOGIN_FAILED`, `LOGIN_LOCKED`(429) |
 | `restoreSession()`                           | `POST /auth/refresh`                | 없음 (refresh token 쿠키) | `{ accessToken, member }` → 스토어 저장. 쿠키가 없으면 `data` 없음(200) | 쿠키 없음·실패 = 로그아웃 상태로 시작 (정상). mock에서는 서버를 부르지 않는다 |
@@ -198,6 +199,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - 이메일은 소문자로 바꿔 비교·저장한다.
 - 이메일 인증(`member/controller/EmailVerificationController`, 테이블 `email_verifications`): 코드 6자리·10분 유효·5번 틀리면 무효, 다시 받기는 60초 간격·하루 10번. 확인하면 30분 동안 한 번만 쓸 수 있는 토큰을 준다. 코드·토큰은 SHA-256 해시만 저장. 가장 최근 코드만 유효.
 - 비밀번호 찾기(`AuthService.resetPassword`): 가입되지 않은 이메일로 `PASSWORD_RESET` 코드를 요청해도 같은 응답을 주고 실제로는 보내지 않는다(재발송 간격·하루 한도도 같게 적용, 가입 여부가 드러나지 않게). 재설정하면 모든 기기의 refresh token을 지우고(새로 발급하지 않음) 로그인 잠금도 푼다. 응답의 `loginId`는 로그인 화면에 미리 채운다.
+- 아이디 찾기(`AuthService.findLoginId`): 비밀번호 찾기와 같이 가입되지 않은 이메일에도 같은 응답(미발송). 아이디는 앞 4자(6자 이하면 앞 2자)만 보이고 뒤는 항상 `***`(길이도 비공개). 인증 용도가 달라(`FIND_ID`, V33) 아이디 찾기 토큰으로 비밀번호를 바꿀 수 없다.
 - 화면의 이메일 인증 부분은 `src/auth/useEmailVerification.js`(상태·요청)와 `src/auth/components/EmailVerificationFields.jsx`(입력칸)를 회원가입·비밀번호 찾기가 같이 쓴다.
 - 메일 발송: 환경변수 `FORGUIDE_MAIL_USERNAME`·`FORGUIDE_MAIL_PASSWORD`(Gmail 앱 비밀번호)가 있으면 Gmail SMTP로 보내고, 없으면 메일 대신 서버 로그에 코드를 남긴다(개발용, 시작 시 경고).
 
