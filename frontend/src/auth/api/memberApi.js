@@ -2,7 +2,8 @@ import { client } from "../../api/client.js";
 import { useAuthStore } from "../store/useAuthStore.js";
 
 // ── 회원 정보 변경 API (로그인 필요, 화면은 이 함수들만 쓴다) ──
-// 응답 member: { memberId, loginId, name, email, nickname, profileImageUrl } (비밀번호 없음)
+// 응답 member: { memberId, loginId, name, givenName, familyName, email, nickname, profileImageUrl, role } (비밀번호 없음)
+// role: "USER" | "ADMIN" — 관리자 메뉴 표시용 (권한 확인은 서버가 한다)
 // 변경에 성공하면 스토어의 회원 정보도 함께 갱신한다 (다시 불러오지 않아도 화면에 바로 반영)
 
 // 프로필 이미지 변경

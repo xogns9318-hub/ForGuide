@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Size;
 public record SignupRequest(
 
         @NotBlank(message = "아이디를 입력해주세요.")
-        @Pattern(regexp = "^[a-z0-9]{4,20}$", message = "4~20자의 영문 소문자와 숫자만 사용할 수 있습니다.")
+        @Pattern(regexp = LOGIN_ID_PATTERN, message = LOGIN_ID_MESSAGE)
         String loginId,
 
         @NotBlank(message = "비밀번호를 입력해주세요.")
@@ -39,6 +39,10 @@ public record SignupRequest(
         // 이메일 인증 완료 토큰 (POST /api/v1/auth/email/verify 응답). 없거나 맞지 않으면 가입하지 않는다
         @NotBlank(message = "이메일 인증을 완료해주세요.")
         String emailVerificationToken) {
+
+    // 아이디 규칙 (아이디 확인·로그인 시도 제한·관리자 계정도 같은 규칙을 쓴다)
+    public static final String LOGIN_ID_PATTERN = "^[a-z0-9]{4,20}$";
+    public static final String LOGIN_ID_MESSAGE = "4~20자의 영문 소문자와 숫자만 사용할 수 있습니다.";
 
     // 비밀번호 규칙 (비밀번호 변경 요청도 같은 규칙을 쓴다)
     // 8~32자, 영문 소문자·대문자·숫자·특수문자 모두 포함, 공백·비영문 자판 문자 불가

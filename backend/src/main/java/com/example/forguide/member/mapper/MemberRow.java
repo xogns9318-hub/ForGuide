@@ -13,6 +13,7 @@ public class MemberRow {
     private Long memberId;
     private String loginId;
     private String password;
+    private String role;          // USER / ADMIN
     private String name;          // 화면 표시용 "이름 성"
     private String givenName;     // 이름
     private String familyName;    // 성 (없을 수 있음)

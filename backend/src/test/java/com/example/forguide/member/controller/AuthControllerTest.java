@@ -16,8 +16,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.forguide.common.security.JwtProvider;
+import com.example.forguide.member.mapper.MemberMapper;
+import com.example.forguide.member.service.AdminAccountInitializer;
 import com.example.forguide.member.service.VerificationMailSender;
+import com.jayway.jsonpath.JsonPath;
 import jakarta.servlet.http.Cookie;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +32,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
@@ -423,5 +430,87 @@ class AuthControllerTest {
         resetPassword("new@example.com", "any", "short")
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.fieldErrors.newPassword").exists());
+    }
+
+    // ── 관리자 계정 ──
+
+    @Autowired
+    private MemberMapper memberMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtProvider jwtProvider;
+
+    // 서버 시작 때와 같은 동작을 테스트 스키마가 준비된 뒤에 직접 실행한다 (환경변수 대신 값을 넘김)
+    private void runAdminInitializer(String loginId, String password) {
+        new AdminAccountInitializer(memberMapper, passwordEncoder, loginId, password, "").run(null);
+    }
+
+    private String roleOf(String loginId) {
+        return jdbcTemplate.queryForObject("SELECT role FROM members WHERE login_id = ?", String.class, loginId);
+    }
+
+    @Test
+    void 가입한_회원은_일반_회원이고_로그인_응답에_역할이_있다() throws Exception {
+        signup();
+        MockHttpServletResponse response = login();
+
+        String body = response.getContentAsString();
+        assertThat(JsonPath.<String>read(body, "$.data.member.role")).isEqualTo("USER");
+        String token = JsonPath.read(body, "$.data.accessToken");
+        assertThat(jwtProvider.parse(token).role()).isEqualTo(JwtProvider.ROLE_USER);
+    }
+
+    @Test
+    void 관리자_계정은_환경변수_값으로_만들어지고_관리자_토큰을_받는다() throws Exception {
+        runAdminInitializer("admin01", "Adminpass1!");
+        // 다시 실행해도 하나만 있다
+        runAdminInitializer("admin01", "Adminpass1!");
+
+        assertThat(roleOf("admin01")).isEqualTo("ADMIN");
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM members", Integer.class);
+        assertThat(count).isEqualTo(1);
+        // DB에는 BCrypt 해시만 있다
+        String saved = jdbcTemplate.queryForObject("SELECT password FROM members", String.class);
+        assertThat(saved).startsWith("$2a$").doesNotContain("Adminpass1!");
+
+        String body = loginWith("admin01", "Adminpass1!")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.member.role").value("ADMIN"))
+                .andReturn().getResponse().getContentAsString();
+        String token = JsonPath.read(body, "$.data.accessToken");
+        assertThat(jwtProvider.parse(token).role()).isEqualTo(JwtProvider.ROLE_ADMIN);
+    }
+
+    @Test
+    void 같은_아이디의_일반_회원이_있으면_관리자로_바꾸지_않는다() throws Exception {
+        signup();
+        runAdminInitializer("newuser1", "Adminpass1!");
+
+        assertThat(roleOf("newuser1")).isEqualTo("USER");
+        // 원래 비밀번호도 그대로
+        loginWith("newuser1", "Abcdef1!").andExpect(status().isOk());
+    }
+
+    @Test
+    void 값이_없거나_규칙에_맞지_않으면_관리자를_만들지_않는다() throws Exception {
+        runAdminInitializer("", "");
+        runAdminInitializer("admin01", "");
+        runAdminInitializer("admin01", "weakpass");
+        runAdminInitializer("AD", "Adminpass1!");
+
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM members", Integer.class);
+        assertThat(count).isZero();
+    }
+
+    @Test
+    void 관리자_비밀번호는_저장소_설정에_없고_환경변수로만_받는다() throws Exception {
+        String properties = Files.readString(Path.of("src/main/resources/application.properties"));
+
+        assertThat(properties)
+                .contains("forguide.admin.login-id=${FORGUIDE_ADMIN_LOGIN_ID:}")
+                .contains("forguide.admin.password=${FORGUIDE_ADMIN_PASSWORD:}");
     }
 }

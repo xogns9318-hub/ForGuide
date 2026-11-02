@@ -8,6 +8,7 @@ CREATE TABLE members (
     member_id         BIGINT        NOT NULL AUTO_INCREMENT PRIMARY KEY,
     login_id          VARCHAR(50)   NOT NULL UNIQUE,
     password          VARCHAR(255)  NOT NULL,
+    role              VARCHAR(10)   NOT NULL DEFAULT 'USER',
     name              VARCHAR(101)  NOT NULL,
     given_name        VARCHAR(50),
     family_name       VARCHAR(50),
