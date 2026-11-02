@@ -8,10 +8,7 @@ const zh = {
         language: "语言",
 
         mega: {
-            introduction: "指南介绍",
-            guides: "指南目录",
             contact: "联系我们",
-            introductionList: "介绍目录",
             contactGroup: "咨询",
             myInquiries: "我的咨询",
             privateInquiry: "一对一咨询",
@@ -33,40 +30,6 @@ const zh = {
     },
 
     home: {
-        banner: {
-            eyebrow: "韩国生活指南，ForGuide",
-            title: "助您在韩国开启更幸福的生活",
-            description:
-                "从工资、银行账户、生活费、贷款还款到就业，帮助您梳理在陌生环境中遇到的困难，找到适合自身情况的支持与帮助。",
-        },
-
-        services: {
-            eyebrow: "ForGuide 服务",
-            title: "您需要什么帮助？",
-            description: "一站式了解为您在韩国生活提供支持的六项服务。",
-        },
-
-        categories: {
-            counseling: {
-                description: "寻找适合您当前情况的咨询服务，并整理咨询所需的准备事项和说明。",
-            },
-            recommendation: {
-                description: "比较贷款、保险和银行账户，了解符合您需求的金融服务。",
-            },
-            repayment: {
-                description: "查看每月还款额、总利息和还款计划，合理规划资金。",
-            },
-            employment: {
-                description: "了解求职准备资料和招聘信息，为下一步做好准备。",
-            },
-            simulator: {
-                description: "在日历中记录还款日期、收入和支出，制定每日支出计划。",
-            },
-            community: {
-                description: "分享在韩国生活的经验和信息，交流彼此的故事。",
-            },
-        },
-
         features: {
             counseling: {
                 consultation: "帮助机构指南",

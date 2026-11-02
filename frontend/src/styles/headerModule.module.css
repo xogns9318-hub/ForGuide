@@ -198,26 +198,35 @@
     border: 0;
 }
 
-/* 상하 메뉴가 같은 6칸 기준을 사용하고, 상위 메뉴는 두 칸씩 차지한다. */
+/* 상위 메뉴의 전체 너비는 유지하고 두 칸으로 나눈다. */
 .navigation {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0;
 }
 
+/* 구분선과 칸 크기는 유지하고 제목을 정중앙에 놓는다. */
 .navItem {
-    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    grid-column: auto;
     min-width: 0;
+    min-height: 40px;
 }
 
-/* 상단 제목은 페이지로 이동하지 않는 문단 */
+/* 마우스 반응 영역을 제목 글씨 크기에 맞춘다. */
 .menuTitle {
-    min-height: 40px;
-    padding: 8px 12px;
+    width: fit-content;
+    max-width: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+
     color: var(--muted);
     font-size: 17px;
     font-weight: 700;
-    line-height: 1.4;
+    line-height: 24px;
     text-align: center;
     cursor: default;
 }
@@ -301,7 +310,7 @@
 /* 상하 메뉴가 같은 최대 너비와 좌우 여백을 사용한다. */
 .groups {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 24px;
     width: 100%;
     max-width: var(--page-width);
@@ -313,10 +322,6 @@
 /* 작은 화면의 기본 배치. 넓은 화면은 아래의 공통 격자로 정렬한다. */
 .singleGroup {
     grid-template-columns: minmax(0, 1fr);
-}
-
-.twoGroups {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .group {
@@ -689,25 +694,19 @@
 }
 
 @media (min-width: 1025px) {
-
-    /* 서비스 목록의 여섯 분류는 기존 1/6 너비를 유지한다. */
+    /* 서비스 목록은 확장 가이드를 포함한 다섯 칸으로 나눈다. */
     .dropdownContent .groups {
-        grid-template-columns: repeat(12, minmax(0, 1fr));
+        grid-template-columns: repeat(5, minmax(0, 1fr));
         gap: 0;
     }
 
-    /* 소개의 두 분류는 각각 상위 메뉴와 같은 1/3 너비로 가운데 배치한다. */
-    .dropdownContent .groups.twoGroups>.group:first-child {
-        grid-column: 3 / span 4;
+    /* 문의도 서비스 목록의 한 분류와 같은 1/5 너비로 가운데 배치한다. */
+    .dropdownContent .groups.singleGroup {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
     }
 
-    .dropdownContent .groups.twoGroups>.group:last-child {
-        grid-column: 7 / span 4;
-    }
-
-    /* 문의도 상위 메뉴와 같은 1/3 너비로 가운데 배치한다. */
-    .dropdownContent .groups.singleGroup>.group {
-        grid-column: 5 / span 4;
+    .dropdownContent .groups.singleGroup > .group {
+        grid-column: 3;
     }
 
     .dropdownContent .groups::before,
@@ -716,12 +715,11 @@
     }
 
     .dropdownContent .group {
-        grid-column: span 2;
+        grid-column: auto;
         position: relative;
         padding-inline: 12px;
     }
 
-    /* 모든 선은 여백의 중간이 아닌 실제 칸 경계에 그린다. */
     .dropdownContent .group::before,
     .dropdownContent .group::after {
         content: "";
@@ -780,7 +778,7 @@
     display: none;
 }
 
-/* 현재 언어 글씨 아래에서 목록을 조금 내려 표시한다. */
+/* 현재 언어 글씨 아래에 아주 옅은 민트색 목록을 표시한다. */
 .actions :global(.header-language .select-box-options) {
     --language-menu-gap: 12px;
 
@@ -789,14 +787,12 @@
     width: 88px;
     transform: translateX(-50%);
     padding: 4px;
-    border: 0;
-    line-height: 1.65;
 
-    /* 글씨는 선명하게 두고 흰 배경만 20% 투명하게 표시한다. */
-    background: rgb(255 255 255 / 80%);
+    border: 1px solid #d4eae2;
+    line-height: 24px;
+    background: #fdfffe;
     box-shadow: none;
 
-    /* 목록이 열릴 때 위에서 아래로 부드럽게 내려온다. */
     animation: language-menu-reveal 260ms ease-out both;
 }
 
@@ -823,9 +819,15 @@
     height: var(--language-menu-gap);
 }
 
-/* 각 언어를 가운데에 놓고 배경 강조와 사각 테두리를 제거한다. */
+/* 모든 언어를 같은 높이와 줄 높이로 가운데 정렬한다. */
 .actions :global(.header-language .select-box-option) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
     padding: 8px 2px;
+    line-height: 24px;
+
     background: transparent;
     box-shadow: none;
     color: var(--muted);
@@ -834,20 +836,22 @@
     transition: color 260ms ease;
 }
 
-/* 밑줄은 목록 전체가 아닌 언어 글씨의 너비를 기준으로 그린다. */
+/* 언어별 글꼴 차이로 밑줄 위치가 달라지지 않도록 줄 높이를 고정한다. */
 .actions :global(.header-language .select-box-option > span) {
     position: relative;
     display: inline-block;
+    line-height: 24px;
+    text-decoration: none;
 }
 
-/* 기본 밑줄은 가운데로 접어 두고 양옆으로 펼칠 준비를 한다. */
+/* 모든 언어에 같은 2px 밑줄을 가운데에서 펼친다. */
 .actions :global(.header-language .select-box-option > span)::after {
     content: "";
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -4px;
-    height: 1px;
+    bottom: -2px;
+    height: 2px;
     background: currentColor;
     transform: scaleX(0);
     transform-origin: center;
@@ -879,36 +883,58 @@
     }
 }
 
-/* 회원 메뉴 길이에 영향을 받지 않고 로고를 화면 중앙에 배치한다. */
+/* 큰 화면은 로고·상위 메뉴·회원 메뉴를 한 줄로 배치한다. */
 @media (min-width: 1025px) {
-    .top {
+    .inner {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-        gap: 24px;
+        grid-template-columns:
+            minmax(0, 1fr)
+            clamp(300px, 30vw, 396px)
+            minmax(0, 1fr);
+        align-items: center;
+        column-gap: 24px;
+        row-gap: 0;
+        min-height: 88px;
+        padding-block: 12px;
     }
 
-    .desktopActions {
+    /* 모바일용 윗줄 묶음은 유지하고 데스크톱에서는 자식만 격자에 배치한다. */
+    .top {
+        display: contents;
+    }
+
+    .brand {
         grid-column: 1;
         grid-row: 1;
         justify-self: start;
     }
 
-    .brand {
+    .navigation {
         grid-column: 2;
         grid-row: 1;
-        justify-self: center;
+        width: 100%;
+        min-width: 0;
     }
 
-    .desktopLanguage {
+    .desktopActions {
         grid-column: 3;
         grid-row: 1;
         justify-self: end;
     }
 }
 
-/* 모바일 언어 선택은 기존 펼친 메뉴 안에서 표시한다. */
-@media (max-width: 1024px) {
-    .desktopLanguage {
-        display: none;
+/* 스크롤 방향에 따라 헤더가 위로 숨거나 아래로 나타난다. */
+.header {
+    transition: top 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* 기존 sticky 위치보다 우선 적용하고 본문 배치는 유지한다. */
+.header.headerHidden {
+    top: calc(-1 * var(--header-height) - 1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .header {
+        transition: none;
     }
 }
