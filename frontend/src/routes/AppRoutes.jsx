@@ -20,9 +20,10 @@ const TotalInterest = lazy(() => import("../components/TotalInterest/TotalIntere
 const Consultation = lazy(() => import("../components/Consultation/Consultation.jsx"));
 const EmploymentResume = lazy(() => import("../components/Employment/EmploymentResume.jsx"));
 const JobListings = lazy(() => import("../components/JobListings/JobListings.jsx"));
+const Simulator = lazy(() => import("../components/Simulator/Simulator.jsx"));
 
 // 제작 중 화면을 표시할 서비스 주소만 지정
-const constructionPaths = new Set(["/service/simulator"]);
+const constructionPaths = new Set();
 
 // 소개 주소를 제외하고 실제 세부 서비스 주소만 연결한다.
 const serviceRoutes = categories.flatMap((category) =>
@@ -129,6 +130,7 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
 
                     {/* 도움 기관 안내는 선택 화면으로 연결 */}
                     <Route path="/service/consultation" element={<Consultation />} />
+                    <Route path="/service/simulator" element={<Simulator />} />
                     <Route path="/service/preparationCard" element={<PreparationCard />} />
 
                     {/* 별도 화면으로 연결한 경로는 기본 서비스 목록에서 제외 */}
@@ -138,6 +140,7 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                                 route.path !== "/service/community" &&
                                 route.path !== "/service/consultation" &&
                                 route.path !== "/service/preparationCard" &&
+                                route.path !== "/service/simulator" &&
                                 route.path !== "/service/employment" &&
                                 !recommendPaths.includes(route.path),
                         )
