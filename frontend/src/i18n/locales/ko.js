@@ -1,4 +1,95 @@
 const ko = {
+    simulator: {
+        title: "지출 계획 시뮬레이터",
+        period: "대출 기간",
+
+        fields: {
+            payment: "월 대출 상환액",
+            start: "시작일",
+            end: "종료일",
+            cash: "현재 보유금",
+            income: "월 소득",
+            fixed: "월 고정지출",
+            food: "월 식비",
+            living: "월 생활비",
+        },
+
+        units: {
+            won: "원",
+            tenThousand: "만",
+            hundredMillion: "억",
+            trillion: "조",
+        },
+
+        calculate: "계산하기",
+        calendar: "일별 지출 캘린더",
+        previous: "이전 달",
+        next: "다음 달",
+
+        weekdays: {
+            0: "일",
+            1: "월",
+            2: "화",
+            3: "수",
+            4: "목",
+            5: "금",
+            6: "토",
+        },
+
+        calendarHint:
+            "휠·스와이프로 한 달씩 이동합니다. 날짜를 누르면 추가 금액을 배정할 수 있어요.",
+        dayLabel:
+            "{{date}} · 추가 사용 가능 금액 {{amount}} · 큰 지출일 설정",
+        outsideDay: "{{date}} · 계산 기간 밖",
+
+        extraTitle: "{{date}} 큰 지출일 설정",
+        extraAmount: "이 날짜에 추가로 배정할 금액",
+        extraHint:
+            "이 금액만큼 다른 날짜의 기본 예산이 줄어듭니다. 0원을 적용하거나 배정을 해제할 수 있어요.",
+
+        apply: "적용",
+        remove: "배정 해제",
+        close: "닫기",
+
+        results: "계산 결과",
+        available: "기간 전체 추가 사용 가능 금액",
+        days: "계산 일수",
+        daily: "하루 기본 추가 예산",
+        extraTotal: "큰 지출일 추가 배정 합계",
+        dayCount: "{{count}}일",
+
+        formula:
+            "보유금 {{cash}} + 기간 소득 {{income}} − 상환액 {{payment}} − 고정지출 {{fixed}} − 식비 {{food}} − 생활비 {{living}} = {{balance}}",
+
+        dailyFormula:
+            "({{available}} − 추가 배정 {{extra}}) ÷ {{days}}일 = 하루 기본 {{daily}}.",
+
+        remainder:
+            "남은 원은 첫 {{count}}일에 1원씩 추가 배분합니다.",
+
+        shortfall:
+            "예정 지출에 비해 {{amount}}이 부족합니다. 캘린더의 추가 예산은 0원으로 표시합니다.",
+
+        assumption:
+            "시작일·종료일을 포함합니다. 월 소득·지출은 부분 월의 일수로 비례 계산하고 월별 원 단위에서 반올림합니다. 보유금도 기간 전체에 나눠 쓰며, 식비·생활비까지 제외한 추가 지출 계획입니다. 실제 입출금일과 잔액 흐름은 반영하지 않습니다.",
+
+        chartLabel:
+            "기간 전체 예정 지출과 추가 사용 가능 금액 비교",
+        chartLegend:
+            "연한 민트: 예정 지출 · 진한 초록: 추가 사용 가능 금액",
+
+        errors: {
+            required:
+                "금액을 입력해주세요. 해당 금액이 없으면 0을 입력해주세요.",
+            digits: "숫자만 입력할 수 있습니다.",
+            limit: "금액은 최대 10조 원까지 입력할 수 있습니다.",
+            dates: "올바른 시작일과 종료일을 입력해주세요.",
+            dateOrder: "종료일은 시작일과 같거나 이후여야 합니다.",
+            extraLimit:
+                "추가 배정 합계가 전체 사용 가능 금액을 초과합니다.",
+            outside: "대출 기간에 포함된 날짜를 선택해주세요.",
+        },
+    },
     preparationCard: {
         title: "상담할 내용을 정리해주세요.",
         givenName: "이름",
