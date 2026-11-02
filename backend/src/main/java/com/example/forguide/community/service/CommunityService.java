@@ -8,9 +8,14 @@ import com.example.forguide.community.image.CommunityImageStorage;
 import com.example.forguide.community.mapper.CommunityMapper;
 import com.example.forguide.translation.cache.TranslationCacheResource;
 import com.example.forguide.translation.service.PublicTranslationInvalidator;
+import com.example.forguide.notification.dto.NotificationCreateCommand;
+import com.example.forguide.notification.dto.NotificationResourceType;
+import com.example.forguide.notification.dto.NotificationType;
+import com.example.forguide.notification.service.NotificationService;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +35,7 @@ public class CommunityService {
     private final CommunityImageStorage communityImageStorage;
     private final PublicTranslationInvalidator publicTranslationInvalidator;
     private final AfterCommitExecutor afterCommitExecutor;
+    private final NotificationService notificationService;
 
     // 게시글 전체 목록 조회
     public List<CommunityPostResponse> getAllPosts() {
@@ -445,29 +451,58 @@ public class CommunityService {
         return response;
     }
 
-    // 이미 좋아요를 누른 경우에는 중복 저장하지 않고 현재 상태만 돌려줌.
+    // 이미 공감한 경우에는 중복 저장하지 않고 현재 상태만 돌려준다.
     @Transactional
     public CommunityPostLikeResponse likePost(
             Long postId,
             Long memberId
     ) {
-        validatePostExists(postId);
+        CommunityPostResponse post = getPostById(postId);
+        int insertedCount = 0;
 
         try {
-            communityMapper.insertPostLike(postId, memberId);
+            insertedCount = communityMapper.insertPostLike(postId, memberId);
         } catch (DuplicateKeyException exception) {
-            // 이미 공감한 상태면 추가 저장 없이 현재 상태 반환
+            // 이미 공감한 상태면 추가 저장·알림 없이 현재 상태만 반환한다.
+        }
+
+        if (insertedCount > 0) {
+            notificationService.createNotification(
+                    new NotificationCreateCommand(
+                            post.getMemberId(),
+                            memberId,
+                            NotificationType.POST_LIKED,
+                            NotificationResourceType.COMMUNITY_POST,
+                            postId,
+                            null,
+                            null
+                    )
+            );
         }
 
         return getPostLikeStatus(postId, memberId);
     }
 
-    // 좋아요 없는 상태에서 취소 요청이 와도 오류 없이 현재 상태 돌려준다.
+    // 공감을 실제로 취소했을 때만 게시글 작성자에게 알림을 만든다.
     @Transactional
     public CommunityPostLikeResponse unlikePost(Long postId, Long memberId) {
-        validatePostExists(postId);
+        CommunityPostResponse post = getPostById(postId);
 
-        communityMapper.deletePostLike(postId, memberId);
+        int deletedCount = communityMapper.deletePostLike(postId, memberId);
+
+        if (deletedCount > 0) {
+            notificationService.createNotification(
+                    new NotificationCreateCommand(
+                            post.getMemberId(),
+                            memberId,
+                            NotificationType.POST_UNLIKED,
+                            NotificationResourceType.COMMUNITY_POST,
+                            postId,
+                            null,
+                            null
+                    )
+            );
+        }
 
         return getPostLikeStatus(postId, memberId);
     }
@@ -491,32 +526,63 @@ public class CommunityService {
         return response;
     }
 
-    // 이미 리포스트한 게시글이면 중복 저장하지 않고 현재 상태 돌려줌
+    // 실제로 리포스트를 등록했을 때만 게시글 작성자에게 알림을 만든다.
     @Transactional
     public CommunityPostRepostResponse repostPost(
-            Long postId, Long memberId
+            Long postId,
+            Long memberId
     ) {
-        validatePostExists(postId);
+        CommunityPostResponse post = getPostById(postId);
+        int insertedCount = 0;
 
         try {
-            communityMapper.insertPostRepost(postId, memberId);
+            insertedCount = communityMapper.insertPostRepost(postId, memberId);
         } catch (DuplicateKeyException exception) {
-            // 이미 리포스트한 상태면 추가 저장 없이 현재 상태를 반환한다.
+            // 이미 리포스트한 상태면 추가 저장·알림 없이 현재 상태만 반환한다.
+        }
+
+        if (insertedCount > 0) {
+            notificationService.createNotification(
+                    new NotificationCreateCommand(
+                            post.getMemberId(),
+                            memberId,
+                            NotificationType.POST_REPOSTED,
+                            NotificationResourceType.COMMUNITY_POST,
+                            postId,
+                            null,
+                            null
+                    )
+            );
         }
 
         return getPostRepostStatus(postId, memberId);
     }
 
-    // 리포스트하지 않은 상태에서 취소해도 오류 없이 현재 상태를 돌려줌
+    // 실제로 리포스트를 취소했을 때만 게시글 작성자에게 알림을 만든다.
     @Transactional
     public CommunityPostRepostResponse unrepostPost(
-            Long postId, Long memberId
+            Long postId,
+            Long memberId
     ) {
-        validatePostExists(postId);
+        CommunityPostResponse post = getPostById(postId);
 
-        communityMapper.deletePostRepost(postId, memberId);
+        int deletedCount = communityMapper.deletePostRepost(postId, memberId);
 
-        return  getPostRepostStatus(postId, memberId);
+        if (deletedCount > 0) {
+            notificationService.createNotification(
+                    new NotificationCreateCommand(
+                            post.getMemberId(),
+                            memberId,
+                            NotificationType.POST_UNREPOSTED,
+                            NotificationResourceType.COMMUNITY_POST,
+                            postId,
+                            null,
+                            null
+                    )
+            );
+        }
+
+        return getPostRepostStatus(postId, memberId);
     }
 
     // 비로그인 사용자도 작성자의 공개 요약 정보를 확인할 수 있다.
@@ -639,41 +705,58 @@ public class CommunityService {
 
     // 로그인 회원 댓글 작성
     @Transactional
-    public void createComment(Long postId, Long memberId, CommunityCommentCreateRequest request)
-    {
-        validatePostExists(postId);
-
+    public void createComment(
+            Long postId,
+            Long memberId,
+            CommunityCommentCreateRequest request
+    ) {
+        CommunityPostResponse post = getPostById(postId);
+        CommunityCommentResponse parentComment = null;
         Long mentionedMemberId = null;
 
         if (request.getParentCommentId() != null) {
-            CommunityCommentResponse parentComment = getCommentByPostId(
+            parentComment = getCommentByPostId(
                     postId,
                     request.getParentCommentId()
             );
 
             // 삭제된 댓글에는 새 답글을 달 수 없게 해 대화 흐름을 명확히 한다.
             if (parentComment.isDeleted()) {
-                throw new ApiException(ErrorCode.INVALID_INPUT, "삭제된 댓글에는 답글을 작성할 수 없습니다.");
+                throw new ApiException(
+                        ErrorCode.INVALID_INPUT,
+                        "삭제된 댓글에는 답글을 작성할 수 없습니다."
+                );
             }
 
             // 답글의 답글은 서버에서도 막아 화면 규칙과 저장 규칙을 일치시킨다.
             if (parentComment.getParentCommentId() != null) {
-                throw new ApiException(ErrorCode.INVALID_INPUT, "답글에는 다시 답글을 작성할 수 없습니다.");
+                throw new ApiException(
+                        ErrorCode.INVALID_INPUT,
+                        "답글에는 다시 답글을 작성할 수 없습니다."
+                );
             }
 
             // 화면의 @아이디 문자열을 믿지 않고 서버에서 실제 회원인지 확인해 태그 대상을 저장한다.
-            if (request.getMentionLoginId() != null && !request.getMentionLoginId().isBlank()) {
+            if (request.getMentionLoginId() != null
+                    && !request.getMentionLoginId().isBlank()) {
                 CommunityMemberPreviewResponse mentionedMember = communityMapper
                         .findMemberPreviewByLoginId(request.getMentionLoginId());
 
                 if (mentionedMember == null) {
-                    throw new ApiException(ErrorCode.INVALID_INPUT, "존재하지 않는 아이디는 태그할 수 없습니다.");
+                    throw new ApiException(
+                            ErrorCode.INVALID_INPUT,
+                            "존재하지 않는 아이디는 태그할 수 없습니다."
+                    );
                 }
 
                 mentionedMemberId = mentionedMember.getMemberId();
             }
-        } else if (request.getMentionLoginId() != null && !request.getMentionLoginId().isBlank()) {
-            throw new ApiException(ErrorCode.INVALID_INPUT, "태그는 답글에서만 사용할 수 있습니다.");
+        } else if (request.getMentionLoginId() != null
+                && !request.getMentionLoginId().isBlank()) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "태그는 답글에서만 사용할 수 있습니다."
+            );
         }
 
         int insertedCount = communityMapper.insertComment(
@@ -684,9 +767,87 @@ public class CommunityService {
                 request.getContent()
         );
 
-        if(insertedCount != 1) {
+        if (insertedCount != 1) {
             throw new IllegalStateException("댓글을 저장하지 못했습니다.");
         }
+
+        // 모든 새 댓글은 우선 원글 작성자에게 알린다.
+        createCommentNotifications(
+                post.getMemberId(),
+                parentComment == null ? null : parentComment.getMemberId(),
+                mentionedMemberId,
+                memberId,
+                postId
+        );
+    }
+
+    /*
+        한 댓글로 같은 회원에게 여러 알림을 보내지 않는다.
+        멘션이 있으면 멘션 알림을 가장 우선하고, 그다음 답글 알림,
+        마지막으로 원글 댓글 알림을 적용한다.
+     */
+
+    private void createCommentNotifications(
+            Long postAuthorMemberId,
+            Long parentCommentAuthorMemberId,
+            Long mentionedMemberId,
+            Long actorMemberId,
+            Long postId
+    ) {
+        Map<Long, NotificationType> notificationTypesByRecipient =
+                new LinkedHashMap<>();
+
+        // 원글 작성자는 기본적으로 새 댓글 알림을 받는다.
+        notificationTypesByRecipient.put(
+                postAuthorMemberId,
+                NotificationType.POST_COMMENTED
+        );
+
+        // 원글 작성자와 부모 댓글 작성자가 다를 때만 답글 알림을 추가
+        if (parentCommentAuthorMemberId != null) {
+            notificationTypesByRecipient.putIfAbsent(
+                    parentCommentAuthorMemberId,
+                    NotificationType.COMMENT_REPLIED
+            );
+        }
+
+        // 멘션은 같은 수신자의 기존 댓글,답글 알림을 덮어쓴다.
+        if (mentionedMemberId != null) {
+            notificationTypesByRecipient.put(
+                    mentionedMemberId,
+                    NotificationType.COMMENT_MENTIONED
+            );
+        }
+
+        notificationTypesByRecipient.forEach(
+                (recipientMemberId, notificationType) ->
+                        createPostNotification(
+                                recipientMemberId,
+                                actorMemberId,
+                                notificationType,
+                                postId
+                        )
+        );
+    }
+
+    // 댓글 관련 알림은 모두 게시글 상세 화면으로 이동하므로 게시글을 대상 리소스로 사용한다.
+    private void createPostNotification(
+            Long recipientMemberId,
+            Long actorMemberId,
+            NotificationType notificationType,
+            Long postId
+    ) {
+        notificationService.createNotification(
+                new NotificationCreateCommand(
+                        recipientMemberId,
+                        actorMemberId,
+                        notificationType,
+                        NotificationResourceType.COMMUNITY_POST,
+                        postId,
+                        null,
+                        null
+                )
+        );
     }
 
     // 댓글이 존재하고 현재 게시글에 실제로 속하는지 확인한다.

@@ -1,8 +1,9 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { categories } from "../../routes/routeConfig.js";
 import LanguageSelector from "../LanguageSelector/LanguageSelector.jsx";
+import NotificationBell from "./NotificationBell.jsx";
 import styles from "../../styles/headerModule.module.css";
 
 // 주 기능 이름과 기존 주소를 소개 메뉴에서 재사용
@@ -86,6 +87,7 @@ const menus = [
 
 export default function Header({ isLoggedIn = false, onLogout }) {
     const { pathname } = useLocation();
+    const navigate = useNavigate();
     const { t } = useTranslation();
     const navigationId = useId();
     // 넓은 화면에서는 한 메뉴만 펼침
@@ -150,6 +152,19 @@ export default function Header({ isLoggedIn = false, onLogout }) {
         // 페이지 이동이나 메뉴 종료 시 펼침 상태 초기화
         setOpenMenu(null);
         setIsMobileMenuOpen(false);
+    }
+
+    function handleNotificationClick(notification) {
+        // 현재 커뮤니티 알림은 모두 해당 게시글 상세로 연결한다.
+        if (
+            notification.resourceType !== "COMMUNITY_POST" ||
+            !notification.resourceId
+        ) {
+            return;
+        }
+
+        closeMenus();
+        navigate(`/service/community/posts/${notification.resourceId}`);
     }
 
     // 다른 페이지로 이동하면 이전 메뉴를 닫음
@@ -434,8 +449,19 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                         </div>
 
                         <div className={`${styles.actions} ${styles.desktopLanguage}`}>
+                            {isLoggedIn && (
+                                <NotificationBell
+                                    onNotificationClick={handleNotificationClick}
+                                />
+                            )}
                             <LanguageSelector />
                         </div>
+
+                        {isMobile && isLoggedIn && (
+                            <NotificationBell
+                                onNotificationClick={handleNotificationClick}
+                            />
+                        )}
 
                         {/* 모바일에서는 버튼으로 전체 목록을 열고 닫음 */}
                         <button

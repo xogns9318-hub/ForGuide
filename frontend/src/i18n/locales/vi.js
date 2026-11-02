@@ -23,6 +23,32 @@ const vi = {
         },
     },
 
+    notification: {
+        bellAria: "Thông báo, {{count}} chưa đọc",
+        title: "Thông báo",
+        markAllRead: "Đánh dấu tất cả đã đọc",
+        loading: "Đang tải thông báo.",
+        empty: "Không có thông báo mới.",
+        loadError: "Không thể tải thông báo.",
+        retry: "Thử lại",
+        loadMore: "Xem thêm thông báo",
+        unread: "Chưa đọc",
+        unknownActor: "Người dùng không xác định",
+
+        postLiked: "{{actor}} đã đồng cảm với bài viết của bạn.",
+        postUnliked: "{{actor}} đã bỏ đồng cảm với bài viết của bạn.",
+        postReposted: "{{actor}} đã đăng lại bài viết của bạn.",
+        postUnreposted: "{{actor}} đã hủy đăng lại bài viết của bạn.",
+        postCommented: "{{actor}} đã bình luận về bài viết của bạn.",
+        commentReplied: "{{actor}} đã trả lời bình luận của bạn.",
+        commentMentioned: "{{actor}} đã nhắc đến bạn.",
+
+        popularTop10: "Bài viết của bạn đã đạt vị trí thứ 10 trong các bài viết phổ biến.",
+        popularTop3: "Bài viết của bạn đã đạt vị trí thứ 3 trong các bài viết phổ biến.",
+        popularTop2: "Bài viết của bạn đã đạt vị trí thứ 2 trong các bài viết phổ biến.",
+        popularTop1: "Bài viết của bạn đã đạt vị trí thứ 1 trong các bài viết phổ biến.",
+    },
+
     navigation: {
         counseling: "Tư vấn",
         recommendation: "Đề xuất",

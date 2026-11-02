@@ -23,6 +23,32 @@ const en = {
         },
     },
 
+    notification: {
+        bellAria: "Notifications, {{count}} unread",
+        title: "Notifications",
+        markAllRead: "Mark all as read",
+        loading: "Loading notifications.",
+        empty: "No new notifications.",
+        loadError: "Unable to load notifications.",
+        retry: "Retry",
+        loadMore: "Show more notifications",
+        unread: "Unread",
+        unknownActor: "Unknown user",
+
+        postLiked: "{{actor}} liked your post.",
+        postUnliked: "{{actor}} removed a like from your post.",
+        postReposted: "{{actor}} reposted your post.",
+        postUnreposted: "{{actor}} removed a repost from your post.",
+        postCommented: "{{actor}} commented on your post.",
+        commentReplied: "{{actor}} replied to your comment.",
+        commentMentioned: "{{actor}} mentioned you.",
+
+        popularTop10: "Your post has reached 10th place in popular posts.",
+        popularTop3: "Your post has reached 3rd place in popular posts.",
+        popularTop2: "Your post has reached 2nd place in popular posts.",
+        popularTop1: "Your post has reached 1st place in popular posts.",
+    },
+
     navigation: {
         counseling: "Consultation",
         recommendation: "Recommendations",

@@ -23,6 +23,32 @@ const ja = {
         },
     },
 
+    notification: {
+        bellAria: "通知、未読 {{count}} 件",
+        title: "通知",
+        markAllRead: "すべて既読にする",
+        loading: "通知を読み込んでいます。",
+        empty: "新しい通知はありません。",
+        loadError: "通知を読み込めませんでした。",
+        retry: "再試行",
+        loadMore: "通知をもっと見る",
+        unread: "未読",
+        unknownActor: "不明なユーザー",
+
+        postLiked: "{{actor}}さんがあなたの投稿に共感しました。",
+        postUnliked: "{{actor}}さんがあなたの投稿の共感を取り消しました。",
+        postReposted: "{{actor}}さんがあなたの投稿をリポストしました。",
+        postUnreposted: "{{actor}}さんがあなたの投稿のリポストを取り消しました。",
+        postCommented: "{{actor}}さんがあなたの投稿にコメントしました。",
+        commentReplied: "{{actor}}さんがあなたのコメントに返信しました。",
+        commentMentioned: "{{actor}}さんがあなたをメンションしました。",
+
+        popularTop10: "あなたの投稿が人気投稿の10位になりました。",
+        popularTop3: "あなたの投稿が人気投稿の3位になりました。",
+        popularTop2: "あなたの投稿が人気投稿の2位になりました。",
+        popularTop1: "あなたの投稿が人気投稿の1位になりました。",
+    },
+
     navigation: {
         counseling: "相談",
         recommendation: "おすすめ",

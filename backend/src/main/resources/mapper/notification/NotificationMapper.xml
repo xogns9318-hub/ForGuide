@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.forguide.notification.mapper.NotificationMapper">
+
+    <!-- 알림 목록과 SSE 전송에 공통으로 쓰는 조회 컬럼 -->
+    <sql id="notificationColumns">
+        n.notification_id AS notificationId,
+        n.actor_member_id AS actorMemberId,
+        COALESCE(actor.nickname, actor.login_id) AS actorNickname,
+        actor.profile_image_url AS actorProfileImageUrl,
+        n.notification_type AS notificationType,
+        n.resource_type AS resourceType,
+        n.resource_id AS resourceId,
+        n.rank_position AS rankPosition,
+        n.read_at AS readAt,
+        n.created_at AS createdAt
+    </sql>
+
+    <!-- DB가 생성한 notification_id를 command.notificationId에 넣는다. -->
+    <insert id="insert"
+            parameterType="com.example.forguide.notification.dto.NotificationCreateCommand"
+            useGeneratedKeys="true"
+            keyProperty="notificationId">
+        INSERT INTO member_notifications (
+            recipient_member_id,
+            actor_member_id,
+            notification_type,
+            resource_type,
+            resource_id,
+            rank_position,
+            notification_event_key
+        ) VALUES (
+            #{recipientMemberId},
+            #{actorMemberId},
+            #{notificationType},
+            #{resourceType},
+            #{resourceId},
+            #{rankPosition},
+            #{notificationEventKey}
+        )
+    </insert>
+
+    <!-- 저장 직후 SSE로 전달할 완성된 알림 한 건 -->
+    <select id="findById"
+            resultType="com.example.forguide.notification.dto.NotificationResponse">
+        SELECT
+        <include refid="notificationColumns"/>
+        FROM member_notifications n
+        LEFT JOIN members actor
+            ON actor.member_id = n.actor_member_id
+        WHERE n.notification_id = #{notificationId}
+    </select>
+
+    <!-- 최신 알림부터 가져오며, 다음 요청은 마지막 notificationId보다 오래된 알림만 조회 -->
+    <select id="findByRecipientIdAndCursor"
+            resultType="com.example.forguide.notification.dto.NotificationResponse">
+        SELECT
+            <include refid="notificationColumns"/>
+        FROM member_notifications n
+        LEFT JOIN members actor
+            ON actor.member_id = n.actor_member_id
+        WHERE n.recipient_member_id = #{recipientMemberId}
+        <if test="cursor.cursorNotificationId != null">
+            AND n.notification_id &lt; #{cursor.cursorNotificationId}
+        </if>
+        ORDER BY n.notification_id DESC
+        LIMIT #{cursor.size}
+    </select>
+
+    <select id="countUnreadByRecipientMemberId" resultType="long">
+        SELECT COUNT(*)
+        FROM member_notifications
+        WHERE recipient_member_id = #{recipientMemberId}
+            AND read_at IS NULL
+    </select>
+
+    <!-- 다른 회원의 알림은 읽음 처리할 수 없도록 수신자 조건을 함께 둔다. -->
+    <update id="markAsRead">
+        UPDATE member_notifications
+        SET read_at = COALESCE(read_at, CURRENT_TIMESTAMP)
+        WHERE notification_id = #{notificationId}
+            AND recipient_member_id = #{recipientMemberId}
+    </update>
+
+    <update id="markAllAsRead">
+        UPDATE member_notifications
+        SET read_at = CURRENT_TIMESTAMP
+        WHERE recipient_member_id = #{recipientMemberId}
+            AND read_at IS NULL
+    </update>
+
+    <!-- TOP 10·3·2·1 알림은 같은 event key로 한 번만 생성한다. -->
+    <select id="existsByNotificationEventKey" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1
+            FROM member_notifications
+            WHERE notification_event_key = #{notificationEventKey}
+        )
+    </select>
+
+</mapper>
