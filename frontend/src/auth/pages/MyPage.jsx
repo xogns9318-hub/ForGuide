@@ -191,6 +191,9 @@ export default function MyPage() {
                     <Link to="/mypage/edit" className="button">
                         {t("auth.myPage.goProfileEdit")}
                     </Link>
+                    <Link to="/my-finance" className="button">
+                        {t("auth.myPage.goMyFinance")}
+                    </Link>
                     <Link to="/mypage/password" className="button">
                         {t("auth.myPage.goPasswordChange")}
                     </Link>

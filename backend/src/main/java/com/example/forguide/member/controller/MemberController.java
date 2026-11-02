@@ -3,6 +3,8 @@ package com.example.forguide.member.controller;
 import com.example.forguide.common.response.ApiResponse;
 import com.example.forguide.common.security.JwtProperties;
 import com.example.forguide.member.dto.AuthResponse;
+import com.example.forguide.member.dto.FinanceRequest;
+import com.example.forguide.member.dto.FinanceResponse;
 import com.example.forguide.member.dto.MemberProfileRequest;
 import com.example.forguide.member.dto.MemberProfileResponse;
 import com.example.forguide.member.dto.MemberResponse;
@@ -23,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 로그인한 본인의 닉네임·프로필 이미지·비밀번호 변경, 프로필 조회·저장 (로그인 필요).
+ * 로그인한 본인의 닉네임·프로필 이미지·비밀번호 변경, 프로필·내 금융 정보 조회·저장 (로그인 필요).
  * 회원 번호는 요청 값으로 받지 않고 토큰에서만 꺼낸다 (남의 정보를 바꾸지 못하게).
  */
 @RestController
@@ -64,6 +66,17 @@ public class MemberController {
     public ApiResponse<MemberProfileResponse> updateProfile(@AuthenticationPrincipal Long memberId,
                                                             @Valid @RequestBody MemberProfileRequest request) {
         return ApiResponse.ok(memberService.updateProfile(memberId, request));
+    }
+
+    @GetMapping("/finance")
+    public ApiResponse<FinanceResponse> getFinance(@AuthenticationPrincipal Long memberId) {
+        return ApiResponse.ok(memberService.getFinance(memberId));
+    }
+
+    @PatchMapping("/finance")
+    public ApiResponse<FinanceResponse> updateFinance(@AuthenticationPrincipal Long memberId,
+                                                      @Valid @RequestBody FinanceRequest request) {
+        return ApiResponse.ok(memberService.updateFinance(memberId, request));
     }
 
     @PatchMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -39,6 +39,33 @@ export async function updateProfile({ language, residenceTypeCode, visaTypeCode,
     return client.patch("/members/me/profile", { language, residenceTypeCode, visaTypeCode, job });
 }
 
+// 내 금융 정보 조회 → { annualIncome, employmentTypeCode, creditScoreBand, mainBank, existingLoanAmount,
+//                      visaTypeCode, visaApplicable, choices }
+// 금액은 원 단위. 저장한 적 없거나 모르는 값은 null ("확인 필요"). visaTypeCode는 프로필의 체류자격(비자)
+export async function getFinance() {
+    return client.get("/members/me/finance");
+}
+
+// 내 금융 정보 저장 (처음이면 새로 만든다) → 조회와 같은 모양
+// 모르는 값은 null로 보낸다 (0과 구분). 체류자격(비자)은 프로필에 저장된다
+export async function updateFinance({
+    annualIncome,
+    employmentTypeCode,
+    creditScoreBand,
+    mainBank,
+    existingLoanAmount,
+    visaTypeCode,
+}) {
+    return client.patch("/members/me/finance", {
+        annualIncome,
+        employmentTypeCode,
+        creditScoreBand,
+        mainBank,
+        existingLoanAmount,
+        visaTypeCode,
+    });
+}
+
 // 닉네임 변경 (앞뒤 공백은 빼고 저장, 다른 회원과 중복 허용)
 export async function updateNickname(nickname) {
     const member = await client.patch("/members/me/nickname", { nickname });

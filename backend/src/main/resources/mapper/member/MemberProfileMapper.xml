@@ -35,6 +35,18 @@
                 #{row.job})
     </insert>
 
+    <update id="updateVisa">
+        UPDATE member_profiles
+        SET visa_type_id = (SELECT visa_type_id FROM visa_types WHERE visa_code = #{visaTypeCode}),
+            updated_at   = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+    </update>
+
+    <insert id="insertVisa">
+        INSERT INTO member_profiles (member_id, visa_type_id)
+        VALUES (#{memberId}, (SELECT visa_type_id FROM visa_types WHERE visa_code = #{visaTypeCode}))
+    </insert>
+
     <select id="findResidenceTypes" resultType="com.example.forguide.member.dto.MemberProfileResponse$Choice">
         SELECT residence_code AS code, residence_name AS name FROM residence_types ORDER BY residence_type_id
     </select>

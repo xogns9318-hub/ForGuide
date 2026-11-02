@@ -6,6 +6,7 @@ import ProfileEdit from "./pages/ProfileEdit.jsx";
 import PasswordChange from "./pages/PasswordChange.jsx";
 import PasswordReset from "./pages/PasswordReset.jsx";
 import FindId from "./pages/FindId.jsx";
+import MyFinance from "./pages/MyFinance.jsx";
 import RequireAuth from "./components/RequireAuth.jsx";
 
 // auth가 화면을 제공하는 주소 (AppRoutes의 임시 화면 목록에서 빼기 위해 쓴다)
@@ -17,6 +18,7 @@ export const authPaths = [
     "/mypage/password",
     "/password/reset",
     "/find-id",
+    "/my-finance",
 ];
 
 // 회원 화면 라우트 묶음. AppRoutes의 공통 레이아웃 Route 안에서 {authRoutes()}로 넣는다
@@ -34,6 +36,7 @@ export function authRoutes() {
                 <Route path="/mypage" element={<MyPage />} />
                 <Route path="/mypage/edit" element={<ProfileEdit />} />
                 <Route path="/mypage/password" element={<PasswordChange />} />
+                <Route path="/my-finance" element={<MyFinance />} />
             </Route>
         </>
     );

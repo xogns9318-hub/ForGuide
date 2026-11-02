@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.forguide.member.mapper.CustomerFinanceMapper">
+
+    <select id="findByMemberId" resultType="com.example.forguide.member.mapper.CustomerFinanceRow">
+        SELECT f.annual_income        AS annualIncome,
+               e.employment_code      AS employmentTypeCode,
+               f.credit_score_band    AS creditScoreBand,
+               f.main_bank            AS mainBank,
+               f.existing_loan_amount AS existingLoanAmount
+        FROM customer_finances f
+        LEFT JOIN employment_types e ON e.employment_type_id = f.employment_type_id
+        WHERE f.member_id = #{memberId}
+    </select>
+
+    <!-- 고용 형태는 코드를 번호로 바꿔 저장한다. 없는 코드면 NULL이 되므로 서비스에서 코드를 먼저 확인한다 -->
+    <update id="update">
+        UPDATE customer_finances
+        SET annual_income        = #{row.annualIncome},
+            employment_type_id   = (SELECT employment_type_id FROM employment_types WHERE employment_code = #{row.employmentTypeCode}),
+            credit_score_band    = #{row.creditScoreBand},
+            main_bank            = #{row.mainBank},
+            existing_loan_amount = #{row.existingLoanAmount},
+            updated_at           = CURRENT_TIMESTAMP
+        WHERE member_id = #{memberId}
+    </update>
+
+    <insert id="insert">
+        INSERT INTO customer_finances
+            (member_id, annual_income, employment_type_id, credit_score_band, main_bank, existing_loan_amount)
+        VALUES (#{memberId},
+                #{row.annualIncome},
+                (SELECT employment_type_id FROM employment_types WHERE employment_code = #{row.employmentTypeCode}),
+                #{row.creditScoreBand},
+                #{row.mainBank},
+                #{row.existingLoanAmount})
+    </insert>
+
+    <select id="findEmploymentCodes" resultType="string">
+        SELECT employment_code FROM employment_types ORDER BY employment_type_id
+    </select>
+</mapper>
