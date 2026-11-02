@@ -20,6 +20,32 @@ const zh = {
         },
     },
 
+    notification: {
+        bellAria: "通知，{{count}} 条未读",
+        title: "通知",
+        markAllRead: "全部标为已读",
+        loading: "正在加载通知。",
+        empty: "没有新通知。",
+        loadError: "无法加载通知。",
+        retry: "重试",
+        loadMore: "查看更多通知",
+        unread: "未读",
+        unknownActor: "未知用户",
+
+        postLiked: "{{actor}} 对您的帖子表示了共鸣。",
+        postUnliked: "{{actor}} 取消了对您帖子的共鸣。",
+        postReposted: "{{actor}} 转发了您的帖子。",
+        postUnreposted: "{{actor}} 取消了对您帖子的转发。",
+        postCommented: "{{actor}} 评论了您的帖子。",
+        commentReplied: "{{actor}} 回复了您的评论。",
+        commentMentioned: "{{actor}} 提到了您。",
+
+        popularTop10: "您的帖子成为热门帖子第10名。",
+        popularTop3: "您的帖子成为热门帖子第3名。",
+        popularTop2: "您的帖子成为热门帖子第2名。",
+        popularTop1: "您的帖子成为热门帖子第1名。",
+    },
+
     navigation: {
         counseling: "咨询",
         recommendation: "推荐",

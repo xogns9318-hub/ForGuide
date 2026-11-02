@@ -291,6 +291,22 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 
 게시글 조회(GET)는 로그인 없이 가능하며, 작성(POST)과 삭제(DELETE)는 로그인해야 한다.
 
+## 알림 API
+
+알림은 커뮤니티 활동을 수신자별 DB에 먼저 저장한 뒤, DB 트랜잭션이 정상 커밋된 경우에만 SSE로 연결 중인 모든 브라우저 탭에 전달한다. 로그인한 회원만 사용할 수 있다. 이력서 저장·불러오기는 본인만 보는 작업이므로 알림함 대신 해당 화면의 성공 메시지를 사용한다.
+
+| 메서드 | 주소 | 설명 |
+| --- | --- | --- |
+| GET | `/api/v1/notifications/stream` | SSE 실시간 알림 구독 |
+| GET | `/api/v1/notifications` | 내 알림 목록을 커서 기반으로 조회 |
+| GET | `/api/v1/notifications/unread-count` | 읽지 않은 알림 수 조회 |
+| PATCH | `/api/v1/notifications/{notificationId}/read` | 내 알림 한 건 읽음 처리 |
+| PATCH | `/api/v1/notifications/read-all` | 내 알림 전체 읽음 처리 |
+
+목록 조회는 `cursorCreatedAt`, `cursorNotificationId`, `size`를 받으며 최신순으로 반환한다. SSE 이벤트 이름은 `notification`이고, 새 알림의 응답 객체를 전달한다. 액세스 토큰을 HTTP `Authorization` 헤더로 보내야 하므로 프론트는 `EventSource`가 아닌 `fetch` 스트리밍으로 연결한다.
+
+알림 종류는 게시글 공감·공감 취소·리포스트·리포스트 취소, 새 댓글·답글·`@로그인아이디` 언급, 인기 게시글 순위다. 자기 행동에는 알림을 만들지 않는다. 대댓글과 언급이 같은 수신자에게 향하면 언급 알림만 생성한다. 인기 순위는 공감순·조회순 중 더 높은 순위를 기준으로 10위·3위·2위·1위에 진입했을 때 각각 한 번만 알리고, 하락 알림은 만들지 않는다.
+
 ### 게시글 API
 
 | 메서드 | 주소                        | 설명                                           |

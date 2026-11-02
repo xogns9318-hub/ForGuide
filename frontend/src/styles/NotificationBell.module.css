@@ -1,0 +1,203 @@
+.wrapper {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.bellButton {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition:
+            background 160ms ease,
+            color 160ms ease;
+}
+
+.bellButton:hover,
+.bellButton:focus-visible {
+    background: #edf7f2;
+    color: var(--primary);
+    outline: none;
+}
+
+.bellButton svg {
+    width: 21px;
+    height: 21px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.badge {
+    position: absolute;
+    top: 1px;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+    border: 2px solid var(--surface);
+    border-radius: 999px;
+    background: #d6544d;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 500;
+    width: min(360px, calc(100vw - 32px));
+    max-height: min(520px, calc(100vh - 110px));
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+    box-shadow: 0 16px 36px rgb(32 59 51 / 16%);
+}
+
+.panelHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid var(--line);
+}
+
+.panelHeader h2 {
+    margin: 0;
+    color: var(--primary);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.markAllButton {
+    padding: 6px 8px;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.markAllButton:hover:not(:disabled),
+.markAllButton:focus-visible:not(:disabled) {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    outline: none;
+}
+
+.markAllButton:disabled {
+    cursor: default;
+    opacity: 0.45;
+}
+
+.notificationList {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.notificationList li + li {
+    border-top: 1px solid var(--line);
+}
+
+.notificationItem {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 15px 18px;
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font: inherit;
+    line-height: 1.5;
+    text-align: left;
+    cursor: pointer;
+    transition: background 160ms ease;
+}
+
+.notificationItem:hover,
+.notificationItem:focus-visible {
+    background: #f2faf6;
+    outline: none;
+}
+
+.notificationItem[data-unread="true"] {
+    background: #edf8f2;
+}
+
+.notificationItem[data-unread="true"]:hover,
+.notificationItem[data-unread="true"]:focus-visible {
+    background: #e3f3ea;
+}
+
+.unreadLabel {
+    flex-shrink: 0;
+    padding: 3px 6px;
+    border-radius: 999px;
+    background: var(--primary);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.stateMessage {
+    margin: 0;
+    padding: 24px 18px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.stateMessage p {
+    margin: 0 0 10px;
+}
+
+.stateMessage button {
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--primary);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+    .panel {
+        position: fixed;
+        top: 64px;
+        right: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bellButton,
+    .notificationItem {
+        transition: none;
+    }
+}

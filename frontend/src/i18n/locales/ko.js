@@ -322,6 +322,32 @@ const ko = {
         },
     },
 
+    notification: {
+        bellAria: "알림, 읽지 않은 알림 {{count}}개",
+        title: "알림",
+        markAllRead: "전체 읽음",
+        loading: "알림을 불러오는 중입니다.",
+        empty: "새 알림이 없습니다.",
+        loadError: "알림을 불러오지 못했습니다.",
+        retry: "다시 시도",
+        loadMore: "알림 더 보기",
+        unread: "읽지 않음",
+        unknownActor: "알 수 없는 사용자",
+
+        postLiked: "{{actor}}님이 회원님의 게시글에 공감했습니다.",
+        postUnliked: "{{actor}}님이 회원님의 게시글 공감을 취소했습니다.",
+        postReposted: "{{actor}}님이 회원님의 게시글을 리포스트했습니다.",
+        postUnreposted: "{{actor}}님이 회원님의 게시글 리포스트를 취소했습니다.",
+        postCommented: "{{actor}}님이 회원님의 게시글에 댓글을 남겼습니다.",
+        commentReplied: "{{actor}}님이 회원님의 댓글에 답글을 남겼습니다.",
+        commentMentioned: "{{actor}}님이 회원님을 언급했습니다.",
+
+        popularTop10: "회원님의 게시글이 인기 게시글 10위가 되었습니다.",
+        popularTop3: "회원님의 게시글이 인기 게시글 3위가 되었습니다.",
+        popularTop2: "회원님의 게시글이 인기 게시글 2위가 되었습니다.",
+        popularTop1: "회원님의 게시글이 인기 게시글 1위가 되었습니다.",
+    },
+
     navigation: {
         counseling: "상담 가이드",
         recommendation: "추천 가이드",

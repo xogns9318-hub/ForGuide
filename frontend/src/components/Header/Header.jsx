@@ -1,8 +1,9 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { categories, contactRoutes } from "../../routes/routeConfig.js";
 import LanguageSelector from "../LanguageSelector/LanguageSelector.jsx";
+import NotificationBell from "./NotificationBell.jsx";
 import styles from "../../styles/headerModule.module.css";
 
 // 시뮬레이터와 커뮤니티는 하나의 확장 가이드 분류로 묶는다.
@@ -56,6 +57,7 @@ const menus = [
 
 export default function Header({ isLoggedIn = false, onLogout }) {
     const { pathname } = useLocation();
+    const navigate = useNavigate();
     const { t } = useTranslation();
     const navigationId = useId();
     // 넓은 화면에서는 한 메뉴만 펼침
@@ -122,6 +124,19 @@ export default function Header({ isLoggedIn = false, onLogout }) {
         // 페이지 이동이나 메뉴 종료 시 펼침 상태 초기화
         setOpenMenu(null);
         setIsMobileMenuOpen(false);
+    }
+
+    function handleNotificationClick(notification) {
+        // 현재 커뮤니티 알림은 모두 해당 게시글 상세로 연결한다.
+        if (
+            notification.resourceType !== "COMMUNITY_POST" ||
+            !notification.resourceId
+        ) {
+            return;
+        }
+
+        closeMenus();
+        navigate(`/service/community/posts/${notification.resourceId}`);
     }
 
     // 다른 페이지로 이동하면 이전 메뉴를 닫음
@@ -370,6 +385,12 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                             {t("header.signup")}
                         </Link>
                     </>
+                )}
+
+                {isLoggedIn && (
+                    <NotificationBell
+                        onNotificationClick={handleNotificationClick}
+                    />
                 )}
 
                 {/* 언어 변경과 저장은 기존 컴포넌트에서 처리 */}
