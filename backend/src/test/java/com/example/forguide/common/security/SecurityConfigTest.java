@@ -164,5 +164,67 @@ class SecurityConfigTest {
         ApiResponse<Void> publicEndpoint() {
             return ApiResponse.ok();
         }
+
+        // 관리자 주소 확인용 (실제 관리자 기능은 관리자 담당 팀원이 /api/v1/admin/ 아래에 만든다)
+        @GetMapping("/api/v1/admin/test-ping")
+        ApiResponse<Map<String, Long>> adminPing(@AuthenticationPrincipal Long memberId) {
+            return ApiResponse.ok(Map.of("memberId", memberId));
+        }
+    }
+
+    // ── 관리자 주소 (/api/v1/admin/**) ──
+
+    @Test
+    void 관리자_주소는_토큰_없이_401() throws Exception {
+        mockMvc.perform(get("/api/v1/admin/test-ping"))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.code").value("AUTH_REQUIRED"));
+    }
+
+    @Test
+    void 일반_회원_토큰으로는_관리자_주소가_403_FORBIDDEN() throws Exception {
+        String token = jwtProvider.createAccessToken(7L, JwtProvider.ROLE_USER);
+
+        mockMvc.perform(get("/api/v1/admin/test-ping").header("Authorization", "Bearer " + token))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.error.code").value("FORBIDDEN"));
+    }
+
+    @Test
+    void 관리자_토큰으로는_관리자_주소를_통과한다() throws Exception {
+        String token = jwtProvider.createAccessToken(1L, JwtProvider.ROLE_ADMIN);
+
+        mockMvc.perform(get("/api/v1/admin/test-ping").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.memberId").value(1));
+    }
+
+    @Test
+    void 역할이_없는_예전_토큰은_일반_회원으로_본다() throws Exception {
+        String noRole = Jwts.builder()
+                .subject("7")
+                .expiration(Date.from(Instant.now().plusSeconds(600)))
+                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret)))
+                .compact();
+
+        mockMvc.perform(get("/api/v1/admin/test-ping").header("Authorization", "Bearer " + noRole))
+                .andExpect(status().isForbidden());
+        mockMvc.perform(get("/api/v1/members/me/test-protected").header("Authorization", "Bearer " + noRole))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void 역할을_ADMIN으로_바꿔치기한_토큰은_401_TOKEN_INVALID() throws Exception {
+        String token = jwtProvider.createAccessToken(7L, JwtProvider.ROLE_USER);
+        // 서명은 그대로 두고 내용만 관리자 역할로 바꾼 위조 토큰
+        String[] parts = token.split("\\.");
+        String forgedPayload = java.util.Base64.getUrlEncoder().withoutPadding()
+                .encodeToString("{\"sub\":\"7\",\"role\":\"ADMIN\",\"exp\":9999999999}".getBytes());
+        String forged = parts[0] + "." + forgedPayload + "." + parts[2];
+
+        mockMvc.perform(get("/api/v1/admin/test-ping").header("Authorization", "Bearer " + forged))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.code").value("TOKEN_INVALID"));
     }
 }

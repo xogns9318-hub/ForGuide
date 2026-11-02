@@ -9,6 +9,7 @@
         member_id         AS memberId,
         login_id          AS loginId,
         password          AS password,
+        role              AS role,
         name              AS name,
         given_name        AS givenName,
         family_name       AS familyName,
@@ -38,8 +39,8 @@
     </select>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="memberId" keyColumn="member_id">
-        INSERT INTO members (login_id, password, name, given_name, family_name, nickname, email)
-        VALUES (#{loginId}, #{password}, #{name}, #{givenName}, #{familyName}, #{nickname}, #{email})
+        INSERT INTO members (login_id, password, role, name, given_name, family_name, nickname, email)
+        VALUES (#{loginId}, #{password}, #{role}, #{name}, #{givenName}, #{familyName}, #{nickname}, #{email})
     </insert>
 
     <update id="updateNickname">

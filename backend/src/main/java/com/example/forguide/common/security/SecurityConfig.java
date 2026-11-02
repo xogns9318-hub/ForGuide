@@ -50,6 +50,10 @@ public class SecurityConfig {
                         // 오류 응답 전달(내부 이동)은 막지 않는다 (공개 주소의 오류가 401로 바뀌는 것 방지)
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
 
+                        // ── 관리자 주소: ADMIN 역할만 (토큰 없음 401, 일반 회원 403) ──
+                        // 관리자 기능은 모두 /api/v1/admin/ 아래에 둔다
+                        .requestMatchers("/api/v1/admin/**").hasRole(JwtProvider.ROLE_ADMIN)
+
                         // ── 공개 주소 ──
                         // 인증: 회원가입·아이디 중복 확인·로그인·재발급·로그아웃
                         .requestMatchers("/api/v1/auth/**").permitAll()
@@ -87,8 +91,10 @@ public class SecurityConfig {
                         // ── 그 밖의 모든 주소는 로그인 필요 ──
                         .anyRequest().authenticated())
 
-                // ④ 인증이 필요한데 없을 때 → 401 실패 응답 (ApiResponse 모양)
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
+                // ④ 인증이 필요한데 없을 때 → 401, 권한이 없을 때 → 403 실패 응답 (ApiResponse 모양)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(authenticationEntryPoint))
 
                 // ⑤ 토큰 필터를 Security 필터 체인에 끼워 넣는다
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);

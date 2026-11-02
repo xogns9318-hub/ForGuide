@@ -34,15 +34,23 @@
 | 위치                                          | 역할                                                                                        |
 | --------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | `common/security/JwtProperties`               | `jwt.*` 설정값. 수명 기본값 access 30분, refresh 14일                                       |
-| `common/security/JwtProvider`                 | access token 발급·검증. 만료 `TOKEN_EXPIRED`, 위조·형식 오류 `TOKEN_INVALID`                |
-| `common/security/JwtAuthenticationFilter`     | `Authorization: Bearer {토큰}` 검증 → 컨트롤러에서 `@AuthenticationPrincipal Long memberId` |
-| `common/security/JwtAuthenticationEntryPoint` | 잠긴 주소에 인증 없음 → 401 (`AUTH_REQUIRED`·`TOKEN_EXPIRED`·`TOKEN_INVALID`)               |
+| `common/security/JwtProvider`                 | access token 발급·검증(회원 번호 `sub`, 역할 `role`). 만료 `TOKEN_EXPIRED`, 위조·형식 오류 `TOKEN_INVALID` |
+| `common/security/JwtAuthenticationFilter`     | `Authorization: Bearer {토큰}` 검증 → 컨트롤러에서 `@AuthenticationPrincipal Long memberId`, 권한 `ROLE_USER`·`ROLE_ADMIN` |
+| `common/security/JwtAuthenticationEntryPoint` | 잠긴 주소에 인증 없음 → 401 (`AUTH_REQUIRED`·`TOKEN_EXPIRED`·`TOKEN_INVALID`), 권한 없음 → 403 (`FORBIDDEN`) |
 | `common/security/SecurityConfig`              | 세션 없음(STATELESS), BCrypt, 접근 규칙                                                     |
 
 접근 규칙: **기본 잠금.** 공개할 주소만 열고 나머지는 모두 로그인이 필요하다(`anyRequest().authenticated()`).
 현재 공개 주소: `/api/v1/auth/**`, 프로필·커뮤니티 이미지 조회(GET), 커뮤니티 게시글 조회(GET `/api/v1/community/posts/**`), 커뮤니티 옵션 조회(GET `/api/v1/community/options/**`), 작성자 미리보기·작성 글 목록(GET `/api/v1/community/members/*/preview`, `/posts`).
 토큰이 실려 오면 `@AuthenticationPrincipal Long memberId`로 회원 번호를 받는다(공개 주소에서 토큰이 없으면 `null`).
 로그인 없이 써야 하는 새 API는 해당 담당자가 `common/security/SecurityConfig`의 "공개 주소" 구역에 한 줄 추가한다. 잊으면 401이 난다.
+
+### 관리자 주소 (관리자 기능 담당자용)
+
+- **주소 규칙:** 관리자 기능은 모두 `/api/v1/admin/` 아래에 만든다. 이 주소는 `SecurityConfig`가 이미 `ADMIN`만 통과시키므로 컨트롤러에서 권한을 다시 검사하지 않아도 된다. 토큰 없음 → 401 `AUTH_REQUIRED`, 일반 회원 → 403 `FORBIDDEN`.
+- **백엔드에서 누구인지:** 다른 API와 같이 `@AuthenticationPrincipal Long memberId`. `/api/v1/admin/` 밖에서 관리자만 허용해야 하면 `SecurityConfig`에 `.hasRole(JwtProvider.ROLE_ADMIN)` 한 줄을 추가한다(회원 담당과 상의).
+- **화면에서:** 로그인·재발급 응답과 스토어의 `member.role`이 `"ADMIN"`이면 관리자 메뉴를 보여 준다. 화면 숨김은 편의일 뿐이고 권한은 서버가 확인한다.
+- **역할 저장:** `members.role`(`USER`/`ADMIN`, V32). 가입으로는 `USER`만 만들어진다. 역할은 access token에 들어가므로, DB에서 바꾸면 다시 로그인(또는 재발급)해야 반영된다.
+- **관리자 계정 만들기:** 서버 시작 때 환경변수 `FORGUIDE_ADMIN_LOGIN_ID`·`FORGUIDE_ADMIN_PASSWORD`(선택 `FORGUIDE_ADMIN_EMAIL`)가 있고 그 아이디가 없으면 만든다(`member/service/AdminAccountInitializer`). 아이디·비밀번호는 가입 규칙을 따라야 하고, 같은 아이디의 일반 회원이 이미 있으면 관리자로 바꾸지 않는다. **비밀번호는 저장소·채팅에 남기지 말고 IntelliJ 실행 설정 환경변수에만 넣는다.**
 
 ## 이력서 저장 API
 
@@ -180,7 +188,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | `restoreSession()`                           | `POST /auth/refresh`                | 없음 (refresh token 쿠키) | `{ accessToken, member }` → 스토어 저장. 쿠키가 없으면 `data` 없음(200) | 쿠키 없음·실패 = 로그아웃 상태로 시작 (정상). mock에서는 서버를 부르지 않는다 |
 | `logout()`                                   | `POST /auth/logout`                 | 없음 (refresh token 쿠키) | 없음                                                                    | 실패해도 화면의 로그인 상태는 지운다                                          |
 
-- `member`: `{ memberId, loginId, name, givenName, familyName, email, nickname, profileImageUrl }`. `name`은 표시용 "이름 성"(성이 없으면 이름만), `familyName`은 없으면 `null`. 비밀번호는 어떤 응답에도 넣지 않는다.
+- `member`: `{ memberId, loginId, name, givenName, familyName, email, nickname, profileImageUrl, role }`. `role`은 `USER`·`ADMIN`. `name`은 표시용 "이름 성"(성이 없으면 이름만), `familyName`은 없으면 `null`. 비밀번호는 어떤 응답에도 넣지 않는다.
 - 백엔드 구현: `member/controller/AuthController`, `member/service/AuthService`, `member/mapper/`(SQL `resources/mapper/member/`). 회원가입 성공은 201.
 - refresh token: 무작위 32바이트(쿠키 `refreshToken`, HttpOnly·SameSite=Strict·Path=/api/v1/auth·Max-Age 14일). DB `refresh_tokens.token`에는 SHA-256 해시만 저장. 재발급 시 교체하고, 같은 토큰은 한 번만 쓸 수 있다.
 - 로그인: 없는 아이디도 비밀번호 비교 시간을 똑같이 써서 응답 시간으로 가입 여부를 알 수 없게 한다.

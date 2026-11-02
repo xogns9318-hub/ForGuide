@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuthService {
 
-    private static final Pattern LOGIN_ID_PATTERN = Pattern.compile("^[a-z0-9]{4,20}$");
+    private static final Pattern LOGIN_ID_PATTERN = Pattern.compile(SignupRequest.LOGIN_ID_PATTERN);
     private static final int REFRESH_TOKEN_BYTES = 32;
 
     private final MemberMapper memberMapper;
@@ -63,7 +63,7 @@ public class AuthService {
     /** 아이디 중복 확인 */
     public boolean isLoginIdAvailable(String loginId) {
         if (loginId == null || !LOGIN_ID_PATTERN.matcher(loginId).matches()) {
-            String message = "4~20자의 영문 소문자와 숫자만 사용할 수 있습니다.";
+            String message = SignupRequest.LOGIN_ID_MESSAGE;
             throw new ApiException(ErrorCode.INVALID_INPUT, message, Map.of("loginId", message));
         }
         return !memberMapper.existsByLoginId(loginId);
@@ -98,6 +98,7 @@ public class AuthService {
         MemberRow row = new MemberRow();
         row.setLoginId(request.loginId());
         row.setPassword(passwordEncoder.encode(request.password())); // BCrypt 해시만 저장
+        row.setRole(JwtProvider.ROLE_USER); // 가입으로는 일반 회원만 만들어진다 (관리자는 AdminAccountInitializer)
         // 화면 표시용 이름은 "이름 성" 순서 (성이 없으면 이름만)
         row.setName(familyName.isEmpty() ? givenName : givenName + " " + familyName);
         row.setGivenName(givenName);
@@ -252,7 +253,7 @@ public class AuthService {
         refreshTokenMapper.insert(member.getMemberId(), SecureTokens.sha256(refreshToken),
                 now.plus(jwtProvider.getRefreshTokenValidity()));
 
-        String accessToken = jwtProvider.createAccessToken(member.getMemberId());
+        String accessToken = jwtProvider.createAccessToken(member.getMemberId(), member.getRole());
         return new AuthTokens(new AuthResponse(accessToken, MemberResponse.from(member)), refreshToken);
     }
 

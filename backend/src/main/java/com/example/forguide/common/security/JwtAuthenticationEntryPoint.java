@@ -7,17 +7,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
 
 /**
- * 로그인이 필요한 주소에 인증 없이 들어왔을 때 401 응답을 직접 만든다.
+ * 필터 단계에서 막힌 요청의 실패 응답을 직접 만든다.
+ * - 로그인이 필요한 주소에 인증 없이 들어옴 → 401 (commence)
+ * - 로그인은 했지만 권한이 없음 (일반 회원이 /api/v1/admin/**) → 403 FORBIDDEN (handle)
  * 필터 단계라 컨트롤러 예외 처리기를 거치지 않으므로, 같은 ApiResponse 모양으로 여기서 작성한다.
  */
 @Component
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, AccessDeniedHandler {
 
     private final ObjectMapper objectMapper;
 
@@ -35,6 +39,16 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
                 ? apiException.getErrorCode()   // TOKEN_EXPIRED · TOKEN_INVALID
                 : ErrorCode.AUTH_REQUIRED;
 
+        write(response, code);
+    }
+
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response,
+                       AccessDeniedException accessDeniedException) throws IOException {
+        write(response, ErrorCode.FORBIDDEN);
+    }
+
+    private void write(HttpServletResponse response, ErrorCode code) throws IOException {
         response.setStatus(code.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
