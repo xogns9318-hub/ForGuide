@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -58,6 +60,27 @@ public class FastResultStore {
             throw new ApiException(ErrorCode.INVALID_INPUT, errors);
         }
         return file.get("results").get(String.join("|", parts));
+    }
+
+    /**
+     * 추천 결과에 나오는 금융회사 이름 목록 (기관 종류로 거른다. 예: "account", "은행")
+     * 내 금융 정보의 주거래은행 선택지에 쓴다 — 추천과 같은 이름을 써야 나중에 추천에서 그대로 비교할 수 있다
+     */
+    public List<String> companies(String product, String institutionType) {
+        JsonNode file = files.computeIfAbsent(product, this::load);
+        TreeSet<String> names = new TreeSet<>();
+        collectCompanies(file.get("results"), institutionType, names);
+        return List.copyOf(names);
+    }
+
+    private void collectCompanies(JsonNode node, String institutionType, Set<String> names) {
+        if (node == null) {
+            return;
+        }
+        if (node.isObject() && node.has("company") && institutionType.equals(node.path("institution_type").asString())) {
+            names.add(node.get("company").asString());
+        }
+        node.forEach(child -> collectCompanies(child, institutionType, names));
     }
 
     private String toKey(String field, String value, JsonNode choices) {

@@ -513,4 +513,65 @@ class AuthControllerTest {
                 .contains("forguide.admin.login-id=${FORGUIDE_ADMIN_LOGIN_ID:}")
                 .contains("forguide.admin.password=${FORGUIDE_ADMIN_PASSWORD:}");
     }
+
+    // ── 아이디 찾기 ──
+
+    private ResultActions findId(String email, String token) throws Exception {
+        return mockMvc.perform(post("/api/v1/auth/find-id").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"" + email + "\",\"verificationToken\":\"" + token + "\"}"));
+    }
+
+    @Test
+    void 아이디_찾기는_앞부분만_보이게_가린_아이디를_알려_준다() throws Exception {
+        signup();
+        String token = verifiedToken(mockMvc, mail, "new@example.com", "FIND_ID");
+
+        // newuser1(8자) → 앞 4자 + ***
+        findId("NEW@example.com", token)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.maskedLoginId").value("newu***"));
+
+        // 같은 토큰은 다시 쓸 수 없다
+        findId("new@example.com", token).andExpect(jsonPath("$.error.code").value("EMAIL_NOT_VERIFIED"));
+    }
+
+    @Test
+    void 짧은_아이디는_앞_2자만_보인다() throws Exception {
+        String token = verifiedToken(mockMvc, mail, "short@example.com");
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                .content(withToken("{\"loginId\":\"abcd12\",\"password\":\"Abcdef1!\",\"givenName\":\"S\","
+                        + "\"nickname\":\"짧은아이디\",\"email\":\"short@example.com\"}", token)));
+
+        findId("short@example.com", verifiedToken(mockMvc, mail, "short@example.com", "FIND_ID"))
+                .andExpect(jsonPath("$.data.maskedLoginId").value("ab***"));
+    }
+
+    @Test
+    void 아이디_찾기도_가입되지_않은_이메일에_같은_응답이고_메일은_보내지_않는다() throws Exception {
+        signup();
+        String registered = mockMvc.perform(post("/api/v1/auth/email/send-code").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"new@example.com\",\"purpose\":\"FIND_ID\"}"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        String unknown = mockMvc.perform(post("/api/v1/auth/email/send-code").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\":\"ghost@example.com\",\"purpose\":\"FIND_ID\"}"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        assertThat(unknown).isEqualTo(registered);
+        verify(mail, never()).send(eq("ghost@example.com"), anyString(), any(), anyLong());
+    }
+
+    @Test
+    void 아이디_찾기_토큰으로_비밀번호를_바꿀_수_없고_반대도_안_된다() throws Exception {
+        signup();
+
+        String findIdToken = verifiedToken(mockMvc, mail, "new@example.com", "FIND_ID");
+        resetPassword("new@example.com", findIdToken, "Newpass2@")
+                .andExpect(jsonPath("$.error.code").value("EMAIL_NOT_VERIFIED"));
+        loginWith("newuser1", "Abcdef1!").andExpect(status().isOk());
+
+        String resetToken = verifiedToken(mockMvc, mail, "new@example.com", "PASSWORD_RESET");
+        findId("new@example.com", resetToken).andExpect(jsonPath("$.error.code").value("EMAIL_NOT_VERIFIED"));
+    }
 }

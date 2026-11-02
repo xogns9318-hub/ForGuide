@@ -159,18 +159,21 @@ class MemberControllerTest {
                 .andExpect(jsonPath("$.error.fieldErrors.language").exists());
     }
 
-    @Test
-    void 다른_회원의_프로필은_보이지도_바뀌지도_않는다() throws Exception {
-        putProfile(accessToken, "{\"language\":\"vi\",\"visaTypeCode\":\"E-9\"}").andExpect(status().isOk());
-
-        // 두 번째 회원으로 가입·로그인
+    // 두 번째 회원으로 가입·로그인 → access token
+    private String signupAndLoginOther() throws Exception {
         String token = verifiedToken(mockMvc, mail, "n2@example.com");
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
                 .content(withToken("{\"loginId\":\"other123\",\"password\":\"Abcdef1!\",\"givenName\":\"B\",\"nickname\":\"둘째\",\"email\":\"n2@example.com\"}", token)));
         String body = mockMvc.perform(post("/api/v1/auth/login").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"loginId\":\"other123\",\"password\":\"Abcdef1!\"}"))
                 .andReturn().getResponse().getContentAsString();
-        String otherToken = JsonPath.read(body, "$.data.accessToken");
+        return JsonPath.read(body, "$.data.accessToken");
+    }
+
+    @Test
+    void 다른_회원의_프로필은_보이지도_바뀌지도_않는다() throws Exception {
+        putProfile(accessToken, "{\"language\":\"vi\",\"visaTypeCode\":\"E-9\"}").andExpect(status().isOk());
+        String otherToken = signupAndLoginOther();
 
         // 두 번째 회원에게는 첫 번째 회원의 값이 보이지 않고, 저장해도 첫 번째 회원 값은 그대로
         getProfile(otherToken).andExpect(jsonPath("$.data.language").doesNotExist());
@@ -183,6 +186,106 @@ class MemberControllerTest {
     @Test
     void 로그인_없이는_프로필을_조회할_수_없다() throws Exception {
         mockMvc.perform(get("/api/v1/members/me/profile")).andExpect(status().isUnauthorized());
+    }
+
+    // ── 내 금융 정보 ──
+
+    private ResultActions getFinance(String token) throws Exception {
+        return mockMvc.perform(get("/api/v1/members/me/finance").header("Authorization", "Bearer " + token));
+    }
+
+    private ResultActions patchFinance(String token, String json) throws Exception {
+        return mockMvc.perform(patch("/api/v1/members/me/finance").header("Authorization", "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON).content(json));
+    }
+
+    @Test
+    void 금융_정보를_처음_조회하면_값은_비어_있고_선택지가_함께_온다() throws Exception {
+        getFinance(accessToken)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.annualIncome").doesNotExist())
+                .andExpect(jsonPath("$.data.creditScoreBand").doesNotExist())
+                .andExpect(jsonPath("$.data.visaApplicable").value(true))
+                .andExpect(jsonPath("$.data.choices.employmentTypes.length()").value(8))
+                .andExpect(jsonPath("$.data.choices.creditScoreBands[0]").value("GT900"))
+                .andExpect(jsonPath("$.data.choices.creditScoreBands[7]").value("LE300"))
+                // 은행은 추천 데이터의 이름 그대로, 화면 이름은 "(주)"를 뗀다. 끝에 기타·없음
+                .andExpect(jsonPath("$.data.choices.banks[?(@.code == '국민은행')].name").value("국민은행"))
+                .andExpect(jsonPath("$.data.choices.banks[?(@.code == '(주)카카오뱅크')].name").value("카카오뱅크"))
+                .andExpect(jsonPath("$.data.choices.banks[-2].code").value("OTHER"))
+                .andExpect(jsonPath("$.data.choices.banks[-1].code").value("NONE"))
+                .andExpect(jsonPath("$.data.choices.visaTypes.length()").value(8));
+    }
+
+    @Test
+    void 금융_정보를_저장하면_체류자격은_프로필과_같은_값이_된다() throws Exception {
+        patchFinance(accessToken, "{\"annualIncome\":36000000,\"employmentTypeCode\":\"REGULAR\","
+                + "\"creditScoreBand\":\"801_900\",\"mainBank\":\"국민은행\",\"existingLoanAmount\":0,"
+                + "\"visaTypeCode\":\"E-9\"}")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.annualIncome").value(36000000))
+                .andExpect(jsonPath("$.data.employmentTypeCode").value("REGULAR"))
+                .andExpect(jsonPath("$.data.mainBank").value("국민은행"))
+                .andExpect(jsonPath("$.data.existingLoanAmount").value(0))
+                .andExpect(jsonPath("$.data.visaTypeCode").value("E-9"));
+
+        // 프로필 화면에서도 같은 체류자격(비자)이 보인다 (값을 두 군데 따로 두지 않는다)
+        getProfile(accessToken).andExpect(jsonPath("$.data.visaTypeCode").value("E-9"));
+    }
+
+    @Test
+    void 모르는_값은_null로_저장되고_0과_구분된다() throws Exception {
+        // 신용점수·연 소득을 비워도 저장된다
+        patchFinance(accessToken, "{\"existingLoanAmount\":0,\"mainBank\":\"NONE\"}").andExpect(status().isOk());
+
+        assertThat(jdbcTemplate.queryForObject("SELECT annual_income FROM customer_finances", Long.class)).isNull();
+        assertThat(jdbcTemplate.queryForObject("SELECT credit_score_band FROM customer_finances", String.class)).isNull();
+        assertThat(jdbcTemplate.queryForObject("SELECT existing_loan_amount FROM customer_finances", Long.class)).isZero();
+
+        // 다시 저장해도 한 행
+        patchFinance(accessToken, "{\"creditScoreBand\":\"LE300\"}").andExpect(status().isOk());
+        assertThat(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM customer_finances", Integer.class)).isEqualTo(1);
+    }
+
+    @Test
+    void 금융_정보에_선택지에_없는_값이나_음수는_400() throws Exception {
+        patchFinance(accessToken, "{\"mainBank\":\"가짜은행\"}")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.fieldErrors.mainBank").exists());
+        patchFinance(accessToken, "{\"creditScoreBand\":\"999\"}")
+                .andExpect(jsonPath("$.error.fieldErrors.creditScoreBand").exists());
+        patchFinance(accessToken, "{\"employmentTypeCode\":\"KING\"}")
+                .andExpect(jsonPath("$.error.fieldErrors.employmentTypeCode").exists());
+        patchFinance(accessToken, "{\"annualIncome\":-1}")
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.fieldErrors.annualIncome").exists());
+    }
+
+    @Test
+    void 내국인이면_금융_정보에서_체류자격을_저장하지_않는다() throws Exception {
+        putProfile(accessToken, "{\"language\":\"ko\",\"residenceTypeCode\":\"KOREAN\"}").andExpect(status().isOk());
+
+        patchFinance(accessToken, "{\"visaTypeCode\":\"E-9\"}")
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.visaApplicable").value(false))
+                .andExpect(jsonPath("$.data.visaTypeCode").doesNotExist());
+    }
+
+    @Test
+    void 다른_회원의_금융_정보는_보이지도_바뀌지도_않는다() throws Exception {
+        patchFinance(accessToken, "{\"annualIncome\":36000000,\"mainBank\":\"국민은행\"}").andExpect(status().isOk());
+        String otherToken = signupAndLoginOther();
+
+        getFinance(otherToken).andExpect(jsonPath("$.data.annualIncome").doesNotExist());
+        patchFinance(otherToken, "{\"annualIncome\":1}").andExpect(status().isOk());
+        getFinance(accessToken)
+                .andExpect(jsonPath("$.data.annualIncome").value(36000000))
+                .andExpect(jsonPath("$.data.mainBank").value("국민은행"));
+    }
+
+    @Test
+    void 로그인_없이는_금융_정보를_조회할_수_없다() throws Exception {
+        mockMvc.perform(get("/api/v1/members/me/finance")).andExpect(status().isUnauthorized());
     }
 
     @Test

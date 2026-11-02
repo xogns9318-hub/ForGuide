@@ -37,11 +37,11 @@ export default function EmailVerificationFields({
     const sendDisabled =
         disabled || v.status === "sending" || isVerified || (v.isWaitingCode && v.resendWait > 0);
 
-    // 비밀번호 찾기는 가입 여부를 드러내지 않으려고 "가입된 이메일이면 보냈다"고 안내한다
+    // 계정 찾기(비밀번호·아이디)는 가입 여부를 드러내지 않으려고 "가입된 이메일이면 보냈다"고 안내한다
     const sentKey =
-        v.purpose === "PASSWORD_RESET"
-            ? "auth.emailVerification.codeSentIfRegistered"
-            : "auth.emailVerification.codeSent";
+        v.purpose === "SIGNUP"
+            ? "auth.emailVerification.codeSent"
+            : "auth.emailVerification.codeSentIfRegistered";
 
     // 코드 입력칸에서 Enter: 폼 제출이 아니라 코드 확인
     function handleCodeKeyDown(event) {

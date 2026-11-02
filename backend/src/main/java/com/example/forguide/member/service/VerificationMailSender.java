@@ -43,8 +43,16 @@ public class VerificationMailSender {
             return;
         }
 
-        String what = purpose == VerificationPurpose.SIGNUP ? "회원가입" : "비밀번호 재설정";
-        String whatEn = purpose == VerificationPurpose.SIGNUP ? "sign-up" : "password reset";
+        String what = switch (purpose) {
+            case SIGNUP -> "회원가입";
+            case PASSWORD_RESET -> "비밀번호 재설정";
+            case FIND_ID -> "아이디 찾기";
+        };
+        String whatEn = switch (purpose) {
+            case SIGNUP -> "sign-up";
+            case PASSWORD_RESET -> "password reset";
+            case FIND_ID -> "user ID lookup";
+        };
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);

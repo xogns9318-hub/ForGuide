@@ -3,6 +3,8 @@ package com.example.forguide.member.controller;
 import com.example.forguide.common.response.ApiResponse;
 import com.example.forguide.common.security.JwtProperties;
 import com.example.forguide.member.dto.AuthResponse;
+import com.example.forguide.member.dto.FindIdRequest;
+import com.example.forguide.member.dto.FindIdResponse;
 import com.example.forguide.member.dto.LoginIdCheckResponse;
 import com.example.forguide.member.dto.LoginRequest;
 import com.example.forguide.member.dto.MemberResponse;
@@ -26,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 회원가입·로그인·재발급·로그아웃·비밀번호 찾기 (로그인 없이 호출 가능: SecurityConfig에서 /api/v1/auth/** 공개)
+ * 회원가입·로그인·재발급·로그아웃·비밀번호 찾기·아이디 찾기 (로그인 없이 호출 가능: SecurityConfig에서 /api/v1/auth/** 공개)
  */
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -58,6 +60,12 @@ public class AuthController {
     @PostMapping("/password/reset")
     public ApiResponse<PasswordResetResponse> resetPassword(@Valid @RequestBody PasswordResetRequest request) {
         return ApiResponse.ok(authService.resetPassword(request));
+    }
+
+    /** 아이디 찾기: 이메일 인증 토큰으로 일부를 가린 아이디를 알려 준다 */
+    @PostMapping("/find-id")
+    public ApiResponse<FindIdResponse> findLoginId(@Valid @RequestBody FindIdRequest request) {
+        return ApiResponse.ok(authService.findLoginId(request));
     }
 
     @PostMapping("/login")

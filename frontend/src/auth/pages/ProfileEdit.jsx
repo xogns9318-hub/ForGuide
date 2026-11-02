@@ -242,7 +242,7 @@ export default function ProfileEdit() {
                     {form.residenceTypeCode !== KOREAN && (
                         <div className="form-field">
                             <label htmlFor="profile-visaTypeCode">
-                                {t("auth.profileEdit.visaType")}{" "}
+                                {t("auth.common.visaType")}{" "}
                                 <span className="text-muted">{t("auth.common.optional")}</span>
                             </label>
                             <select {...fieldProps("visaTypeCode")}>
