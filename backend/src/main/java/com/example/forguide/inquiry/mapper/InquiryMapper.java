@@ -2,8 +2,10 @@ package com.example.forguide.inquiry.mapper;
 
 import com.example.forguide.inquiry.dto.InquiryCreateRequest;
 import com.example.forguide.inquiry.dto.InquiryCursorRequest;
+import com.example.forguide.inquiry.dto.InquiryImageResponse;
 import com.example.forguide.inquiry.dto.InquiryResponse;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -11,9 +13,29 @@ import java.util.List;
 @Mapper
 public interface InquiryMapper {
 
+    @Options(
+            useGeneratedKeys = true,
+            keyProperty = "request.inquiryId",
+            keyColumn = "inquiry_id"
+    )
     int insert(
             @Param("memberId") Long memberId,
             @Param("request")InquiryCreateRequest request
+    );
+
+    int insertImage(
+            @Param("inquiryId") Long inquiryId,
+            @Param("imageUrl") String imageUrl,
+            @Param("displayOrder") int displayOrder
+    );
+
+    List<InquiryImageResponse> findImagesByInquiryIds(
+            @Param("inquiryIds") List<Long> inquiryIds
+    );
+
+    InquiryImageResponse findImageByIdAndInquiryId(
+            @Param("inquiryId") Long inquiryId,
+            @Param("inquiryImageId") Long inquiryImageId
     );
 
     // 로그인한 회원은 자신의 문의만 목록으로 조회한다.

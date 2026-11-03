@@ -10,6 +10,9 @@ import lombok.Setter;
 @Setter
 public class InquiryCreateRequest {
 
+    // INSERT 뒤 첨부 이미지 행을 연결하기 위해 MyBatis가 생성한 번호를 보관한다.
+    private Long inquiryId;
+
     @NotNull(message = "문의 유형을 선택해주세요.")
     private InquiryCategory inquiryCategory;
 

@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import {
     deleteCommunityPost,
     getCommunityPost,
@@ -11,12 +11,12 @@ import {
     unlikeCommunityPost,
     unrepostCommunityPost,
 } from "../../api/communityApi.js";
-import { confirm } from "../Modal/modal.js";
-import { useAuthStore } from "../../auth/store/useAuthStore.js";
+import {confirm} from "../Modal/modal.js";
+import {useAuthStore} from "../../auth/store/useAuthStore.js";
 import CommunityCommentSection from "./CommunityCommentSection.jsx";
 import CommunityPostEditForm from "./CommunityPostEditForm.jsx";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
-
+import CommunityReportAction from "./CommunityReportAction.jsx";
 // relatedService는 사용자가 쓴 본문이 아니라 서비스 식별값이므로 LLM 대신 i18next로 표시한다.
 const RELATED_SERVICE_LINKS = {
     ACCOUNT_RECOMMEND: {
@@ -39,18 +39,18 @@ const RELATED_SERVICE_LINKS = {
 
 // 피드에서 게시글 본문을 누르면 상세 내용을 모달로 보여준다.
 export default function CommunityPostModal({
-    postId,
-    onClose,
-    onPostLoaded,
-    onCommentCountChange,
-    onPostDeleted,
-}) {
-    const { t, i18n } = useTranslation();
+                                               postId,
+                                               onClose,
+                                               onPostLoaded,
+                                               onCommentCountChange,
+                                               onPostDeleted,
+                                           }) {
+    const {t, i18n} = useTranslation();
     const [post, setPost] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
-    const [likeInfo, setLikeInfo] = useState({ likeCount: 0, likedByMe: false });
-    const [repostInfo, setRepostInfo] = useState({ repostCount: 0, repostedByMe: false });
+    const [likeInfo, setLikeInfo] = useState({likeCount: 0, likedByMe: false});
+    const [repostInfo, setRepostInfo] = useState({repostCount: 0, repostedByMe: false});
     const [isLikeLoading, setIsLikeLoading] = useState(false);
     const [isRepostLoading, setIsRepostLoading] = useState(false);
     const [isLikeSubmitting, setIsLikeSubmitting] = useState(false);
@@ -189,7 +189,7 @@ export default function CommunityPostModal({
     function handleModalCommentCountChange(changedPostId, commentCount) {
         setPost((previous) =>
             previous && Number(previous.postId) === Number(changedPostId)
-                ? { ...previous, commentCount }
+                ? {...previous, commentCount}
                 : previous,
         );
         onCommentCountChange?.(changedPostId, commentCount);
@@ -335,10 +335,12 @@ export default function CommunityPostModal({
                                     </button>
                                 </div>
                             )}
+                            {!isOwner && <CommunityReportAction postId={post.postId}/>}
                         </header>
 
                         {isEditing ? (
                             <CommunityPostEditForm
+
                                 post={post}
                                 onCancel={() => setIsEditing(false)}
                                 onUpdated={handlePostUpdated}
@@ -357,8 +359,8 @@ export default function CommunityPostModal({
                                     {isTranslating
                                         ? t("community.postModal.translating")
                                         : isTranslationVisible
-                                          ? t("community.postModal.hideTranslation")
-                                          : t("community.postModal.showTranslation")}
+                                            ? t("community.postModal.hideTranslation")
+                                            : t("community.postModal.showTranslation")}
                                 </button>
 
                                 {translationError && (
@@ -427,8 +429,8 @@ export default function CommunityPostModal({
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
                                     >
-                                        <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
-                                        <circle cx="12" cy="12" r="2.5" />
+                                        <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/>
+                                        <circle cx="12" cy="12" r="2.5"/>
                                     </svg>
                                     {t("community.postModal.viewCount")}{" "}
                                     <strong>{post.viewCount ?? 0}</strong>

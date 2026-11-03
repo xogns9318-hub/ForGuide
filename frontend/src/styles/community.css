@@ -285,6 +285,110 @@
     font-size: 13px;
 }
 
+.community-report-button {
+    border: 0;
+    background: transparent;
+    color: #748b82;
+    font: inherit;
+    cursor: pointer;
+}
+
+.community-report-button:hover {
+    color: #b04a3c;
+}
+
+.community-report-backdrop {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+    background: rgb(22 42 34 / 42%);
+}
+
+.community-report-dialog {
+    display: grid;
+    gap: 16px;
+    width: min(100%, 380px);
+    padding: 24px;
+    border: 1px solid #d9e9e2;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 20px 48px rgb(20 54 42 / 22%);
+}
+
+.community-report-dialog h3,
+.community-report-dialog p {
+    margin: 0;
+}
+
+.community-report-dialog label {
+    display: grid;
+    gap: 8px;
+    color: #385f52;
+    font-weight: 700;
+}
+
+.community-report-dialog select {
+    min-height: 42px;
+    padding: 8px 10px;
+    border: 1px solid #cfe3da;
+    border-radius: 10px;
+    background: #fff;
+    color: #203a32;
+    font: inherit;
+}
+
+.community-report-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.community-report-cancel-button,
+.community-report-submit-button {
+    min-width: 88px;
+    min-height: 44px;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+.community-report-submit-button.button-primary {
+    border: 1px solid #b9ddd1;
+    background: linear-gradient(135deg, #eff9f4, #dff1e8) !important;
+    color: #2f6d5d;
+    box-shadow: 0 6px 14px rgb(42 89 74 / 8%);
+}
+
+.community-report-submit-button.button-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #e4f4ec, #cfe9dd);
+    color: #2f6d5d;
+    transform: translateY(-1px);
+}
+
+.community-report-cancel-button {
+    border: 1px solid #b9ddd1;
+    background: linear-gradient(135deg, #eff9f4, #dff1e8) !important;
+    color: #2f6d5d;
+    box-shadow: 0 6px 14px rgb(42 89 74 / 8%);
+    cursor: pointer;
+    transition:
+        transform 0.16s ease,
+        background 0.16s ease;
+}
+
+.community-report-cancel-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #e4f4ec, #cfe9dd);
+    transform: translateY(-1px);
+}
+
+.community-report-cancel-button:disabled,
+.community-report-submit-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.58;
+}
+
 .community-reply {
     margin-top: 22px;
     padding: 14px;
@@ -2692,4 +2796,52 @@
         text-align: left;
         cursor: pointer;
     }
+}
+
+/* 신고 모달: 게시글·댓글에서 같은 크기와 민트 톤의 버튼을 쓴다. */
+.community-report-dialog {
+    width: min(100%, 640px);
+    gap: 26px;
+    padding: 38px 44px 42px;
+    border-radius: 28px;
+}
+
+.community-report-dialog h3 {
+    font-size: 2rem;
+}
+
+.community-report-dialog select {
+    min-height: 72px;
+    padding: 14px 22px;
+    border-radius: 18px;
+    font-size: 1.35rem;
+}
+
+.community-report-actions {
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+.community-report-cancel-button,
+.community-report-submit-button {
+    min-width: 154px;
+    min-height: 56px;
+    border: 1px solid #b9ddd1;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #eff9f4, #dff1e8) !important;
+    color: #2f6d5d;
+    font-size: 1.1rem;
+    font-weight: 700;
+    box-shadow: 0 10px 22px rgb(48 103 88 / 10%);
+}
+
+.community-report-cancel-button:hover,
+.community-report-submit-button:hover {
+    border-color: #91c7b5;
+    background: linear-gradient(135deg, #e8f6ef, #d2ecdf) !important;
+}
+
+.community-post-modal .community-post-header > .community-report-button {
+    margin-left: auto;
+    align-self: center;
 }

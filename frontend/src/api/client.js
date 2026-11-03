@@ -63,7 +63,10 @@ function toApiUrl(path) {
 }
 
 // 요청 한 번 보내기
-async function send(path, { method, body, headers, timeoutMs = TIMEOUT_MS }) {
+async function send(
+    path,
+    { method, body, headers, timeoutMs = TIMEOUT_MS, responseType = "json" },
+) {
     const { accessToken } = useAuthStore.getState();
 
     const requestHeaders = {
@@ -98,6 +101,10 @@ async function send(path, { method, body, headers, timeoutMs = TIMEOUT_MS }) {
             credentials: "same-origin",
             signal: controller.signal,
         });
+        if (responseType === "blob" && response.ok) {
+            return await response.blob();
+        }
+
         return await parseResponse(response);
     } catch (error) {
         if (error instanceof ApiError) throw error;
@@ -112,10 +119,22 @@ async function send(path, { method, body, headers, timeoutMs = TIMEOUT_MS }) {
 // 화면 코드는 토큰 만료를 신경 쓰지 않고 이 함수의 결과만 받는다
 export async function request(
     path,
-    { method = "GET", body, headers, timeoutMs = TIMEOUT_MS } = {},
+    {
+        method = "GET",
+        body,
+        headers,
+        timeoutMs = TIMEOUT_MS,
+        responseType = "json",
+    } = {},
 ) {
     try {
-        return await send(path, { method, body, headers, timeoutMs });
+        return await send(path, {
+            method,
+            body,
+            headers,
+            timeoutMs,
+            responseType,
+        });
     } catch (error) {
         if (!(error instanceof ApiError)) throw error;
 
@@ -127,14 +146,17 @@ export async function request(
             if (!newToken) {
                 throw new ApiError("AUTH_REQUIRED", "로그인이 필요합니다.", { status: 401 });
             }
-            return send(path, { method, body, headers, timeoutMs });
+            return send(path, {
+                method,
+                body,
+                headers,
+                timeoutMs,
+                responseType,
+            });
         }
 
         // 위조 토큰 또는 정지 계정은 기존 브라우저 로그인 상태도 즉시 비운다.
-        if (
-            error.code === "TOKEN_INVALID" ||
-            error.code === "ACCOUNT_SUSPENDED"
-        ) {
+        if (error.code === "TOKEN_INVALID" || error.code === "ACCOUNT_SUSPENDED") {
             useAuthStore.getState().clearAuth();
         }
 
@@ -148,4 +170,6 @@ export const client = {
     post: (path, body, options) => request(path, { ...options, method: "POST", body }),
     patch: (path, body, options) => request(path, { ...options, method: "PATCH", body }),
     delete: (path, options) => request(path, { ...options, method: "DELETE" }),
+    getBlob: (path, options) =>
+        request(path, { ...options, method: "GET", responseType: "blob" }),
 };

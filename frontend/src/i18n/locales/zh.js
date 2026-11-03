@@ -5,9 +5,15 @@ const zh = {
         logout: "退出登录",
         myPage: "我的主页",
         myFinance: "我的金融信息",
+        adminPage: "管理员",
         language: "语言",
 
         mega: {
+            serviceList: "服务列表",
+            contactMenu: "咨询",
+            inquiry: "联系我们",
+            extendedServices: "扩展指南",
+
             contact: "联系我们",
             contactGroup: "咨询",
             myInquiries: "我的咨询",
@@ -18,6 +24,213 @@ const zh = {
             open: "打开菜单",
             close: "关闭菜单",
         },
+    },
+
+    homeMain: {
+        duckLabel: "一只从侧面走来并在中央打招呼的鸭子",
+        navigationLabel: "跳转至首页各区域",
+        sections: {
+            main: "主页",
+            translation: "翻译",
+            counseling: "咨询",
+            recommendation: "推荐",
+            repayment: "计算",
+            employment: "就业",
+            extendedServices: "更多",
+            contact: "联系我们",
+        },
+    },
+
+    homeOverview: {
+        translation: {
+            title: "翻译",
+            headline: "即使语言不同，也无需担心",
+            description:
+                "请使用您熟悉的语言使用 ForGuide。\n选择语言后，页面会自动翻译。",
+        },
+        consultation: {
+            headline: "不知道该向哪里寻求帮助？",
+            description:
+                "寻找适合您情况的咨询机构，\n了解可以获得哪些帮助。",
+        },
+        preparationCard: {
+            headline: "咨询准备也并不困难",
+            description:
+                "提前整理想要咨询的内容和疑问，\n制作属于您的咨询准备卡。",
+        },
+        loan: {
+            headline: "寻找适合您的贷款产品",
+            description:
+                "比较各种贷款产品的条件，\n了解适合您情况的产品。",
+        },
+        insurance: {
+            headline: "不必觉得保险很复杂",
+            description:
+                "比较保险产品的保障内容和条件，\n寻找您需要的保险。",
+        },
+        account: {
+            headline: "想在韩国开设银行账户？",
+            description:
+                "从开户所需材料到办理流程，\n一步一步了解清楚。",
+        },
+        monthlyPayment: {
+            headline: "每个月需要偿还多少？",
+            description:
+                "输入贷款金额和利率等信息，\n即可计算每月还款金额。",
+        },
+        totalInterest: {
+            headline: "需要支付多少利息？",
+            description:
+                "确认贷款期间需要支付的总利息，\n提前制定还款计划。",
+        },
+        jobListings: {
+            headline: "正在韩国寻找工作？",
+            description:
+                "在一个地方浏览各种招聘信息，\n寻找适合您的工作。",
+        },
+        employment: {
+            headline: "不知道该从哪里开始准备就业？",
+            description:
+                "了解在韩国工作时有用的信息，\n并查看就业所需的准备资料。",
+        },
+        simulator: {
+            headline: "今天可以花多少钱？",
+            description:
+                "输入每月支出、贷款金额和利息，\n即可在日历中查看每天可使用的金额。",
+        },
+        community: {
+            headline: "一起分享疑问和烦恼",
+            description:
+                "提出在韩国生活中遇到的问题，\n分享彼此的经验和实用信息。",
+        },
+        inquiry: {
+            headline: "如有疑问，欢迎随时咨询",
+            description:
+                "使用服务时如有任何问题，\n请通过咨询页面留言。",
+        },
+    },
+
+    institutionGuide: {
+        title: "您需要哪方面的咨询？",
+        optionsLoadError: "无法加载选择项目。",
+        reloadOptions: "重新加载",
+        noTopics: "暂无可用的咨询分类。",
+        provinceLabel: "希望地区 · 省/直辖市",
+        districtLabel: "希望地区 · 市/郡/区",
+        consultationLanguageLabel: "咨询语言",
+        consultationMethodLabel: "咨询方式",
+        selectedConditionsTitle: "已选择的咨询条件",
+        conditionsChanged:
+            "修改条件后，之前的结果将被隐藏。请点击“获取指南”再次确认。",
+        selectedProvinceLabel: "希望地区",
+        languages: {
+            ko: "韩语",
+            en: "英语",
+            zh: "中文",
+            ja: "日语",
+            vi: "越南语",
+            th: "泰语",
+        },
+        topicLabel: "咨询领域",
+        keywordLabel: "咨询关键词",
+        chooseTopicAndKeywords: "请选择咨询领域和关键词。",
+        chooseKeywords: "请至少选择一个咨询关键词。",
+        selectedKeywords: "已选择 {{count}} 个关键词",
+        submit: "获取指南",
+        searchLabel: "搜索机构名称或咨询内容",
+        searchPlaceholder:
+            "例如：임금체불（拖欠工资）、통장 만들기（开设账户）、외국인등록（外国人登记）",
+        queryReady: "将使用搜索词和当前选择条件查询机构。",
+        showAll: "查看全部机构",
+        all: "全部",
+        resultsTitle: "帮助机构查询结果",
+        resultCount: "{{count}} 家机构",
+        loading: "正在加载机构信息。",
+        loadError: "无法加载机构信息。请检查服务器连接后重试。",
+        invalidInput: "请检查搜索条件。",
+        retry: "重试",
+        empty: "没有符合条件的机构。请减少关键词或查看全部机构。",
+        unknown: "需要确认",
+        multilingual: "多语言",
+        available: "可使用",
+        unavailable: "未运营",
+        phoneAgentUnavailable: "暂不提供电话咨询",
+        phone24Hours: "24小时服务",
+        phoneOpenWithinHours: "咨询时间内可使用",
+        required: "必须预约",
+        notRequired: "非必需",
+        detail: "查看详情",
+        detailTitle: "机构详情",
+        close: "返回列表",
+        notFound: "未找到该机构。",
+        administration: "行政与生活指南",
+        servicesTitle: "咨询领域和关键词",
+        scopeNotesTitle: "咨询范围和注意事项",
+        usageInfoTitle: "使用指南",
+        usageVariant: "使用指南 {{count}}",
+        partialNotice:
+            "仅确认了部分信息。使用前请向机构确认最新条件。",
+        rankingNotice:
+            "优先显示可直接咨询的机构，其后按所选关键词匹配数量和条件确认情况排序。匹配率不代表资格或获批概率。",
+        matchCount: "所选 {{total}} 个关键词中匹配 {{matched}} 个 · {{percent}}%",
+        matchedList: "匹配的关键词：{{keywords}}",
+        chartTitle: "排名靠前机构的所选关键词匹配数量",
+        matchedLabel: "匹配关键词",
+        specialHours: "特殊运营时间：{{scope}} — {{hours}}",
+        phoneNationwide: "电话服务不受地区限制",
+        preparationUnknown:
+            "请在确定要使用的机构和服务后确认所需材料。",
+        reservationLink: "预约指南",
+        onlineLink: "在线咨询",
+        serviceSource: "咨询服务来源",
+        officialLink: "官方网站",
+        sourceLink: "参考资料 {{count}}",
+        prepareCard: "创建咨询准备卡",
+
+        roles: {
+            direct: "直接咨询",
+            related: "相关咨询、服务或机构指南",
+            unknown: "需要确认咨询职责",
+        },
+
+        methods: {
+            phone: "电话",
+            visit: "现场访问",
+            online: "在线",
+            reservation: "预约",
+            unknown: "需要确认",
+        },
+
+        pending: {
+            method: "需要确认咨询方式",
+            language: "需要确认所选语言",
+            region: "需要确认所选地区",
+        },
+
+        fields: {
+            location: "服务地区与到访指南",
+            phoneHours: "电话咨询时间",
+            visitHours: "现场咨询时间",
+            phoneWeekend: "周末电话咨询",
+            phoneHoliday: "节假日电话咨询",
+            phoneLanguages: "电话咨询语言",
+            visitLanguages: "现场咨询语言",
+            methods: "咨询方式",
+            visitAddress: "现场咨询地点",
+            visitWeekend: "周末现场咨询",
+            visitHoliday: "节假日现场咨询",
+            reservationRequired: "到访预约",
+            branch: "分支机构与预约指南",
+            languageNotes: "各语言咨询指南",
+            contact: "咨询使用流程",
+            target: "服务对象",
+            preparation: "所需材料与准备事项",
+            address: "机构地址",
+            phone: "咨询电话",
+            keywords: "主要咨询关键词",
+            checkedAt: "信息确认日期",
+        },
+        multipleKeywords: "（可多选）",
     },
 
     notification: {
@@ -83,11 +296,6 @@ const zh = {
         },
     },
 
-    footer: {
-        description: "这里是页脚。这里有一股浓烈的脚臭味。",
-        copyright: "© 这就是你能做到的最好水平吗，人类？",
-    },
-
     community: {
         navigation: {
             allPosts: "全部帖子",
@@ -126,6 +334,23 @@ const zh = {
             loan: "查看贷款",
             insurance: "查看保险",
             employment: "就业助手",
+        },
+        report: {
+            action: "举报",
+            title: "举报内容",
+            description: "选择举报原因后，管理员会进行确认。",
+            reason: "举报原因",
+            reasons: {
+                SPAM_AD: "垃圾信息或广告",
+                ABUSE_HATE: "辱骂或仇恨内容",
+                SEXUAL_CONTENT: "色情或性内容",
+                MISINFORMATION: "虚假信息",
+                OTHER: "其他",
+            },
+            cancel: "取消",
+            submit: "提交举报",
+            submitting: "正在提交...",
+            error: "无法提交举报，请稍后重试。",
         },
         post: {
             reposted: "我已转发",
@@ -886,6 +1111,10 @@ const zh = {
             NETWORK_ERROR: "无法连接服务器，请检查网络。",
             TIMEOUT: "响应时间较长，请稍后再试。",
         },
+    },
+    footer: {
+        description: "这里是页脚。这里有一股浓烈的脚臭味。",
+        copyright: "© 这就是你能做到的最好水平吗，人类？",
     },
 };
 

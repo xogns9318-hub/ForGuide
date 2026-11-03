@@ -16,6 +16,8 @@ import com.example.forguide.community.dto.CommunityPostRepostResponse;
 import com.example.forguide.community.dto.CommunityPostResponse;
 import com.example.forguide.community.dto.CommunityPostUpdateRequest;
 import com.example.forguide.community.service.CommunityService;
+import com.example.forguide.community.report.CommunityReportCreateRequest;
+import com.example.forguide.community.report.CommunityReportService;
 import com.example.forguide.translation.cache.TranslationCacheResource;
 import com.example.forguide.translation.dto.TranslationRequest;
 import com.example.forguide.translation.dto.TranslationResponse;
@@ -53,6 +55,7 @@ import java.util.UUID;
 public class CommunityController {
 
     private final CommunityService communityService;
+    private final CommunityReportService communityReportService;
     private final TranslationService translationService;
 
     // 게시글 전체 목록 조회
@@ -227,6 +230,17 @@ public class CommunityController {
         return ApiResponse.ok();
     }
 
+    // 로그인한 회원은 다른 회원의 게시글을 한 번만 신고할 수 있다.
+    @PostMapping("/posts/{postId}/reports")
+    public ApiResponse<Void> reportPost(
+            @PathVariable Long postId,
+            @AuthenticationPrincipal Long memberId,
+            @Valid @RequestBody CommunityReportCreateRequest request
+    ) {
+        communityReportService.reportPost(postId, memberId, request);
+        return ApiResponse.ok();
+    }
+
     // 비로그인 사용자도 게시글의 댓글 목록을 볼 수 있다
     @GetMapping("/posts/{postId}/comments")
     public ApiResponse<List<CommunityCommentResponse>> getCommentsByPostId(
@@ -301,6 +315,18 @@ public class CommunityController {
             @AuthenticationPrincipal Long memberId
     ) {
         communityService.deleteComment(postId, commentId, memberId);
+        return ApiResponse.ok();
+    }
+
+    // 로그인한 회원은 다른 회원의 댓글을 한 번만 신고할 수 있다.
+    @PostMapping("/posts/{postId}/comments/{commentId}/reports")
+    public ApiResponse<Void> reportComment(
+            @PathVariable Long postId,
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal Long memberId,
+            @Valid @RequestBody CommunityReportCreateRequest request
+    ) {
+        communityReportService.reportComment(postId, commentId, memberId, request);
         return ApiResponse.ok();
     }
 

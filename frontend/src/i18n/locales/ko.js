@@ -1,4 +1,32 @@
 const ko = {
+    header: {
+        login: "로그인",
+        signup: "회원가입",
+        logout: "로그아웃",
+        myPage: "마이페이지",
+        myFinance: "내 금융 정보",
+        adminPage: "관리자",
+        language: "언어",
+
+        // 새 헤더 메뉴에서 사용할 한국어 문구
+        mega: {
+            serviceList: "서비스 목록",
+            contact: "문의하기",
+            contactMenu: "문의",
+            inquiry: "문의하기",
+
+            // 클릭할 수 없는 연한 제목
+            extendedServices: "확장 가이드",
+            contactGroup: "문의 가이드",
+
+            // 화면 읽기와 모바일 메뉴용 이름
+            home: "ForGuide 홈",
+            navigation: "가이드 메뉴",
+            open: "메뉴 열기",
+            close: "메뉴 닫기",
+        },
+    },
+
     preparationCard: {
         title: "상담할 내용을 정리해주세요.",
         givenName: "이름",
@@ -166,7 +194,26 @@ const ko = {
         },
     },
     institutionGuide: {
-        // 도움 기관 안내의 검색 조건과 제출 버튼 문구다.
+        title: "어떤 상담이 필요하신가요?",
+        optionsLoadError: "선택 항목을 불러오지 못했습니다.",
+        reloadOptions: "다시 불러오기",
+        noTopics: "등록된 상담 분야가 없습니다.",
+        provinceLabel: "희망 지역 · 시·도",
+        districtLabel: "희망 지역 · 시·군·구",
+        consultationLanguageLabel: "상담 언어",
+        consultationMethodLabel: "상담 방식",
+        selectedConditionsTitle: "선택한 상담 조건",
+        conditionsChanged:
+            "조건을 변경하면 이전 결과가 숨겨집니다. 안내받기를 눌러 다시 확인해주세요.",
+        selectedProvinceLabel: "희망 지역",
+        languages: {
+            ko: "한국어",
+            en: "영어",
+            zh: "중국어",
+            ja: "일본어",
+            vi: "베트남어",
+            th: "태국어",
+        },
         topicLabel: "상담 분야",
         keywordLabel: "상담 키워드",
         chooseTopicAndKeywords: "상담 분야와 키워드를 선택해주세요.",
@@ -221,6 +268,7 @@ const ko = {
         sourceLink: "참고자료 {{count}}",
         prepareCard: "상담 준비 카드 만들기",
 
+
         roles: {
             direct: "직접 상담",
             related: "관련 상담·민원·기관 안내",
@@ -231,6 +279,8 @@ const ko = {
             phone: "전화",
             visit: "방문",
             online: "온라인",
+            reservation: "예약",
+            unknown: "확인 필요",
         },
 
         pending: {
@@ -315,34 +365,6 @@ const ko = {
             financial_information: "금융정보·기초상담",
         },
     },
-    header: {
-        login: "로그인",
-        signup: "회원가입",
-        logout: "로그아웃",
-        myPage: "마이페이지",
-        myFinance: "내 금융 정보",
-        adminPage: "관리자",
-        language: "언어",
-
-        // 새 헤더 메뉴에서 사용할 한국어 문구
-        mega: {
-            serviceList: "서비스 목록",
-            contact: "문의하기",
-            contactMenu: "문의",
-            inquiry: "문의하기",
-
-            // 클릭할 수 없는 연한 제목
-            extendedServices: "확장 가이드",
-            contactGroup: "문의 가이드",
-
-            // 화면 읽기와 모바일 메뉴용 이름
-            home: "ForGuide 홈",
-            navigation: "가이드 메뉴",
-            open: "메뉴 열기",
-            close: "메뉴 닫기",
-        },
-    },
-
     admin: {
         dashboard: {
             eyebrow: "운영 현황",
@@ -368,8 +390,7 @@ const ko = {
                 },
                 community: {
                     title: "커뮤니티 관리",
-                    description:
-                        "게시글과 댓글을 확인하고 공개 상태를 관리합니다.",
+                    description: "게시글과 댓글을 확인하고 공개 상태를 관리합니다.",
                 },
             },
         },
@@ -432,8 +453,7 @@ const ko = {
         community: {
             eyebrow: "커뮤니티 관리",
             title: "커뮤니티 콘텐츠 관리",
-            description:
-                "게시글과 댓글을 조회하고, 필요한 경우 숨김 또는 공개 복구 처리합니다.",
+            description: "게시글과 댓글을 조회하고, 필요한 경우 숨김 또는 공개 복구 처리합니다.",
 
             resourceTypeLabel: "콘텐츠 종류",
             resourceTypeAll: "전체 콘텐츠",
@@ -474,8 +494,7 @@ const ko = {
         recommendationUsage: {
             eyebrow: "추천 사용 현황",
             title: "추천 기능 운영 현황",
-            description:
-                "개인정보 없이 기록한 대출·보험·계좌 추천 실행 현황입니다.",
+            description: "개인정보 없이 기록한 대출·보험·계좌 추천 실행 현황입니다.",
 
             periodLabel: "조회 기간",
             period7: "최근 7일",
@@ -505,8 +524,7 @@ const ko = {
             emptyLatestUsedAt: "아직 추천 실행 기록이 없습니다.",
 
             dashboardTitle: "추천 사용 현황",
-            dashboardDescription:
-                "대출·보험·계좌 추천의 실행 현황을 확인합니다.",
+            dashboardDescription: "대출·보험·계좌 추천의 실행 현황을 확인합니다.",
         },
     },
 
@@ -523,6 +541,15 @@ const ko = {
             submitting: "등록 중...",
             success: "문의가 등록되었습니다.",
             submitError: "문의 등록에 실패했습니다. 잠시 후 다시 시도해주세요.",
+        },
+        images: {
+            add: "사진 추가",
+            help: "JPG/PNG · 최대 4장 · 장당 20MB",
+            selected: "사진 {{count}}장을 선택했습니다.",
+            label: "문의 첨부 이미지",
+            alt: "문의 첨부 이미지 {{index}}",
+            previewLabel: "선택한 문의 이미지 미리보기",
+            previewAlt: "선택한 문의 이미지 {{index}}",
         },
         category: {
             SERVICE: "서비스 이용",
@@ -608,11 +635,6 @@ const ko = {
                 community: "커뮤니티",
             },
         },
-    },
-
-    footer: {
-        description: "빠른 시일 내에 변경될 예정인 Footer 입니다.",
-        copyright: "© ForGuide",
     },
 
     community: {
@@ -815,6 +837,23 @@ const ko = {
             loan: "대출 바로가기",
             insurance: "보험 바로가기",
             employment: "취업 도우미 바로가기",
+        },
+        report: {
+            action: "신고",
+            title: "콘텐츠 신고",
+            description: "신고 사유를 선택하면 관리자가 확인합니다.",
+            reason: "신고 사유",
+            reasons: {
+                SPAM_AD: "스팸·광고",
+                ABUSE_HATE: "욕설·혐오 표현",
+                SEXUAL_CONTENT: "음란물·성적 콘텐츠",
+                MISINFORMATION: "허위 정보",
+                OTHER: "기타",
+            },
+            cancel: "취소",
+            submit: "신고하기",
+            submitting: "신고 중...",
+            error: "신고를 접수하지 못했습니다. 잠시 후 다시 시도해주세요.",
         },
     },
     service: {
@@ -1540,6 +1579,10 @@ const ko = {
             rate_by_credit:
                 "평균 금리는 지난달 실제로 빌린 사람들의 평균이에요. 내 금리는 신용 심사에 따라 달라져요.",
         },
+    },
+    footer: {
+        description: "빠른 시일 내에 변경될 예정인 Footer 입니다.",
+        copyright: "© ForGuide",
     },
 };
 

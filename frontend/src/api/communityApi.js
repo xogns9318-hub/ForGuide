@@ -118,6 +118,11 @@ export async function deleteCommunityPost(postId) {
     return client.delete(`/community/posts/${postId}`);
 }
 
+// 로그인한 회원이 다른 회원의 게시글을 신고한다.
+export async function reportCommunityPost(postId, reportReason) {
+    return client.post(`/community/posts/${postId}/reports`, { reportReason });
+}
+
 // 게시글 본문과 사진을 multipart/form-data로 수정
 export async function updateCommunityPost(postId, formData) {
     return client.patch(`/community/posts/${postId}`, formData);
@@ -170,6 +175,13 @@ export async function updateCommunityComment(postId, commentId, content) {
 // 댓글 작성자 또는 게시글 작성자의 댓글 삭제
 export async function deleteCommunityComment(postId, commentId) {
     return client.delete(`/community/posts/${postId}/comments/${commentId}`);
+}
+
+// 로그인한 회원이 다른 회원의 댓글을 신고한다.
+export async function reportCommunityComment(postId, commentId, reportReason) {
+    return client.post(`/community/posts/${postId}/comments/${commentId}/reports`, {
+        reportReason,
+    });
 }
 
 // 로그인 회원의 댓글 공감 추가
