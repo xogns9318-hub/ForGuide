@@ -1,0 +1,273 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { createInquiry, getMyInquiries } from "../../api/inquiryApi.js";
+import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
+import styles from "../../styles/inquiry.module.css";
+import { formatDateTime } from "../../utils/formatDateTime.js";
+
+const PAGE_SIZE = 10;
+
+const CATEGORY_CODES = ["SERVICE", "ACCOUNT", "FINANCE", "OTHER"];
+
+const INITIAL_FORM = {
+    inquiryCategory: "SERVICE",
+    title: "",
+    content: "",
+};
+
+export default function InquiryPage() {
+    const { t, i18n } = useTranslation();
+
+    const [form, setForm] = useState(INITIAL_FORM);
+    const [inquiries, setInquiries] = useState([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isListLoading, setIsListLoading] = useState(true);
+    const [hasMore, setHasMore] = useState(true);
+    const [formError, setFormError] = useState("");
+    const [listError, setListError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+
+    const cursorInquiryIdRef = useRef(null);
+    const isLoadingRef = useRef(false);
+    const hasMoreRef = useRef(true);
+
+    // 첫 조회와 다음 목록 조회가 같은 커서 규칙을 사용한다.
+    const loadInquiries = useCallback(
+        async ({ reset = false } = {}) => {
+            if (isLoadingRef.current || (!reset && !hasMoreRef.current)) {
+                return;
+            }
+
+            isLoadingRef.current = true;
+            setIsListLoading(true);
+            setListError("");
+
+            if (reset) {
+                cursorInquiryIdRef.current = null;
+                hasMoreRef.current = true;
+                setHasMore(true);
+            }
+
+            try {
+                const response = await getMyInquiries({
+                    cursorInquiryId: cursorInquiryIdRef.current,
+                    size: PAGE_SIZE,
+                });
+                const received = Array.isArray(response) ? response : [];
+
+                setInquiries((previous) => {
+                    if (reset) {
+                        return received;
+                    }
+
+                    const existingIds = new Set(previous.map((inquiry) => inquiry.inquiryId));
+
+                    return [
+                        ...previous,
+                        ...received.filter((inquiry) => !existingIds.has(inquiry.inquiryId)),
+                    ];
+                });
+
+                const lastInquiry = received.at(-1);
+
+                if (lastInquiry) {
+                    cursorInquiryIdRef.current = lastInquiry.inquiryId;
+                }
+
+                const nextHasMore = received.length === PAGE_SIZE;
+
+                hasMoreRef.current = nextHasMore;
+                setHasMore(nextHasMore);
+            } catch (requestError) {
+                setListError(requestError?.message || t("inquiry.myList.loadError"));
+            } finally {
+                isLoadingRef.current = false;
+                setIsListLoading(false);
+            }
+        },
+        [t],
+    );
+
+    useEffect(() => {
+        void loadInquiries({ reset: true });
+    }, [loadInquiries]);
+
+    const observerTarget = useInfiniteScroll({
+        enabled: hasMore && !isListLoading && !listError,
+        onLoadMore: loadInquiries,
+    });
+
+    function handleChange(event) {
+        const { name, value } = event.target;
+
+        setForm((previous) => ({
+            ...previous,
+            [name]: value,
+        }));
+    }
+
+    async function handleSubmit(event) {
+        event.preventDefault();
+
+        setIsSubmitting(true);
+        setFormError("");
+        setSuccessMessage("");
+
+        try {
+            await createInquiry({
+                inquiryCategory: form.inquiryCategory,
+                title: form.title.trim(),
+                content: form.content.trim(),
+            });
+
+            setForm(INITIAL_FORM);
+            setSuccessMessage(t("inquiry.form.success"));
+            await loadInquiries({ reset: true });
+        } catch (requestError) {
+            setFormError(requestError?.message || t("inquiry.form.submitError"));
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
+    return (
+        <section className={styles.page} aria-labelledby="inquiry-page-title">
+            <header className={styles.heading}>
+                <h1 id="inquiry-page-title">{t("inquiry.title")}</h1>
+                <p>{t("inquiry.description")}</p>
+            </header>
+
+            <form className={styles.form} onSubmit={handleSubmit} noValidate>
+                <label>
+                    <span>{t("inquiry.form.category")}</span>
+                    <select
+                        name="inquiryCategory"
+                        value={form.inquiryCategory}
+                        onChange={handleChange}
+                    >
+                        {CATEGORY_CODES.map((category) => (
+                            <option key={category} value={category}>
+                                {t(`inquiry.category.${category}`)}
+                            </option>
+                        ))}
+                    </select>
+                </label>
+
+                <label>
+                    <span>{t("inquiry.form.title")}</span>
+                    <input
+                        name="title"
+                        type="text"
+                        value={form.title}
+                        maxLength={200}
+                        placeholder={t("inquiry.form.titlePlaceholder")}
+                        onChange={handleChange}
+                    />
+                </label>
+
+                <label>
+                    <span>{t("inquiry.form.content")}</span>
+                    <textarea
+                        name="content"
+                        value={form.content}
+                        maxLength={5000}
+                        placeholder={t("inquiry.form.contentPlaceholder")}
+                        onChange={handleChange}
+                    />
+                </label>
+
+                {formError && (
+                    <p className={styles.error} role="alert">
+                        {formError}
+                    </p>
+                )}
+
+                {successMessage && (
+                    <p className={styles.success} role="status">
+                        {successMessage}
+                    </p>
+                )}
+
+                <button type="submit" className="button button-primary" disabled={isSubmitting}>
+                    {isSubmitting ? t("inquiry.form.submitting") : t("inquiry.form.submit")}
+                </button>
+            </form>
+
+            <section className={styles.listSection} aria-labelledby="my-inquiry-title">
+                <h2 id="my-inquiry-title">{t("inquiry.myList.title")}</h2>
+
+                {isListLoading && inquiries.length === 0 && <p>{t("inquiry.myList.loading")}</p>}
+
+                {!isListLoading && listError && (
+                    <div className={styles.stateMessage} role="alert">
+                        <p>{listError}</p>
+                        <button
+                            type="button"
+                            className="button"
+                            onClick={() =>
+                                loadInquiries({
+                                    reset: inquiries.length === 0,
+                                })
+                            }
+                        >
+                            {t("inquiry.myList.retry")}
+                        </button>
+                    </div>
+                )}
+
+                {!isListLoading && !listError && inquiries.length === 0 && (
+                    <p>{t("inquiry.myList.empty")}</p>
+                )}
+
+                {inquiries.length > 0 && (
+                    <ul className={styles.inquiryList}>
+                        {inquiries.map((inquiry) => (
+                            <li key={inquiry.inquiryId} className={styles.inquiryItem}>
+                                <div className={styles.itemHeader}>
+                                    <span
+                                        className={
+                                            inquiry.inquiryStatus === "ANSWERED"
+                                                ? styles.answered
+                                                : styles.received
+                                        }
+                                    >
+                                        {t(`inquiry.status.${inquiry.inquiryStatus}`)}
+                                    </span>
+                                    <time dateTime={inquiry.createdAt}>
+                                        {formatDateTime(inquiry.createdAt, i18n.language)}
+                                    </time>
+                                </div>
+
+                                <p className={styles.category}>
+                                    {t(`inquiry.category.${inquiry.inquiryCategory}`)}
+                                </p>
+                                <h3>{inquiry.title}</h3>
+                                <p className={styles.content}>{inquiry.content}</p>
+
+                                {inquiry.answerContent && (
+                                    <div className={styles.answer}>
+                                        <h4>{t("inquiry.answer.title")}</h4>
+                                        <p>{inquiry.answerContent}</p>
+                                        <time dateTime={inquiry.answeredAt}>
+                                            {formatDateTime(inquiry.answeredAt, i18n.language)}
+                                        </time>
+                                    </div>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                )}
+
+                {isListLoading && inquiries.length > 0 && <p>{t("inquiry.myList.loading")}</p>}
+
+                <div ref={observerTarget} aria-hidden="true" />
+
+                {!isListLoading && !listError && hasMore && (
+                    <button type="button" className="button" onClick={() => loadInquiries()}>
+                        {t("inquiry.myList.loadMore")}
+                    </button>
+                )}
+            </section>
+        </section>
+    );
+}

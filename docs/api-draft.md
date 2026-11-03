@@ -89,7 +89,7 @@
 }
 ```
 
-응답은 번역문과 Redis 캐시 사용 여부를 반환한다.
+응답은 번역문과 캐시·DB 재사용 여부를 반환한다.
 
 ```json
 {
@@ -101,11 +101,15 @@
 }
 ```
 
-지원 언어는 `ko`, `en`, `ja`, `zh`, `vi`, `th`다. 공개 커뮤니티 번역은 `translation:v2:{콘텐츠종류}:{ID}:v{내용버전}:{원문언어}:{대상언어}` 키로 Redis에 7일간 저장한다. 동일한 콘텐츠·버전·언어 요청은 캐시를 반환하며, 게시글 또는 댓글을 수정·삭제하면 DB 커밋 뒤 해당 콘텐츠의 번역 캐시를 제거한다.
+지원 언어는 `ko`, `en`, `ja`, `zh`, `vi`, `th`다. 공개 커뮤니티 번역은 Redis → DB → Gemini 순서로 조회한다. DB의 `community_content_translations`가 번역문의 기준 저장소이고, Redis는 `translation:v2:{콘텐츠종류}:{ID}:v{내용버전}:{원문언어}:{대상언어}` 키로 7일간 보조 캐시한다.
+
+같은 콘텐츠·원문 버전·대상 언어의 동시 번역 요청은 `community_translation_jobs`의 DB 잠금으로 하나만 Gemini를 호출한다. 나머지 요청은 저장 완료를 잠시 기다린 뒤 DB 번역문을 반환한다. Redis 연결이 끊겨도 캐시만 건너뛰고 DB·Gemini 흐름은 계속 진행한다.
+
+게시글 또는 댓글을 수정·삭제하면 같은 트랜잭션에서 이전 DB 번역문을 제거하고, 커밋 뒤 Redis 캐시를 제거한다. 인기 게시글 영역은 현재 목록에 표시되는 인기글 전체를 선택 언어로 자동 번역하며, 일반 게시글 목록과 댓글은 사용자가 `번역 보기`를 눌렀을 때만 요청한다.
 
 ### 이력서 한국어 초안 요청
 
-이력서는 개인정보가 포함될 수 있으므로 로그인한 본인만 요청할 수 있고 Redis 캐시를 사용하지 않는다. 원문과 번역문은 이 API에서 저장하지 않으며, 사용자가 화면에서 검토·수정한 뒤 별도 이력서 저장 API를 호출한다.
+이력서는 개인정보가 포함될 수 있으므로 로그인한 본인만 요청할 수 있고 Redis 캐시·공개 번역 DB·번역 작업 잠금을 사용하지 않는다. 원문과 번역문은 이 API에서 저장하지 않으며, 사용자가 화면에서 검토·수정한 뒤 별도 이력서 저장 API를 호출한다.
 
 ```json
 {
@@ -145,6 +149,50 @@ IntelliJ 실행 설정의 Environment variables에 `JWT_SECRET=만든값`을 넣
 프론트는 `src/recommend/api/recommendApi.js`의 `getAccountRecommendation(input)`·`getInsuranceRecommendation(input)`·`getLoanRecommendation(input)`으로 부른다(입력 객체를 그대로 쿼리로 보냄).
 
 값이 틀리면 400 `INVALID_INPUT`, `fieldErrors`에 항목별 허용값(예: `"term": "허용값: 6, 12, 24"`). 계좌 관문의 "본인 명의 통장 아니오"는 API를 부르지 않고 화면에서 입출금통장 안내로 보낸다.
+
+### 관리자 추천 사용 현황
+
+`GET /api/v1/admin/recommendation-usage?days=30`
+
+관리자 전용 API다. 추천 결과가 조회된 횟수와 보험 추천이 상담 안내로 전환된 횟수만 집계한다. 회원 번호·입력 조건·추천 결과 원문 등 개인정보는 저장하거나 반환하지 않는다.
+
+| 이름 | 필수 여부 | 기본값 | 허용값 | 설명 |
+| --- | --- | --- | --- | --- |
+| `days` | 선택 | `30` | `7`, `30`, `90` | 오늘을 포함해 집계할 최근 일수 |
+
+응답은 전체 요약과 날짜별 실행 수를 함께 반환한다. 날짜별 배열은 실행이 없는 날도 0으로 포함하므로 프론트의 추이 그래프가 끊기지 않는다.
+
+```json
+{
+  "success": true,
+  "data": {
+    "periodDays": 30,
+    "summary": {
+      "totalUsageCount": 18,
+      "loanUsageCount": 7,
+      "insuranceUsageCount": 6,
+      "accountUsageCount": 5,
+      "productResultCount": 16,
+      "consultationRedirectCount": 2,
+      "latestUsedAt": "2026-11-03T10:20:00"
+    },
+    "dailyUsage": [
+      {
+        "usageDate": "2026-11-03",
+        "totalUsageCount": 3,
+        "loanUsageCount": 1,
+        "insuranceUsageCount": 1,
+        "accountUsageCount": 1
+      }
+    ]
+  }
+}
+```
+
+- 대출·계좌 추천 결과 조회는 `PRODUCT_RESULT`로 기록한다.
+- 보험 추천은 상품 결과면 `PRODUCT_RESULT`, 상담 화면으로 안내하면 `CONSULTATION_REDIRECT`로 기록한다.
+- 일반 사용자의 추천 API는 공개 상태를 유지하고, 현황 조회 API만 `/api/v1/admin/**` 권한 규칙으로 `ADMIN` 역할이 필요하다.
+- 잘못된 `days`는 `INVALID_INPUT`(400)이다.
 
 ## 공통 요청 클라이언트 (`src/api/client.js`)
 

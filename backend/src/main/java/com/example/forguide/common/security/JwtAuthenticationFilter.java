@@ -1,6 +1,9 @@
 package com.example.forguide.common.security;
 
 import com.example.forguide.common.exception.ApiException;
+import com.example.forguide.common.exception.ErrorCode;
+import com.example.forguide.member.mapper.MemberMapper;
+import com.example.forguide.member.mapper.MemberRow;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,9 +31,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
 
     private final JwtProvider jwtProvider;
+    private final MemberMapper memberMapper;
 
-    public JwtAuthenticationFilter(JwtProvider jwtProvider) {
+    public JwtAuthenticationFilter(JwtProvider jwtProvider, MemberMapper memberMapper) {
         this.jwtProvider = jwtProvider;
+        this.memberMapper = memberMapper;
     }
 
     @Override
@@ -42,6 +47,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith(BEARER_PREFIX)) {
             try {
                 JwtProvider.AccessTokenClaims claims = jwtProvider.parse(header.substring(BEARER_PREFIX.length()));
+
+                MemberRow member = memberMapper.findById(claims.memberId());
+
+                if (member == null) {
+                    throw new ApiException(ErrorCode.AUTH_REQUIRED);
+                }
+
+                if ("SUSPENDED".equals(member.getMemberStatus())) {
+                    throw new ApiException(ErrorCode.ACCOUNT_SUSPENDED);
+                }
 
                 // 인증 정보 = (누구인지, 비밀번호, 권한 목록). principal 자리에 회원 번호를 넣는다
                 // 컨트롤러에서는 @AuthenticationPrincipal Long memberId 로 꺼낸다

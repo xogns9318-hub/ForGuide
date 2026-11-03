@@ -1,0 +1,184 @@
+.page {
+    width: min(100%, 1120px);
+    margin: 0 auto;
+    padding: 48px 24px 72px;
+}
+
+.heading {
+    margin-bottom: 28px;
+}
+
+.eyebrow {
+    margin: 0 0 8px;
+    color: var(--color-primary, #2f6d5d);
+    font-weight: 700;
+}
+
+.heading h1 {
+    margin: 0;
+    color: var(--color-text, #203a32);
+    font-size: clamp(28px, 4vw, 42px);
+}
+
+.heading p:last-child {
+    margin: 12px 0 0;
+    color: var(--color-text-muted, #647d75);
+}
+
+.periodControls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 18px 20px;
+    border: 1px solid #d9e9e2;
+    border-radius: 18px;
+    background: #fff;
+}
+
+.periodControls > span {
+    color: #49665d;
+    font-weight: 700;
+}
+
+.periodButtons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.metricGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.metricCard,
+.outcomeCard,
+.latestCard,
+.chartSection {
+    border: 1px solid #d9e9e2;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 12px 28px rgb(42 89 74 / 7%);
+}
+
+.metricCard {
+    min-height: 142px;
+    padding: 22px;
+}
+
+.metricCard p {
+    margin: 0;
+    color: #627b72;
+    font-weight: 700;
+}
+
+.metricCard strong {
+    display: block;
+    margin-top: 18px;
+    color: #24483d;
+    font-size: clamp(28px, 4vw, 40px);
+}
+
+.infoSection {
+    margin-top: 32px;
+}
+
+.infoSection h2,
+.chartSection h2 {
+    margin: 0 0 16px;
+    color: #24483d;
+    font-size: 22px;
+}
+
+.outcomeGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.outcomeCard,
+.latestCard {
+    display: grid;
+    gap: 12px;
+    min-height: 112px;
+    padding: 20px;
+}
+
+.outcomeCard span,
+.latestCard span {
+    color: #627b72;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.outcomeCard strong,
+.latestCard strong {
+    color: #24483d;
+    font-size: 20px;
+    overflow-wrap: anywhere;
+}
+
+.chartSection {
+    margin-top: 32px;
+    padding: 24px;
+}
+
+.chartWrap {
+    width: 100%;
+    min-height: 300px;
+}
+
+.stateMessage {
+    display: grid;
+    gap: 14px;
+    justify-items: start;
+    padding: 24px;
+    border: 1px solid #d9e9e2;
+    border-radius: 16px;
+    background: #fff;
+    color: #49665d;
+}
+
+.stateMessage p {
+    margin: 0;
+}
+
+@media (max-width: 900px) {
+    .metricGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .outcomeGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .page {
+        padding: 32px 16px 56px;
+    }
+
+    .metricGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .periodControls {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .periodButtons {
+        width: 100%;
+    }
+
+    .periodButtons button {
+        flex: 1;
+    }
+
+    .chartSection {
+        padding: 18px 12px;
+    }
+}

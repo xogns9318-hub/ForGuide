@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.forguide.admin.mapper.AdminRecommendationUsageMapper">
+
+    <select
+            id="findSummary"
+            resultType="com.example.forguide.admin.dto.AdminRecommendationUsageSummaryResponse"
+    >
+        SELECT
+            COUNT(*) AS totalUsageCount,
+            COALESCE(SUM(
+                CASE WHEN recommendation_type = 'LOAN' THEN 1 ELSE 0 END
+            ), 0) AS loanUsageCount,
+            COALESCE(SUM(
+                CASE WHEN recommendation_type = 'INSURANCE' THEN 1 ELSE 0 END
+            ), 0) AS insuranceUsageCount,
+            COALESCE(SUM(
+                CASE WHEN recommendation_type = 'ACCOUNT' THEN 1 ELSE 0 END
+            ), 0) AS accountUsageCount,
+            COALESCE(SUM(
+                CASE WHEN outcome_type = 'PRODUCT_RESULT' THEN 1 ELSE 0 END
+            ), 0) AS productResultCount,
+            COALESCE(SUM(
+                CASE WHEN outcome_type = 'CONSULTATION_REDIRECT' THEN 1 ELSE 0 END
+            ), 0) AS consultationRedirectCount,
+            MAX(created_at) AS latestUsedAt
+        FROM recommendation_usage_logs
+        WHERE created_at >= #{startedAt}
+    </select>
+
+    <select
+            id="findDailyUsage"
+            resultType="com.example.forguide.admin.dto.AdminRecommendationUsageDailyResponse"
+    >
+        SELECT
+            DATE(created_at) AS usageDate,
+            COUNT(*) AS totalUsageCount,
+            COALESCE(SUM(
+                CASE WHEN recommendation_type = 'LOAN' THEN 1 ELSE 0 END
+            ), 0) AS loanUsageCount,
+            COALESCE(SUM(
+                CASE WHEN recommendation_type = 'INSURANCE' THEN 1 ELSE 0 END
+            ), 0) AS insuranceUsageCount,
+            COALESCE(SUM(
+                CASE WHEN recommendation_type = 'ACCOUNT' THEN 1 ELSE 0 END
+            ), 0) AS accountUsageCount
+        FROM recommendation_usage_logs
+        WHERE created_at >= #{startedAt}
+        GROUP BY DATE(created_at)
+        ORDER BY usageDate ASC
+    </select>
+
+</mapper>

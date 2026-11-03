@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.forguide.admin.mapper.AdminMemberMapper">
+
+    <sql id="memberColumns">
+        m.member_id AS memberId,
+        m.login_id AS loginId,
+        m.name,
+        m.nickname,
+        m.email,
+        m.role,
+        m.member_status AS memberStatus,
+        m.created_at AS createdAt,
+        m.suspended_at AS suspendedAt
+    </sql>
+
+    <select id="findAllByCursor"
+            resultType="com.example.forguide.admin.dto.AdminMemberResponse">
+        SELECT
+            <include refid="memberColumns"/>
+        FROM members m
+        WHERE 1 = 1
+        <if test="cursor.memberStatus != null">
+            AND m.member_status = #{cursor.memberStatus}
+        </if>
+        <if test="cursor.keyword != null and cursor.keyword != ''">
+            AND (
+                m.login_id LIKE CONCAT('%', #{cursor.keyword}, '%')
+                OR m.name LIKE CONCAT('%', #{cursor.keyword}, '%')
+                OR m.nickname LIKE CONCAT('%', #{cursor.keyword}, '%')
+                OR m.email LIKE CONCAT('%', #{cursor.keyword}, '%')
+            )
+        </if>
+        <if test="cursor.cursorMemberId != null">
+            AND m.member_id &lt; #{cursor.cursorMemberId}
+        </if>
+        ORDER BY m.member_id DESC
+        LIMIT #{cursor.size}
+    </select>
+
+    <select id="findById"
+            resultType="com.example.forguide.admin.dto.AdminMemberResponse">
+        SELECT
+            <include refid="memberColumns"/>
+        FROM members m
+        WHERE m.member_id = #{memberId}
+    </select>
+
+    <update id="updateStatusForUser">
+        UPDATE members
+        SET member_status = #{memberStatus},
+            suspended_at = CASE
+                WHEN #{memberStatus} = 'SUSPENDED' THEN CURRENT_TIMESTAMP
+                ELSE NULL
+            END
+        WHERE member_id = #{memberId}
+            AND role = 'USER'
+    </update>
+
+</mapper>
