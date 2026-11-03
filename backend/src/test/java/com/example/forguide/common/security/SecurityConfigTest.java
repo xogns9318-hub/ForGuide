@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +32,13 @@ import org.springframework.web.context.WebApplicationContext;
  */
 @SpringBootTest
 @Import(SecurityConfigTest.TestController.class)
+@Sql(
+        scripts = {
+                "/member/schema.sql",
+                "/security/security-members.sql"
+        },
+        config = @SqlConfig(encoding = "UTF-8")
+)
 class SecurityConfigTest {
 
     @Autowired

@@ -17,6 +17,7 @@ public class MemberRow {
     private String name;          // 화면 표시용 "이름 성"
     private String givenName;     // 이름
     private String familyName;    // 성 (없을 수 있음)
+    private String memberStatus;  // ACTIVE / SUSPENDED
     private String email;
     private String nickname;
     private String profileImageUrl;

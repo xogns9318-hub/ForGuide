@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.forguide.admin.mapper.AdminCommunityMapper">
+
+    <!-- 게시글과 댓글을 관리자 공통 응답 형태로 맞춘다. -->
+    <sql id="contentUnion">
+        SELECT
+            'POST' AS resourceType,
+            p.post_id AS resourceId,
+            p.member_id AS authorMemberId,
+            m.login_id AS authorLoginId,
+            m.nickname AS authorNickname,
+            p.content,
+            p.created_at AS createdAt,
+            COALESCE(cm.moderation_status, 'VISIBLE') AS moderationStatus,
+            cm.reason AS moderationReason,
+            cm.moderated_by_member_id AS moderatedByMemberId,
+            cm.updated_at AS moderatedAt
+        FROM community_posts p
+        INNER JOIN members m ON m.member_id = p.member_id
+        LEFT JOIN community_content_moderations cm
+            ON cm.resource_type = 'POST'
+            AND cm.resource_id = p.post_id
+
+        UNION ALL
+
+        SELECT
+            'COMMENT' AS resourceType,
+            c.comment_id AS resourceId,
+            c.member_id AS authorMemberId,
+            m.login_id AS authorLoginId,
+            m.nickname AS authorNickname,
+            c.content,
+            c.created_at AS createdAt,
+            COALESCE(cm.moderation_status, 'VISIBLE') AS moderationStatus,
+            cm.reason AS moderationReason,
+            cm.moderated_by_member_id AS moderatedByMemberId,
+            cm.updated_at AS moderatedAt
+        FROM community_comments c
+        INNER JOIN members m ON m.member_id = c.member_id
+        LEFT JOIN community_content_moderations cm
+            ON cm.resource_type = 'COMMENT'
+            AND cm.resource_id = c.comment_id
+    </sql>
+
+    <!-- 게시글·댓글을 작성일 최신순으로 함께 조회한다. -->
+    <select id="findContentsByCursor"
+            resultType="com.example.forguide.admin.dto.AdminCommunityContentResponse">
+        SELECT *
+        FROM (
+            <include refid="contentUnion"/>
+        ) content
+        WHERE 1 = 1
+
+        <if test="cursor.resourceType != null">
+            AND content.resourceType = #{cursor.resourceType}
+        </if>
+
+        <if test="cursor.moderationStatus != null">
+            AND content.moderationStatus = #{cursor.moderationStatus}
+        </if>
+
+        <if test="cursor.keyword != null and cursor.keyword != ''">
+            AND (
+                content.content LIKE CONCAT('%', #{cursor.keyword}, '%')
+                OR content.authorLoginId LIKE CONCAT('%', #{cursor.keyword}, '%')
+                OR content.authorNickname LIKE CONCAT('%', #{cursor.keyword}, '%')
+            )
+        </if>
+
+        <if test="cursor.cursorCreatedAt != null
+                  and cursor.cursorResourceType != null
+                  and cursor.cursorResourceId != null">
+            AND (
+                content.createdAt &lt; #{cursor.cursorCreatedAt}
+                OR (
+                    content.createdAt = #{cursor.cursorCreatedAt}
+                    AND content.resourceType &gt; #{cursor.cursorResourceType}
+            )
+            OR (
+                    content.createdAt = #{cursor.cursorCreatedAt}
+                    AND content.resourceType = #{cursor.cursorResourceType}
+                    AND content.resourceId &lt; #{cursor.cursorResourceId}
+            )
+            )
+        </if>
+
+        ORDER BY
+            content.createdAt DESC,
+            content.resourceType ASC,
+            content.resourceId DESC
+        LIMIT #{cursor.size}
+    </select>
+
+    <!-- 숨김·공개 변경 전에 콘텐츠 존재 여부와 현재 상태를 확인한다. -->
+    <select id="findContentByResource"
+            resultType="com.example.forguide.admin.dto.AdminCommunityContentResponse">
+        SELECT *
+        FROM (
+            <include refid="contentUnion"/>
+        ) content
+        WHERE content.resourceType = #{resourceType}
+            AND content.resourceId = #{resourceId}
+    </select>
+
+    <!-- 콘텐츠당 관리 상태 한 행을 INSERT 또는 UPDATE 한다. -->
+    <insert id="upsertModeration">
+        INSERT INTO community_content_moderations (
+            resource_type,
+            resource_id,
+            moderation_status,
+            reason,
+            moderated_by_member_id
+        ) VALUES (
+            #{resourceType},
+            #{resourceId},
+            #{moderationStatus},
+            #{reason},
+            #{moderatedByMemberId}
+        )
+        ON DUPLICATE KEY UPDATE
+            moderation_status = VALUES(moderation_status),
+            reason = VALUES(reason),
+            moderated_by_member_id = VALUES(moderated_by_member_id),
+            updated_at = CURRENT_TIMESTAMP
+    </insert>
+
+</mapper>

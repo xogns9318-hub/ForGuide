@@ -152,6 +152,10 @@ public class AuthService {
             throw new ApiException(ErrorCode.LOGIN_FAILED);
         }
 
+        if ("SUSPENDED".equals(member.getMemberStatus())) {
+            throw new ApiException(ErrorCode.ACCOUNT_SUSPENDED);
+        }
+
         loginAttemptService.reset(loginId);
         return issueTokens(member);
     }
@@ -176,6 +180,11 @@ public class AuthService {
         if (member == null) {
             throw new ApiException(ErrorCode.REFRESH_INVALID);
         }
+
+        if ("SUSPENDED".equals(member.getMemberStatus())) {
+            throw new ApiException(ErrorCode.ACCOUNT_SUSPENDED);
+        }
+
         return issueTokens(member);
     }
 

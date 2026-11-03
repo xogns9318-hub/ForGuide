@@ -10,6 +10,7 @@
         login_id          AS loginId,
         password          AS password,
         role              AS role,
+        member_status     AS memberStatus,
         name              AS name,
         given_name        AS givenName,
         family_name       AS familyName,

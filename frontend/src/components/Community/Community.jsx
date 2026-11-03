@@ -518,7 +518,7 @@ export default function Community() {
         loadPopularPosts();
     }, [loadPopularPosts]);
 
-    // 사이트 언어 또는 인기 게시글이 바뀌면 최대 3개의 인기 게시글을 자동 번역
+    // 사이트 언어 또는 인기 게시글이 바뀌면 현재 인기 게시글 전체를 자동 번역한다.
     useEffect(() => {
         let isMounted = true;
 

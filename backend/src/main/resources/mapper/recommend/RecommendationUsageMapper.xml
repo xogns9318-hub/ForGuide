@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.forguide.recommend.usage.RecommendationUsageMapper">
+
+    <insert id="insert">
+        INSERT INTO recommendation_usage_logs (
+            recommendation_type,
+            outcome_type
+        ) VALUES (
+            #{recommendationType},
+            #{outcomeType}
+        )
+    </insert>
+
+</mapper>

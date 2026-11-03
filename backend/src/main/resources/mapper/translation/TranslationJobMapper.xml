@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.forguide.translation.mapper.TranslationJobMapper">
+
+    <!-- INSERT IGNORE의 반환 행 수가 1이면 이 요청이 최초 번역 작업을 확보한 것이다. -->
+    <insert id="insertIfAbsent">
+        INSERT IGNORE INTO community_translation_jobs (
+            resource_type,
+            resource_id,
+            content_version,
+            target_language,
+            lock_token,
+            locked_until
+        ) VALUES (
+            #{resourceType},
+            #{resourceId},
+            #{contentVersion},
+            #{targetLanguage},
+            #{lockToken},
+            #{lockedUntil}
+        )
+    </insert>
+
+    <!-- 이전 서버가 비정상 종료해 잠금이 만료된 경우에만 새 요청이 작업을 이어받는다. -->
+    <update id="takeExpiredJob">
+        UPDATE community_translation_jobs
+        SET lock_token = #{lockToken},
+            locked_until = #{lockedUntil}
+        WHERE resource_type = #{resourceType}
+            AND resource_id = #{resourceId}
+            AND content_version = #{contentVersion}
+            AND target_language = #{targetLanguage}
+            AND locked_until &lt; #{now}
+    </update>
+
+    <!-- 성공·실패 뒤 자기 요청이 만든 잠금만 제거한다. -->
+    <delete id="deleteByLockToken">
+        DELETE FROM community_translation_jobs
+        WHERE resource_type = #{resourceType}
+            AND resource_id = #{resourceId}
+            AND content_version = #{contentVersion}
+            AND target_language = #{targetLanguage}
+            AND lock_token = #{lockToken}
+    </delete>
+</mapper>

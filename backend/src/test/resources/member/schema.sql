@@ -10,6 +10,8 @@ CREATE TABLE members (
     login_id          VARCHAR(50)   NOT NULL UNIQUE,
     password          VARCHAR(255)  NOT NULL,
     role              VARCHAR(10)   NOT NULL DEFAULT 'USER',
+    member_status     VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+    suspended_at      DATETIME,
     name              VARCHAR(101)  NOT NULL,
     given_name        VARCHAR(50),
     family_name       VARCHAR(50),

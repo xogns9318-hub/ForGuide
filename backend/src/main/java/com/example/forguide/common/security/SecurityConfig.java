@@ -2,6 +2,7 @@ package com.example.forguide.common.security;
 
 import com.example.forguide.community.image.CommunityImageStorage;
 import com.example.forguide.member.image.ProfileImageStorage;
+import com.example.forguide.member.mapper.MemberMapper;
 import jakarta.servlet.DispatcherType;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -27,10 +28,12 @@ public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
     private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+    private final MemberMapper memberMapper;
 
-    public SecurityConfig(JwtProvider jwtProvider, JwtAuthenticationEntryPoint authenticationEntryPoint) {
+    public SecurityConfig(JwtProvider jwtProvider, JwtAuthenticationEntryPoint authenticationEntryPoint, MemberMapper memberMapper) {
         this.jwtProvider = jwtProvider;
         this.authenticationEntryPoint = authenticationEntryPoint;
+        this.memberMapper = memberMapper;
     }
 
     @Bean
@@ -97,7 +100,7 @@ public class SecurityConfig {
                         .accessDeniedHandler(authenticationEntryPoint))
 
                 // ⑤ 토큰 필터를 Security 필터 체인에 끼워 넣는다
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider, memberMapper), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

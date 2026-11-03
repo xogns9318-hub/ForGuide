@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
  * - 비밀번호는 로그에 남기지 않고, DB에는 BCrypt 해시만 저장한다
  */
 @Component
+@ConditionalOnProperty(
+        name = "forguide.admin.initializer.enabled",
+        havingValue = "true",
+        matchIfMissing = true
+)
 public class AdminAccountInitializer implements ApplicationRunner {
 
     private static final Logger log = LoggerFactory.getLogger(AdminAccountInitializer.class);

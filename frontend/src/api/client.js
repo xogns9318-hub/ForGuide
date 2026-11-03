@@ -127,8 +127,11 @@ export async function request(path, { method = "GET", body, headers } = {}) {
             return send(path, { method, body, headers });
         }
 
-        // 위조·형식 오류 토큰: 더 쓰지 않도록 로그인 정보를 지운다
-        if (error.code === "TOKEN_INVALID") {
+        // 위조 토큰 또는 정지 계정은 기존 브라우저 로그인 상태도 즉시 비운다.
+        if (
+            error.code === "TOKEN_INVALID" ||
+            error.code === "ACCOUNT_SUSPENDED"
+        ) {
             useAuthStore.getState().clearAuth();
         }
 
