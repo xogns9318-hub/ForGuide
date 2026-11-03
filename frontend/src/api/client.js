@@ -63,7 +63,7 @@ function toApiUrl(path) {
 }
 
 // 요청 한 번 보내기
-async function send(path, { method, body, headers }) {
+async function send(path, { method, body, headers, timeoutMs = TIMEOUT_MS }) {
     const { accessToken } = useAuthStore.getState();
 
     const requestHeaders = {
@@ -87,7 +87,7 @@ async function send(path, { method, body, headers }) {
     }
 
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
 
     try {
         const response = await fetch(toApiUrl(path), {
@@ -110,9 +110,12 @@ async function send(path, { method, body, headers }) {
 // 공통 요청 함수
 // access token이 만료되었으면 재발급 후 원래 요청을 한 번만 다시 보낸다
 // 화면 코드는 토큰 만료를 신경 쓰지 않고 이 함수의 결과만 받는다
-export async function request(path, { method = "GET", body, headers } = {}) {
+export async function request(
+    path,
+    { method = "GET", body, headers, timeoutMs = TIMEOUT_MS } = {},
+) {
     try {
-        return await send(path, { method, body, headers });
+        return await send(path, { method, body, headers, timeoutMs });
     } catch (error) {
         if (!(error instanceof ApiError)) throw error;
 
@@ -124,7 +127,7 @@ export async function request(path, { method = "GET", body, headers } = {}) {
             if (!newToken) {
                 throw new ApiError("AUTH_REQUIRED", "로그인이 필요합니다.", { status: 401 });
             }
-            return send(path, { method, body, headers });
+            return send(path, { method, body, headers, timeoutMs });
         }
 
         // 위조 토큰 또는 정지 계정은 기존 브라우저 로그인 상태도 즉시 비운다.

@@ -43,10 +43,10 @@
     min-width: 0;
 }
 
-.field>span,
+.field > span,
 .gender legend,
 .problem legend,
-.details>span {
+.details > span {
     font-weight: 700;
 }
 
@@ -119,12 +119,12 @@
     border-bottom: 2px solid var(--prep-line);
 }
 
-.genderOption input:checked+span {
+.genderOption input:checked + span {
     border-color: var(--prep-ink);
     font-weight: 700;
 }
 
-.genderOption input:focus-visible+span {
+.genderOption input:focus-visible + span {
     outline: 2px solid var(--prep-ink);
     outline-offset: 3px;
 }
@@ -219,7 +219,7 @@
     gap: 10px;
 }
 
-.problem>.choices {
+.problem > .choices {
     margin-top: 16px;
 }
 
@@ -230,7 +230,9 @@
     border-radius: var(--control-radius);
     background: #fff;
     color: inherit;
-    transition: border-color 180ms, background-color 180ms;
+    transition:
+        border-color 180ms,
+        background-color 180ms;
 }
 
 .choice:hover,
@@ -317,7 +319,7 @@
     overflow-wrap: anywhere;
 }
 
-.notice>span {
+.notice > span {
     padding-top: 1px;
     font-weight: 700;
 }
@@ -363,7 +365,10 @@
     color: var(--prep-line);
     background: #fff;
     border-color: var(--prep-line);
-    transition: color 180ms, background-color 180ms, border-color 180ms;
+    transition:
+        color 180ms,
+        background-color 180ms,
+        border-color 180ms;
 }
 
 .page .complete[aria-disabled="false"] {
@@ -441,7 +446,7 @@
     }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1200px) {
     .fields {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -454,8 +459,8 @@
         margin-top: 28px;
     }
 
-    .fields> :nth-child(3),
-    .fields> :last-child {
+    .fields > :nth-child(3),
+    .fields > :last-child {
         grid-column: 1 / -1;
     }
 
@@ -497,7 +502,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-
     .reveal,
     .resultReveal,
     .field :global(.select-box-options) {
@@ -508,5 +512,124 @@
     .notice,
     .field :global(.select-box-option > span)::after {
         transition: none;
+    }
+}
+
+/* 생년월일은 연도 입력과 월·일 선택을 한 줄에 배치한다. */
+.birthDateInputs {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 10px;
+    min-width: 0;
+}
+
+.birthDateInputs > .field {
+    gap: 0;
+}
+
+.birthDateError {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.printToolbar {
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* 인쇄 버튼은 마우스를 올리거나 눌러도 위치를 유지한다. */
+.page .printToolbar .complete,
+.page .printToolbar .complete:hover {
+    margin-top: 0;
+}
+
+/* 인쇄용 카드는 화면에서 숨기고 브라우저 인쇄 시에만 표시한다. */
+.printRoot {
+    display: none;
+}
+
+@page preparation-card {
+    size: A4 portrait;
+    margin: 14mm;
+}
+
+@media print {
+    /* 이 페이지의 인쇄용 카드가 있을 때만 앱 화면을 제외한다. */
+    :global(body:has([data-preparation-print])) > :not([data-preparation-print]) {
+        display: none !important;
+    }
+
+    :global(body:has([data-preparation-print])) {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+    }
+
+    .printRoot {
+        display: block !important;
+        width: 100%;
+        page: preparation-card;
+        color: #527b73;
+        font-size: 11pt;
+    }
+
+    /* 다른 화면의 인쇄 CSS가 로드돼 있어도 상담 카드는 표시한다. */
+    .printRoot,
+    .printRoot * {
+        visibility: visible !important;
+        box-sizing: border-box;
+    }
+
+    .printRoot .resultCard {
+        position: static;
+        width: 100%;
+        margin: 0;
+        padding: 8mm;
+        border: 1px solid #d4eae2;
+        border-radius: 18px;
+        box-shadow: none;
+        animation: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+        break-inside: avoid;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .printRoot .resultCard + .resultCard {
+        break-before: page;
+    }
+
+    .printRoot .resultCard h2 {
+        margin: 0;
+        font-size: 18pt;
+        line-height: 1.5;
+    }
+
+    .printRoot .resultCard h3 {
+        font-size: 13pt;
+        line-height: 1.6;
+    }
+
+    .printRoot .resultFields {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8mm 6mm;
+        margin: 10mm 0;
+    }
+
+    .printRoot .resultFields dt {
+        margin-bottom: 3mm;
+        font-size: 12pt;
+    }
+
+    .printRoot .resultFields dd,
+    .printRoot .resultDetails {
+        font-size: 11pt;
+    }
+
+    .printRoot .translationNote {
+        font-size: 9pt;
     }
 }

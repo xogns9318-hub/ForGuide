@@ -586,3 +586,27 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - description은 줄바꿈별로 나누며, 빈 항목과 중복 문장은 제거한다.
 - 소비자분쟁은 기존 생활·복지·법률 분야의 법률·주거분쟁 검색 규칙에 연결한다.
 - getInstitutionGuide는 DB 원본을 수정하지 않으며 HTTP API의 응답 필드도 변경하지 않는다.
+
+## 상담 준비 카드 한국어 번역
+
+- 메서드: POST
+- 주소: `/api/v1/consultation/preparation-card/translation`
+- 인증: 로그인 없이 요청 가능
+- 요청: `sourceText`에 사용자가 직접 작성한 상세 내용을 전달한다.
+- 입력 제한: 공백만 있는 내용은 허용하지 않으며 최대 300자이다.
+- 원문 언어는 자동 감지하고 대상 언어는 한국어로 고정한다.
+- 이름·성·생년월일과 선택 항목은 이 API에 전달하지 않는다.
+- 항목명과 선택 항목의 한국어 표시는 프론트엔드에서 처리한다.
+- 성공 시 공통 응답의 data에 `translatedText`, `cached`를 반환한다.
+- 상담 준비 카드 전용 `PreparationTranslationService`를 사용한다.
+- 이 처리에서는 원문과 번역문을 DB·Redis 캐시에 저장하지 않는다.
+- 번역 실패 시 실패 응답을 반환하며 원문을 번역 성공 결과로 대체하지 않는다.
+- 프론트엔드 함수: translatePreparationDetails(sourceText)
+- 공통 client를 통해 번역 API를 호출하고 translatedText를 반환한다.
+- 화면에서는 번역 중 상태와 실패 시 재시도 버튼을 표시한다.
+- 번역 중 입력 수정·페이지 이동으로 무효화된 응답은 화면에 반영하지 않는다.
+- 상담 준비 카드 전용 번역 서비스에서 일시적인 HTTP 오류를 최대 두 번 추가 재시도한다.
+- 재시도를 포함한 전체 처리 제한은 25초이며, 외부 요청 한 번은 남은 전체 제한 내에서 최대 25초이다.
+- 사용량 제한과 키·권한 오류는 자동 재시도하지 않는다.
+- 상담 번역의 프론트 대기 시간은 35초이며 다른 API의 기본 10초 제한은 유지한다.
+- 실패 코드는 TRANSLATION_TIMEOUT, TRANSLATION_UNAVAILABLE, TRANSLATION_RATE_LIMITED로 구분한다.
