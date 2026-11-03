@@ -33,6 +33,9 @@ const AdminMemberPage = lazy(
 const AdminCommunityPage = lazy(
     () => import("../admin/pages/AdminCommunityPage.jsx"),
 );
+const AdminRecommendationUsagePage = lazy(
+    () => import("../admin/pages/AdminRecommendationUsagePage.jsx"),
+);
 // 제작 중 화면을 표시할 서비스 주소만 지정
 const constructionPaths = new Set();
 
@@ -220,6 +223,10 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                             element={<AdminMemberPage />}
                         />
                     </Route>
+                    <Route
+                        path="/admin/recommendation-usage"
+                        element={<AdminRecommendationUsagePage />}
+                    />
 
                     {/* 추천 화면 */}
                     {recommendRoutes()}

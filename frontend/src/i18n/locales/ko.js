@@ -448,6 +448,44 @@ const ko = {
             createdAt: "작성일",
             moderatedAt: "관리 처리일",
         },
+
+        recommendationUsage: {
+            eyebrow: "추천 사용 현황",
+            title: "추천 기능 운영 현황",
+            description:
+                "개인정보 없이 기록한 대출·보험·계좌 추천 실행 현황입니다.",
+
+            periodLabel: "조회 기간",
+            period7: "최근 7일",
+            period30: "최근 30일",
+            period90: "최근 90일",
+
+            totalUsage: "총 추천 실행",
+            loanUsage: "대출 추천",
+            insuranceUsage: "보험 추천",
+            accountUsage: "계좌 추천",
+            latestUsedAt: "최근 추천 실행",
+
+            outcomeTitle: "추천 결과 흐름",
+            productResult: "상품 결과 제공",
+            consultationRedirect: "상담 안내 이동",
+
+            chartTitle: "날짜별 추천 실행 추이",
+            chartTotal: "전체",
+            chartLoan: "대출",
+            chartInsurance: "보험",
+            chartAccount: "계좌",
+            chartTooltip: "실행 횟수",
+
+            loading: "추천 사용 현황을 불러오는 중입니다.",
+            loadError: "추천 사용 현황을 불러오지 못했습니다.",
+            retry: "다시 시도",
+            emptyLatestUsedAt: "아직 추천 실행 기록이 없습니다.",
+
+            dashboardTitle: "추천 사용 현황",
+            dashboardDescription:
+                "대출·보험·계좌 추천의 실행 현황을 확인합니다.",
+        },
     },
 
     inquiry: {

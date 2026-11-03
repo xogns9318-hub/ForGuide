@@ -150,6 +150,50 @@ IntelliJ 실행 설정의 Environment variables에 `JWT_SECRET=만든값`을 넣
 
 값이 틀리면 400 `INVALID_INPUT`, `fieldErrors`에 항목별 허용값(예: `"term": "허용값: 6, 12, 24"`). 계좌 관문의 "본인 명의 통장 아니오"는 API를 부르지 않고 화면에서 입출금통장 안내로 보낸다.
 
+### 관리자 추천 사용 현황
+
+`GET /api/v1/admin/recommendation-usage?days=30`
+
+관리자 전용 API다. 추천 결과가 조회된 횟수와 보험 추천이 상담 안내로 전환된 횟수만 집계한다. 회원 번호·입력 조건·추천 결과 원문 등 개인정보는 저장하거나 반환하지 않는다.
+
+| 이름 | 필수 여부 | 기본값 | 허용값 | 설명 |
+| --- | --- | --- | --- | --- |
+| `days` | 선택 | `30` | `7`, `30`, `90` | 오늘을 포함해 집계할 최근 일수 |
+
+응답은 전체 요약과 날짜별 실행 수를 함께 반환한다. 날짜별 배열은 실행이 없는 날도 0으로 포함하므로 프론트의 추이 그래프가 끊기지 않는다.
+
+```json
+{
+  "success": true,
+  "data": {
+    "periodDays": 30,
+    "summary": {
+      "totalUsageCount": 18,
+      "loanUsageCount": 7,
+      "insuranceUsageCount": 6,
+      "accountUsageCount": 5,
+      "productResultCount": 16,
+      "consultationRedirectCount": 2,
+      "latestUsedAt": "2026-11-03T10:20:00"
+    },
+    "dailyUsage": [
+      {
+        "usageDate": "2026-11-03",
+        "totalUsageCount": 3,
+        "loanUsageCount": 1,
+        "insuranceUsageCount": 1,
+        "accountUsageCount": 1
+      }
+    ]
+  }
+}
+```
+
+- 대출·계좌 추천 결과 조회는 `PRODUCT_RESULT`로 기록한다.
+- 보험 추천은 상품 결과면 `PRODUCT_RESULT`, 상담 화면으로 안내하면 `CONSULTATION_REDIRECT`로 기록한다.
+- 일반 사용자의 추천 API는 공개 상태를 유지하고, 현황 조회 API만 `/api/v1/admin/**` 권한 규칙으로 `ADMIN` 역할이 필요하다.
+- 잘못된 `days`는 `INVALID_INPUT`(400)이다.
+
 ## 공통 요청 클라이언트 (`src/api/client.js`)
 
 auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한다. 화면에서 `fetch`를 직접 쓰지 않는다.

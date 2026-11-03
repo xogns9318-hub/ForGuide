@@ -110,6 +110,11 @@ export default function AdminDashboard() {
                                 <strong>{t("admin.dashboard.management.members.title")}</strong>
                                 <span>{t("admin.dashboard.management.members.description")}</span>
                             </Link>
+
+                            <Link className={styles.managementCard} to="/admin/recommendation-usage">
+                                <strong>{t("admin.recommendationUsage.dashboardTitle")}</strong>
+                                <span>{t("admin.recommendationUsage.dashboardDescription")}</span>
+                            </Link>
                         </div>
                     </section>
                 </>

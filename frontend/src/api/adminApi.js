@@ -5,6 +5,17 @@ export function getAdminDashboard() {
     return client.get("/admin/dashboard");
 }
 
+// 관리자가 선택한 기간의 추천 사용 현황을 조회한다.
+export function getAdminRecommendationUsage(days = 30) {
+    const params = new URLSearchParams({
+        days: String(days),
+    });
+
+    return client.get(
+        `/admin/recommendation-usage?${params.toString()}`,
+    );
+}
+
 // 관리자는 문의 상태를 선택해 최신순으로 목록을 조회한다.
 export function getAdminInquiries({
     cursorInquiryId = null,
@@ -100,7 +111,7 @@ export function getAdminCommunityContents({
     }
 
     if (keyword?.trim()) {
-        params.set("keyword", keyword,trim());
+        params.set("keyword", keyword.trim());
     }
 
     return client.get(`/admin/community/contents?${params.toString()}`);
