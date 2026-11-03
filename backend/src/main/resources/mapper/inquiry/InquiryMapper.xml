@@ -35,6 +35,45 @@
         )
     </insert>
 
+    <insert id="insertImage">
+        INSERT INTO member_inquiry_images (
+            inquiry_id,
+            image_url,
+            display_order
+        ) VALUES (
+            #{inquiryId},
+            #{imageUrl},
+            #{displayOrder}
+        )
+    </insert>
+
+    <select id="findImagesByInquiryIds"
+            resultType="com.example.forguide.inquiry.dto.InquiryImageResponse">
+        SELECT
+            inquiry_image_id AS inquiryImageId,
+            inquiry_id AS inquiryId,
+            image_url AS imageUrl,
+            display_order AS displayOrder
+        FROM member_inquiry_images
+        WHERE inquiry_id IN
+        <foreach collection="inquiryIds" item="inquiryId" open="(" separator="," close=")">
+            #{inquiryId}
+        </foreach>
+        ORDER BY inquiry_id ASC, display_order ASC
+    </select>
+
+    <select id="findImageByIdAndInquiryId"
+            resultType="com.example.forguide.inquiry.dto.InquiryImageResponse">
+        SELECT
+            inquiry_image_id AS inquiryImageId,
+            inquiry_id AS inquiryId,
+            image_url AS imageUrl,
+            display_order AS displayOrder
+        FROM member_inquiry_images
+        WHERE inquiry_id = #{inquiryId}
+            AND inquiry_image_id = #{inquiryImageId}
+    </select>
+
     <select id="findByMemberIdAndCursor"
             resultType="com.example.forguide.inquiry.dto.InquiryResponse">
         SELECT

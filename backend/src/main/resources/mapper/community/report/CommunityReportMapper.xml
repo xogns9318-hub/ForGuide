@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.forguide.community.report.CommunityReportMapper">
+
+    <insert id="insert">
+        INSERT INTO community_reports (
+            reporter_member_id,
+            resource_type,
+            resource_id,
+            report_reason
+        ) VALUES (
+            #{reporterMemberId},
+            #{resourceType},
+            #{resourceId},
+            #{reportReason}
+        )
+    </insert>
+</mapper>

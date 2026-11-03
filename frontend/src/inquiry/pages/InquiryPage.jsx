@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { createInquiry, getMyInquiries } from "../../api/inquiryApi.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
+import InquiryImageList from "../components/InquiryImageList.jsx";
 import styles from "../../styles/inquiry.module.css";
 import { formatDateTime } from "../../utils/formatDateTime.js";
 
@@ -26,6 +27,8 @@ export default function InquiryPage() {
     const [formError, setFormError] = useState("");
     const [listError, setListError] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
+    const [imageFiles, setImageFiles] = useState([]);
+    const [imagePreviewUrls, setImagePreviewUrls] = useState([]);
 
     const cursorInquiryIdRef = useRef(null);
     const isLoadingRef = useRef(false);
@@ -106,6 +109,17 @@ export default function InquiryPage() {
         }));
     }
 
+    useEffect(() => {
+        const urls = imageFiles.map((image) => URL.createObjectURL(image));
+        setImagePreviewUrls(urls);
+
+        return () => urls.forEach((url) => URL.revokeObjectURL(url));
+    }, [imageFiles]);
+
+    function handleImageChange(event) {
+        setImageFiles(Array.from(event.target.files || []).slice(0, 4));
+    }
+
     async function handleSubmit(event) {
         event.preventDefault();
 
@@ -118,9 +132,11 @@ export default function InquiryPage() {
                 inquiryCategory: form.inquiryCategory,
                 title: form.title.trim(),
                 content: form.content.trim(),
+                images: imageFiles,
             });
 
             setForm(INITIAL_FORM);
+            setImageFiles([]);
             setSuccessMessage(t("inquiry.form.success"));
             await loadInquiries({ reset: true });
         } catch (requestError) {
@@ -175,6 +191,38 @@ export default function InquiryPage() {
                         onChange={handleChange}
                     />
                 </label>
+
+                <div className={styles.imageUpload}>
+                    <label className={styles.imageUploadButton}>
+                        <input
+                            type="file"
+                            accept="image/jpeg,image/png"
+                            multiple
+                            onChange={handleImageChange}
+                        />
+                        <span aria-hidden="true">▧</span>
+                        {t("inquiry.images.add")}
+                    </label>
+                    <span>{t("inquiry.images.help")}</span>
+                    {imageFiles.length > 0 && (
+                        <small>{t("inquiry.images.selected", { count: imageFiles.length })}</small>
+                    )}
+                </div>
+
+                {imagePreviewUrls.length > 0 && (
+                    <div
+                        className={styles.imagePreviewList}
+                        aria-label={t("inquiry.images.previewLabel")}
+                    >
+                        {imagePreviewUrls.map((url, index) => (
+                            <img
+                                key={url}
+                                src={url}
+                                alt={t("inquiry.images.previewAlt", { index: index + 1 })}
+                            />
+                        ))}
+                    </div>
+                )}
 
                 {formError && (
                     <p className={styles.error} role="alert">
@@ -243,6 +291,10 @@ export default function InquiryPage() {
                                 </p>
                                 <h3>{inquiry.title}</h3>
                                 <p className={styles.content}>{inquiry.content}</p>
+                                <InquiryImageList
+                                    inquiryId={inquiry.inquiryId}
+                                    images={inquiry.images}
+                                />
 
                                 {inquiry.answerContent && (
                                     <div className={styles.answer}>

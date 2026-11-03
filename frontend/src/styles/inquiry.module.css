@@ -58,6 +58,74 @@
     font: inherit;
 }
 
+.imageUpload {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    color: #71877f;
+}
+
+.imageUploadButton {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+    width: auto !important;
+    padding: 11px 18px;
+    border: 1px solid #cfe3da;
+    border-radius: 999px;
+    color: #2f6d5d;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.imageUploadButton input {
+    position: absolute;
+    width: 1px !important;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+}
+
+.imageUpload small {
+    width: 100%;
+}
+
+.imageList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.imageList a {
+    display: block;
+    overflow: hidden;
+    border: 1px solid #d9e9e2;
+    border-radius: 12px;
+}
+
+.imageList img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+}
+
+.imagePreviewList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+    gap: 10px;
+}
+
+.imagePreviewList img {
+    width: 100%;
+    aspect-ratio: 1;
+    border: 1px solid #d9e9e2;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
 .form textarea {
     min-height: 160px;
     resize: vertical;

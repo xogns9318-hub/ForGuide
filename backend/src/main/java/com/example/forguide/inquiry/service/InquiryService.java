@@ -5,29 +5,73 @@ import com.example.forguide.common.exception.ErrorCode;
 import com.example.forguide.inquiry.dto.InquiryAnswerRequest;
 import com.example.forguide.inquiry.dto.InquiryCreateRequest;
 import com.example.forguide.inquiry.dto.InquiryCursorRequest;
+import com.example.forguide.inquiry.dto.InquiryImageResponse;
 import com.example.forguide.inquiry.dto.InquiryResponse;
+import com.example.forguide.inquiry.image.InquiryImageStorage;
 import com.example.forguide.inquiry.mapper.InquiryMapper;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class InquiryService {
 
     private final InquiryMapper inquiryMapper;
+    private final InquiryImageStorage inquiryImageStorage;
 
     // 문의 작성은 INSERT 작업이므로 트랜잭션으로 처리한다.
     @Transactional
     public void createInquiry(
             Long memberId,
-            InquiryCreateRequest request
+            InquiryCreateRequest request,
+            List<MultipartFile> images
     ) {
         requireLogin(memberId);
 
-        inquiryMapper.insert(memberId, request);
+        List<MultipartFile> imageFiles = images == null
+                ? List.of()
+                : images.stream()
+                        .filter(image -> !image.isEmpty())
+                        .toList();
+
+        if (inquiryMapper.insert(memberId, request) != 1
+                || request.getInquiryId() == null) {
+            throw new IllegalStateException("문의를 저장하지 못했습니다.");
+        }
+
+        List<String> storedImageUrls = new ArrayList<>();
+
+        try {
+            for (int displayOrder = 0;
+                    displayOrder < imageFiles.size();
+                    displayOrder++) {
+                String imageUrl = inquiryImageStorage.store(
+                        imageFiles.get(displayOrder)
+                );
+                storedImageUrls.add(imageUrl);
+
+                if (inquiryMapper.insertImage(
+                        request.getInquiryId(),
+                        imageUrl,
+                        displayOrder
+                ) != 1) {
+                    throw new IllegalStateException("문의 사진을 저장하지 못했습니다.");
+                }
+            }
+        } catch (RuntimeException exception) {
+            // DB 트랜잭션이 롤백될 때 이번 요청에서 저장한 파일도 함께 정리한다.
+            storedImageUrls.forEach(inquiryImageStorage::deleteIfOwned);
+            throw exception;
+        }
     }
 
     // 목록 조회는 DB 상태를 바꾸지 않으므로 트랜잭션이 필요 없다.
@@ -37,7 +81,9 @@ public class InquiryService {
     ) {
         requireLogin(memberId);
 
-        return inquiryMapper.findByMemberIdAndCursor(memberId, cursor);
+        return attachImages(
+                inquiryMapper.findByMemberIdAndCursor(memberId, cursor)
+        );
     }
 
     public InquiryResponse getMyInquiry(
@@ -59,14 +105,14 @@ public class InquiryService {
             );
         }
 
-        return inquiry;
+        return attachImages(List.of(inquiry)).get(0);
     }
 
     // 관리자 전체 목록 조회도 SELECT만 수행한다.
     public List<InquiryResponse> getAllInquiries(
             InquiryCursorRequest cursor
     ) {
-        return inquiryMapper.findAllByCursor(cursor);
+        return attachImages(inquiryMapper.findAllByCursor(cursor));
     }
 
     public InquiryResponse getInquiryForAdmin(Long inquiryId) {
@@ -81,7 +127,7 @@ public class InquiryService {
             );
         }
 
-        return inquiry;
+        return attachImages(List.of(inquiry)).get(0);
     }
 
     // 답변 등록은 문의 상태·답변 내용을 함께 바꾸므로 트랜잭션으로 처리한다.
@@ -117,6 +163,86 @@ public class InquiryService {
         );
     }
 
+    // 작성자 본인만 문의 첨부 파일을 읽을 수 있다.
+    public Path getMyInquiryImage(
+            Long memberId,
+            Long inquiryId,
+            Long inquiryImageId
+    ) {
+        requireLogin(memberId);
+        requireInquiryId(inquiryId);
+        requireInquiryImageId(inquiryImageId);
+
+        if (inquiryMapper.findByIdAndMemberId(inquiryId, memberId) == null) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "문의 내용을 찾을 수 없습니다.");
+        }
+
+        return findInquiryImageFile(inquiryId, inquiryImageId);
+    }
+
+    // 관리자 API는 작성자 소유권 대신 관리자 주소의 권한 규칙을 사용한다.
+    public Path getInquiryImageForAdmin(
+            Long inquiryId,
+            Long inquiryImageId
+    ) {
+        requireInquiryId(inquiryId);
+        requireInquiryImageId(inquiryImageId);
+        getInquiryForAdmin(inquiryId);
+
+        return findInquiryImageFile(inquiryId, inquiryImageId);
+    }
+
+    private Path findInquiryImageFile(
+            Long inquiryId,
+            Long inquiryImageId
+    ) {
+        InquiryImageResponse image = inquiryMapper.findImageByIdAndInquiryId(
+                inquiryId,
+                inquiryImageId
+        );
+
+        if (image == null) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "문의 사진을 찾을 수 없습니다.");
+        }
+
+        Path imagePath = inquiryImageStorage.findOwnedFile(image.getImageUrl());
+
+        if (imagePath == null) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "문의 사진을 찾을 수 없습니다.");
+        }
+
+        return imagePath;
+    }
+
+    private List<InquiryResponse> attachImages(
+            List<InquiryResponse> inquiries
+    ) {
+        if (inquiries.isEmpty()) {
+            return inquiries;
+        }
+
+        List<Long> inquiryIds = inquiries.stream()
+                .map(InquiryResponse::getInquiryId)
+                .toList();
+
+        Map<Long, List<InquiryImageResponse>> imagesByInquiryId =
+                inquiryMapper.findImagesByInquiryIds(inquiryIds).stream()
+                        .collect(Collectors.groupingBy(
+                                InquiryImageResponse::getInquiryId,
+                                HashMap::new,
+                                Collectors.toList()
+                        ));
+
+        inquiries.forEach(inquiry -> inquiry.setImages(
+                imagesByInquiryId.getOrDefault(
+                        inquiry.getInquiryId(),
+                        List.of()
+                )
+        ));
+
+        return inquiries;
+    }
+
     private void requireLogin(Long memberId) {
         if (memberId == null) {
             throw new ApiException(ErrorCode.AUTH_REQUIRED);
@@ -128,6 +254,15 @@ public class InquiryService {
             throw new ApiException(
                     ErrorCode.INVALID_INPUT,
                     "문의 번호가 올바르지 않습니다."
+            );
+        }
+    }
+
+    private void requireInquiryImageId(Long inquiryImageId) {
+        if (inquiryImageId == null || inquiryImageId < 1) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "문의 사진 번호가 올바르지 않습니다."
             );
         }
     }

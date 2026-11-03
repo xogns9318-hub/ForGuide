@@ -27,6 +27,7 @@ import CommunityCommentSection from "./CommunityCommentSection.jsx";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 import CommunityPostEditForm from "./CommunityPostEditForm.jsx";
 import CommunityPostModal from "./CommunityPostModal.jsx";
+import CommunityReportAction from "./CommunityReportAction.jsx";
 
 const MAX_IMAGE_COUNT = 4;
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
@@ -241,6 +242,7 @@ function PostCard({
                         </button>
                     </div>
                 )}
+                {!isOwner && !isEditing && <CommunityReportAction postId={post.postId} />}
             </header>
 
             {isEditing ? (

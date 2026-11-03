@@ -5,9 +5,15 @@ const vi = {
         logout: "Đăng xuất",
         myPage: "Trang cá nhân",
         myFinance: "Thông tin tài chính của tôi",
+        adminPage: "Quản trị viên",
         language: "Ngôn ngữ",
 
         mega: {
+            serviceList: "Danh sách dịch vụ",
+            contactMenu: "Yêu cầu hỗ trợ",
+            inquiry: "Liên hệ",
+            extendedServices: "Hướng dẫn mở rộng",
+
             contact: "Liên hệ",
             contactGroup: "Liên hệ",
             myInquiries: "Yêu cầu của tôi",
@@ -18,6 +24,213 @@ const vi = {
             open: "Mở menu",
             close: "Đóng menu",
         },
+    },
+
+    homeMain: {
+        duckLabel: "Chú vịt đi từ bên cạnh vào và chào ở giữa màn hình",
+        navigationLabel: "Di chuyển giữa các khu vực trang chủ",
+        sections: {
+            main: "Trang chính",
+            translation: "Dịch thuật",
+            counseling: "Tư vấn",
+            recommendation: "Đề xuất",
+            repayment: "Tính toán",
+            employment: "Việc làm",
+            extendedServices: "Thêm",
+            contact: "Liên hệ",
+        },
+    },
+
+    homeOverview: {
+        translation: {
+            title: "Dịch thuật",
+            headline: "Không cần lo lắng dù ngôn ngữ khác nhau",
+            description:
+                "Hãy sử dụng ForGuide bằng ngôn ngữ quen thuộc của bạn.\nKhi chọn ngôn ngữ, trang sẽ được dịch tự động.",
+        },
+        consultation: {
+            headline: "Bạn không biết nên nhờ ai hỗ trợ?",
+            description:
+                "Hãy tìm tổ chức tư vấn phù hợp với hoàn cảnh của bạn\nvà xem bạn có thể nhận được hỗ trợ gì.",
+        },
+        preparationCard: {
+            headline: "Chuẩn bị tư vấn cũng thật dễ dàng",
+            description:
+                "Hãy sắp xếp trước nội dung cần trao đổi và câu hỏi của bạn,\nrồi tạo thẻ chuẩn bị tư vấn riêng.",
+        },
+        loan: {
+            headline: "Tìm sản phẩm vay phù hợp với bạn",
+            description:
+                "So sánh điều kiện của nhiều sản phẩm vay khác nhau\nvà tìm lựa chọn phù hợp với hoàn cảnh của bạn.",
+        },
+        insurance: {
+            headline: "Đừng nghĩ bảo hiểm quá phức tạp",
+            description:
+                "So sánh quyền lợi và điều kiện của các sản phẩm bảo hiểm\nđể tìm loại bảo hiểm bạn cần.",
+        },
+        account: {
+            headline: "Bạn muốn mở tài khoản ngân hàng tại Hàn Quốc?",
+            description:
+                "Tìm hiểu từng bước, từ giấy tờ cần chuẩn bị\nđến quy trình mở tài khoản.",
+        },
+        monthlyPayment: {
+            headline: "Mỗi tháng tôi cần trả bao nhiêu?",
+            description:
+                "Nhập số tiền vay và lãi suất\nđể tính số tiền cần trả mỗi tháng.",
+        },
+        totalInterest: {
+            headline: "Tôi sẽ phải trả bao nhiêu tiền lãi?",
+            description:
+                "Kiểm tra tổng tiền lãi trong thời hạn vay\nvà lập kế hoạch trả nợ sắp tới.",
+        },
+        jobListings: {
+            headline: "Bạn đang tìm việc tại Hàn Quốc?",
+            description:
+                "Xem nhiều thông tin tuyển dụng tại một nơi\nvà tìm công việc phù hợp với bạn.",
+        },
+        employment: {
+            headline: "Bạn chưa biết bắt đầu chuẩn bị việc làm từ đâu?",
+            description:
+                "Xem thông tin hữu ích khi làm việc tại Hàn Quốc\nvà tài liệu cần thiết để chuẩn bị xin việc.",
+        },
+        simulator: {
+            headline: "Hôm nay tôi có thể chi bao nhiêu?",
+            description:
+                "Nhập chi phí hằng tháng, khoản vay và tiền lãi\nđể xem số tiền có thể chi mỗi ngày trên lịch.",
+        },
+        community: {
+            headline: "Hãy cùng chia sẻ những câu hỏi và băn khoăn",
+            description:
+                "Hỏi những điều bạn thắc mắc về cuộc sống tại Hàn Quốc\nvà chia sẻ kinh nghiệm cùng thông tin hữu ích.",
+        },
+        inquiry: {
+            headline: "Hãy thoải mái hỏi nếu bạn có thắc mắc",
+            description:
+                "Nếu có câu hỏi khi sử dụng dịch vụ,\nhãy để lại yêu cầu hỗ trợ cho chúng tôi.",
+        },
+    },
+
+    institutionGuide: {
+        title: "Bạn cần tư vấn về vấn đề gì?",
+        optionsLoadError: "Không thể tải các mục lựa chọn.",
+        reloadOptions: "Tải lại",
+        noTopics: "Không có lĩnh vực tư vấn nào được đăng ký.",
+        provinceLabel: "Khu vực mong muốn · Tỉnh/Thành phố",
+        districtLabel: "Khu vực mong muốn · Thành phố/Huyện/Quận",
+        consultationLanguageLabel: "Ngôn ngữ tư vấn",
+        consultationMethodLabel: "Hình thức tư vấn",
+        selectedConditionsTitle: "Điều kiện tư vấn đã chọn",
+        conditionsChanged:
+            "Khi thay đổi điều kiện, kết quả trước đó sẽ bị ẩn. Hãy chọn Nhận hướng dẫn để kiểm tra lại.",
+        selectedProvinceLabel: "Khu vực mong muốn",
+        languages: {
+            ko: "Tiếng Hàn",
+            en: "Tiếng Anh",
+            zh: "Tiếng Trung",
+            ja: "Tiếng Nhật",
+            vi: "Tiếng Việt",
+            th: "Tiếng Thái",
+        },
+        topicLabel: "Lĩnh vực tư vấn",
+        keywordLabel: "Từ khóa tư vấn",
+        chooseTopicAndKeywords: "Hãy chọn lĩnh vực tư vấn và từ khóa.",
+        chooseKeywords: "Hãy chọn ít nhất một từ khóa tư vấn.",
+        selectedKeywords: "Đã chọn {{count}} từ khóa",
+        submit: "Nhận hướng dẫn",
+        searchLabel: "Tìm kiếm tên tổ chức hoặc nội dung tư vấn",
+        searchPlaceholder:
+            "Ví dụ: 임금체불 (nợ lương), 통장 만들기 (mở tài khoản), 외국인등록 (đăng ký người nước ngoài)",
+        queryReady: "Tìm kiếm tổ chức bằng từ khóa và điều kiện hiện tại.",
+        showAll: "Xem tất cả tổ chức",
+        all: "Tất cả",
+        resultsTitle: "Kết quả tìm kiếm tổ chức hỗ trợ",
+        resultCount: "{{count}} tổ chức",
+        loading: "Đang tải thông tin tổ chức.",
+        loadError: "Không thể tải thông tin tổ chức. Hãy kiểm tra kết nối máy chủ và thử lại.",
+        invalidInput: "Hãy kiểm tra điều kiện tìm kiếm.",
+        retry: "Thử lại",
+        empty: "Không có tổ chức phù hợp. Hãy giảm số từ khóa hoặc xem tất cả tổ chức.",
+        unknown: "Cần xác nhận",
+        multilingual: "Đa ngôn ngữ",
+        available: "Đang hoạt động",
+        unavailable: "Không hoạt động",
+        phoneAgentUnavailable: "Không có tư vấn qua điện thoại",
+        phone24Hours: "Hoạt động 24 giờ",
+        phoneOpenWithinHours: "Có thể sử dụng trong giờ tư vấn",
+        required: "Bắt buộc đặt lịch",
+        notRequired: "Không bắt buộc",
+        detail: "Xem chi tiết",
+        detailTitle: "Chi tiết tổ chức",
+        close: "Quay lại danh sách",
+        notFound: "Không tìm thấy tổ chức phù hợp.",
+        administration: "Hướng dẫn hành chính và đời sống",
+        servicesTitle: "Lĩnh vực tư vấn và từ khóa",
+        scopeNotesTitle: "Phạm vi tư vấn và lưu ý",
+        usageInfoTitle: "Hướng dẫn sử dụng",
+        usageVariant: "Hướng dẫn sử dụng {{count}}",
+        partialNotice:
+            "Chỉ một phần thông tin đã được xác nhận. Hãy kiểm tra điều kiện mới nhất với tổ chức trước khi sử dụng.",
+        rankingNotice:
+            "Ưu tiên hiển thị tổ chức tư vấn trực tiếp, sau đó theo số từ khóa phù hợp và tình trạng xác nhận điều kiện. Tỷ lệ phù hợp không phải là điều kiện đủ hay xác suất được chấp thuận.",
+        matchCount: "Khớp {{matched}} trong {{total}} từ khóa đã chọn · {{percent}}%",
+        matchedList: "Từ khóa phù hợp: {{keywords}}",
+        chartTitle: "Số từ khóa đã chọn phù hợp của các tổ chức hàng đầu",
+        matchedLabel: "Từ khóa phù hợp",
+        specialHours: "Giờ hoạt động đặc biệt: {{scope}} — {{hours}}",
+        phoneNationwide: "Không giới hạn khu vực khi tư vấn qua điện thoại",
+        preparationUnknown:
+            "Hãy kiểm tra giấy tờ cần thiết sau khi chọn tổ chức và dịch vụ.",
+        reservationLink: "Thông tin đặt lịch",
+        onlineLink: "Tư vấn trực tuyến",
+        serviceSource: "Nguồn dịch vụ tư vấn",
+        officialLink: "Trang web chính thức",
+        sourceLink: "Tài liệu tham khảo {{count}}",
+        prepareCard: "Tạo thẻ chuẩn bị tư vấn",
+
+        roles: {
+            direct: "Tư vấn trực tiếp",
+            related: "Hướng dẫn tư vấn, dịch vụ hoặc cơ quan liên quan",
+            unknown: "Cần xác nhận vai trò tư vấn",
+        },
+
+        methods: {
+            phone: "Điện thoại",
+            visit: "Trực tiếp",
+            online: "Trực tuyến",
+            reservation: "Đặt lịch",
+            unknown: "Cần xác nhận",
+        },
+
+        pending: {
+            method: "Cần xác nhận hình thức tư vấn",
+            language: "Cần xác nhận ngôn ngữ đã chọn",
+            region: "Cần xác nhận khu vực đã chọn",
+        },
+
+        fields: {
+            location: "Khu vực sử dụng và hướng dẫn đến trực tiếp",
+            phoneHours: "Giờ tư vấn qua điện thoại",
+            visitHours: "Giờ tư vấn trực tiếp",
+            phoneWeekend: "Tư vấn điện thoại cuối tuần",
+            phoneHoliday: "Tư vấn điện thoại ngày lễ",
+            phoneLanguages: "Ngôn ngữ tư vấn điện thoại",
+            visitLanguages: "Ngôn ngữ tư vấn trực tiếp",
+            methods: "Hình thức tư vấn",
+            visitAddress: "Địa điểm tư vấn trực tiếp",
+            visitWeekend: "Tư vấn trực tiếp cuối tuần",
+            visitHoliday: "Tư vấn trực tiếp ngày lễ",
+            reservationRequired: "Đặt lịch đến trực tiếp",
+            branch: "Hướng dẫn chi nhánh và đặt lịch",
+            languageNotes: "Hướng dẫn theo từng ngôn ngữ",
+            contact: "Cách sử dụng dịch vụ tư vấn",
+            target: "Đối tượng sử dụng",
+            preparation: "Hồ sơ và vật dụng cần chuẩn bị",
+            address: "Địa chỉ cơ quan",
+            phone: "Số điện thoại tư vấn",
+            keywords: "Từ khóa tư vấn chính",
+            checkedAt: "Ngày xác nhận thông tin",
+        },
+        multipleKeywords: "(Có thể chọn nhiều)",
     },
 
     notification: {
@@ -83,11 +296,6 @@ const vi = {
         },
     },
 
-    footer: {
-        description: "Đây là phần chân trang. Ở đây có mùi chân rất nồng.",
-        copyright: "© Đây là điều tốt nhất bạn có thể làm sao, con người?",
-    },
-
     community: {
         navigation: {
             allPosts: "Tất cả bài viết",
@@ -126,6 +334,23 @@ const vi = {
             loan: "Khám phá khoản vay",
             insurance: "Khám phá bảo hiểm",
             employment: "Hỗ trợ việc làm",
+        },
+        report: {
+            action: "Báo cáo",
+            title: "Báo cáo nội dung",
+            description: "Chọn lý do để quản trị viên xem xét.",
+            reason: "Lý do báo cáo",
+            reasons: {
+                SPAM_AD: "Thư rác hoặc quảng cáo",
+                ABUSE_HATE: "Lăng mạ hoặc thù ghét",
+                SEXUAL_CONTENT: "Nội dung tình dục",
+                MISINFORMATION: "Thông tin sai lệch",
+                OTHER: "Khác",
+            },
+            cancel: "Hủy",
+            submit: "Gửi báo cáo",
+            submitting: "Đang gửi...",
+            error: "Không thể gửi báo cáo. Vui lòng thử lại sau.",
         },
         post: {
             reposted: "Bạn đã đăng lại",
@@ -933,6 +1158,10 @@ const vi = {
             NETWORK_ERROR: "Không thể kết nối máy chủ. Vui lòng kiểm tra mạng.",
             TIMEOUT: "Phản hồi đang chậm. Vui lòng thử lại sau.",
         },
+    },
+    footer: {
+        description: "Đây là phần chân trang. Ở đây có mùi chân rất nồng.",
+        copyright: "© Đây là điều tốt nhất bạn có thể làm sao, con người?",
     },
 };
 

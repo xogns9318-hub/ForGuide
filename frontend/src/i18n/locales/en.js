@@ -5,9 +5,15 @@ const en = {
         logout: "Log Out",
         myPage: "My Page",
         myFinance: "My Financial Information",
+        adminPage: "Administrator",
         language: "Language",
 
         mega: {
+            serviceList: "Service List",
+            contactMenu: "Inquiries",
+            inquiry: "Contact",
+            extendedServices: "Extended Guides",
+
             contact: "Contact",
             contactGroup: "Inquiries",
             myInquiries: "My Inquiries",
@@ -18,6 +24,213 @@ const en = {
             open: "Open Menu",
             close: "Close Menu",
         },
+    },
+
+    homeMain: {
+        duckLabel: "A duck walking in from the side and greeting in the center",
+        navigationLabel: "Navigate home sections",
+        sections: {
+            main: "Main",
+            translation: "Translation",
+            counseling: "Consultation",
+            recommendation: "Recommendations",
+            repayment: "Calculators",
+            employment: "Employment",
+            extendedServices: "More",
+            contact: "Contact",
+        },
+    },
+
+    homeOverview: {
+        translation: {
+            title: "Translation",
+            headline: "No worries, even when languages differ",
+            description:
+                "Use ForGuide in a language you are comfortable with.\nWhen you select a language, the page is translated automatically.",
+        },
+        consultation: {
+            headline: "Not sure where to ask for help?",
+            description:
+                "Find an organization that fits your situation\nand see what kind of support it can provide.",
+        },
+        preparationCard: {
+            headline: "Prepare for a consultation with ease",
+            description:
+                "Organize what you need to discuss and your questions in advance,\nand create your own consultation preparation card.",
+        },
+        loan: {
+            headline: "Find a loan product that suits you",
+            description:
+                "Compare conditions across different loan products\nand explore options that fit your situation.",
+        },
+        insurance: {
+            headline: "Insurance does not have to be complicated",
+            description:
+                "Compare coverage and conditions across insurance products\nand find the coverage you need.",
+        },
+        account: {
+            headline: "Want to open a bank account in Korea?",
+            description:
+                "Learn everything step by step, from what to prepare\nto the account-opening process.",
+        },
+        monthlyPayment: {
+            headline: "How much will I need to repay each month?",
+            description:
+                "Enter your loan amount and interest rate\nto calculate your monthly repayment.",
+        },
+        totalInterest: {
+            headline: "How much interest will I pay?",
+            description:
+                "Check the total interest over your loan term\nand plan your repayments ahead.",
+        },
+        jobListings: {
+            headline: "Looking for a job in Korea?",
+            description:
+                "Browse a variety of job listings in one place\nand find work that suits you.",
+        },
+        employment: {
+            headline: "Not sure where to begin preparing for employment?",
+            description:
+                "Find useful information for working in Korea\nand employment preparation materials.",
+        },
+        simulator: {
+            headline: "How much can I spend today?",
+            description:
+                "Enter your monthly expenses, loan amount, and interest\nto see your daily spending amount on a calendar.",
+        },
+        community: {
+            headline: "Share your questions and concerns together",
+            description:
+                "Ask questions about life in Korea\nand share experiences and useful information.",
+        },
+        inquiry: {
+            headline: "Feel free to ask if you have questions",
+            description:
+                "If you have questions while using the service,\nleave an inquiry for us.",
+        },
+    },
+
+    institutionGuide: {
+        title: "What kind of consultation do you need?",
+        optionsLoadError: "Unable to load selection options.",
+        reloadOptions: "Reload options",
+        noTopics: "No consultation categories are available.",
+        provinceLabel: "Preferred region · Province/Metropolitan city",
+        districtLabel: "Preferred region · City/County/District",
+        consultationLanguageLabel: "Consultation language",
+        consultationMethodLabel: "Consultation method",
+        selectedConditionsTitle: "Selected consultation conditions",
+        conditionsChanged:
+            "Changing the conditions hides the previous results. Select Get Guidance to check them again.",
+        selectedProvinceLabel: "Preferred region",
+        languages: {
+            ko: "Korean",
+            en: "English",
+            zh: "Chinese",
+            ja: "Japanese",
+            vi: "Vietnamese",
+            th: "Thai",
+        },
+        topicLabel: "Consultation category",
+        keywordLabel: "Consultation keywords",
+        chooseTopicAndKeywords: "Select a consultation category and keywords.",
+        chooseKeywords: "Select at least one consultation keyword.",
+        selectedKeywords: "{{count}} keyword(s) selected",
+        submit: "Get Guidance",
+        searchLabel: "Search organizations or consultation topics",
+        searchPlaceholder:
+            "e.g. 임금체불 (unpaid wages), 통장 만들기 (opening an account), 외국인등록 (foreigner registration)",
+        queryReady: "Search organizations using your keyword and current selections.",
+        showAll: "View All Organizations",
+        all: "All",
+        resultsTitle: "Support Organization Results",
+        resultCount: "{{count}} organization(s)",
+        loading: "Loading organization information.",
+        loadError: "Unable to load organization information. Check the server connection and try again.",
+        invalidInput: "Check your search conditions.",
+        retry: "Retry",
+        empty: "No organizations match your conditions. Use fewer keywords or view all organizations.",
+        unknown: "Needs confirmation",
+        multilingual: "Multiple languages",
+        available: "Available",
+        unavailable: "Unavailable",
+        phoneAgentUnavailable: "Phone consultation unavailable",
+        phone24Hours: "Open 24 hours",
+        phoneOpenWithinHours: "Available during consultation hours",
+        required: "Reservation required",
+        notRequired: "Not required",
+        detail: "View Details",
+        detailTitle: "Organization Details",
+        close: "Back to List",
+        notFound: "Organization not found.",
+        administration: "Administrative and daily-life guidance",
+        servicesTitle: "Consultation categories and keywords",
+        scopeNotesTitle: "Consultation scope and notes",
+        usageInfoTitle: "How to use this service",
+        usageVariant: "Usage guide {{count}}",
+        partialNotice:
+            "Only partial information has been confirmed. Check the latest conditions with the organization before using the service.",
+        rankingNotice:
+            "Direct consultation organizations are listed first, followed by keyword matches and verified conditions. The match rate is not an eligibility or approval probability.",
+        matchCount: "{{matched}} of {{total}} selected keywords matched · {{percent}}%",
+        matchedList: "Matched keywords: {{keywords}}",
+        chartTitle: "Selected keyword matches for top organizations",
+        matchedLabel: "Matched keywords",
+        specialHours: "Special hours: {{scope}} — {{hours}}",
+        phoneNationwide: "No regional restriction for phone access",
+        preparationUnknown:
+            "Check the required documents after choosing the organization and service you need.",
+        reservationLink: "Reservation information",
+        onlineLink: "Online consultation",
+        serviceSource: "Service source",
+        officialLink: "Official website",
+        sourceLink: "Reference {{count}}",
+        prepareCard: "Create a Consultation Preparation Card",
+
+        roles: {
+            direct: "Direct consultation",
+            related: "Related consultation, service, or institution guidance",
+            unknown: "Consultation role needs confirmation",
+        },
+
+        methods: {
+            phone: "Phone",
+            visit: "Visit",
+            online: "Online",
+            reservation: "Reservation",
+            unknown: "Needs confirmation",
+        },
+
+        pending: {
+            method: "Consultation method needs confirmation",
+            language: "Selected language needs confirmation",
+            region: "Selected region needs confirmation",
+        },
+
+        fields: {
+            location: "Service area and visit guidance",
+            phoneHours: "Phone consultation hours",
+            visitHours: "In-person consultation hours",
+            phoneWeekend: "Weekend phone consultation",
+            phoneHoliday: "Holiday phone consultation",
+            phoneLanguages: "Phone consultation languages",
+            visitLanguages: "In-person consultation languages",
+            methods: "Consultation methods",
+            visitAddress: "Consultation location",
+            visitWeekend: "Weekend in-person consultation",
+            visitHoliday: "Holiday in-person consultation",
+            reservationRequired: "Visit reservation",
+            branch: "Branch and reservation guidance",
+            languageNotes: "Language-specific guidance",
+            contact: "How to use the service",
+            target: "Eligible users",
+            preparation: "Required documents and preparation",
+            address: "Institution address",
+            phone: "Contact number",
+            keywords: "Main consultation keywords",
+            checkedAt: "Information checked on",
+        },
+        multipleKeywords: "(Multiple selections allowed)",
     },
 
     notification: {
@@ -83,11 +296,6 @@ const en = {
         },
     },
 
-    footer: {
-        description: "This is the footer. It smells terribly of feet here.",
-        copyright: "© Is this the best you can do, human?",
-    },
-
     community: {
         navigation: {
             allPosts: "All Posts",
@@ -129,6 +337,23 @@ const en = {
             loan: "Explore Loans",
             insurance: "Explore Insurance",
             employment: "Employment Helper",
+        },
+        report: {
+            action: "Report",
+            title: "Report content",
+            description: "Choose a reason and an administrator will review it.",
+            reason: "Reason",
+            reasons: {
+                SPAM_AD: "Spam or advertising",
+                ABUSE_HATE: "Abusive or hateful content",
+                SEXUAL_CONTENT: "Sexual content",
+                MISINFORMATION: "Misinformation",
+                OTHER: "Other",
+            },
+            cancel: "Cancel",
+            submit: "Submit report",
+            submitting: "Submitting...",
+            error: "We could not submit the report. Please try again shortly.",
         },
 
         post: {
@@ -952,6 +1177,10 @@ const en = {
             NETWORK_ERROR: "Couldn't connect to the server. Please check your network.",
             TIMEOUT: "The response is taking too long. Please try again shortly.",
         },
+    },
+    footer: {
+        description: "This is the footer. It smells terribly of feet here.",
+        copyright: "© Is this the best you can do, human?",
     },
 };
 

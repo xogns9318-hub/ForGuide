@@ -5,9 +5,15 @@ const ja = {
         logout: "ログアウト",
         myPage: "マイページ",
         myFinance: "マイ金融情報",
+        adminPage: "管理者",
         language: "言語",
 
         mega: {
+            serviceList: "サービス一覧",
+            contactMenu: "お問い合わせ",
+            inquiry: "お問い合わせ",
+            extendedServices: "拡張ガイド",
+
             contact: "お問い合わせ",
             contactGroup: "お問い合わせ",
             myInquiries: "お問い合わせ履歴",
@@ -18,6 +24,213 @@ const ja = {
             open: "メニューを開く",
             close: "メニューを閉じる",
         },
+    },
+
+    homeMain: {
+        duckLabel: "横から歩いてきて中央であいさつするアヒル",
+        navigationLabel: "ホームセクションを移動",
+        sections: {
+            main: "メイン",
+            translation: "翻訳",
+            counseling: "相談",
+            recommendation: "おすすめ",
+            repayment: "計算",
+            employment: "就職",
+            extendedServices: "その他",
+            contact: "お問い合わせ",
+        },
+    },
+
+    homeOverview: {
+        translation: {
+            title: "翻訳",
+            headline: "言語が違っても心配ありません",
+            description:
+                "慣れた言語でForGuideをご利用ください。\n言語を選択すると、ページが自動的に翻訳されます。",
+        },
+        consultation: {
+            headline: "どこに相談すればよいか分からないときは",
+            description:
+                "自分の状況に合った相談機関を探して、\nどのような支援を受けられるか確認しましょう。",
+        },
+        preparationCard: {
+            headline: "相談の準備も難しくありません",
+            description:
+                "相談したい内容や質問をあらかじめ整理して、\n自分だけの相談準備カードを作りましょう。",
+        },
+        loan: {
+            headline: "自分に合ったローン商品を探してみましょう",
+            description:
+                "さまざまなローン商品の条件を比較して、\n自分の状況に合う商品を確認しましょう。",
+        },
+        insurance: {
+            headline: "保険を難しく考える必要はありません",
+            description:
+                "保険商品の補償内容と条件を比較して、\n自分に必要な保険を探しましょう。",
+        },
+        account: {
+            headline: "韓国で銀行口座を作りたいなら",
+            description:
+                "口座開設に必要な準備物から手続きまで、\n最初から一つずつ確認しましょう。",
+        },
+        monthlyPayment: {
+            headline: "毎月いくら返済すればよい？",
+            description:
+                "ローン金額や金利などを入力すると、\n毎月の返済額を計算できます。",
+        },
+        totalInterest: {
+            headline: "利息はいくら支払うことになる？",
+            description:
+                "ローン期間中に支払う総利息を確認して、\n今後の返済計画を立てましょう。",
+        },
+        jobListings: {
+            headline: "韓国で仕事を探しているなら",
+            description:
+                "さまざまな求人情報を一か所で確認して、\n自分に合った仕事を探しましょう。",
+        },
+        employment: {
+            headline: "就職準備をどこから始めるか悩んでいるなら",
+            description:
+                "韓国で働くときに役立つ情報と、\n就職に必要な準備資料を確認しましょう。",
+        },
+        simulator: {
+            headline: "今日はどこまで使ってもよい？",
+            description:
+                "毎月の支出、ローン金額、利息を入力すると、\n1日に使える金額をカレンダーで確認できます。",
+        },
+        community: {
+            headline: "疑問や悩みを一緒に共有しましょう",
+            description:
+                "韓国生活で気になることを質問して、\nお互いの経験や役立つ情報を共有しましょう。",
+        },
+        inquiry: {
+            headline: "気になることがあれば気軽にお問い合わせください",
+            description:
+                "サービスの利用中に質問があれば、\nお問い合わせから質問を残してください。",
+        },
+    },
+
+    institutionGuide: {
+        title: "どのような相談が必要ですか？",
+        optionsLoadError: "選択項目を読み込めませんでした。",
+        reloadOptions: "もう一度読み込む",
+        noTopics: "登録されている相談分野はありません。",
+        provinceLabel: "希望地域・市道",
+        districtLabel: "希望地域・市郡区",
+        consultationLanguageLabel: "相談言語",
+        consultationMethodLabel: "相談方法",
+        selectedConditionsTitle: "選択した相談条件",
+        conditionsChanged:
+            "条件を変更すると以前の結果は非表示になります。案内を受けるを押してもう一度確認してください。",
+        selectedProvinceLabel: "希望地域",
+        languages: {
+            ko: "韓国語",
+            en: "英語",
+            zh: "中国語",
+            ja: "日本語",
+            vi: "ベトナム語",
+            th: "タイ語",
+        },
+        topicLabel: "相談分野",
+        keywordLabel: "相談キーワード",
+        chooseTopicAndKeywords: "相談分野とキーワードを選択してください。",
+        chooseKeywords: "相談キーワードを1つ以上選択してください。",
+        selectedKeywords: "{{count}}個のキーワードを選択中",
+        submit: "案内を受ける",
+        searchLabel: "機関名・相談内容を検索",
+        searchPlaceholder:
+            "例: 임금체불（賃金未払い）、통장 만들기（口座開設）、외국인등록（外国人登録）",
+        queryReady: "検索語と現在の選択条件で機関を検索します。",
+        showAll: "すべての機関を見る",
+        all: "すべて",
+        resultsTitle: "支援機関の検索結果",
+        resultCount: "{{count}}か所",
+        loading: "機関情報を読み込んでいます。",
+        loadError: "機関情報を読み込めませんでした。サーバー接続を確認してもう一度お試しください。",
+        invalidInput: "検索条件を確認してください。",
+        retry: "再試行",
+        empty: "条件に合う機関はありません。キーワードを減らすか、すべての機関を確認してください。",
+        unknown: "要確認",
+        multilingual: "多言語",
+        available: "利用可能",
+        unavailable: "利用不可",
+        phoneAgentUnavailable: "電話相談は利用できません",
+        phone24Hours: "24時間対応",
+        phoneOpenWithinHours: "相談時間内に利用可能",
+        required: "予約必須",
+        notRequired: "必須ではありません",
+        detail: "詳細を見る",
+        detailTitle: "機関詳細",
+        close: "一覧に戻る",
+        notFound: "該当する機関が見つかりません。",
+        administration: "行政・生活案内",
+        servicesTitle: "相談分野・キーワード",
+        scopeNotesTitle: "相談範囲と注意事項",
+        usageInfoTitle: "利用案内",
+        usageVariant: "利用案内 {{count}}",
+        partialNotice:
+            "一部の情報のみ確認済みです。利用前に機関へ最新の条件を確認してください。",
+        rankingNotice:
+            "直接相談機関を優先し、選択キーワードの一致数と条件確認の有無の順に表示します。一致率は利用資格や承認確率ではありません。",
+        matchCount: "選択キーワード {{total}}個中 {{matched}}個一致・{{percent}}%",
+        matchedList: "一致したキーワード: {{keywords}}",
+        chartTitle: "上位機関の選択キーワード一致数",
+        matchedLabel: "一致キーワード",
+        specialHours: "特別運営: {{scope}} — {{hours}}",
+        phoneNationwide: "電話利用の地域制限なし",
+        preparationUnknown:
+            "必要書類は利用する機関と業務を決めた後に確認してください。",
+        reservationLink: "予約案内",
+        onlineLink: "オンライン相談",
+        serviceSource: "相談業務の出典",
+        officialLink: "公式ホームページ",
+        sourceLink: "参考資料 {{count}}",
+        prepareCard: "相談準備カードを作成",
+
+        roles: {
+            direct: "直接相談",
+            related: "関連相談・窓口・機関案内",
+            unknown: "相談の役割を確認する必要があります",
+        },
+
+        methods: {
+            phone: "電話",
+            visit: "訪問",
+            online: "オンライン",
+            reservation: "予約",
+            unknown: "確認が必要",
+        },
+
+        pending: {
+            method: "相談方法の確認が必要です",
+            language: "選択した言語の確認が必要です",
+            region: "選択した地域の確認が必要です",
+        },
+
+        fields: {
+            location: "利用地域・訪問案内",
+            phoneHours: "電話相談時間",
+            visitHours: "訪問相談時間",
+            phoneWeekend: "週末の電話相談",
+            phoneHoliday: "祝日の電話相談",
+            phoneLanguages: "電話相談対応言語",
+            visitLanguages: "訪問相談対応言語",
+            methods: "相談方法",
+            visitAddress: "訪問相談場所",
+            visitWeekend: "週末の訪問相談",
+            visitHoliday: "祝日の訪問相談",
+            reservationRequired: "訪問予約",
+            branch: "支店・予約案内",
+            languageNotes: "言語別相談案内",
+            contact: "相談利用手順",
+            target: "利用対象",
+            preparation: "必要書類・準備物",
+            address: "機関所在地",
+            phone: "相談電話",
+            keywords: "主な相談キーワード",
+            checkedAt: "情報基準日",
+        },
+        multipleKeywords: "（複数選択可）",
     },
 
     notification: {
@@ -83,11 +296,6 @@ const ja = {
         },
     },
 
-    footer: {
-        description: "ここはフッターです。ひどい足の臭いがします。",
-        copyright: "© これがベストなのですか、人間？",
-    },
-
     community: {
         navigation: {
             allPosts: "すべての投稿",
@@ -126,6 +334,23 @@ const ja = {
             loan: "ローンを見る",
             insurance: "保険を見る",
             employment: "就職サポートへ",
+        },
+        report: {
+            action: "報告",
+            title: "コンテンツを報告",
+            description: "理由を選択すると、管理者が確認します。",
+            reason: "報告理由",
+            reasons: {
+                SPAM_AD: "スパム・広告",
+                ABUSE_HATE: "暴言・ヘイト表現",
+                SEXUAL_CONTENT: "わいせつ・性的コンテンツ",
+                MISINFORMATION: "誤情報",
+                OTHER: "その他",
+            },
+            cancel: "キャンセル",
+            submit: "報告する",
+            submitting: "報告中...",
+            error: "報告を送信できませんでした。しばらくしてからもう一度お試しください。",
         },
         post: {
             reposted: "自分がリポストしました",
@@ -912,6 +1137,10 @@ const ja = {
             NETWORK_ERROR: "サーバーに接続できませんでした。ネットワークをご確認ください。",
             TIMEOUT: "応答に時間がかかっています。しばらくしてからもう一度お試しください。",
         },
+    },
+    footer: {
+        description: "ここはフッターです。ひどい足の臭いがします。",
+        copyright: "© これがベストなのですか、人間？",
     },
 };
 

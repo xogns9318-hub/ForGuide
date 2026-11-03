@@ -1,12 +1,16 @@
 import { client } from "./client.js";
 
-// 로그인한 사용자가 문의를 등록한다.
-export function createInquiry({ inquiryCategory, title, content }) {
-    return client.post("/inquiries", {
-        inquiryCategory,
-        title,
-        content,
-    });
+// 로그인한 사용자가 문의와 선택한 이미지를 함께 등록한다.
+export function createInquiry({ inquiryCategory, title, content, images = [] }) {
+    const formData = new FormData();
+
+    formData.append("inquiryCategory", inquiryCategory);
+    formData.append("title", title);
+    formData.append("content", content);
+
+    images.forEach((image) => formData.append("images", image));
+
+    return client.post("/inquiries", formData);
 }
 
 // 로그인한 사용자의 문의를 최신 순으로 커서 조회한다.

@@ -12,6 +12,7 @@ import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import { useLocation, useNavigate } from "react-router-dom";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
+import CommunityReportAction from "./CommunityReportAction.jsx";
 import { useTranslation } from "react-i18next";
 import { confirm } from "../Modal/modal.js";
 
@@ -622,6 +623,12 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                                         ? t("community.comments.deleting")
                                                         : t("community.comments.delete")}
                                                 </button>
+                                            )}
+                                            {!isCommentAuthor && (
+                                                <CommunityReportAction
+                                                    postId={postId}
+                                                    commentId={comment.commentId}
+                                                />
                                             )}
                                         </div>
                                     )}
