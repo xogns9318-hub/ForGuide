@@ -1,0 +1,111 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "analysis": {
+      "analyzer": {
+        "institution_korean": {
+          "type": "custom",
+          "tokenizer": "nori_tokenizer",
+          "filter": ["lowercase", "nori_part_of_speech"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "dynamic": false,
+    "properties": {
+      "id": { "type": "long" },
+      "code": { "type": "keyword" },
+      "name": {
+        "type": "text",
+        "analyzer": "institution_korean",
+        "fields": {
+          "exact": { "type": "keyword" }
+        }
+      },
+      "description": {
+        "type": "text",
+        "analyzer": "institution_korean"
+      },
+      "address": {
+        "type": "text",
+        "analyzer": "institution_korean"
+      },
+      "phone": { "type": "keyword" },
+      "targetDescription": {
+        "type": "text",
+        "analyzer": "institution_korean"
+      },
+      "additionalNotes": {
+        "type": "text",
+        "analyzer": "institution_korean"
+      },
+      "aliases": {
+        "type": "text",
+        "analyzer": "institution_korean"
+      },
+      "featuredKeywords": {
+        "type": "text",
+        "analyzer": "institution_korean"
+      },
+      "services": {
+        "type": "nested",
+        "dynamic": false,
+        "properties": {
+          "id": { "type": "long" },
+          "topic": { "type": "keyword" },
+          "role": { "type": "keyword" },
+          "keywords": { "type": "keyword" },
+          "name": {
+            "type": "text",
+            "analyzer": "institution_korean"
+          },
+          "summary": {
+            "type": "text",
+            "analyzer": "institution_korean"
+          },
+          "description": {
+            "type": "text",
+            "analyzer": "institution_korean"
+          },
+          "targetDescription": {
+            "type": "text",
+            "analyzer": "institution_korean"
+          },
+          "phone": {
+            "type": "object",
+            "dynamic": true
+          },
+          "visit": {
+            "type": "object",
+            "dynamic": true
+          },
+          "online": {
+            "type": "object",
+            "dynamic": true
+          },
+          "languages": {
+            "type": "nested",
+            "properties": {
+              "code": { "type": "keyword" },
+              "method": { "type": "keyword" },
+              "description": {
+                "type": "text",
+                "analyzer": "institution_korean"
+              }
+            }
+          },
+          "regions": {
+            "type": "nested",
+            "properties": {
+              "province": { "type": "keyword" },
+              "district": { "type": "keyword" },
+              "method": { "type": "keyword" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
