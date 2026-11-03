@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.forguide.inquiry.mapper.InquiryMapper">
+
+    <sql id="inquiryColumns">
+        i.inquiry_id AS inquiryId,
+        i.member_id AS memberId,
+        m.nickname AS memberNickname,
+        i.inquiry_category AS inquiryCategory,
+        i.title,
+        i.content,
+        i.inquiry_status AS inquiryStatus,
+        i.answer_content AS answerContent,
+        i.answered_by_member_id AS answeredByMemberId,
+        i.answered_at AS answeredAt,
+        i.created_at AS createdAt,
+        i.updated_at AS updatedAt
+    </sql>
+
+    <insert id="insert">
+        INSERT INTO member_inquiries (
+            member_id,
+            inquiry_category,
+            title,
+            content
+        )
+        VALUES (
+            #{memberId},
+            #{request.inquiryCategory},
+            #{request.title},
+            #{request.content}
+        )
+    </insert>
+
+    <select id="findByMemberIdAndCursor"
+            resultType="com.example.forguide.inquiry.dto.InquiryResponse">
+        SELECT
+            <include refid="inquiryColumns"/>
+        FROM member_inquiries i
+        INNER JOIN members m ON m.member_id = i.member_id
+        WHERE i.member_id = #{memberId}
+        <if test="cursor.cursorInquiryId != null">
+            AND i.inquiry_id &lt; #{cursor.cursorInquiryId}
+        </if>
+        ORDER BY i.inquiry_id DESC
+        LIMIT #{cursor.size}
+    </select>
+
+    <select id="findByIdAndMemberId"
+            resultType="com.example.forguide.inquiry.dto.InquiryResponse">
+        SELECT
+            <include refid="inquiryColumns"/>
+        FROM member_inquiries i
+        INNER JOIN members m ON m.member_id = i.member_id
+        WHERE i.inquiry_id = #{inquiryId}
+            AND i.member_id = #{memberId}
+    </select>
+
+    <select id="findAllByCursor"
+            resultType="com.example.forguide.inquiry.dto.InquiryResponse">
+        SELECT
+            <include refid="inquiryColumns"/>
+        FROM member_inquiries i
+        INNER JOIN members m ON m.member_id = i.member_id
+        WHERE 1 = 1
+        <if test="cursor.inquiryStatus != null">
+            AND i.inquiry_status = #{cursor.inquiryStatus}
+        </if>
+        <if test="cursor.cursorInquiryId != null">
+            AND i.inquiry_id &lt; #{cursor.cursorInquiryId}
+        </if>
+        ORDER BY i.inquiry_id DESC
+        LIMIT #{cursor.size}
+    </select>
+
+    <select id="findById"
+            resultType="com.example.forguide.inquiry.dto.InquiryResponse">
+        SELECT
+            <include refid="inquiryColumns"/>
+        FROM member_inquiries i
+        INNER JOIN members m ON m.member_id = i.member_id
+        WHERE i.inquiry_id = #{inquiryId}
+    </select>
+
+    <update id="answer">
+        UPDATE member_inquiries
+        SET inquiry_status = 'ANSWERED',
+            answer_content = #{answerContent},
+            answered_by_member_id = #{adminMemberId},
+            answered_at = CURRENT_TIMESTAMP
+        WHERE inquiry_id = #{inquiryId}
+            AND inquiry_status = 'RECEIVED'
+    </update>
+
+</mapper>

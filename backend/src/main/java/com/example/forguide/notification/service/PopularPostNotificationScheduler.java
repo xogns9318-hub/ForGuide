@@ -32,7 +32,7 @@ public class PopularPostNotificationScheduler {
         설정 파일의 popular-check-interval 주기마다 공감순,조회순 Top10을 조회한다.
         조회 작업만 하므로 이 메서드 자체에는 트랜잭션을 걸지 않는다.
      */
-    @Scheduled(fixedDelayString = "${forguide.notification.popular-check-interval}")
+    @Scheduled(fixedDelayString = "${forguide.notification.popular-check-interval:5m}")
     public void createPopularPostNotifications() {
         Map<Long, RankedPost> rankedPostsById = new HashMap<>();
 

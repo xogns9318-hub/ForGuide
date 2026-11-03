@@ -1,15 +1,19 @@
 package com.example.forguide.translation.cache;
 
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
 import com.example.forguide.common.transaction.AfterCommitExecutor;
-
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Component;
 
 @Component
 public class TranslationCache {
+
+    private static final Logger log = LoggerFactory.getLogger(TranslationCache.class);
 
     // 캐시 규칙이 바뀌었으므로 기존 v1 캐시와 분리한다.
     private static final String KEY_PREFIX = "translation:v2:";
@@ -64,18 +68,31 @@ public class TranslationCache {
 
     // 캐시에 있으면 번역문을 반환하고, 없으면 Optional.empty()를 반환한다.
     public Optional<String> get(String key) {
-        return Optional.ofNullable(
-                redisTemplate.opsForValue().get(key)
-        );
+        try {
+            return Optional.ofNullable(
+                    redisTemplate.opsForValue().get(key)
+            );
+        } catch (DataAccessException exception) {
+            // Redis는 보조 캐시이므로 장애가 나도 DB 번역문 조회를 계속한다.
+            log.warn("Redis 번역 캐시 조회를 건너뜁니다. key={}, reason={}",
+                    key, exception.getMessage());
+            return Optional.empty();
+        }
     }
 
     // 번역 결과를 저장하고 7일 뒤 자동 만료되도록 한다.
     public void put(String key, String translatedText) {
-        redisTemplate.opsForValue().set(
-                key,
-                translatedText,
-                TTL
-        );
+        try {
+            redisTemplate.opsForValue().set(
+                    key,
+                    translatedText,
+                    TTL
+            );
+        } catch (DataAccessException exception) {
+            // DB 저장과 화면 응답은 유지하고, 다음 요청에서 다시 캐시를 채운다.
+            log.warn("Redis 번역 캐시 저장을 건너뜁니다. key={}, reason={}",
+                    key, exception.getMessage());
+        }
     }
 
     /*
@@ -86,23 +103,23 @@ public class TranslationCache {
             TranslationCacheResource resource,
             String sourceLanguage
     ) {
-        for (String targetLanguage : SUPPORTED_TARGET_LANGUAGES) {
-            redisTemplate.delete(
-                    createKey(resource, sourceLanguage, targetLanguage)
-            );
+        try {
+            for (String targetLanguage : SUPPORTED_TARGET_LANGUAGES) {
+                redisTemplate.delete(
+                        createKey(resource, sourceLanguage, targetLanguage)
+                );
+            }
+        } catch (DataAccessException exception) {
+            // DB 번역문은 이미 삭제됐고, 남은 캐시는 TTL 뒤 자연 만료된다.
+            log.warn("Redis 번역 캐시 삭제를 건너뜁니다. resourceType={}, resourceId={}, reason={}",
+                    resource.resourceType(), resource.resourceId(), exception.getMessage());
         }
     }
 
     /*
-        DB 변경이 실제로 커밋된 뒤에만 캐시를 제거한다.
-        Mockito 단위 테스트처럼 트랜잭션이 없는 환경에서는 즉시 제거한다.
+     * DB 변경이 실제로 커밋된 뒤에만 캐시를 제거한다.
+     * Mockito 단위 테스트처럼 트랜잭션이 없는 환경에서는 즉시 제거한다.
      */
-
-
-    /*
-    DB 변경이 실제로 커밋된 뒤에만 캐시를 제거한다.
-    Mockito 단위 테스트처럼 트랜잭션이 없는 환경에서는 즉시 제거한다.
-    */
     public void evictAfterCommit(
             TranslationCacheResource resource,
             String sourceLanguage

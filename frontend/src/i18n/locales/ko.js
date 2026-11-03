@@ -27,7 +27,8 @@ const ko = {
         translatedTitle: "상담 준비 카드 - 한국어 번역본",
         translationPending: "번역 기능 준비 중입니다. 현재는 입력한 원문을 그대로 표시합니다.",
         institution: "선택 기관: {{name}}",
-        nameRule: "공백·숫자·특수문자 없이 최대 20자까지 입력해주세요. 외국어도 입력할 수 있습니다.",
+        nameRule:
+            "공백·숫자·특수문자 없이 최대 20자까지 입력해주세요. 외국어도 입력할 수 있습니다.",
         periods: {
             under1: "1개월 미만",
             months1to3: "1개월~3개월",
@@ -80,8 +81,7 @@ const ko = {
         },
         loan: {
             headline: "나에게 맞는 대출 상품을 찾아보고",
-            description:
-                "다양한 대출 상품의 조건을 비교하고,\n내 상황에 맞는 상품을 살펴보세요.",
+            description: "다양한 대출 상품의 조건을 비교하고,\n내 상황에 맞는 상품을 살펴보세요.",
         },
         insurance: {
             headline: "보험, 어렵게 생각하지 마세요",
@@ -90,8 +90,7 @@ const ko = {
         },
         account: {
             headline: "한국에서 은행 계좌를 만들고 싶다면",
-            description:
-                "계좌 개설에 필요한 준비물부터 절차까지,\n처음부터 하나씩 알아보세요.",
+            description: "계좌 개설에 필요한 준비물부터 절차까지,\n처음부터 하나씩 알아보세요.",
         },
         monthlyPayment: {
             headline: "매달 얼마씩 갚아야 할까?",
@@ -105,8 +104,7 @@ const ko = {
         },
         jobListings: {
             headline: "한국에서 일자리를 찾고 있다면",
-            description:
-                "다양한 채용 정보를 한곳에서 살펴보고,\n나에게 맞는 일자리를 찾아보세요.",
+            description: "다양한 채용 정보를 한곳에서 살펴보고,\n나에게 맞는 일자리를 찾아보세요.",
         },
         employment: {
             headline: "취업 준비, 어디서부터 시작할지 고민이라면",
@@ -301,6 +299,7 @@ const ko = {
         logout: "로그아웃",
         myPage: "마이페이지",
         myFinance: "내 금융 정보",
+        adminPage: "관리자",
         language: "언어",
 
         // 새 헤더 메뉴에서 사용할 한국어 문구
@@ -319,6 +318,172 @@ const ko = {
             navigation: "가이드 메뉴",
             open: "메뉴 열기",
             close: "메뉴 닫기",
+        },
+    },
+
+    admin: {
+        dashboard: {
+            eyebrow: "운영 현황",
+            title: "관리자 대시보드",
+            description: "ForGuide 서비스의 현재 운영 현황을 확인합니다.",
+            loading: "운영 현황을 불러오는 중입니다.",
+            loadError: "운영 현황을 불러오지 못했습니다.",
+            retry: "다시 시도",
+            metrics: {
+                members: "전체 회원",
+                posts: "전체 게시글",
+                comments: "전체 댓글",
+            },
+            management: {
+                title: "관리 메뉴",
+                members: {
+                    title: "회원 관리",
+                    description: "회원 목록을 조회하고 이용 상태를 관리합니다.",
+                },
+                inquiries: {
+                    title: "문의 관리",
+                    description: "접수된 회원 문의를 확인하고 답변을 등록합니다.",
+                },
+                community: {
+                    title: "커뮤니티 관리",
+                    description:
+                        "게시글과 댓글을 확인하고 공개 상태를 관리합니다.",
+                },
+            },
+        },
+
+        inquiries: {
+            title: "문의 관리",
+            description: "회원 문의를 확인하고 답변을 등록합니다.",
+            filter: {
+                all: "전체",
+                received: "접수됨",
+                answered: "답변 완료",
+            },
+            loading: "문의 목록을 불러오는 중입니다.",
+            empty: "표시할 문의가 없습니다.",
+            loadError: "문의 목록을 불러오지 못했습니다.",
+            retry: "다시 시도",
+            loadMore: "문의 더 보기",
+            member: "문의 회원",
+            answer: "답변 등록",
+            answerPlaceholder: "회원에게 전달할 답변을 작성해주세요.",
+            submitting: "등록 중...",
+            answerSuccess: "답변을 등록했습니다.",
+            answerError: "답변 등록에 실패했습니다.",
+            alreadyAnswered: "답변이 등록된 문의입니다.",
+            answerRequired: "답변 내용을 입력해주세요.",
+        },
+
+        members: {
+            eyebrow: "회원 관리",
+            title: "회원 상태 관리",
+            description: "회원 목록을 검색하고 이용 상태를 정지 또는 활성으로 변경합니다.",
+            statusLabel: "회원 상태",
+            statusAll: "전체 상태",
+            statusActive: "정상 회원",
+            statusSuspended: "정지 회원",
+            searchLabel: "회원 검색",
+            searchPlaceholder: "아이디, 이름, 닉네임, 이메일",
+            search: "검색",
+            loading: "회원 목록을 불러오는 중입니다.",
+            empty: "표시할 회원이 없습니다.",
+            loadError: "회원 목록을 불러오지 못했습니다.",
+            retry: "다시 시도",
+            updateError: "회원 상태를 변경하지 못했습니다.",
+            suspend: "정지",
+            activate: "정지 해제",
+            updating: "변경 중...",
+            suspendSuccess: "회원 이용을 정지했습니다.",
+            activateSuccess: "회원 이용 정지를 해제했습니다.",
+            joinedAt: "가입일",
+            status: {
+                ACTIVE: "정상",
+                SUSPENDED: "정지",
+            },
+            role: {
+                USER: "일반 회원",
+                ADMIN: "관리자",
+            },
+        },
+
+        community: {
+            eyebrow: "커뮤니티 관리",
+            title: "커뮤니티 콘텐츠 관리",
+            description:
+                "게시글과 댓글을 조회하고, 필요한 경우 숨김 또는 공개 복구 처리합니다.",
+
+            resourceTypeLabel: "콘텐츠 종류",
+            resourceTypeAll: "전체 콘텐츠",
+            resourceTypePost: "게시글",
+            resourceTypeComment: "댓글",
+
+            statusLabel: "공개 상태",
+            statusAll: "전체 상태",
+            statusVisible: "공개",
+            statusHidden: "숨김",
+            confirmHide: "숨김 처리",
+            cancel: "취소",
+
+            searchLabel: "콘텐츠 검색",
+            searchPlaceholder: "본문, 작성자 아이디, 닉네임",
+            search: "검색",
+
+            loading: "커뮤니티 콘텐츠를 불러오는 중입니다.",
+            empty: "표시할 커뮤니티 콘텐츠가 없습니다.",
+            loadError: "커뮤니티 콘텐츠를 불러오지 못했습니다.",
+            retry: "다시 시도",
+            loadMore: "콘텐츠 더 보기",
+
+            hide: "숨김",
+            restore: "공개 복구",
+            updating: "변경 중...",
+            updateError: "공개 상태를 변경하지 못했습니다.",
+            hideSuccess: "콘텐츠를 숨김 처리했습니다.",
+            restoreSuccess: "콘텐츠를 공개로 복구했습니다.",
+
+            reasonLabel: "관리 사유",
+            reasonPlaceholder: "숨김 사유를 선택적으로 입력하세요.",
+            reasonNone: "등록된 관리 사유가 없습니다.",
+            createdAt: "작성일",
+            moderatedAt: "관리 처리일",
+        },
+    },
+
+    inquiry: {
+        title: "문의하기",
+        description: "서비스 이용 중 궁금한 점이나 도움이 필요한 내용을 남겨주세요.",
+        form: {
+            category: "문의 유형",
+            title: "제목",
+            content: "문의 내용",
+            titlePlaceholder: "문의 제목을 입력해주세요.",
+            contentPlaceholder: "문의 내용을 자세히 작성해주세요. 관리자가 확인 후 답변드립니다.",
+            submit: "문의 등록",
+            submitting: "등록 중...",
+            success: "문의가 등록되었습니다.",
+            submitError: "문의 등록에 실패했습니다. 잠시 후 다시 시도해주세요.",
+        },
+        category: {
+            SERVICE: "서비스 이용",
+            ACCOUNT: "계정·로그인",
+            FINANCE: "금융 정보",
+            OTHER: "기타",
+        },
+        myList: {
+            title: "내 문의",
+            loading: "문의 목록을 불러오는 중입니다.",
+            empty: "등록한 문의가 없습니다.",
+            loadError: "문의 목록을 불러오지 못했습니다.",
+            retry: "다시 시도",
+            loadMore: "문의 더 보기",
+        },
+        status: {
+            RECEIVED: "접수됨",
+            ANSWERED: "답변 완료",
+        },
+        answer: {
+            title: "관리자 답변",
         },
     },
 
@@ -681,8 +846,7 @@ const ko = {
         dayCount: "{{count}}일",
         formula:
             "보유금 {{cash}} + 기간 소득 {{income}} − 상환액 {{payment}} − 고정지출 {{fixed}} − 식비 {{food}} − 생활비 {{living}} = {{balance}}",
-        dailyFormula:
-            "({{available}} − 추가 배정 {{extra}}) ÷ {{days}}일 = 하루 기본 {{daily}}.",
+        dailyFormula: "({{available}} − 추가 배정 {{extra}}) ÷ {{days}}일 = 하루 기본 {{daily}}.",
         remainder: "남은 원은 첫 {{count}}일에 1원씩 추가 배분합니다.",
         shortfall:
             "예정 지출에 비해 {{amount}}이 부족합니다. 캘린더의 추가 예산은 0원으로 표시합니다.",
@@ -941,7 +1105,8 @@ const ko = {
         },
         myFinance: {
             title: "내 금융 정보",
-            description: "모르는 항목은 비워 두어도 됩니다. 비어 있는 항목은 '확인 필요'로 표시됩니다.",
+            description:
+                "모르는 항목은 비워 두어도 됩니다. 비어 있는 항목은 '확인 필요'로 표시됩니다.",
             needCheck: "확인 필요",
             annualIncome: "연 소득 (만원)",
             manwonHelp: "만원 단위로 입력하세요. 예: 3,600만 원 → 3600",

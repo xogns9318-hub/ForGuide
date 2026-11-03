@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Outlet, Route, Routes, Navigate, useLocation } from "react-router-dom";
-import { categories, accountRoutes, contactRoutes } from "./routeConfig";
+import { categories, accountRoutes } from "./routeConfig";
 import { useTranslation } from "react-i18next";
 import Home from "../components/Home/Home.jsx";
 import Header from "../components/Header/Header.jsx";
@@ -11,6 +11,7 @@ import { recommendPaths, recommendRoutes } from "../recommend/recommendRoutes.js
 import UnderConstruction from "../components/UnderConstruction/UnderConstruction.jsx";
 import RequireAuth from "../auth/components/RequireAuth.jsx";
 import PreparationCard from "../components/PreparationCard/PreparationCard.jsx";
+import RequireAdmin from "../auth/components/RequireAdmin.jsx";
 
 // 자주 열지 않는 기능 화면은 해당 경로에 들어갈 때만 내려받아 초기 번들을 줄인다.
 const Community = lazy(() => import("../components/Community/Community.jsx"));
@@ -21,7 +22,17 @@ const Consultation = lazy(() => import("../components/Consultation/Consultation.
 const EmploymentResume = lazy(() => import("../components/Employment/EmploymentResume.jsx"));
 const JobListings = lazy(() => import("../components/JobListings/JobListings.jsx"));
 const Simulator = lazy(() => import("../components/Simulator/Simulator.jsx"));
-
+const AdminDashboard = lazy(() => import("../admin/pages/AdminDashboard.jsx"));
+const InquiryPage = lazy(() => import("../inquiry/pages/InquiryPage.jsx"));
+const AdminInquiryPage = lazy(
+    () => import("../admin/pages/AdminInquiryPage.jsx"),
+);
+const AdminMemberPage = lazy(
+    () => import("../admin/pages/AdminMemberPage.jsx"),
+);
+const AdminCommunityPage = lazy(
+    () => import("../admin/pages/AdminCommunityPage.jsx"),
+);
 // 제작 중 화면을 표시할 서비스 주소만 지정
 const constructionPaths = new Set();
 
@@ -105,14 +116,14 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                 >
                     <Route path="/" element={<Home />} />
 
-                    {/* 문의하기는 공통 제작 중 안내로 연결한다. */}
-                    {contactRoutes.map((route) => (
+                    {/* 문의 작성 전 로그인 여부를 확인하고, 로그인 뒤 같은 주소로 돌아온다. */}
+                    <Route element={<RequireAuth />}>
                         <Route
-                            key={route.path}
-                            path={route.path}
-                            element={<UnderConstruction />}
+                            path="/contact/inquiry"
+                            element={<InquiryPage />}
                         />
-                    ))}
+                    </Route>
+
 
                     {/* 커뮤니티 페이지 */}
                     <Route path="/service/community" element={<Community />} />
@@ -188,6 +199,26 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                     {/* 이력서 작성은 로그인한 회원만 가능 */}
                     <Route element={<RequireAuth />}>
                         <Route path="/service/employment" element={<EmploymentResume />} />
+                    </Route>
+
+                    {/* 관리자 전용 화면 */}
+                    <Route element={<RequireAdmin />}>
+                        <Route
+                            path="/admin"
+                            element={<AdminDashboard />}
+                        />
+                        <Route
+                            path="/admin/inquiries"
+                            element={<AdminInquiryPage />}
+                        />
+                        <Route
+                            path="/admin/community"
+                            element={<AdminCommunityPage />}
+                        />
+                        <Route
+                            path="/admin/members"
+                            element={<AdminMemberPage />}
+                        />
                     </Route>
 
                     {/* 추천 화면 */}

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { categories, contactRoutes } from "../../routes/routeConfig.js";
 import LanguageSelector from "../LanguageSelector/LanguageSelector.jsx";
 import NotificationBell from "./NotificationBell.jsx";
+import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import styles from "../../styles/headerModule.module.css";
 
 // 시뮬레이터와 커뮤니티는 하나의 확장 가이드 분류로 묶는다.
@@ -59,6 +60,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const { t } = useTranslation();
+    const isAdmin = useAuthStore((state) => state.member?.role === "ADMIN");
     const navigationId = useId();
     // 넓은 화면에서는 한 메뉴만 펼침
     const [openMenu, setOpenMenu] = useState(null);
@@ -128,10 +130,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
 
     function handleNotificationClick(notification) {
         // 현재 커뮤니티 알림은 모두 해당 게시글 상세로 연결한다.
-        if (
-            notification.resourceType !== "COMMUNITY_POST" ||
-            !notification.resourceId
-        ) {
+        if (notification.resourceType !== "COMMUNITY_POST" || !notification.resourceId) {
             return;
         }
 
@@ -198,16 +197,12 @@ export default function Header({ isLoggedIn = false, onLogout }) {
             frame = 0;
 
             // 모바일의 맨 위·맨 아래 튕김은 스크롤 방향으로 계산하지 않는다.
-            const maxY = Math.max(
-                0,
-                document.documentElement.scrollHeight - window.innerHeight,
-            );
+            const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
             const currentY = Math.min(maxY, Math.max(0, window.scrollY));
             const delta = currentY - previousY;
             previousY = currentY;
 
-            const hasOpenSelector =
-                header.querySelector('[aria-expanded="true"]') !== null;
+            const hasOpenSelector = header.querySelector('[aria-expanded="true"]') !== null;
             const hasHeaderFocus = header.contains(document.activeElement);
 
             // 화면 상단이나 메뉴·언어 선택·키보드 조작 중에는 헤더를 유지한다.
@@ -226,10 +221,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
             if (delta === 0) return;
 
             // 같은 방향의 이동을 누적해 터치패드의 작은 흔들림을 걸러낸다.
-            distance =
-                Math.sign(distance) === Math.sign(delta)
-                    ? distance + delta
-                    : delta;
+            distance = Math.sign(distance) === Math.sign(delta) ? distance + delta : delta;
 
             if (Math.abs(distance) < 8) return;
 
@@ -364,6 +356,12 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                             {t("header.myFinance")}
                         </Link>
 
+                        {isAdmin && (
+                            <Link to="/admin" onClick={closeMenus}>
+                                {t("header.adminPage")}
+                            </Link>
+                        )}
+
                         <button
                             type="button"
                             className={styles.logout}
@@ -387,11 +385,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                     </>
                 )}
 
-                {isLoggedIn && (
-                    <NotificationBell
-                        onNotificationClick={handleNotificationClick}
-                    />
-                )}
+                {isLoggedIn && <NotificationBell onNotificationClick={handleNotificationClick} />}
 
                 {/* 언어 변경과 저장은 기존 컴포넌트에서 처리 */}
                 {includeLanguage && <LanguageSelector />}
@@ -402,10 +396,7 @@ export default function Header({ isLoggedIn = false, onLogout }) {
     function renderGroups(menu) {
         return (
             <div
-                className={[
-                    styles.groups,
-                    menu.groups.length === 1 ? styles.singleGroup : "",
-                ]
+                className={[styles.groups, menu.groups.length === 1 ? styles.singleGroup : ""]
                     .filter(Boolean)
                     .join(" ")}
             >
@@ -490,7 +481,6 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                         onMouseEnter={() => setOpenMenu(null)}
                         onFocus={() => setOpenMenu(null)}
                     >
-
                         <div className={styles.brand}>
                             <Link
                                 to="/"
