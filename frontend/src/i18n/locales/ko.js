@@ -23,11 +23,34 @@ const ko = {
         complete: "상담 준비 완료",
         incomplete: "아직 상담 준비가 완료되지 않았습니다.\n모든 항목을 선택·입력하여 주십시오.",
         results: "작성된 상담 준비 카드",
+        print: "카드 인쇄",
         originalTitle: "상담 준비 카드 - 작성 원문",
         translatedTitle: "상담 준비 카드 - 한국어 번역본",
-        translationPending: "번역 기능 준비 중입니다. 현재는 입력한 원문을 그대로 표시합니다.",
+        translating: "한국어로 번역하고 있습니다.",
+        retryTranslation: "다시 번역",
+        translationFailed:
+            "한국어 번역에 실패했습니다. 작성 원문은 유지됩니다. 잠시 후 다시 시도해주세요.",
+        translationTimeout:
+            "번역 응답이 늦어지고 있습니다. 작성 원문은 유지됩니다. 잠시 후 다시 시도해주세요.",
+        translationUnavailable:
+            "번역 서비스를 일시적으로 이용할 수 없습니다. 작성 원문은 유지됩니다. 잠시 후 다시 시도해주세요.",
+        translationRateLimited:
+            "번역 사용량이 제한되었습니다. 작성 원문은 유지됩니다. 잠시 후 다시 시도해주세요.",
+        translationConnectionFailed:
+            "서버에 연결하지 못했습니다. 작성 원문은 유지됩니다. 연결 상태를 확인하고 다시 시도해주세요.",
+        translationReview: "AI 번역문입니다. 작성 원문과 비교해 내용을 확인해주세요.",
+        translationNotice:
+            "한국어 번역을 선택하면 준비 완료 시 상세 내용이 Google Gemini로 전송됩니다. 이름·성·생년월일 항목은 전송하지 않습니다.",
         institution: "선택 기관: {{name}}",
-        nameRule: "공백·숫자·특수문자 없이 최대 20자까지 입력해주세요. 외국어도 입력할 수 있습니다.",
+        nameRule:
+            "공백·숫자·특수문자 없이 최대 20자까지 입력해주세요. 외국어도 입력할 수 있습니다.",
+        birthYear: "연도",
+        birthMonth: "월",
+        birthDay: "일",
+        birthYearPlaceholder: "YYYY",
+        birthMonthValue: "{{value}}월",
+        birthDayValue: "{{value}}일",
+        birthDateInvalid: "1900년 1월 1일부터 오늘까지의 올바른 생년월일을 입력해주세요.",
         periods: {
             under1: "1개월 미만",
             months1to3: "1개월~3개월",
@@ -80,8 +103,7 @@ const ko = {
         },
         loan: {
             headline: "나에게 맞는 대출 상품을 찾아보고",
-            description:
-                "다양한 대출 상품의 조건을 비교하고,\n내 상황에 맞는 상품을 살펴보세요.",
+            description: "다양한 대출 상품의 조건을 비교하고,\n내 상황에 맞는 상품을 살펴보세요.",
         },
         insurance: {
             headline: "보험, 어렵게 생각하지 마세요",
@@ -90,8 +112,7 @@ const ko = {
         },
         account: {
             headline: "한국에서 은행 계좌를 만들고 싶다면",
-            description:
-                "계좌 개설에 필요한 준비물부터 절차까지,\n처음부터 하나씩 알아보세요.",
+            description: "계좌 개설에 필요한 준비물부터 절차까지,\n처음부터 하나씩 알아보세요.",
         },
         monthlyPayment: {
             headline: "매달 얼마씩 갚아야 할까?",
@@ -105,8 +126,7 @@ const ko = {
         },
         jobListings: {
             headline: "한국에서 일자리를 찾고 있다면",
-            description:
-                "다양한 채용 정보를 한곳에서 살펴보고,\n나에게 맞는 일자리를 찾아보세요.",
+            description: "다양한 채용 정보를 한곳에서 살펴보고,\n나에게 맞는 일자리를 찾아보세요.",
         },
         employment: {
             headline: "취업 준비, 어디서부터 시작할지 고민이라면",
@@ -681,8 +701,7 @@ const ko = {
         dayCount: "{{count}}일",
         formula:
             "보유금 {{cash}} + 기간 소득 {{income}} − 상환액 {{payment}} − 고정지출 {{fixed}} − 식비 {{food}} − 생활비 {{living}} = {{balance}}",
-        dailyFormula:
-            "({{available}} − 추가 배정 {{extra}}) ÷ {{days}}일 = 하루 기본 {{daily}}.",
+        dailyFormula: "({{available}} − 추가 배정 {{extra}}) ÷ {{days}}일 = 하루 기본 {{daily}}.",
         remainder: "남은 원은 첫 {{count}}일에 1원씩 추가 배분합니다.",
         shortfall:
             "예정 지출에 비해 {{amount}}이 부족합니다. 캘린더의 추가 예산은 0원으로 표시합니다.",
@@ -941,7 +960,8 @@ const ko = {
         },
         myFinance: {
             title: "내 금융 정보",
-            description: "모르는 항목은 비워 두어도 됩니다. 비어 있는 항목은 '확인 필요'로 표시됩니다.",
+            description:
+                "모르는 항목은 비워 두어도 됩니다. 비어 있는 항목은 '확인 필요'로 표시됩니다.",
             needCheck: "확인 필요",
             annualIncome: "연 소득 (만원)",
             manwonHelp: "만원 단위로 입력하세요. 예: 3,600만 원 → 3600",
