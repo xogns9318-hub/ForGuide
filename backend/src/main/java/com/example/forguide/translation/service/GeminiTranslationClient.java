@@ -8,9 +8,12 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 
+@Slf4j
 @Component
 public class GeminiTranslationClient {
 
@@ -78,7 +81,24 @@ public class GeminiTranslationClient {
                     .body(JsonNode.class);
 
             return extractTranslatedText(response);
+        } catch (RestClientResponseException exception) {
+            // 키·요청 내용·응답 본문은 기록하지 않고 HTTP 상태만 확인한다.
+            log.warn(
+                    "Gemini 번역 HTTP 오류: status={}",
+                    exception.getStatusCode().value()
+            );
+
+            throw new ApiException(
+                    ErrorCode.INTERNAL_ERROR,
+                    "번역 서버에 연결하지 못했습니다. 잠시 후 다시 시도해주세요."
+            );
         } catch (RestClientException exception) {
+            // 통신 오류도 민감한 정보가 포함될 수 있는 메시지 대신 종류만 기록한다.
+            log.warn(
+                    "Gemini 번역 통신 오류: type={}",
+                    exception.getClass().getSimpleName()
+            );
+
             throw new ApiException(
                     ErrorCode.INTERNAL_ERROR,
                     "번역 서버에 연결하지 못했습니다. 잠시 후 다시 시도해주세요."

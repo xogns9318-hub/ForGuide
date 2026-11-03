@@ -1,4 +1,111 @@
 const en = {
+    preparationCard: {
+        title: "Tell us what you would like to discuss.",
+        givenName: "Given names",
+        surname: "Surname",
+        birthDate: "Date of birth",
+        gender: "Gender",
+        male: "Male",
+        female: "Female",
+        occurrence: "When the issue occurred",
+        choose: "Select an option",
+        issue: "Issue",
+        other: "Other",
+        taxKeyword: "Tax filing and payment",
+        keywordHelp: "Select the specific issues that apply. You may select more than one.",
+        details: "Details",
+        characterCount: "{{count}}/300 characters",
+        guidanceTitle: "Before your consultation",
+        acknowledge: "I have read this.",
+        translationQuestion: "Would you like a Korean translation?",
+        yes: "Yes",
+        no: "No",
+        complete: "Create consultation card",
+        incomplete:
+            "Your consultation preparation is not complete.\nPlease complete all fields and selections.",
+        results: "Completed consultation cards",
+        print: "Print cards",
+        originalTitle: "Consultation Preparation Card - Original",
+        translatedTitle: "Consultation Preparation Card - Korean Translation",
+        translating: "Translating into Korean.",
+        retryTranslation: "Retry translation",
+        translationFailed:
+            "The Korean translation failed. Your original text has been kept. Please try again shortly.",
+        translationTimeout:
+            "The translation is taking longer than expected. Your original text has been kept. Please try again shortly.",
+        translationUnavailable:
+            "The translation service is temporarily unavailable. Your original text has been kept. Please try again shortly.",
+        translationRateLimited:
+            "Translation usage is currently limited. Your original text has been kept. Please try again later.",
+        translationConnectionFailed:
+            "Unable to connect to the server. Your original text has been kept. Check your connection and try again.",
+        translationReview: "This is an AI translation. Please compare it with the original text.",
+        translationNotice:
+            "If you request a Korean translation, your details will be sent to Google Gemini when you create the card. The given names, surname, and date of birth fields will not be sent.",
+        institution: "Selected organization: {{name}}",
+        nameRule:
+            "Enter up to 20 characters without spaces, numbers, or special characters. Letters from other languages are accepted.",
+        birthYear: "Year",
+        birthMonth: "Month",
+        birthDay: "Day",
+        birthYearPlaceholder: "YYYY",
+        birthMonthValue: "{{value}}",
+        birthDayValue: "{{value}}",
+        birthDateInvalid: "Enter a valid date of birth between January 1, 1900 and today.",
+        periods: {
+            under1: "Less than 1 month",
+            months1to3: "1 to 3 months",
+            months3to6: "3 to 6 months",
+            months6to12: "6 months to 1 year",
+            years1: "1 year or more",
+            years3: "3 years or more",
+            years5: "5 years or more",
+            years10: "10 years or more",
+        },
+
+        notices: {
+            1: "Photography and filming may be restricted in security-sensitive facilities, government offices, and research facilities.\nCheck the rules at each facility and follow security staff instructions.",
+            2: "Do not verbally abuse, assault, threaten, or repeatedly harass staff.\nSuch behavior may result in the consultation being ended or action being taken under applicable laws.",
+            3: "Not all requests can be processed immediately.\nCheck the processing time and any additional document requirements, and apply well before you need the result.",
+            4: "Consultation hours and lunch closures vary by organization and service.\nCheck opening hours and whether an appointment is required before visiting.",
+            5: "Documents required for an application by a representative vary by service.\nCheck whether a representative may apply and which documents are required, such as authorization and identification for both people.",
+        },
+    },
+
+    institutionGuide: {
+        selectionLabels: {
+            "출입국·행정": "Immigration and administration",
+            "비자·체류": "Visas and stay",
+            외국인등록: "Foreign resident registration",
+            "민원·증명서": "Administrative requests and certificates",
+
+            "노동·취업": "Labor and employment",
+            "임금·퇴직금": "Wages and severance pay",
+            "근로계약·근무조건": "Employment contracts and working conditions",
+            "취업·고용": "Jobs and employment",
+
+            "금융·채무": "Finance and debt",
+            "대출·서민금융": "Loans and inclusive finance",
+            "채무·신용회복": "Debt and credit recovery",
+            "금융민원·피해": "Financial complaints and harm",
+
+            "보험·연금": "Insurance and pensions",
+            건강보험: "Health insurance",
+            국민연금: "National Pension",
+            "산재·고용보험": "Industrial accident and employment insurance",
+
+            세금: "Taxes",
+            "세금신고·납부": "Tax filing and payment",
+            연말정산: "Year-end tax settlement",
+            세금환급: "Tax refunds",
+
+            "생활·복지·법률": "Daily life, welfare, and legal matters",
+            복지지원: "Welfare support",
+            "가족·생활상담": "Family and daily life counseling",
+            "법률·주거분쟁": "Legal and housing disputes",
+        },
+    },
+
     header: {
         login: "Log In",
         signup: "Sign Up",

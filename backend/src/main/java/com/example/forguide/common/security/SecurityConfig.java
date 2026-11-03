@@ -91,6 +91,13 @@ public class SecurityConfig {
                         ).permitAll()
                         // 추천 결과 조회는 로그인 없이 쓸 수 있다.
                         .requestMatchers(HttpMethod.GET, "/api/v1/recommend/**").permitAll()
+
+                        // 상담 준비 카드의 한국어 번역은 로그인 없이 요청할 수 있다.
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/v1/consultation/preparation-card/translation"
+                        ).permitAll()
+
                         // ── 그 밖의 모든 주소는 로그인 필요 ──
                         .anyRequest().authenticated())
 

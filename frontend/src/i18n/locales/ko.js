@@ -51,12 +51,34 @@ const ko = {
         complete: "상담 준비 완료",
         incomplete: "아직 상담 준비가 완료되지 않았습니다.\n모든 항목을 선택·입력하여 주십시오.",
         results: "작성된 상담 준비 카드",
+        print: "카드 인쇄",
         originalTitle: "상담 준비 카드 - 작성 원문",
         translatedTitle: "상담 준비 카드 - 한국어 번역본",
-        translationPending: "번역 기능 준비 중입니다. 현재는 입력한 원문을 그대로 표시합니다.",
+        translating: "한국어로 번역하고 있습니다.",
+        retryTranslation: "다시 번역",
+        translationFailed:
+            "한국어 번역에 실패했습니다. 작성 원문은 유지됩니다. 잠시 후 다시 시도해주세요.",
+        translationTimeout:
+            "번역 응답이 늦어지고 있습니다. 작성 원문은 유지됩니다. 잠시 후 다시 시도해주세요.",
+        translationUnavailable:
+            "번역 서비스를 일시적으로 이용할 수 없습니다. 작성 원문은 유지됩니다. 잠시 후 다시 시도해주세요.",
+        translationRateLimited:
+            "번역 사용량이 제한되었습니다. 작성 원문은 유지됩니다. 잠시 후 다시 시도해주세요.",
+        translationConnectionFailed:
+            "서버에 연결하지 못했습니다. 작성 원문은 유지됩니다. 연결 상태를 확인하고 다시 시도해주세요.",
+        translationReview: "AI 번역문입니다. 작성 원문과 비교해 내용을 확인해주세요.",
+        translationNotice:
+            "한국어 번역을 선택하면 준비 완료 시 상세 내용이 Google Gemini로 전송됩니다. 이름·성·생년월일 항목은 전송하지 않습니다.",
         institution: "선택 기관: {{name}}",
         nameRule:
             "공백·숫자·특수문자 없이 최대 20자까지 입력해주세요. 외국어도 입력할 수 있습니다.",
+        birthYear: "연도",
+        birthMonth: "월",
+        birthDay: "일",
+        birthYearPlaceholder: "YYYY",
+        birthMonthValue: "{{value}}월",
+        birthDayValue: "{{value}}일",
+        birthDateInvalid: "1900년 1월 1일부터 오늘까지의 올바른 생년월일을 입력해주세요.",
         periods: {
             under1: "1개월 미만",
             months1to3: "1개월~3개월",

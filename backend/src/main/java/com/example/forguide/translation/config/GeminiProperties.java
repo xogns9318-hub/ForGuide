@@ -14,7 +14,7 @@ public record GeminiProperties(
         }
 
         if (model == null || model.isBlank()) {
-            model = "gemini-3.1-flash-lite";
+            model = "gemini-3.5-flash-lite";
         }
     }
 }
