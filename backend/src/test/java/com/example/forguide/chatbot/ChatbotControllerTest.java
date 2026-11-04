@@ -132,7 +132,7 @@ class ChatbotControllerTest {
                 .andExpect(status().isOk());
 
         assertThat(fakeChatModel.lastPromptText())
-                .contains("첫 번째 질문", FakeChatModel.ANSWER, "second question", "Vietnamese");
+                .contains("첫 번째 질문", FakeChatModel.ANSWER, "second question", "Vietnamese", "no Markdown");
     }
 
     @Test

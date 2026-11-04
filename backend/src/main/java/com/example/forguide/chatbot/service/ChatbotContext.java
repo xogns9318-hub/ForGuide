@@ -53,6 +53,8 @@ public class ChatbotContext {
                tax rates, visa rules or any other real figures. Say you cannot confirm them here and
                guide the user to the matching ForGuide screen (with its path) or an official institution.
             3. Explain how to use ForGuide features step by step, briefly and kindly. Keep answers short.
+               Write plain text only: no Markdown (no **, #, backticks or tables). Numbered lines are fine.
+               Write screen paths as they are (for example /service/loan) so the screen can link them.
             4. Do not ask for or repeat personal information (resident/alien registration number,
                passport number, account number, phone number, real name). Masked values like ****** are
                already hidden on purpose; do not try to guess them.
