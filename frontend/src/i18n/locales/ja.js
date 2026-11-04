@@ -12,6 +12,7 @@ const ja = {
             serviceList: "サービス一覧",
             contactMenu: "お問い合わせ",
             inquiry: "お問い合わせ",
+            chatbot: "AIチャットボット相談",
             extendedServices: "拡張ガイド",
 
             contact: "お問い合わせ",
@@ -1479,6 +1480,48 @@ const ja = {
     footer: {
         description: "ここはフッターです。ひどい足の臭いがします。",
         copyright: "© これがベストなのですか、人間？",
+    },
+    // 문의 챗봇 화면 (/contact/chatbot)
+    chatbot: {
+        title: "AIチャットボット相談",
+        description:
+            "ForGuide の使い方を AI チャットボットに質問できます。質問した言語で回答します。AI の回答は参考用です。金利や申込資格などの実際の数値は該当する画面で確認してください。",
+        loading: "会話を読み込んでいます。",
+        loadError: "会話を読み込めませんでした。",
+        retry: "再試行",
+        unavailable:
+            "現在 AI チャットボットは利用できません。下の「直接問い合わせる」をご利用ください。",
+        empty: "質問を入力してください。\n例）ローン商品はどこで比較できますか？",
+        remaining: "本日の残り質問 {{count}} / {{limit}} 回",
+        clear: "会話を消去",
+        clearConfirm: "会話をすべて消去しますか？本日使った質問回数は戻りません。",
+        inputLabel: "質問を入力",
+        placeholder: "質問を入力してください。（Enter で送信、Shift+Enter で改行）",
+        count: "{{count}} / {{max}} 文字",
+        send: "送信",
+        sending: "回答を待っています...",
+        answering: "回答を準備しています...",
+        privacyNotice:
+            "住民登録番号・外国人登録番号・旅券番号・口座番号・電話番号は自動で伏せてから AI に送られます。個人情報は入力しないのが安全です。",
+        speaker: {
+            user: "自分",
+            assistant: "AIチャットボット",
+        },
+        error: {
+            dailyLimit:
+                "本日の質問回数をすべて使いました。明日もう一度ご利用いただくか、直接お問い合わせください。",
+            tooLong: "質問は {{max}} 文字以内で入力してください。",
+            unavailable: "現在 AI チャットボットは利用できません。",
+            timeout: "回答に時間がかかっています。しばらくしてからもう一度お試しください。",
+            network: "サーバーに接続できませんでした。ネットワークを確認してください。",
+            failed: "回答を受け取れませんでした。しばらくしてからもう一度お試しください。",
+            clearFailed: "会話を消去できませんでした。しばらくしてからもう一度お試しください。",
+        },
+        handoff: {
+            title: "求める答えが見つかりませんでしたか？",
+            description: "担当者が直接確認して回答します。",
+            link: "直接問い合わせる",
+        },
     },
 };
 

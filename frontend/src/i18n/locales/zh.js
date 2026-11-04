@@ -12,6 +12,7 @@ const zh = {
             serviceList: "服务列表",
             contactMenu: "咨询",
             inquiry: "联系我们",
+            chatbot: "AI 聊天机器人咨询",
             extendedServices: "扩展指南",
 
             contact: "联系我们",
@@ -1431,6 +1432,46 @@ const zh = {
     footer: {
         description: "这里是页脚。这里有一股浓烈的脚臭味。",
         copyright: "© 这就是你能做到的最好水平吗，人类？",
+    },
+    // 문의 챗봇 화면 (/contact/chatbot)
+    chatbot: {
+        title: "AI 聊天机器人咨询",
+        description:
+            "向 AI 聊天机器人询问 ForGuide 的使用方法。它会用你提问的语言回答。AI 回答仅供参考，利率、申请资格等实际数值请在相应页面确认。",
+        loading: "正在加载对话。",
+        loadError: "无法加载对话。",
+        retry: "重试",
+        unavailable: "AI 聊天机器人暂时无法使用。请使用下方的“直接咨询”。",
+        empty: "请输入你的问题。\n例：在哪里可以比较贷款产品？",
+        remaining: "今日剩余提问 {{count}} / {{limit}} 次",
+        clear: "清除对话",
+        clearConfirm: "要清除全部对话吗？今天已使用的提问次数不会恢复。",
+        inputLabel: "输入问题",
+        placeholder: "请输入问题。（Enter 发送，Shift+Enter 换行）",
+        count: "{{count}} / {{max}} 字",
+        send: "发送",
+        sending: "等待回答中...",
+        answering: "正在准备回答...",
+        privacyNotice:
+            "居民登录号码、外国人登录号码、护照号码、账号和电话号码会先自动隐藏再发送给 AI。最安全的做法是不要输入个人信息。",
+        speaker: {
+            user: "我",
+            assistant: "AI 聊天机器人",
+        },
+        error: {
+            dailyLimit: "今天的提问次数已用完。请明天再试或直接咨询。",
+            tooLong: "问题请不要超过 {{max}} 个字。",
+            unavailable: "AI 聊天机器人暂时无法使用。",
+            timeout: "回答时间较长。请稍后再试。",
+            network: "无法连接到服务器。请检查网络。",
+            failed: "未能获得回答。请稍后再试。",
+            clearFailed: "无法清除对话。请稍后再试。",
+        },
+        handoff: {
+            title: "没有找到想要的答案？",
+            description: "工作人员会直接确认并回复你。",
+            link: "直接咨询",
+        },
     },
 };
 

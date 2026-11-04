@@ -12,6 +12,7 @@ const vi = {
             serviceList: "Danh sách dịch vụ",
             contactMenu: "Yêu cầu hỗ trợ",
             inquiry: "Liên hệ",
+            chatbot: "Tư vấn chatbot AI",
             extendedServices: "Hướng dẫn mở rộng",
 
             contact: "Liên hệ",
@@ -1511,6 +1512,49 @@ const vi = {
     footer: {
         description: "Đây là phần chân trang. Ở đây có mùi chân rất nồng.",
         copyright: "© Đây là điều tốt nhất bạn có thể làm sao, con người?",
+    },
+    // 문의 챗봇 화면 (/contact/chatbot)
+    chatbot: {
+        title: "Tư vấn chatbot AI",
+        description:
+            "Hỏi chatbot AI cách sử dụng ForGuide. Chatbot trả lời bằng ngôn ngữ bạn dùng để hỏi. Câu trả lời của AI chỉ mang tính tham khảo; hãy kiểm tra các số liệu thực tế như lãi suất và điều kiện tại màn hình tương ứng.",
+        loading: "Đang tải cuộc trò chuyện.",
+        loadError: "Không thể tải cuộc trò chuyện.",
+        retry: "Thử lại",
+        unavailable:
+            "Hiện không thể sử dụng chatbot AI. Vui lòng dùng mục 'Liên hệ trực tiếp' bên dưới.",
+        empty: "Hãy nhập câu hỏi của bạn.\nVí dụ: Tôi có thể so sánh các sản phẩm vay ở đâu?",
+        remaining: "Câu hỏi còn lại hôm nay: {{count}} / {{limit}}",
+        clear: "Xóa cuộc trò chuyện",
+        clearConfirm:
+            "Xóa toàn bộ cuộc trò chuyện? Số câu hỏi đã dùng hôm nay sẽ không được hoàn lại.",
+        inputLabel: "Nhập câu hỏi",
+        placeholder: "Nhập câu hỏi. (Enter để gửi, Shift+Enter để xuống dòng)",
+        count: "{{count}} / {{max}} ký tự",
+        send: "Gửi",
+        sending: "Đang chờ trả lời...",
+        answering: "Đang chuẩn bị câu trả lời...",
+        privacyNotice:
+            "Số đăng ký cư trú, số đăng ký người nước ngoài, số hộ chiếu, số tài khoản và số điện thoại sẽ được tự động che trước khi gửi cho AI. An toàn nhất là không nhập thông tin cá nhân.",
+        speaker: {
+            user: "Tôi",
+            assistant: "Chatbot AI",
+        },
+        error: {
+            dailyLimit:
+                "Bạn đã dùng hết số câu hỏi hôm nay. Vui lòng thử lại vào ngày mai hoặc liên hệ trực tiếp.",
+            tooLong: "Vui lòng nhập câu hỏi không quá {{max}} ký tự.",
+            unavailable: "Hiện không thể sử dụng chatbot AI.",
+            timeout: "Câu trả lời đang mất nhiều thời gian. Vui lòng thử lại sau ít phút.",
+            network: "Không thể kết nối tới máy chủ. Vui lòng kiểm tra mạng.",
+            failed: "Không nhận được câu trả lời. Vui lòng thử lại sau ít phút.",
+            clearFailed: "Không thể xóa cuộc trò chuyện. Vui lòng thử lại sau ít phút.",
+        },
+        handoff: {
+            title: "Chưa tìm được câu trả lời bạn cần?",
+            description: "Nhân viên sẽ trực tiếp kiểm tra và trả lời bạn.",
+            link: "Liên hệ trực tiếp",
+        },
     },
 };
 

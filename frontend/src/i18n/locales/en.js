@@ -12,6 +12,7 @@ const en = {
             serviceList: "Service List",
             contactMenu: "Inquiries",
             inquiry: "Contact",
+            chatbot: "AI Chatbot",
             extendedServices: "Extended Guides",
 
             contact: "Contact",
@@ -1536,6 +1537,49 @@ const en = {
     footer: {
         description: "This is the footer. It smells terribly of feet here.",
         copyright: "© Is this the best you can do, human?",
+    },
+    // 문의 챗봇 화면 (/contact/chatbot)
+    chatbot: {
+        title: "AI Chatbot",
+        description:
+            "Ask the AI chatbot how to use ForGuide. It answers in the language you ask in. AI answers are for reference only; check real figures such as interest rates and eligibility on the relevant screen.",
+        loading: "Loading the conversation.",
+        loadError: "Could not load the conversation.",
+        retry: "Try again",
+        unavailable:
+            "The AI chatbot is not available right now. Please use 'Contact us directly' below.",
+        empty: "Type your question.\nE.g. Where can I compare loan products?",
+        remaining: "Questions left today: {{count}} / {{limit}}",
+        clear: "Clear conversation",
+        clearConfirm:
+            "Clear the whole conversation? Questions already used today will not be restored.",
+        inputLabel: "Question",
+        placeholder: "Type your question. (Enter to send, Shift+Enter for a new line)",
+        count: "{{count}} / {{max}} characters",
+        send: "Send",
+        sending: "Waiting for the answer...",
+        answering: "Preparing an answer...",
+        privacyNotice:
+            "Resident registration, alien registration, passport, account and phone numbers are hidden automatically before being sent to the AI. It is safest not to enter personal information.",
+        speaker: {
+            user: "Me",
+            assistant: "AI chatbot",
+        },
+        error: {
+            dailyLimit:
+                "You have used all of today's questions. Please try again tomorrow or contact us directly.",
+            tooLong: "Please keep your question to {{max}} characters or fewer.",
+            unavailable: "The AI chatbot is not available right now.",
+            timeout: "The answer is taking longer than usual. Please try again shortly.",
+            network: "Could not connect to the server. Please check your network.",
+            failed: "Could not get an answer. Please try again shortly.",
+            clearFailed: "Could not clear the conversation. Please try again shortly.",
+        },
+        handoff: {
+            title: "Didn't find the answer you need?",
+            description: "Our staff will check and reply to you directly.",
+            link: "Contact us directly",
+        },
     },
 };
 
