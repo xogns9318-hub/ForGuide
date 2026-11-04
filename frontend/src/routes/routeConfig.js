@@ -140,6 +140,12 @@ export const languages = [
 
 // 문의 메뉴와 홈에서 같은 주소를 사용한다.
 export const contactRoutes = [
+    // 1차 문의는 AI 챗봇, 해결되지 않으면 직접 문의하기
+    {
+        id: "chatbot",
+        labelKey: "header.mega.chatbot",
+        path: "/contact/chatbot",
+    },
     {
         id: "inquiry",
         labelKey: "header.mega.inquiry",

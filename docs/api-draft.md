@@ -610,3 +610,26 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - 사용량 제한과 키·권한 오류는 자동 재시도하지 않는다.
 - 상담 번역의 프론트 대기 시간은 35초이며 다른 API의 기본 10초 제한은 유지한다.
 - 실패 코드는 TRANSLATION_TIMEOUT, TRANSLATION_UNAVAILABLE, TRANSLATION_RATE_LIMITED로 구분한다.
+
+## 문의 챗봇 API
+
+- 주소: `/api/v1/chatbot/messages`, 모두 로그인 필요 (없으면 401 `AUTH_REQUIRED`)
+- 프론트 함수: `src/api/chatbotApi.js` — `getChatbotMessages()`, `sendChatbotQuestion({ question, language })`, `clearChatbotMessages()`
+- 백엔드: `chatbot/` (`ChatbotService`·`ChatbotContext`·`PiiMasker`), 키는 환경변수 `FORGUIDE_OPENAI_API_KEY`, 모델은 `FORGUIDE_OPENAI_MODEL`(기본 `gpt-5.6-luna`)
+
+| 방식   | 요청                     | 성공 data                                                                                       |
+| ------ | ------------------------ | ----------------------------------------------------------------------------------------------- |
+| GET    | 없음                     | `available`, `dailyLimit`, `remainingToday`, `maxQuestionLength`, `messages[{ role, content }]` |
+| POST   | `{ question, language }` | `question{ role, content }`(가린 질문), `answer{ role, content }`, `remainingToday`             |
+| DELETE | 없음                     | 없음 (오늘 사용 횟수는 그대로)                                                                  |
+
+- `role`은 `USER` / `ASSISTANT`. `messages`는 오래된 순, 최근 10개.
+- 질문 답변은 서버가 최대 30초 기다리고, 프론트 대기 시간은 40초다.
+
+| 코드                        | 상태 | 용도                                  |
+| --------------------------- | ---- | ------------------------------------- |
+| `INVALID_INPUT`             | 400  | 빈 질문                               |
+| `CHATBOT_QUESTION_TOO_LONG` | 400  | 500자 초과                            |
+| `CHATBOT_DAILY_LIMIT`       | 429  | 하루 30회 초과                        |
+| `CHATBOT_UNAVAILABLE`       | 503  | 서버에 키 없음                        |
+| `CHATBOT_FAILED`            | 502  | OpenAI 응답 실패 (횟수·질문은 되돌림) |

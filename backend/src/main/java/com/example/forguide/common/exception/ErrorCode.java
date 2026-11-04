@@ -20,6 +20,12 @@ public enum ErrorCode {
     TRANSLATION_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "번역 서비스를 일시적으로 이용할 수 없습니다."),
     TRANSLATION_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "번역 사용량 제한에 도달했습니다."),
 
+    // 문의 챗봇: 화면에서 키 없음·한도 초과·글자 수 초과·답변 실패를 구분한다.
+    CHATBOT_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "지금은 챗봇을 사용할 수 없습니다."),
+    CHATBOT_QUESTION_TOO_LONG(HttpStatus.BAD_REQUEST, "질문이 너무 깁니다."),
+    CHATBOT_DAILY_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "오늘 챗봇 질문 횟수를 모두 사용했습니다. 내일 다시 이용해주세요."),
+    CHATBOT_FAILED(HttpStatus.BAD_GATEWAY, "챗봇 답변을 받지 못했습니다. 잠시 후 다시 시도해주세요."),
+
     // ── 인증 (토큰) ──
     AUTH_REQUIRED(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "로그인이 만료되었습니다."),

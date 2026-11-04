@@ -12,6 +12,7 @@ const en = {
             serviceList: "Service List",
             contactMenu: "Inquiries",
             inquiry: "Contact",
+            chatbot: "AI Chatbot",
             extendedServices: "Extended Guides",
 
             contact: "Contact",
@@ -178,8 +179,7 @@ const en = {
         },
         inquiry: {
             headline: "Feel free to ask if you have questions",
-            description:
-                "If you have questions while using the service,\nleave an inquiry for us.",
+            description: "If you have questions while using the service,\nleave an inquiry for us.",
         },
     },
 
@@ -219,7 +219,8 @@ const en = {
         resultsTitle: "Support Organization Results",
         resultCount: "{{count}} organization(s)",
         loading: "Loading organization information.",
-        loadError: "Unable to load organization information. Check the server connection and try again.",
+        loadError:
+            "Unable to load organization information. Check the server connection and try again.",
         invalidInput: "Check your search conditions.",
         retry: "Retry",
         empty: "No organizations match your conditions. Use fewer keywords or view all organizations.",
@@ -1465,12 +1466,14 @@ const en = {
         },
 
         reasons: {
-            high_rate: "This product has a relatively high interest rate under the same conditions.",
+            high_rate:
+                "This product has a relatively high interest rate under the same conditions.",
             no_visit: "You can apply without visiting a branch.",
             bank: "This is a bank product.",
             low_premium: "This product has a relatively low premium for similar coverage.",
             online_join: "You can apply online.",
-            low_rate: "This product has a relatively low average interest rate among similar loans.",
+            low_rate:
+                "This product has a relatively low average interest rate among similar loans.",
         },
 
         checkReasons: {
@@ -1480,8 +1483,7 @@ const en = {
                 "Its interest rate is much higher than other products. Check whether special eligibility requirements apply.",
             kakao_withdrawal_only:
                 "Only a basic transaction account is currently available to foreigners. Check whether you can also join this product.",
-            insurer_review:
-                "Foreign eligibility review standards vary by insurer.",
+            insurer_review: "Foreign eligibility review standards vary by insurer.",
             limit_after_review: "The loan limit is determined after review.",
             special_target:
                 "This product is intended for specific groups, such as young adults or newlyweds. Check whether you are eligible.",
@@ -1524,8 +1526,7 @@ const en = {
                 "Deposits and savings products from savings banks are also protected by deposit insurance.",
             reference_only:
                 "Recommendations are for reference only. Actual eligibility and terms depend on the financial institution's review.",
-            premium_may_change:
-                "Premiums are based on the {{date}} disclosure and may change.",
+            premium_may_change: "Premiums are based on the {{date}} disclosure and may change.",
             insurance_age_basis:
                 "Premiums use insurance age, so the actual premium may differ slightly.",
             rate_by_credit:
@@ -1536,6 +1537,49 @@ const en = {
     footer: {
         description: "This is the footer. It smells terribly of feet here.",
         copyright: "© Is this the best you can do, human?",
+    },
+    // 문의 챗봇 화면 (/contact/chatbot)
+    chatbot: {
+        title: "AI Chatbot",
+        description:
+            "Ask the AI chatbot how to use ForGuide. It answers in the language you ask in. AI answers are for reference only; check real figures such as interest rates and eligibility on the relevant screen.",
+        loading: "Loading the conversation.",
+        loadError: "Could not load the conversation.",
+        retry: "Try again",
+        unavailable:
+            "The AI chatbot is not available right now. Please use 'Contact us directly' below.",
+        empty: "Type your question.\nE.g. Where can I compare loan products?",
+        remaining: "Questions left today: {{count}} / {{limit}}",
+        clear: "Clear conversation",
+        clearConfirm:
+            "Clear the whole conversation? Questions already used today will not be restored.",
+        inputLabel: "Question",
+        placeholder: "Type your question. (Enter to send, Shift+Enter for a new line)",
+        count: "{{count}} / {{max}} characters",
+        send: "Send",
+        sending: "Waiting for the answer...",
+        answering: "Preparing an answer...",
+        privacyNotice:
+            "Resident registration, alien registration, passport, account and phone numbers are hidden automatically before being sent to the AI. It is safest not to enter personal information.",
+        speaker: {
+            user: "Me",
+            assistant: "AI chatbot",
+        },
+        error: {
+            dailyLimit:
+                "You have used all of today's questions. Please try again tomorrow or contact us directly.",
+            tooLong: "Please keep your question to {{max}} characters or fewer.",
+            unavailable: "The AI chatbot is not available right now.",
+            timeout: "The answer is taking longer than usual. Please try again shortly.",
+            network: "Could not connect to the server. Please check your network.",
+            failed: "Could not get an answer. Please try again shortly.",
+            clearFailed: "Could not clear the conversation. Please try again shortly.",
+        },
+        handoff: {
+            title: "Didn't find the answer you need?",
+            description: "Our staff will check and reply to you directly.",
+            link: "Contact us directly",
+        },
     },
 };
 

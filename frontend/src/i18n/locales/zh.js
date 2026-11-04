@@ -12,6 +12,7 @@ const zh = {
             serviceList: "服务列表",
             contactMenu: "咨询",
             inquiry: "联系我们",
+            chatbot: "AI 聊天机器人咨询",
             extendedServices: "扩展指南",
 
             contact: "联系我们",
@@ -70,30 +71,23 @@ const zh = {
         translatedTitle: "咨询准备卡 - 韩语译文",
         translating: "正在翻译为韩语。",
         retryTranslation: "重新翻译",
-        translationFailed:
-            "韩语翻译失败，原文将被保留。请稍后重试。",
-        translationTimeout:
-            "翻译响应较慢，原文将被保留。请稍后重试。",
-        translationUnavailable:
-            "翻译服务暂时不可用，原文将被保留。请稍后重试。",
-        translationRateLimited:
-            "翻译使用量已达上限，原文将被保留。请稍后重试。",
-        translationConnectionFailed:
-            "无法连接到服务器，原文将被保留。请检查网络连接后重试。",
+        translationFailed: "韩语翻译失败，原文将被保留。请稍后重试。",
+        translationTimeout: "翻译响应较慢，原文将被保留。请稍后重试。",
+        translationUnavailable: "翻译服务暂时不可用，原文将被保留。请稍后重试。",
+        translationRateLimited: "翻译使用量已达上限，原文将被保留。请稍后重试。",
+        translationConnectionFailed: "无法连接到服务器，原文将被保留。请检查网络连接后重试。",
         translationReview: "这是 AI 翻译稿。请与原文对照确认内容。",
         translationNotice:
             "选择韩语翻译后，完成准备时详细内容将发送至 Google Gemini。名字、姓氏和出生日期不会被发送。",
         institution: "已选择机构：{{name}}",
-        nameRule:
-            "请输入不含空格、数字或特殊字符的姓名，最多20个字符。可以输入外语。",
+        nameRule: "请输入不含空格、数字或特殊字符的姓名，最多20个字符。可以输入外语。",
         birthYear: "年",
         birthMonth: "月",
         birthDay: "日",
         birthYearPlaceholder: "YYYY",
         birthMonthValue: "{{value}}月",
         birthDayValue: "{{value}}日",
-        birthDateInvalid:
-            "请输入1900年1月1日至今天之间有效的出生日期。",
+        birthDateInvalid: "请输入1900年1月1日至今天之间有效的出生日期。",
         periods: {
             under1: "不足1个月",
             months1to3: "1至3个月",
@@ -117,68 +111,55 @@ const zh = {
         translation: {
             title: "翻译",
             headline: "即使语言不同，也无需担心",
-            description:
-                "请使用您熟悉的语言使用 ForGuide。\n选择语言后，页面会自动翻译。",
+            description: "请使用您熟悉的语言使用 ForGuide。\n选择语言后，页面会自动翻译。",
         },
         consultation: {
             headline: "不知道该向哪里寻求帮助？",
-            description:
-                "寻找适合您情况的咨询机构，\n了解可以获得哪些帮助。",
+            description: "寻找适合您情况的咨询机构，\n了解可以获得哪些帮助。",
         },
         preparationCard: {
             headline: "咨询准备也并不困难",
-            description:
-                "提前整理想要咨询的内容和疑问，\n制作属于您的咨询准备卡。",
+            description: "提前整理想要咨询的内容和疑问，\n制作属于您的咨询准备卡。",
         },
         loan: {
             headline: "寻找适合您的贷款产品",
-            description:
-                "比较各种贷款产品的条件，\n了解适合您情况的产品。",
+            description: "比较各种贷款产品的条件，\n了解适合您情况的产品。",
         },
         insurance: {
             headline: "不必觉得保险很复杂",
-            description:
-                "比较保险产品的保障内容和条件，\n寻找您需要的保险。",
+            description: "比较保险产品的保障内容和条件，\n寻找您需要的保险。",
         },
         account: {
             headline: "想在韩国开设银行账户？",
-            description:
-                "从开户所需材料到办理流程，\n一步一步了解清楚。",
+            description: "从开户所需材料到办理流程，\n一步一步了解清楚。",
         },
         monthlyPayment: {
             headline: "每个月需要偿还多少？",
-            description:
-                "输入贷款金额和利率等信息，\n即可计算每月还款金额。",
+            description: "输入贷款金额和利率等信息，\n即可计算每月还款金额。",
         },
         totalInterest: {
             headline: "需要支付多少利息？",
-            description:
-                "确认贷款期间需要支付的总利息，\n提前制定还款计划。",
+            description: "确认贷款期间需要支付的总利息，\n提前制定还款计划。",
         },
         jobListings: {
             headline: "正在韩国寻找工作？",
-            description:
-                "在一个地方浏览各种招聘信息，\n寻找适合您的工作。",
+            description: "在一个地方浏览各种招聘信息，\n寻找适合您的工作。",
         },
         employment: {
             headline: "不知道该从哪里开始准备就业？",
-            description:
-                "了解在韩国工作时有用的信息，\n并查看就业所需的准备资料。",
+            description: "了解在韩国工作时有用的信息，\n并查看就业所需的准备资料。",
         },
         simulator: {
             headline: "今天可以花多少钱？",
-            description:
-                "输入每月支出、贷款金额和利息，\n即可在日历中查看每天可使用的金额。",
+            description: "输入每月支出、贷款金额和利息，\n即可在日历中查看每天可使用的金额。",
         },
         community: {
             headline: "一起分享疑问和烦恼",
-            description:
-                "提出在韩国生活中遇到的问题，\n分享彼此的经验和实用信息。",
+            description: "提出在韩国生活中遇到的问题，\n分享彼此的经验和实用信息。",
         },
         inquiry: {
             headline: "如有疑问，欢迎随时咨询",
-            description:
-                "使用服务时如有任何问题，\n请通过咨询页面留言。",
+            description: "使用服务时如有任何问题，\n请通过咨询页面留言。",
         },
     },
 
@@ -192,8 +173,7 @@ const zh = {
         consultationLanguageLabel: "咨询语言",
         consultationMethodLabel: "咨询方式",
         selectedConditionsTitle: "已选择的咨询条件",
-        conditionsChanged:
-            "修改条件后，之前的结果将被隐藏。请点击“获取指南”再次确认。",
+        conditionsChanged: "修改条件后，之前的结果将被隐藏。请点击“获取指南”再次确认。",
         selectedProvinceLabel: "希望地区",
         languages: {
             ko: "韩语",
@@ -240,8 +220,7 @@ const zh = {
         scopeNotesTitle: "咨询范围和注意事项",
         usageInfoTitle: "使用指南",
         usageVariant: "使用指南 {{count}}",
-        partialNotice:
-            "仅确认了部分信息。使用前请向机构确认最新条件。",
+        partialNotice: "仅确认了部分信息。使用前请向机构确认最新条件。",
         rankingNotice:
             "优先显示可直接咨询的机构，其后按所选关键词匹配数量和条件确认情况排序。匹配率不代表资格或获批概率。",
         matchCount: "所选 {{total}} 个关键词中匹配 {{matched}} 个 · {{percent}}%",
@@ -250,8 +229,7 @@ const zh = {
         matchedLabel: "匹配关键词",
         specialHours: "特殊运营时间：{{scope}} — {{hours}}",
         phoneNationwide: "电话服务不受地区限制",
-        preparationUnknown:
-            "请在确定要使用的机构和服务后确认所需材料。",
+        preparationUnknown: "请在确定要使用的机构和服务后确认所需材料。",
         reservationLink: "预约指南",
         onlineLink: "在线咨询",
         serviceSource: "咨询服务来源",
@@ -1406,17 +1384,13 @@ const zh = {
         checkReasons: {
             foreigner_unspecified: "未公开外国人的办理条件。",
             region_limit: "可办理地区已限定：{{regions}}",
-            rate_outlier:
-                "利率明显高于其他产品。请确认是否有特殊办理条件。",
-            kakao_withdrawal_only:
-                "目前仅向外国人 안내普通交易账户。请确认是否也可以办理该产品。",
+            rate_outlier: "利率明显高于其他产品。请确认是否有特殊办理条件。",
+            kakao_withdrawal_only: "目前仅向外国人 안내普通交易账户。请确认是否也可以办理该产品。",
             insurer_review: "各保险公司对外国人的审核标准不同。",
             limit_after_review: "贷款额度将在审核后确定。",
-            special_target:
-                "这是面向青年、新婚夫妇等特定对象的产品。请确认您是否符合条件。",
+            special_target: "这是面向青年、新婚夫妇等特定对象的产品。请确认您是否符合条件。",
             rate_not_disclosed: "未公开平均利率。",
-            rate_inconsistent:
-                "上月平均利率与当前利率范围差异较大。请向金融机构确认实际利率。",
+            rate_inconsistent: "上月平均利率与当前利率范围差异较大。请向金融机构确认实际利率。",
         },
 
         mismatchReasons: {
@@ -1427,8 +1401,7 @@ const zh = {
         },
 
         guides: {
-            join_at_company:
-                "该产品 안내外国人可办理。请通过金融机构的应用程序或网站办理。",
+            join_at_company: "该产品 안내外国人可办理。请通过金融机构的应用程序或网站办理。",
             ask_foreigner_eligibility:
                 "未公开外国人的办理条件。办理前请向金融机构确认外国人是否可以办理。",
             ask_insurer_eligibility:
@@ -1443,27 +1416,62 @@ const zh = {
             title: "还有这些产品",
             senior: "老年人实损医疗保险",
             simplified: "简易核保实损医疗保险",
-            description:
-                "由于办理条件和保障内容与普通实损医疗保险不同，因此单独显示。",
+            description: "由于办理条件和保障内容与普通实损医疗保险不同，因此单独显示。",
         },
 
         notices: {
             rate_may_change: "利率以 {{month}} 公示为准，可能发生变化。",
-            savings_bank_protected:
-                "储蓄银行的定期存款和储蓄产品也受存款人保护制度保障。",
-            reference_only:
-                "推荐仅供参考。实际是否可办理及具体条件取决于金融机构的审核。",
+            savings_bank_protected: "储蓄银行的定期存款和储蓄产品也受存款人保护制度保障。",
+            reference_only: "推荐仅供参考。实际是否可办理及具体条件取决于金融机构的审核。",
             premium_may_change: "保费以 {{date}} 公示为准，可能发生变化。",
-            insurance_age_basis:
-                "保费以保险年龄为准，因此可能与实际保费略有差异。",
-            rate_by_credit:
-                "平均利率是上月实际借款人的平均值。您的实际利率取决于信用审核。",
+            insurance_age_basis: "保费以保险年龄为准，因此可能与实际保费略有差异。",
+            rate_by_credit: "平均利率是上月实际借款人的平均值。您的实际利率取决于信用审核。",
         },
     },
 
     footer: {
         description: "这里是页脚。这里有一股浓烈的脚臭味。",
         copyright: "© 这就是你能做到的最好水平吗，人类？",
+    },
+    // 문의 챗봇 화면 (/contact/chatbot)
+    chatbot: {
+        title: "AI 聊天机器人咨询",
+        description:
+            "向 AI 聊天机器人询问 ForGuide 的使用方法。它会用你提问的语言回答。AI 回答仅供参考，利率、申请资格等实际数值请在相应页面确认。",
+        loading: "正在加载对话。",
+        loadError: "无法加载对话。",
+        retry: "重试",
+        unavailable: "AI 聊天机器人暂时无法使用。请使用下方的“直接咨询”。",
+        empty: "请输入你的问题。\n例：在哪里可以比较贷款产品？",
+        remaining: "今日剩余提问 {{count}} / {{limit}} 次",
+        clear: "清除对话",
+        clearConfirm: "要清除全部对话吗？今天已使用的提问次数不会恢复。",
+        inputLabel: "输入问题",
+        placeholder: "请输入问题。（Enter 发送，Shift+Enter 换行）",
+        count: "{{count}} / {{max}} 字",
+        send: "发送",
+        sending: "等待回答中...",
+        answering: "正在准备回答...",
+        privacyNotice:
+            "居民登录号码、外国人登录号码、护照号码、账号和电话号码会先自动隐藏再发送给 AI。最安全的做法是不要输入个人信息。",
+        speaker: {
+            user: "我",
+            assistant: "AI 聊天机器人",
+        },
+        error: {
+            dailyLimit: "今天的提问次数已用完。请明天再试或直接咨询。",
+            tooLong: "问题请不要超过 {{max}} 个字。",
+            unavailable: "AI 聊天机器人暂时无法使用。",
+            timeout: "回答时间较长。请稍后再试。",
+            network: "无法连接到服务器。请检查网络。",
+            failed: "未能获得回答。请稍后再试。",
+            clearFailed: "无法清除对话。请稍后再试。",
+        },
+        handoff: {
+            title: "没有找到想要的答案？",
+            description: "工作人员会直接确认并回复你。",
+            link: "直接咨询",
+        },
     },
 };
 
