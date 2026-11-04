@@ -24,15 +24,9 @@ const JobListings = lazy(() => import("../components/JobListings/JobListings.jsx
 const Simulator = lazy(() => import("../components/Simulator/Simulator.jsx"));
 const AdminDashboard = lazy(() => import("../admin/pages/AdminDashboard.jsx"));
 const InquiryPage = lazy(() => import("../inquiry/pages/InquiryPage.jsx"));
-const AdminInquiryPage = lazy(
-    () => import("../admin/pages/AdminInquiryPage.jsx"),
-);
-const AdminMemberPage = lazy(
-    () => import("../admin/pages/AdminMemberPage.jsx"),
-);
-const AdminCommunityPage = lazy(
-    () => import("../admin/pages/AdminCommunityPage.jsx"),
-);
+const AdminInquiryPage = lazy(() => import("../admin/pages/AdminInquiryPage.jsx"));
+const AdminMemberPage = lazy(() => import("../admin/pages/AdminMemberPage.jsx"));
+const AdminCommunityPage = lazy(() => import("../admin/pages/AdminCommunityPage.jsx"));
 const AdminRecommendationUsagePage = lazy(
     () => import("../admin/pages/AdminRecommendationUsagePage.jsx"),
 );
@@ -77,22 +71,20 @@ function PlaceholderPage({ title, description, categoryId, serviceId }) {
 
     const translatedTitle = serviceId
         ? t(`home.features.${categoryId}.${serviceId}`, {
-            defaultValue: title,
-        })
+              defaultValue: title,
+          })
         : title;
 
     const translatedDescription = serviceId
         ? t(`service.${serviceId}.description`, {
-            defaultValue: description ?? "",
-        })
+              defaultValue: description ?? "",
+          })
         : description;
 
     return (
         <section className="panel">
             <h1>{translatedTitle}</h1>
-            {translatedDescription && (
-                <p className="text-muted">{translatedDescription}</p>
-            )}
+            {translatedDescription && <p className="text-muted">{translatedDescription}</p>}
         </section>
     );
 }
@@ -121,12 +113,8 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
 
                     {/* 문의 작성 전 로그인 여부를 확인하고, 로그인 뒤 같은 주소로 돌아온다. */}
                     <Route element={<RequireAuth />}>
-                        <Route
-                            path="/contact/inquiry"
-                            element={<InquiryPage />}
-                        />
+                        <Route path="/contact/inquiry" element={<InquiryPage />} />
                     </Route>
-
 
                     {/* 커뮤니티 페이지 */}
                     <Route path="/service/community" element={<Community />} />
@@ -206,22 +194,10 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
 
                     {/* 관리자 전용 화면 */}
                     <Route element={<RequireAdmin />}>
-                        <Route
-                            path="/admin"
-                            element={<AdminDashboard />}
-                        />
-                        <Route
-                            path="/admin/inquiries"
-                            element={<AdminInquiryPage />}
-                        />
-                        <Route
-                            path="/admin/community"
-                            element={<AdminCommunityPage />}
-                        />
-                        <Route
-                            path="/admin/members"
-                            element={<AdminMemberPage />}
-                        />
+                        <Route path="/admin" element={<AdminDashboard />} />
+                        <Route path="/admin/inquiries" element={<AdminInquiryPage />} />
+                        <Route path="/admin/community" element={<AdminCommunityPage />} />
+                        <Route path="/admin/members" element={<AdminMemberPage />} />
                     </Route>
                     <Route
                         path="/admin/recommendation-usage"

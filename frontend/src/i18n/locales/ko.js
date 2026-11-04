@@ -319,7 +319,6 @@ const ko = {
         sourceLink: "참고자료 {{count}}",
         prepareCard: "상담 준비 카드 만들기",
 
-
         roles: {
             direct: "직접 상담",
             related: "관련 상담·민원·기관 안내",
