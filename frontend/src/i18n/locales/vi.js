@@ -92,8 +92,7 @@ const vi = {
         birthYearPlaceholder: "YYYY",
         birthMonthValue: "Tháng {{value}}",
         birthDayValue: "Ngày {{value}}",
-        birthDateInvalid:
-            "Hãy nhập ngày sinh hợp lệ từ ngày 1 tháng 1 năm 1900 đến hôm nay.",
+        birthDateInvalid: "Hãy nhập ngày sinh hợp lệ từ ngày 1 tháng 1 năm 1900 đến hôm nay.",
         periods: {
             under1: "Dưới 1 tháng",
             months1to3: "1 đến 3 tháng",
@@ -142,13 +141,11 @@ const vi = {
         },
         account: {
             headline: "Bạn muốn mở tài khoản ngân hàng tại Hàn Quốc?",
-            description:
-                "Tìm hiểu từng bước, từ giấy tờ cần chuẩn bị\nđến quy trình mở tài khoản.",
+            description: "Tìm hiểu từng bước, từ giấy tờ cần chuẩn bị\nđến quy trình mở tài khoản.",
         },
         monthlyPayment: {
             headline: "Mỗi tháng tôi cần trả bao nhiêu?",
-            description:
-                "Nhập số tiền vay và lãi suất\nđể tính số tiền cần trả mỗi tháng.",
+            description: "Nhập số tiền vay và lãi suất\nđể tính số tiền cần trả mỗi tháng.",
         },
         totalInterest: {
             headline: "Tôi sẽ phải trả bao nhiêu tiền lãi?",
@@ -250,8 +247,7 @@ const vi = {
         matchedLabel: "Từ khóa phù hợp",
         specialHours: "Giờ hoạt động đặc biệt: {{scope}} — {{hours}}",
         phoneNationwide: "Không giới hạn khu vực khi tư vấn qua điện thoại",
-        preparationUnknown:
-            "Hãy kiểm tra giấy tờ cần thiết sau khi chọn tổ chức và dịch vụ.",
+        preparationUnknown: "Hãy kiểm tra giấy tờ cần thiết sau khi chọn tổ chức và dịch vụ.",
         reservationLink: "Thông tin đặt lịch",
         onlineLink: "Tư vấn trực tuyến",
         serviceSource: "Nguồn dịch vụ tư vấn",
@@ -1393,7 +1389,8 @@ const vi = {
         premium: "Phí bảo hiểm hàng tháng",
         premiumValue: "{{amount}} won",
         breakdown: "Cấu thành phí bảo hiểm",
-        breakdownValue: "Cơ bản {{basic}} · Quyền lợi bổ sung 1 {{rider1}} · Quyền lợi bổ sung 2 {{rider2}}",
+        breakdownValue:
+            "Cơ bản {{basic}} · Quyền lợi bổ sung 1 {{rider1}} · Quyền lợi bổ sung 2 {{rider2}}",
         insurerType: "Loại bảo hiểm",
         joinWay: "Cách đăng ký",
         online: "Có thể đăng ký trực tuyến",
@@ -1460,8 +1457,7 @@ const vi = {
                 "Lãi suất cao hơn đáng kể so với các sản phẩm khác. Hãy kiểm tra điều kiện đăng ký đặc biệt.",
             kakao_withdrawal_only:
                 "Hiện chỉ có thông tin về tài khoản giao dịch cho người nước ngoài. Hãy kiểm tra xem bạn có thể đăng ký sản phẩm này hay không.",
-            insurer_review:
-                "Tiêu chí xét duyệt người nước ngoài khác nhau tùy công ty bảo hiểm.",
+            insurer_review: "Tiêu chí xét duyệt người nước ngoài khác nhau tùy công ty bảo hiểm.",
             limit_after_review: "Hạn mức vay được xác định sau khi xét duyệt.",
             special_target:
                 "Đây là sản phẩm dành cho nhóm đối tượng cụ thể như người trẻ hoặc vợ chồng mới cưới. Hãy kiểm tra điều kiện.",

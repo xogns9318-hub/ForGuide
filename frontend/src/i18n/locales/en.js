@@ -178,8 +178,7 @@ const en = {
         },
         inquiry: {
             headline: "Feel free to ask if you have questions",
-            description:
-                "If you have questions while using the service,\nleave an inquiry for us.",
+            description: "If you have questions while using the service,\nleave an inquiry for us.",
         },
     },
 
@@ -219,7 +218,8 @@ const en = {
         resultsTitle: "Support Organization Results",
         resultCount: "{{count}} organization(s)",
         loading: "Loading organization information.",
-        loadError: "Unable to load organization information. Check the server connection and try again.",
+        loadError:
+            "Unable to load organization information. Check the server connection and try again.",
         invalidInput: "Check your search conditions.",
         retry: "Retry",
         empty: "No organizations match your conditions. Use fewer keywords or view all organizations.",
@@ -1465,12 +1465,14 @@ const en = {
         },
 
         reasons: {
-            high_rate: "This product has a relatively high interest rate under the same conditions.",
+            high_rate:
+                "This product has a relatively high interest rate under the same conditions.",
             no_visit: "You can apply without visiting a branch.",
             bank: "This is a bank product.",
             low_premium: "This product has a relatively low premium for similar coverage.",
             online_join: "You can apply online.",
-            low_rate: "This product has a relatively low average interest rate among similar loans.",
+            low_rate:
+                "This product has a relatively low average interest rate among similar loans.",
         },
 
         checkReasons: {
@@ -1480,8 +1482,7 @@ const en = {
                 "Its interest rate is much higher than other products. Check whether special eligibility requirements apply.",
             kakao_withdrawal_only:
                 "Only a basic transaction account is currently available to foreigners. Check whether you can also join this product.",
-            insurer_review:
-                "Foreign eligibility review standards vary by insurer.",
+            insurer_review: "Foreign eligibility review standards vary by insurer.",
             limit_after_review: "The loan limit is determined after review.",
             special_target:
                 "This product is intended for specific groups, such as young adults or newlyweds. Check whether you are eligible.",
@@ -1524,8 +1525,7 @@ const en = {
                 "Deposits and savings products from savings banks are also protected by deposit insurance.",
             reference_only:
                 "Recommendations are for reference only. Actual eligibility and terms depend on the financial institution's review.",
-            premium_may_change:
-                "Premiums are based on the {{date}} disclosure and may change.",
+            premium_may_change: "Premiums are based on the {{date}} disclosure and may change.",
             insurance_age_basis:
                 "Premiums use insurance age, so the actual premium may differ slightly.",
             rate_by_credit:

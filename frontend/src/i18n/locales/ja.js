@@ -92,8 +92,7 @@ const ja = {
         birthYearPlaceholder: "YYYY",
         birthMonthValue: "{{value}}月",
         birthDayValue: "{{value}}日",
-        birthDateInvalid:
-            "1900年1月1日から今日までの正しい生年月日を入力してください。",
+        birthDateInvalid: "1900年1月1日から今日までの正しい生年月日を入力してください。",
         periods: {
             under1: "1か月未満",
             months1to3: "1か月〜3か月",
@@ -137,33 +136,27 @@ const ja = {
         },
         insurance: {
             headline: "保険を難しく考える必要はありません",
-            description:
-                "保険商品の補償内容と条件を比較して、\n自分に必要な保険を探しましょう。",
+            description: "保険商品の補償内容と条件を比較して、\n自分に必要な保険を探しましょう。",
         },
         account: {
             headline: "韓国で銀行口座を作りたいなら",
-            description:
-                "口座開設に必要な準備物から手続きまで、\n最初から一つずつ確認しましょう。",
+            description: "口座開設に必要な準備物から手続きまで、\n最初から一つずつ確認しましょう。",
         },
         monthlyPayment: {
             headline: "毎月いくら返済すればよい？",
-            description:
-                "ローン金額や金利などを入力すると、\n毎月の返済額を計算できます。",
+            description: "ローン金額や金利などを入力すると、\n毎月の返済額を計算できます。",
         },
         totalInterest: {
             headline: "利息はいくら支払うことになる？",
-            description:
-                "ローン期間中に支払う総利息を確認して、\n今後の返済計画を立てましょう。",
+            description: "ローン期間中に支払う総利息を確認して、\n今後の返済計画を立てましょう。",
         },
         jobListings: {
             headline: "韓国で仕事を探しているなら",
-            description:
-                "さまざまな求人情報を一か所で確認して、\n自分に合った仕事を探しましょう。",
+            description: "さまざまな求人情報を一か所で確認して、\n自分に合った仕事を探しましょう。",
         },
         employment: {
             headline: "就職準備をどこから始めるか悩んでいるなら",
-            description:
-                "韓国で働くときに役立つ情報と、\n就職に必要な準備資料を確認しましょう。",
+            description: "韓国で働くときに役立つ情報と、\n就職に必要な準備資料を確認しましょう。",
         },
         simulator: {
             headline: "今日はどこまで使ってもよい？",
@@ -177,8 +170,7 @@ const ja = {
         },
         inquiry: {
             headline: "気になることがあれば気軽にお問い合わせください",
-            description:
-                "サービスの利用中に質問があれば、\nお問い合わせから質問を残してください。",
+            description: "サービスの利用中に質問があれば、\nお問い合わせから質問を残してください。",
         },
     },
 
@@ -240,8 +232,7 @@ const ja = {
         scopeNotesTitle: "相談範囲と注意事項",
         usageInfoTitle: "利用案内",
         usageVariant: "利用案内 {{count}}",
-        partialNotice:
-            "一部の情報のみ確認済みです。利用前に機関へ最新の条件を確認してください。",
+        partialNotice: "一部の情報のみ確認済みです。利用前に機関へ最新の条件を確認してください。",
         rankingNotice:
             "直接相談機関を優先し、選択キーワードの一致数と条件確認の有無の順に表示します。一致率は利用資格や承認確率ではありません。",
         matchCount: "選択キーワード {{total}}個中 {{matched}}個一致・{{percent}}%",
@@ -250,8 +241,7 @@ const ja = {
         matchedLabel: "一致キーワード",
         specialHours: "特別運営: {{scope}} — {{hours}}",
         phoneNationwide: "電話利用の地域制限なし",
-        preparationUnknown:
-            "必要書類は利用する機関と業務を決めた後に確認してください。",
+        preparationUnknown: "必要書類は利用する機関と業務を決めた後に確認してください。",
         reservationLink: "予約案内",
         onlineLink: "オンライン相談",
         serviceSource: "相談業務の出典",
@@ -1347,8 +1337,7 @@ const ja = {
 
     recommendInsurance: {
         title: "実損保険おすすめ",
-        description:
-            "いくつかの質問に答えると、同じ補償の実損保険を保険料順に比較できます。",
+        description: "いくつかの質問に答えると、同じ補償の実損保険を保険料順に比較できます。",
         gateTitle: "まず確認しましょう",
         healthInsurance: "国民健康保険に加入していますか？",
         healthOptions: {
@@ -1386,8 +1375,7 @@ const ja = {
 
     recommendLoan: {
         title: "ローンおすすめ",
-        description:
-            "用途を選ぶと、外国人が検討できるローンを平均金利順に比較できます。",
+        description: "用途を選ぶと、外国人が検討できるローンを平均金利順に比較できます。",
         fastTitle: "どのようなローンをお探しですか？",
         purpose: "用途",
         purposeOptions: {
@@ -1472,18 +1460,15 @@ const ja = {
             title: "このような商品もあります",
             senior: "高齢者向け実損保険",
             simplified: "簡易審査型実損保険",
-            description:
-                "一般の実損保険とは加入条件と保障内容が異なるため、別に表示しています。",
+            description: "一般の実損保険とは加入条件と保障内容が異なるため、別に表示しています。",
         },
 
         notices: {
             rate_may_change: "金利は{{month}}の公示基準であり、変更される場合があります。",
-            savings_bank_protected:
-                "貯蓄銀行の預金・積立商品も預金者保護の対象です。",
+            savings_bank_protected: "貯蓄銀行の預金・積立商品も預金者保護の対象です。",
             reference_only:
                 "おすすめは参考用です。実際の加入可否と条件は金融機関の審査により異なります。",
-            premium_may_change:
-                "保険料は{{date}}の公示基準であり、変更される場合があります。",
+            premium_may_change: "保険料は{{date}}の公示基準であり、変更される場合があります。",
             insurance_age_basis:
                 "保険料は保険年齢を基準とするため、実際の保険料と少し異なる場合があります。",
             rate_by_credit:
