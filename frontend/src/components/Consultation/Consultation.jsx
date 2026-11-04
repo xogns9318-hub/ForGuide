@@ -5,14 +5,39 @@ import "../../styles/consultation.css";
 import styles from "../../styles/consultationControls.module.css";
 import { useTranslation } from "react-i18next";
 import ConsultationResults from "./ConsultationResults.jsx";
+import { getConsultationLocationLabel } from "../../i18n/consultationLocationLabels.js";
 
-// 문자열 목록을 공통 선택창이 사용하는 구조로 변환
-function makeOptions(values = []) {
-    return [{ value: "", label: "전체" }, ...values.map((value) => ({ value, label: value }))];
+// 문자열 목록을 공통 선택창이 사용하는 구조로 변환한다.
+function makeOptions(values = [], allLabel, getLabel = (value) => value) {
+    return [
+        { value: "", label: allLabel },
+        ...values.map((value) => ({
+            value,
+            label: getLabel(value),
+        })),
+    ];
 }
 
+// API에는 한국어 원본 값을 보내고, 화면에는 현재 언어의 문구를 표시한다.
+const LANGUAGE_TRANSLATION_KEYS = {
+    한국어: "ko",
+    영어: "en",
+    중국어: "zh",
+    일본어: "ja",
+    베트남어: "vi",
+    태국어: "th",
+};
+
+const METHOD_TRANSLATION_KEYS = {
+    전화: "phone",
+    방문: "visit",
+    온라인: "online",
+    예약: "reservation",
+    모름: "unknown",
+};
+
 export default function Consultation() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     // 사용자가 입력 중인 기관명·상담 내용 검색어다.
     const [query, setQuery] = useState("");
@@ -76,7 +101,7 @@ export default function Consultation() {
                 }
             } catch {
                 if (active) {
-                    setLoadError("선택 항목을 불러오지 못했습니다.");
+                    setLoadError(t("institutionGuide.optionsLoadError"));
                 }
             } finally {
                 if (active) {
@@ -90,7 +115,7 @@ export default function Consultation() {
         return () => {
             active = false;
         };
-    }, [retryCount]);
+    }, [retryCount, t]);
 
     // 선택한 상담 분야에 연결된 전체 키워드 확인
     const selectedTopic = options?.topics.find((item) => item.name === topic);
@@ -98,17 +123,44 @@ export default function Consultation() {
     // 선택한 시·도에 연결된 전체 하위 지역 확인
     const selectedRegion = options?.regions.find((item) => item.name === province);
 
-    // 기존 공통 선택창에 전달할 목록 구성
-    const provinceOptions = makeOptions(options?.regions.map((item) => item.name));
-    const districtOptions = makeOptions(selectedRegion?.districts);
+    const allLabel = t("institutionGuide.all");
+
+    function getLanguageLabel(value) {
+        const languageKey = LANGUAGE_TRANSLATION_KEYS[value];
+
+        return languageKey ? t(`institutionGuide.languages.${languageKey}`) : value;
+    }
+
+    function getMethodLabel(value) {
+        const methodKey = METHOD_TRANSLATION_KEYS[value];
+
+        return methodKey ? t(`institutionGuide.methods.${methodKey}`) : value;
+    }
+
+    function getLocationLabel(value) {
+        return getConsultationLocationLabel(i18n.language, value);
+    }
+
+    const provinceOptions = makeOptions(
+        options?.regions.map((item) => item.name),
+        allLabel,
+        getLocationLabel,
+    );
+
+    const districtOptions = makeOptions(selectedRegion?.districts, allLabel, getLocationLabel);
+
     // 지정한 여섯 언어를 먼저 표시하고 '전체'는 맨 아래에 둔다.
     const languageOptions = [
         ...["한국어", "영어", "중국어", "일본어", "베트남어", "태국어"]
             .filter((value) => options?.languages.includes(value))
-            .map((value) => ({ value, label: value })),
-        { value: "", label: t("institutionGuide.all") },
+            .map((value) => ({
+                value,
+                label: getLanguageLabel(value),
+            })),
+        { value: "", label: allLabel },
     ];
-    const methodOptions = makeOptions(options?.methods);
+
+    const methodOptions = makeOptions(options?.methods, allLabel, getMethodLabel);
 
     // 검색어만 입력하거나 분야와 키워드를 함께 선택하면 조회할 수 있다.
     // 검색어는 API가 허용하는 최대 100자까지만 받는다.
@@ -269,7 +321,7 @@ export default function Consultation() {
         <div className={`page-stack ${styles.page}`}>
             <section className="panel consultation-panel" aria-labelledby="consultation-title">
                 <div className="consultation-heading">
-                    <h2 id="consultation-title">어떤 상담이 필요하신가요?</h2>
+                    <h2 id="consultation-title">{t("institutionGuide.title")}</h2>
                 </div>
 
                 {/* 표시할 목록이 이미 있으면 조회 중에도 선택창을 계속 보여준다. */}
@@ -285,12 +337,12 @@ export default function Consultation() {
                                 className="button"
                                 onClick={() => setRetryCount((previous) => previous + 1)}
                             >
-                                다시 불러오기
+                                {t("institutionGuide.reloadOptions")}
                             </button>
                         </div>
                     </div>
                 ) : !options?.topics.length ? (
-                    <p role="status">등록된 상담 분야가 없습니다.</p>
+                    <p role="status">{t("institutionGuide.noTopics")}</p>
                 ) : (
                     <form onSubmit={handleSubmit}>
                         {/* 검색어 입력도 다른 선택 조건처럼 이전 결과를 즉시 숨긴다. */}
@@ -316,9 +368,7 @@ export default function Consultation() {
                         </div>
                         {/* 해제 가능한 입력을 사용하되 선택 상태는 한 분야만 유지한다. */}
                         <fieldset className="consultation-group">
-                            <legend>
-                                {t("institutionGuide.topicLabel")}
-                            </legend>
+                            <legend>{t("institutionGuide.topicLabel")}</legend>
 
                             <div className="consultation-choices">
                                 {options.topics.map((item) => (
@@ -371,7 +421,9 @@ export default function Consultation() {
                         {/* 지역·언어·상담 방식은 기존 공통 선택창 사용 */}
                         <div className="consultation-filters">
                             <div className="form-field">
-                                <span id="consultation-province-label">희망 지역 · 시·도</span>
+                                <span id="consultation-province-label">
+                                    {t("institutionGuide.provinceLabel")}
+                                </span>
                                 <SelectBox
                                     id="consultation-province"
                                     maxVisibleOptions={6}
@@ -383,7 +435,9 @@ export default function Consultation() {
                             </div>
 
                             <div className="form-field">
-                                <span id="consultation-district-label">희망 지역 · 시·군·구</span>
+                                <span id="consultation-district-label">
+                                    {t("institutionGuide.districtLabel")}
+                                </span>
                                 <SelectBox
                                     // 시·도 변경 시 열린 목록 상태도 초기화
                                     key={province}
@@ -398,7 +452,9 @@ export default function Consultation() {
                             </div>
 
                             <div className="form-field">
-                                <span id="consultation-language-label">상담 언어</span>
+                                <span id="consultation-language-label">
+                                    {t("institutionGuide.consultationLanguageLabel")}
+                                </span>
                                 <SelectBox
                                     id="consultation-language"
                                     maxVisibleOptions={6}
@@ -411,7 +467,9 @@ export default function Consultation() {
                             </div>
 
                             <div className="form-field">
-                                <span id="consultation-method-label">상담 방식</span>
+                                <span id="consultation-method-label">
+                                    {t("institutionGuide.consultationMethodLabel")}
+                                </span>
                                 <SelectBox
                                     id="consultation-method"
                                     maxVisibleOptions={6}
@@ -456,10 +514,9 @@ export default function Consultation() {
                         <div aria-live="polite">
                             {confirmed && (
                                 <section className="consultation-summary">
-                                    <h3>선택한 상담 조건</h3>
+                                    <h3>{t("institutionGuide.selectedConditionsTitle")}</h3>
                                     <p className="form-help">
-                                        조건을 변경하면 이전 결과가 숨겨집니다. 안내받기를 눌러 다시
-                                        확인해주세요.
+                                        {t("institutionGuide.conditionsChanged")}
                                     </p>
 
                                     <dl>
@@ -486,20 +543,22 @@ export default function Consultation() {
                                             </dd>
                                         </div>
                                         <div>
-                                            <dt>희망 지역</dt>
+                                            <dt>{t("institutionGuide.selectedProvinceLabel")}</dt>
                                             <dd>
-                                                {confirmed.province}
+                                                {getLocationLabel(confirmed.province)}
                                                 {" / "}
-                                                {confirmed.district}
+                                                {getLocationLabel(confirmed.district)}
                                             </dd>
                                         </div>
                                         <div>
-                                            <dt>상담 언어</dt>
-                                            <dd>{confirmed.language}</dd>
+                                            <dt>
+                                                {t("institutionGuide.consultationLanguageLabel")}
+                                            </dt>
+                                            <dd>{getLanguageLabel(confirmed.language)}</dd>
                                         </div>
                                         <div>
-                                            <dt>상담 방식</dt>
-                                            <dd>{confirmed.method}</dd>
+                                            <dt>{t("institutionGuide.consultationMethodLabel")}</dt>
+                                            <dd>{getMethodLabel(confirmed.method)}</dd>
                                         </div>
                                     </dl>
                                 </section>

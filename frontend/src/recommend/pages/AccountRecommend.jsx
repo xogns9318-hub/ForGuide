@@ -116,7 +116,12 @@ export default function AccountRecommend() {
     );
     const residenceOptions = [
         { value: "", label: t("recommendForm.choose") },
-        ...(choices?.residence_status ?? []).map((value) => ({ value, label: value })),
+        ...(choices?.residence_status ?? []).map((value) => ({
+            value,
+            label: t(`recommendForm.residenceStatuses.${value}`, {
+                defaultValue: value,
+            }),
+        })),
     ];
 
     const renderFacts = (item) => (

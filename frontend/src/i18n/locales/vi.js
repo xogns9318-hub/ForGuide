@@ -41,6 +41,78 @@ const vi = {
         },
     },
 
+    preparationCard: {
+        title: "Hãy sắp xếp nội dung bạn cần tư vấn.",
+        givenName: "Tên",
+        surname: "Họ",
+        birthDate: "Ngày sinh",
+        gender: "Giới tính",
+        male: "Nam",
+        female: "Nữ",
+        occurrence: "Thời điểm xảy ra",
+        choose: "Vui lòng chọn",
+        issue: "Vấn đề gặp phải",
+        other: "Khác",
+        taxKeyword: "Khai và nộp thuế",
+        keywordHelp: "Hãy chọn các vấn đề chi tiết phù hợp. Có thể chọn nhiều mục.",
+        details: "Nội dung chi tiết",
+        characterCount: "{{count}}/300 ký tự",
+        guidanceTitle: "Hướng dẫn chuẩn bị tư vấn",
+        acknowledge: "Tôi đã xác nhận.",
+        translationQuestion: "Bạn có cần bản dịch tiếng Hàn không?",
+        yes: "Có",
+        no: "Không",
+        complete: "Hoàn tất chuẩn bị tư vấn",
+        incomplete: "Việc chuẩn bị tư vấn chưa hoàn tất.\nHãy chọn và nhập tất cả các mục.",
+        results: "Thẻ chuẩn bị tư vấn đã tạo",
+        print: "In thẻ",
+        originalTitle: "Thẻ chuẩn bị tư vấn - Bản gốc",
+        translatedTitle: "Thẻ chuẩn bị tư vấn - Bản dịch tiếng Hàn",
+        translating: "Đang dịch sang tiếng Hàn.",
+        retryTranslation: "Dịch lại",
+        translationFailed:
+            "Không thể dịch sang tiếng Hàn. Bản gốc sẽ được giữ nguyên. Vui lòng thử lại sau.",
+        translationTimeout:
+            "Phản hồi dịch đang chậm. Bản gốc sẽ được giữ nguyên. Vui lòng thử lại sau.",
+        translationUnavailable:
+            "Dịch vụ dịch tạm thời không khả dụng. Bản gốc sẽ được giữ nguyên. Vui lòng thử lại sau.",
+        translationRateLimited:
+            "Đã đạt giới hạn sử dụng dịch. Bản gốc sẽ được giữ nguyên. Vui lòng thử lại sau.",
+        translationConnectionFailed:
+            "Không thể kết nối máy chủ. Bản gốc sẽ được giữ nguyên. Hãy kiểm tra kết nối và thử lại.",
+        translationReview: "Đây là bản dịch AI. Hãy so sánh với bản gốc để kiểm tra nội dung.",
+        translationNotice:
+            "Khi chọn dịch sang tiếng Hàn, nội dung chi tiết sẽ được gửi đến Google Gemini khi hoàn tất. Tên, họ và ngày sinh sẽ không được gửi.",
+        institution: "Cơ quan đã chọn: {{name}}",
+        nameRule:
+            "Nhập tối đa 20 ký tự không có khoảng trắng, số hoặc ký tự đặc biệt. Có thể nhập tên bằng ngôn ngữ khác.",
+        birthYear: "Năm",
+        birthMonth: "Tháng",
+        birthDay: "Ngày",
+        birthYearPlaceholder: "YYYY",
+        birthMonthValue: "Tháng {{value}}",
+        birthDayValue: "Ngày {{value}}",
+        birthDateInvalid:
+            "Hãy nhập ngày sinh hợp lệ từ ngày 1 tháng 1 năm 1900 đến hôm nay.",
+        periods: {
+            under1: "Dưới 1 tháng",
+            months1to3: "1 đến 3 tháng",
+            months3to6: "3 đến 6 tháng",
+            months6to12: "6 tháng đến 1 năm",
+            years1: "Từ 1 năm trở lên",
+            years3: "Từ 3 năm trở lên",
+            years5: "Từ 5 năm trở lên",
+            years10: "Từ 10 năm trở lên",
+        },
+        notices: {
+            1: "Việc chụp ảnh có thể bị hạn chế tại cơ sở quốc gia quan trọng, bên trong cơ quan công cộng hoặc viện nghiên cứu.\nHãy kiểm tra quy định của từng nơi và tuân theo hướng dẫn của nhân viên an ninh.",
+            2: "Hãy dừng hành vi lăng mạ, bạo lực, đe dọa hoặc quấy rối lặp lại đối với nhân viên.\nTùy theo hành vi, buổi tư vấn có thể kết thúc hoặc có biện pháp theo quy định pháp luật.",
+            3: "Không phải mọi yêu cầu đều được xử lý ngay lập tức.\nHãy kiểm tra thời hạn xử lý và hồ sơ bổ sung cần thiết, sau đó nộp đơn với đủ thời gian trước thời điểm cần kết quả.",
+            4: "Giờ làm việc và thời gian nghỉ trưa của quầy tư vấn khác nhau tùy cơ quan và dịch vụ.\nTrước khi đến, hãy kiểm tra giờ hoạt động và yêu cầu đặt lịch.",
+            5: "Hồ sơ cần thiết khi người đại diện nộp đơn khác nhau tùy từng dịch vụ.\nHãy kiểm tra trước giấy ủy quyền, giấy tờ tùy thân của người nộp và người đại diện, cùng khả năng nộp hồ sơ thay mặt.",
+        },
+    },
+
     homeOverview: {
         translation: {
             title: "Dịch thuật",
@@ -231,6 +303,57 @@ const vi = {
             checkedAt: "Ngày xác nhận thông tin",
         },
         multipleKeywords: "(Có thể chọn nhiều)",
+
+        selectionLabels: {
+            "출입국·행정": "Xuất nhập cảnh & Hành chính",
+            "비자·체류": "Thị thực & Lưu trú",
+            외국인등록: "Đăng ký người nước ngoài",
+            "민원·증명서": "Thủ tục hành chính & Giấy tờ chứng nhận",
+
+            "노동·취업": "Lao động & Việc làm",
+            "임금·퇴직금": "Tiền lương & Trợ cấp thôi việc",
+            "근로계약·근무조건": "Hợp đồng lao động & Điều kiện làm việc",
+            "취업·고용": "Tìm việc & Tuyển dụng",
+
+            "금융·채무": "Tài chính & Nợ",
+            "대출·서민금융": "Khoản vay & Hỗ trợ tài chính",
+            "채무·신용회복": "Nợ & Phục hồi tín dụng",
+            "금융민원·피해": "Khiếu nại & Thiệt hại tài chính",
+
+            "보험·연금": "Bảo hiểm & Lương hưu",
+            건강보험: "Bảo hiểm y tế",
+            국민연금: "Lương hưu quốc dân",
+            "산재·고용보험": "Bảo hiểm tai nạn lao động & Việc làm",
+
+            세금: "Thuế",
+            "세금신고·납부": "Khai và nộp thuế",
+            연말정산: "Quyết toán thuế cuối năm",
+            세금환급: "Hoàn thuế",
+
+            "생활·복지·법률": "Đời sống, phúc lợi & pháp luật",
+            복지지원: "Hỗ trợ phúc lợi",
+            "가족·생활상담": "Tư vấn gia đình & đời sống",
+            "법률·주거분쟁": "Tranh chấp pháp lý & nhà ở",
+        },
+        topics: {
+            bank: "Tài khoản & Ngân hàng",
+            loan: "Khoản vay",
+            repayment: "Nợ & Hoàn trả",
+            credit: "Quản lý tín dụng",
+            living: "Chi phí sinh hoạt & Chi tiêu",
+            wages: "Lương & Tiền công",
+            employment_contract: "Hợp đồng lao động & Điều kiện làm việc",
+            retirement: "Nghỉ việc & Trợ cấp thôi việc",
+            employment: "Việc làm & Tìm việc",
+            remittance: "Chuyển tiền & Chuyển khoản",
+            payment: "Thẻ & Thanh toán",
+            housing: "Chi phí nhà ở",
+            tax: "Thuế",
+            insurance: "Bảo hiểm & An sinh xã hội",
+            fraud: "Lừa đảo & Thiệt hại tài chính",
+            financial_support: "Hỗ trợ tài chính & Phúc lợi",
+            financial_information: "Thông tin tài chính & Tư vấn cơ bản",
+        },
     },
 
     notification: {
@@ -1159,6 +1282,236 @@ const vi = {
             TIMEOUT: "Phản hồi đang chậm. Vui lòng thử lại sau.",
         },
     },
+
+    recommendForm: {
+        choose: "Chọn",
+        submit: "Nhận đề xuất",
+        required: "Hãy chọn tất cả các mục để nhận đề xuất.",
+        changed: "Điều kiện đã thay đổi. Vui lòng nhận đề xuất lại.",
+        residenceStatus: "Tư cách lưu trú",
+        loading: "Đang tải kết quả đề xuất.",
+        loadingChoices: "Đang tải câu hỏi.",
+        loadError: "Không thể tải kết quả đề xuất.",
+        invalidInput: "Vui lòng kiểm tra lại thông tin đã nhập.",
+        retry: "Thử lại",
+        resultsTitle: "Kết quả đề xuất",
+        empty: "Không có sản phẩm phù hợp. Hãy thử thay đổi điều kiện.",
+        groupCount: "{{companies}} tổ chức tài chính · {{total}} sản phẩm",
+        productCount: "{{total}} sản phẩm",
+        showMore: "Xem thêm",
+        showLess: "Thu gọn",
+        mismatchToggle: "Xem sản phẩm khó đăng ký ({{count}})",
+        detail: "Xem chi tiết",
+        close: "Đóng",
+        reasonsTitle: "Lý do đề xuất",
+        checksTitle: "Điều cần kiểm tra trước khi đăng ký",
+        nextTitle: "Việc cần làm tiếp theo",
+        homepage: "Trang web",
+        phone: "Điện thoại",
+        noContact: "Không có thông tin liên hệ.",
+        residenceStatuses: {
+            "비전문취업(E-9)": "Lao động không chuyên môn (E-9)",
+            "방문취업(H-2)": "Lao động thăm thân (H-2)",
+            전문인력: "Nhân lực chuyên môn",
+            유학생: "Du học sinh",
+            "재외동포(F-4)": "Người Hàn ở nước ngoài (F-4)",
+            "영주(F-5)": "Thường trú nhân (F-5)",
+            "결혼이민(F-6)": "Người nhập cư theo diện kết hôn (F-6)",
+            기타: "Khác",
+        },
+    },
+
+    recommendAccount: {
+        title: "Gợi ý tài khoản",
+        description:
+            "Trả lời vài câu hỏi để so sánh tiền gửi có kỳ hạn và tiết kiệm mà người nước ngoài có thể đăng ký.",
+        gateTitle: "Hãy kiểm tra điều này trước",
+        fastTitle: "Bạn đang tìm sản phẩm nào?",
+        ownAccount: "Bạn có tài khoản thanh toán đứng tên mình không?",
+        visit: "Đến chi nhánh",
+        purpose: "Mục đích",
+        term: "Thời gian gửi",
+        institution: "Tổ chức tài chính",
+        yes: "Có",
+        no: "Không",
+        visitOptions: {
+            상관없음: "Có thể đến chi nhánh",
+            "원치 않음": "Không muốn đến chi nhánh",
+        },
+        purposeOptions: {
+            예금: "Tiền gửi có kỳ hạn · Gửi một khoản tiền một lần",
+            적금: "Tiết kiệm · Gửi một khoản nhỏ mỗi tháng",
+        },
+        termOption: "{{count}} tháng",
+        termNotice:
+            "Không chọn kỳ hạn dài hơn thời gian lưu trú còn lại. Nếu tất toán trước hạn, lãi suất tất toán trước hạn thấp hơn có thể được áp dụng và làm giảm tiền lãi.",
+        institutionOptions: {
+            "은행 선호": "Ưu tiên ngân hàng",
+            상관없음: "Không có ưu tiên",
+        },
+        noAccountTitle: "Hãy mở tài khoản thanh toán trước",
+        noAccountBody:
+            "Tiền gửi có kỳ hạn và tiết kiệm được đăng ký bằng cách liên kết với tài khoản thanh toán đứng tên bạn. Hãy hỏi ngân hàng gần nhất về giấy tờ cần thiết để người nước ngoài mở tài khoản.",
+        noAccountAction: "Tìm cơ quan hỗ trợ",
+        rate: "Lãi suất cơ bản",
+        rateValue: "{{rate}}%/năm · {{type}}",
+        period: "Kỳ hạn",
+        joinWay: "Cách đăng ký",
+        institutionType: "Loại tổ chức tài chính",
+        visitRequired: "Cần đến chi nhánh",
+        chartTitle: "So sánh tiền lãi dự kiến (trước thuế)",
+        chartDeposit: "Khi gửi 10 triệu won trong {{term}} tháng",
+        chartSaving: "Khi gửi 500.000 won mỗi tháng trong {{term}} tháng",
+        interest: "Tiền lãi dự kiến (trước thuế)",
+        interestValue: "{{amount}} won",
+    },
+
+    recommendInsurance: {
+        title: "Gợi ý bảo hiểm bồi thường thực tế",
+        description:
+            "Trả lời vài câu hỏi để so sánh bảo hiểm bồi thường thực tế có cùng quyền lợi theo mức phí.",
+        gateTitle: "Hãy kiểm tra điều này trước",
+        healthInsurance: "Bạn có tham gia Bảo hiểm Y tế Quốc dân không?",
+        healthOptions: {
+            예: "Có",
+            아니오: "Không",
+            모름: "Không rõ",
+        },
+        fastTitle: "Hãy cho biết thông tin để tính phí bảo hiểm",
+        sex: "Giới tính",
+        sexOptions: {
+            남: "Nam",
+            여: "Nữ",
+        },
+        age: "Tuổi",
+        agePlaceholder: "Ví dụ: 30",
+        ageError: "Hãy nhập số từ {{min}} đến {{max}} tuổi.",
+        noInsuranceTitle: "Hãy kiểm tra tình trạng tham gia bảo hiểm y tế trước",
+        noInsuranceBody:
+            "Nội dung cần tìm hiểu khác nhau tùy theo tình trạng bảo hiểm y tế. Hãy nhận tư vấn phù hợp với hoàn cảnh của bạn từ cơ quan hỗ trợ trước.",
+        noInsuranceAction: "Tìm cơ quan hỗ trợ",
+        premium: "Phí bảo hiểm hàng tháng",
+        premiumValue: "{{amount}} won",
+        breakdown: "Cấu thành phí bảo hiểm",
+        breakdownValue: "Cơ bản {{basic}} · Quyền lợi bổ sung 1 {{rider1}} · Quyền lợi bổ sung 2 {{rider2}}",
+        insurerType: "Loại bảo hiểm",
+        joinWay: "Cách đăng ký",
+        online: "Có thể đăng ký trực tuyến",
+        offline: "Liên hệ công ty bảo hiểm hoặc tư vấn viên",
+        chartTitle: "So sánh phí bảo hiểm hàng tháng",
+        chartBasis: "Dựa trên {{sex}}, {{age}} tuổi",
+        basic: "Cơ bản",
+        rider1: "Quyền lợi bổ sung 1",
+        rider2: "Quyền lợi bổ sung 2",
+    },
+
+    recommendLoan: {
+        title: "Gợi ý khoản vay",
+        description:
+            "Chọn mục đích để so sánh các khoản vay người nước ngoài có thể tìm hiểu theo lãi suất trung bình.",
+        fastTitle: "Bạn đang tìm khoản vay nào?",
+        purpose: "Mục đích",
+        purposeOptions: {
+            생활비: "Chi phí sinh hoạt (vay tín chấp)",
+            "전세 보증금": "Tiền đặt cọc Jeonse (vay thế chấp)",
+        },
+        visit: "Đến chi nhánh",
+        visitOptions: {
+            상관없음: "Có thể đến chi nhánh",
+            "원치 않음": "Không muốn đến chi nhánh",
+        },
+        rateAvg: "Lãi suất trung bình tháng trước",
+        rateValue: "{{rate}}%/năm",
+        rateRange: {
+            credit: "Lãi suất theo điểm tín dụng",
+            jeonse: "Khoảng lãi suất hiện tại",
+        },
+        rateRangeValue: "{{min}}–{{max}}%/năm",
+        noRate: "Chưa công bố",
+        kind: "Loại sản phẩm",
+        joinWay: "Cách đăng ký",
+        visitRequired: "Cần đến chi nhánh",
+        limit: "Hạn mức vay",
+        repay: "Phương thức trả nợ",
+        chartTitle: "So sánh lãi suất trung bình tháng trước",
+        chartBasis: "Lãi suất thấp hơn thường giúp giảm gánh nặng tiền lãi.",
+    },
+
+    recommendResult: {
+        groups: {
+            match: "Người nước ngoài có thể đăng ký",
+            check: "Cần kiểm tra điều kiện đăng ký",
+            mismatch: "Sản phẩm khó đăng ký",
+        },
+
+        reasons: {
+            high_rate: "Lãi suất của sản phẩm này tương đối cao trong cùng điều kiện.",
+            no_visit: "Bạn có thể đăng ký mà không cần đến chi nhánh.",
+            bank: "Đây là sản phẩm của ngân hàng.",
+            low_premium: "Phí bảo hiểm tương đối thấp với quyền lợi tương tự.",
+            online_join: "Bạn có thể đăng ký trực tuyến.",
+            low_rate: "Lãi suất trung bình tương đối thấp trong các khoản vay cùng loại.",
+        },
+
+        checkReasons: {
+            foreigner_unspecified: "Điều kiện đăng ký dành cho người nước ngoài chưa được công bố.",
+            region_limit: "Khu vực đăng ký bị giới hạn: {{regions}}",
+            rate_outlier:
+                "Lãi suất cao hơn đáng kể so với các sản phẩm khác. Hãy kiểm tra điều kiện đăng ký đặc biệt.",
+            kakao_withdrawal_only:
+                "Hiện chỉ có thông tin về tài khoản giao dịch cho người nước ngoài. Hãy kiểm tra xem bạn có thể đăng ký sản phẩm này hay không.",
+            insurer_review:
+                "Tiêu chí xét duyệt người nước ngoài khác nhau tùy công ty bảo hiểm.",
+            limit_after_review: "Hạn mức vay được xác định sau khi xét duyệt.",
+            special_target:
+                "Đây là sản phẩm dành cho nhóm đối tượng cụ thể như người trẻ hoặc vợ chồng mới cưới. Hãy kiểm tra điều kiện.",
+            rate_not_disclosed: "Lãi suất trung bình chưa được công bố.",
+            rate_inconsistent:
+                "Lãi suất trung bình tháng trước khác nhiều so với phạm vi lãi suất hiện tại. Hãy xác nhận lãi suất thực tế với tổ chức tài chính.",
+        },
+
+        mismatchReasons: {
+            domestic_only: "Chỉ công dân Hàn Quốc mới có thể đăng ký.",
+            visit_required: "Bạn phải đến chi nhánh để đăng ký.",
+            term_over_stay: "Thời gian tiết kiệm dài hơn thời gian lưu trú còn lại của bạn.",
+            kbank_not_yet: "Dịch vụ đăng ký dành cho người nước ngoài đang được chuẩn bị.",
+        },
+
+        guides: {
+            join_at_company:
+                "Sản phẩm này được giới thiệu là người nước ngoài có thể đăng ký. Hãy đăng ký qua ứng dụng hoặc trang web của tổ chức tài chính.",
+            ask_foreigner_eligibility:
+                "Điều kiện đăng ký dành cho người nước ngoài chưa được công bố. Hãy hỏi tổ chức tài chính xem người nước ngoài có thể đăng ký hay không trước khi đăng ký.",
+            ask_insurer_eligibility:
+                "Trước khi đăng ký, hãy hỏi công ty bảo hiểm xem bạn có thể tham gia với tư cách lưu trú và thời gian lưu trú hiện tại hay không.",
+            ask_loan_eligibility:
+                "Điều kiện vay dành cho người nước ngoài chưa được công bố. Trước khi đăng ký, hãy hỏi tổ chức tài chính xem bạn có thể vay dựa trên tư cách lưu trú, thu nhập và thời gian lưu trú hay không.",
+        },
+
+        moreFromCompany: "{{count}} sản phẩm khác từ tổ chức tài chính này",
+
+        separate: {
+            title: "Bạn cũng có thể xem các sản phẩm này",
+            senior: "Bảo hiểm bồi thường thực tế cho người cao tuổi",
+            simplified: "Bảo hiểm bồi thường thực tế thẩm định đơn giản",
+            description:
+                "Các sản phẩm này được hiển thị riêng vì điều kiện đăng ký và quyền lợi khác với bảo hiểm bồi thường thực tế thông thường.",
+        },
+
+        notices: {
+            rate_may_change: "Lãi suất dựa trên công bố tháng {{month}} và có thể thay đổi.",
+            savings_bank_protected:
+                "Tiền gửi và tiết kiệm tại ngân hàng tiết kiệm cũng được bảo vệ bởi chế độ bảo vệ người gửi tiền.",
+            reference_only:
+                "Gợi ý chỉ mang tính tham khảo. Điều kiện và khả năng đăng ký thực tế phụ thuộc vào quá trình xét duyệt của tổ chức tài chính.",
+            premium_may_change: "Phí bảo hiểm dựa trên công bố ngày {{date}} và có thể thay đổi.",
+            insurance_age_basis:
+                "Phí bảo hiểm dựa trên tuổi bảo hiểm nên có thể khác một chút so với phí thực tế.",
+            rate_by_credit:
+                "Lãi suất trung bình là mức trung bình của những người đã vay trong tháng trước. Lãi suất thực tế của bạn phụ thuộc vào xét duyệt tín dụng.",
+        },
+    },
+
     footer: {
         description: "Đây là phần chân trang. Ở đây có mùi chân rất nồng.",
         copyright: "© Đây là điều tốt nhất bạn có thể làm sao, con người?",

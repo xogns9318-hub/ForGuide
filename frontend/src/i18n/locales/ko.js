@@ -27,6 +27,21 @@ const ko = {
         },
     },
 
+    homeMain: {
+        duckLabel: "옆모습으로 걸어와 가운데에서 인사하는 오리",
+        navigationLabel: "홈 구역 이동",
+        sections: {
+            main: "메인",
+            translation: "번역",
+            counseling: "상담",
+            recommendation: "추천",
+            repayment: "계산",
+            employment: "취업",
+            extendedServices: "확장",
+            contact: "문의",
+        },
+    },
+
     preparationCard: {
         title: "상담할 내용을 정리해주세요.",
         givenName: "이름",
@@ -97,21 +112,7 @@ const ko = {
             5: "대리인이 신청할 때 필요한 서류는 업무마다 다릅니다.\n위임장, 본인·대리인 신분증 등 해당 업무의 구비서류와 대리 신청 가능 여부를 미리 확인해주세요.",
         },
     },
-    homeMain: {
-        duckLabel: "옆모습으로 걸어와 가운데에서 인사하는 오리",
-        navigationLabel: "홈 구역 이동",
-        sections: {
-            main: "메인",
-            translation: "번역",
-            counseling: "상담",
-            recommendation: "추천",
-            repayment: "계산",
-            employment: "취업",
-            extendedServices: "확장",
-            contact: "문의",
-        },
-    },
-    // 홈 안내 문구는 실제 서비스 화면의 설명과 분리한다.
+
     homeOverview: {
         translation: {
             title: "번역",
@@ -193,6 +194,7 @@ const ko = {
             totalInterest: "총 이자 금액",
         },
     },
+
     institutionGuide: {
         title: "어떤 상담이 필요하신가요?",
         optionsLoadError: "선택 항목을 불러오지 못했습니다.",
@@ -1403,6 +1405,16 @@ const ko = {
         homepage: "홈페이지",
         phone: "전화",
         noContact: "연락처 정보가 없어요.",
+        residenceStatuses: {
+            nonProfessionalEmployment: "비전문취업(E-9)",
+            visitingEmployment: "방문취업(H-2)",
+            professional: "전문인력",
+            student: "유학생",
+            overseasKorean: "재외동포(F-4)",
+            permanentResident: "영주(F-5)",
+            marriageMigrant: "결혼이민(F-6)",
+            other: "기타",
+        },
     },
 
     recommendAccount: {

@@ -7,12 +7,32 @@ import {
     getConsultationInstitution,
     getInstitutionGuide,
 } from "../../api/consultationApi.js";
+import { getConsultationLocationLabel } from "../../i18n/consultationLocationLabels.js";
 import styles from "../../styles/institutionResults.module.css";
 
 const unique = (values) => [...new Set(values.filter(Boolean))];
 
 const availability = (value, t) =>
     value === true ? t("available") : value === false ? t("unavailable") : t("unknown");
+
+const LANGUAGE_TRANSLATION_KEYS = {
+    한국어: "ko",
+    영어: "en",
+    중국어: "zh",
+    일본어: "ja",
+    베트남어: "vi",
+    태국어: "th",
+};
+
+function getLanguageLabel(value, t) {
+    const languageKey = LANGUAGE_TRANSLATION_KEYS[value];
+
+    return languageKey ? t(`languages.${languageKey}`) : value;
+}
+
+function getSelectionLabel(value, t) {
+    return t(`selectionLabels.${value}`, { defaultValue: value });
+}
 
 // 공식 사이트와 출처 링크에는 HTTP(S) 주소만 허용한다.
 function webUrl(value) {
@@ -50,7 +70,7 @@ function Field({ label, children }) {
 }
 
 // 카드에서는 언어를 요약하고, 상세에서는 원문과 이용 조건을 모두 보여준다.
-function ServiceInformation({ service, guidance, t, compact = false }) {
+function ServiceInformation({ service, guidance, t, language, compact = false }) {
     const p = service.phone;
     const v = service.visit;
     const baseLanguages = ["한국어", "영어", "중국어", "일본어", "태국어", "베트남어"];
@@ -66,7 +86,9 @@ function ServiceInformation({ service, guidance, t, compact = false }) {
             const original =
                 method === "phone" ? guidance?.phoneLanguages : guidance?.visitLanguages;
 
-            return original || all.join(", ") || t("unknown");
+            return (
+                original || all.map((code) => getLanguageLabel(code, t)).join(", ") || t("unknown")
+            );
         }
 
         // 실제 지원하는 기본 언어만 남기고, 나머지는 다국어 한 번으로 표시한다.
@@ -76,14 +98,19 @@ function ServiceInformation({ service, guidance, t, compact = false }) {
             displayed.push(t("multilingual"));
         }
 
-        return displayed.join(", ") || t("unknown");
+        return displayed.map((code) => getLanguageLabel(code, t)).join(", ") || t("unknown");
     };
 
     const location =
         unique(
             service.regions
                 .filter((region) => region.method === "visit")
-                .map((region) => [region.province, region.district].filter(Boolean).join(" ")),
+                .map((region) =>
+                    [region.province, region.district]
+                        .filter(Boolean)
+                        .map((value) => getConsultationLocationLabel(language, value))
+                        .join(" "),
+                ),
         ).join(", ") || (p.regionStatus === "unrestricted" ? t("phoneNationwide") : t("unknown"));
 
     const methods = ["phone", "visit", "online"]
@@ -185,7 +212,7 @@ function ServiceInformation({ service, guidance, t, compact = false }) {
 }
 
 // 네이티브 dialog가 모달의 포커스와 배경 접근 제한을 관리한다.
-function InstitutionDialog({ id, filters, onClose, t }) {
+function InstitutionDialog({ id, filters, language, onClose, t }) {
     const dialogRef = useRef(null);
     const [item, setItem] = useState(null);
     const [error, setError] = useState(null);
@@ -285,7 +312,8 @@ function InstitutionDialog({ id, filters, onClose, t }) {
                         </Field>
 
                         <Field label={t("fields.keywords")}>
-                            {keywords.join(", ") || t("unknown")}
+                            {keywords.map((keyword) => getSelectionLabel(keyword, t)).join(", ") ||
+                                t("unknown")}
                         </Field>
 
                         <Field label={t("fields.checkedAt")}>
@@ -341,6 +369,7 @@ function InstitutionDialog({ id, filters, onClose, t }) {
                                 service={group.service}
                                 guidance={item.guidance}
                                 t={t}
+                                language={language}
                             />
                         </div>
                     ))}
@@ -381,7 +410,7 @@ function InstitutionDialog({ id, filters, onClose, t }) {
 }
 
 export default function ConsultationResults({ filters, visible, reloadKey }) {
-    const { t: translate } = useTranslation();
+    const { t: translate, i18n } = useTranslation();
     const t = (key, variables) => translate(`institutionGuide.${key}`, variables);
 
     const [result, setResult] = useState(null);
@@ -522,7 +551,9 @@ export default function ConsultationResults({ filters, visible, reloadKey }) {
                                 {item.match.keywords.length > 0 && (
                                     <p className={styles.notice}>
                                         {t("matchedList", {
-                                            keywords: item.match.keywords.join(", "),
+                                            keywords: item.match.keywords
+                                                .map((keyword) => getSelectionLabel(keyword, t))
+                                                .join(", "),
                                         })}
                                     </p>
                                 )}
@@ -540,6 +571,7 @@ export default function ConsultationResults({ filters, visible, reloadKey }) {
                                         service={item.preview}
                                         guidance={item.guidance}
                                         t={t}
+                                        language={i18n.language}
                                         compact
                                     />
 
@@ -572,6 +604,7 @@ export default function ConsultationResults({ filters, visible, reloadKey }) {
                 <InstitutionDialog
                     id={selectedId}
                     filters={filters}
+                    language={i18n.language}
                     onClose={() => setSelectedId(null)}
                     t={t}
                 />
