@@ -14,6 +14,7 @@ const ko = {
             contact: "문의하기",
             contactMenu: "문의",
             inquiry: "문의하기",
+            chatbot: "AI 챗봇 상담",
 
             // 클릭할 수 없는 연한 제목
             extendedServices: "확장 가이드",
@@ -621,6 +622,48 @@ const ko = {
         },
         answer: {
             title: "관리자 답변",
+        },
+    },
+
+    // 문의 챗봇 화면 (/contact/chatbot)
+    chatbot: {
+        title: "AI 챗봇 상담",
+        description:
+            "ForGuide 이용 방법을 AI 챗봇에게 물어보세요. 질문한 언어로 답합니다. AI 답변은 참고용이며, 금리·자격 조건 같은 실제 수치는 해당 화면에서 확인해주세요.",
+        loading: "대화를 불러오는 중입니다.",
+        loadError: "대화를 불러오지 못했습니다.",
+        retry: "다시 시도",
+        unavailable: "지금은 AI 챗봇을 사용할 수 없습니다. 아래 '직접 문의하기'를 이용해주세요.",
+        empty: "궁금한 점을 입력해보세요.\n예) 대출 상품은 어디서 비교하나요?",
+        remaining: "오늘 남은 질문 {{count}}회 / {{limit}}회",
+        clear: "대화 지우기",
+        clearConfirm: "대화를 모두 지울까요? 오늘 사용한 질문 횟수는 돌아오지 않습니다.",
+        inputLabel: "질문 입력",
+        placeholder: "질문을 입력하세요. (Enter 보내기, Shift+Enter 줄바꿈)",
+        count: "{{count}} / {{max}}자",
+        send: "보내기",
+        sending: "답변 기다리는 중...",
+        answering: "답변을 준비하고 있습니다...",
+        privacyNotice:
+            "주민등록번호·외국인등록번호·여권번호·계좌번호·전화번호는 자동으로 가린 뒤 AI에 전달됩니다. 개인정보는 입력하지 않는 것이 안전합니다.",
+        speaker: {
+            user: "나",
+            assistant: "AI 챗봇",
+        },
+        error: {
+            dailyLimit:
+                "오늘 질문 횟수를 모두 사용했습니다. 내일 다시 이용하거나 직접 문의해주세요.",
+            tooLong: "질문은 {{max}}자 이하로 입력해주세요.",
+            unavailable: "지금은 AI 챗봇을 사용할 수 없습니다.",
+            timeout: "답변이 늦어지고 있습니다. 잠시 후 다시 시도해주세요.",
+            network: "서버에 연결하지 못했습니다. 네트워크를 확인해주세요.",
+            failed: "답변을 받지 못했습니다. 잠시 후 다시 시도해주세요.",
+            clearFailed: "대화를 지우지 못했습니다. 잠시 후 다시 시도해주세요.",
+        },
+        handoff: {
+            title: "원하는 답을 얻지 못하셨나요?",
+            description: "담당자가 직접 확인하고 답변드립니다.",
+            link: "직접 문의하기",
         },
     },
 

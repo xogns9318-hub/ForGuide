@@ -24,6 +24,7 @@ const JobListings = lazy(() => import("../components/JobListings/JobListings.jsx
 const Simulator = lazy(() => import("../components/Simulator/Simulator.jsx"));
 const AdminDashboard = lazy(() => import("../admin/pages/AdminDashboard.jsx"));
 const InquiryPage = lazy(() => import("../inquiry/pages/InquiryPage.jsx"));
+const ChatbotPage = lazy(() => import("../chatbot/pages/ChatbotPage.jsx"));
 const AdminInquiryPage = lazy(() => import("../admin/pages/AdminInquiryPage.jsx"));
 const AdminMemberPage = lazy(() => import("../admin/pages/AdminMemberPage.jsx"));
 const AdminCommunityPage = lazy(() => import("../admin/pages/AdminCommunityPage.jsx"));
@@ -114,6 +115,8 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                     {/* 문의 작성 전 로그인 여부를 확인하고, 로그인 뒤 같은 주소로 돌아온다. */}
                     <Route element={<RequireAuth />}>
                         <Route path="/contact/inquiry" element={<InquiryPage />} />
+                        {/* AI 챗봇 상담: 해결되지 않으면 화면 안 버튼으로 /contact/inquiry에 넘어간다 */}
+                        <Route path="/contact/chatbot" element={<ChatbotPage />} />
                     </Route>
 
                     {/* 커뮤니티 페이지 */}
