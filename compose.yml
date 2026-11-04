@@ -8,5 +8,36 @@ services:
     volumes:
       - forguide-redis-data:/data
 
+  elasticsearch:
+    # 검색 서버는 필요할 때만 별도로 실행한다.
+    profiles: ["search"]
+    build:
+      context: ./database
+      dockerfile: Dockerfile.elasticsearch
+    image: forguide-elasticsearch:9.4.7-nori
+    container_name: forguide-elasticsearch
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      xpack.ml.enabled: "false"
+      # 소규모 로컬 개발에서는 호스트의 메모리 매핑 설정 변경을 생략한다.
+      node.store.allow_mmap: "false"
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
+    ports:
+      # 이 노트북에서만 검색 서버에 접근하도록 제한한다.
+      - "127.0.0.1:9200:9200"
+    mem_limit: 2g
+    volumes:
+      - forguide-elasticsearch-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "curl -fsS 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s' > /dev/null || exit 1"
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 60s
+
 volumes:
   forguide-redis-data:
+  forguide-elasticsearch-data:
