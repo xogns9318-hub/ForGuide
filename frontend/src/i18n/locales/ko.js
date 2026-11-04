@@ -195,6 +195,55 @@ const ko = {
         },
     },
 
+    loanCalculator: {
+        titles: {
+            monthly: "월 상환액",
+            interest: "총 이자",
+        },
+        fields: {
+            loanAmount: "대출 금액",
+            annualInterestRate: "연 금리",
+            loanMonths: "대출 기간",
+            graceMonths: "거치 기간",
+            repaymentMethod: "상환 방식",
+        },
+        units: {
+            tenThousandWon: "만원",
+            months: "개월",
+            percent: "%",
+        },
+        methods: {
+            bullet: "만기 일시",
+            equalPayment: "원리금 균등",
+            equalPrincipal: "원금 균등",
+        },
+        descriptions: {
+            bullet: "대출 만기까지 이자만 납부하고, 원금은 만기에 지불하는 방식입니다.",
+            equalPayment: "원금과 이자를 합쳐 매달 동일한 금액을 납부하는 방식입니다.",
+            equalPrincipal: "매달 동일한 원금을 갚으며 이자는 점차 줄어드는 방식입니다.",
+            equalPaymentWithGrace:
+                "거치기간에는 이자만 납부하고, 이후에는 원금과 이자를 합쳐 매달 동일한 금액을 납부하는 방식입니다.",
+            equalPrincipalWithGrace:
+                "거치기간에는 이자만 납부하고, 이후에는 매달 동일한 원금을 갚으며 이자는 점차 줄어드는 방식입니다.",
+        },
+        schedule: {
+            title: "월별 상환 스케줄",
+            summary: "{{method}} · 총 {{count}}회",
+            ariaLabel: "{{method}} 월별 상환 스케줄 표",
+            columns: {
+                month: "회차",
+                principal: "원금",
+                interest: "이자",
+                payment: "총 금액",
+                repayment: "상환금",
+                cumulativePrincipal: "납입 원금 합계",
+                balance: "잔금",
+            },
+        },
+        calculate: "계산하기",
+        fallbackError: "계산하지 못했습니다. 입력을 확인해주세요.",
+    },
+
     institutionGuide: {
         title: "어떤 상담이 필요하신가요?",
         optionsLoadError: "선택 항목을 불러오지 못했습니다.",

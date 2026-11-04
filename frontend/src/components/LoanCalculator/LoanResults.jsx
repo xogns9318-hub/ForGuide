@@ -27,7 +27,14 @@ export function LoanResults({ mode = "monthly", result }) {
     // 계산 전에는 오른쪽 결과 영역을 비워 둠
     if (!result) return null;
 
-    const method = repaymentMethods.find((item) => item.value === result.method);
+    const methodLabel = t(`loanCalculator.methods.${result.method}`);
+
+    const descriptionKey =
+        result.method === "bullet"
+            ? "bullet"
+            : result.graceMonths > 0
+              ? `${result.method}WithGrace`
+              : result.method;
 
     const monthlyItems = [
         ["firstPayment", result.firstPayment],

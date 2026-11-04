@@ -322,7 +322,7 @@ export default function LoanCalculator({ mode = "monthly" }) {
                             className="button button-primary monthly-payment-button"
                             disabled={!canCalculate}
                         >
-                            계산하기
+                            {t("loanCalculator.calculate")}
                         </button>
                     </form>
                 </div>
