@@ -1,4 +1,46 @@
 const en = {
+    header: {
+        login: "Log In",
+        signup: "Sign Up",
+        logout: "Log Out",
+        myPage: "My Page",
+        myFinance: "My Financial Information",
+        adminPage: "Administrator",
+        language: "Language",
+
+        mega: {
+            serviceList: "Service List",
+            contactMenu: "Inquiries",
+            inquiry: "Contact",
+            extendedServices: "Extended Guides",
+
+            contact: "Contact",
+            contactGroup: "Inquiries",
+            myInquiries: "My Inquiries",
+            privateInquiry: "1-on-1 Inquiry",
+            faq: "Frequently Asked Questions",
+            home: "ForGuide Home",
+            navigation: "Guide Menu",
+            open: "Open Menu",
+            close: "Close Menu",
+        },
+    },
+
+    homeMain: {
+        duckLabel: "A duck walking in from the side and greeting in the center",
+        navigationLabel: "Navigate home sections",
+        sections: {
+            main: "Main",
+            translation: "Translation",
+            counseling: "Consultation",
+            recommendation: "Recommendations",
+            repayment: "Calculators",
+            employment: "Employment",
+            extendedServices: "More",
+            contact: "Contact",
+        },
+    },
+
     preparationCard: {
         title: "Tell us what you would like to discuss.",
         givenName: "Given names",
@@ -69,82 +111,6 @@ const en = {
             3: "Not all requests can be processed immediately.\nCheck the processing time and any additional document requirements, and apply well before you need the result.",
             4: "Consultation hours and lunch closures vary by organization and service.\nCheck opening hours and whether an appointment is required before visiting.",
             5: "Documents required for an application by a representative vary by service.\nCheck whether a representative may apply and which documents are required, such as authorization and identification for both people.",
-        },
-    },
-
-    institutionGuide: {
-        selectionLabels: {
-            "출입국·행정": "Immigration and administration",
-            "비자·체류": "Visas and stay",
-            외국인등록: "Foreign resident registration",
-            "민원·증명서": "Administrative requests and certificates",
-
-            "노동·취업": "Labor and employment",
-            "임금·퇴직금": "Wages and severance pay",
-            "근로계약·근무조건": "Employment contracts and working conditions",
-            "취업·고용": "Jobs and employment",
-
-            "금융·채무": "Finance and debt",
-            "대출·서민금융": "Loans and inclusive finance",
-            "채무·신용회복": "Debt and credit recovery",
-            "금융민원·피해": "Financial complaints and harm",
-
-            "보험·연금": "Insurance and pensions",
-            건강보험: "Health insurance",
-            국민연금: "National Pension",
-            "산재·고용보험": "Industrial accident and employment insurance",
-
-            세금: "Taxes",
-            "세금신고·납부": "Tax filing and payment",
-            연말정산: "Year-end tax settlement",
-            세금환급: "Tax refunds",
-
-            "생활·복지·법률": "Daily life, welfare, and legal matters",
-            복지지원: "Welfare support",
-            "가족·생활상담": "Family and daily life counseling",
-            "법률·주거분쟁": "Legal and housing disputes",
-        },
-    },
-
-    header: {
-        login: "Log In",
-        signup: "Sign Up",
-        logout: "Log Out",
-        myPage: "My Page",
-        myFinance: "My Financial Information",
-        adminPage: "Administrator",
-        language: "Language",
-
-        mega: {
-            serviceList: "Service List",
-            contactMenu: "Inquiries",
-            inquiry: "Contact",
-            extendedServices: "Extended Guides",
-
-            contact: "Contact",
-            contactGroup: "Inquiries",
-            myInquiries: "My Inquiries",
-            privateInquiry: "1-on-1 Inquiry",
-            faq: "Frequently Asked Questions",
-            home: "ForGuide Home",
-            navigation: "Guide Menu",
-            open: "Open Menu",
-            close: "Close Menu",
-        },
-    },
-
-    homeMain: {
-        duckLabel: "A duck walking in from the side and greeting in the center",
-        navigationLabel: "Navigate home sections",
-        sections: {
-            main: "Main",
-            translation: "Translation",
-            counseling: "Consultation",
-            recommendation: "Recommendations",
-            repayment: "Calculators",
-            employment: "Employment",
-            extendedServices: "More",
-            contact: "Contact",
         },
     },
 
@@ -338,6 +304,57 @@ const en = {
             checkedAt: "Information checked on",
         },
         multipleKeywords: "(Multiple selections allowed)",
+
+        selectionLabels: {
+            "출입국·행정": "Immigration & Administration",
+            "비자·체류": "Visa & Stay",
+            외국인등록: "Foreigner Registration",
+            "민원·증명서": "Civil Services & Certificates",
+
+            "노동·취업": "Labor & Employment",
+            "임금·퇴직금": "Wages & Severance Pay",
+            "근로계약·근무조건": "Employment Contracts & Working Conditions",
+            "취업·고용": "Jobs & Hiring",
+
+            "금융·채무": "Finance & Debt",
+            "대출·서민금융": "Loans & Financial Support",
+            "채무·신용회복": "Debt & Credit Recovery",
+            "금융민원·피해": "Financial Complaints & Damage",
+
+            "보험·연금": "Insurance & Pensions",
+            건강보험: "National Health Insurance",
+            국민연금: "National Pension",
+            "산재·고용보험": "Industrial Accident & Employment Insurance",
+
+            세금: "Taxes",
+            "세금신고·납부": "Tax Filing & Payment",
+            연말정산: "Year-end Tax Settlement",
+            세금환급: "Tax Refund",
+
+            "생활·복지·법률": "Daily Life, Welfare & Legal Services",
+            복지지원: "Welfare Support",
+            "가족·생활상담": "Family & Daily Life Counseling",
+            "법률·주거분쟁": "Legal & Housing Disputes",
+        },
+        topics: {
+            bank: "Accounts & Banking",
+            loan: "Loans",
+            repayment: "Debt & Repayment",
+            credit: "Credit Management",
+            living: "Living Expenses & Spending",
+            wages: "Wages & Pay",
+            employment_contract: "Employment Contracts & Working Conditions",
+            retirement: "Retirement & Severance Pay",
+            employment: "Jobs & Job Seeking",
+            remittance: "Remittance & Transfers",
+            payment: "Cards & Payments",
+            housing: "Housing Costs",
+            tax: "Taxes",
+            insurance: "Insurance & Social Security",
+            fraud: "Financial Fraud & Damage",
+            financial_support: "Financial Support & Welfare",
+            financial_information: "Financial Information & Basic Consultation",
+        },
     },
 
     notification: {
@@ -1285,6 +1302,237 @@ const en = {
             TIMEOUT: "The response is taking too long. Please try again shortly.",
         },
     },
+
+    recommendForm: {
+        choose: "Select",
+        submit: "Get Recommendations",
+        required: "Complete all fields to get recommendations.",
+        changed: "Your conditions have changed. Please get recommendations again.",
+        residenceStatus: "Residence Status",
+        loading: "Loading recommendations.",
+        loadingChoices: "Loading questions.",
+        loadError: "Could not load recommendations.",
+        invalidInput: "Please check your input.",
+        retry: "Try Again",
+        resultsTitle: "Recommendation Results",
+        empty: "No products match your conditions. Try changing them.",
+        groupCount: "{{companies}} financial institutions · {{total}} products",
+        productCount: "{{total}} products",
+        showMore: "Show More",
+        showLess: "Show Less",
+        mismatchToggle: "View products that may be difficult to join ({{count}})",
+        detail: "View Details",
+        close: "Close",
+        reasonsTitle: "Why We Recommend This",
+        checksTitle: "Things to Check Before Joining",
+        nextTitle: "Next Steps",
+        homepage: "Website",
+        phone: "Phone",
+        noContact: "No contact information is available.",
+        residenceStatuses: {
+            "비전문취업(E-9)": "Non-professional Employment (E-9)",
+            "방문취업(H-2)": "Visiting Employment (H-2)",
+            전문인력: "Professional",
+            유학생: "Student",
+            "재외동포(F-4)": "Overseas Korean (F-4)",
+            "영주(F-5)": "Permanent Resident (F-5)",
+            "결혼이민(F-6)": "Marriage Migrant (F-6)",
+            기타: "Other",
+        },
+    },
+
+    recommendAccount: {
+        title: "Account Recommendations",
+        description:
+            "Answer a few questions to compare deposits and savings accounts available to foreigners.",
+        gateTitle: "Let’s check this first",
+        fastTitle: "What product are you looking for?",
+        ownAccount: "Do you have a bank account in your name?",
+        visit: "Branch Visit",
+        purpose: "Purpose",
+        term: "Savings Period",
+        institution: "Financial Institution",
+        yes: "Yes",
+        no: "No",
+        visitOptions: {
+            상관없음: "A branch visit is okay",
+            "원치 않음": "I do not want to visit a branch",
+        },
+        purposeOptions: {
+            예금: "Deposit · One lump sum",
+            적금: "Savings · A small amount every month",
+        },
+        termOption: "{{count}} months",
+        termNotice:
+            "Do not choose a term longer than your remaining stay. Early cancellation may apply a lower early-termination rate and reduce your interest.",
+        institutionOptions: {
+            "은행 선호": "I prefer a bank",
+            상관없음: "No preference",
+        },
+        noAccountTitle: "Please open a bank account first",
+        noAccountBody:
+            "Deposits and savings accounts are opened by linking your own bank account. Ask a nearby bank about the documents required for a foreigner to open an account.",
+        noAccountAction: "Find Support Institutions",
+        rate: "Base Interest Rate",
+        rateValue: "Annual {{rate}}% · {{type}}",
+        period: "Term",
+        joinWay: "How to Apply",
+        institutionType: "Financial Institution Type",
+        visitRequired: "Branch visit required",
+        chartTitle: "Estimated Interest Comparison (Before Tax)",
+        chartDeposit: "When depositing KRW 10 million for {{term}} months",
+        chartSaving: "When saving KRW 500,000 each month for {{term}} months",
+        interest: "Estimated Interest (Before Tax)",
+        interestValue: "{{amount}} KRW",
+    },
+
+    recommendInsurance: {
+        title: "Indemnity Insurance Recommendations",
+        description:
+            "Answer a few questions to compare indemnity insurance with the same coverage by premium.",
+        gateTitle: "Let’s check this first",
+        healthInsurance: "Are you enrolled in National Health Insurance?",
+        healthOptions: {
+            예: "Yes",
+            아니오: "No",
+            모름: "I’m not sure",
+        },
+        fastTitle: "Tell us what we need to calculate your premium",
+        sex: "Sex",
+        sexOptions: {
+            남: "Male",
+            여: "Female",
+        },
+        age: "Age",
+        agePlaceholder: "Example: 30",
+        ageError: "Enter a number between {{min}} and {{max}}.",
+        noInsuranceTitle: "Please check your health insurance enrollment first",
+        noInsuranceBody:
+            "What you need to review depends on your health insurance status. First, get guidance suited to your situation from a support institution.",
+        noInsuranceAction: "Find Support Institutions",
+        premium: "Monthly Premium",
+        premiumValue: "{{amount}} KRW",
+        breakdown: "Premium Breakdown",
+        breakdownValue: "Basic {{basic}} · Rider 1 {{rider1}} · Rider 2 {{rider2}}",
+        insurerType: "Insurance Type",
+        joinWay: "How to Apply",
+        online: "Online enrollment available",
+        offline: "Contact an insurer or insurance agent",
+        chartTitle: "Monthly Premium Comparison",
+        chartBasis: "Based on {{sex}}, age {{age}}",
+        basic: "Basic",
+        rider1: "Rider 1",
+        rider2: "Rider 2",
+    },
+
+    recommendLoan: {
+        title: "Loan Recommendations",
+        description:
+            "Choose your purpose to compare loans available to foreigners by average interest rate.",
+        fastTitle: "What type of loan are you looking for?",
+        purpose: "Purpose",
+        purposeOptions: {
+            생활비: "Living Expenses (Credit Loan)",
+            "전세 보증금": "Jeonse Deposit (Secured Loan)",
+        },
+        visit: "Branch Visit",
+        visitOptions: {
+            상관없음: "A branch visit is okay",
+            "원치 않음": "I do not want to visit a branch",
+        },
+        rateAvg: "Average Interest Rate Last Month",
+        rateValue: "Annual {{rate}}%",
+        rateRange: {
+            credit: "Interest Rate by Credit Score",
+            jeonse: "Current Interest Rate Range",
+        },
+        rateRangeValue: "Annual {{min}}–{{max}}%",
+        noRate: "Not Disclosed",
+        kind: "Product Type",
+        joinWay: "How to Apply",
+        visitRequired: "Branch visit required",
+        limit: "Loan Limit",
+        repay: "Repayment Method",
+        chartTitle: "Average Interest Rate Comparison Last Month",
+        chartBasis: "A lower rate generally means a lower interest burden.",
+    },
+
+    recommendResult: {
+        groups: {
+            match: "Available to Foreigners",
+            check: "Eligibility Check Required",
+            mismatch: "Products Difficult to Join",
+        },
+
+        reasons: {
+            high_rate: "This product has a relatively high interest rate under the same conditions.",
+            no_visit: "You can apply without visiting a branch.",
+            bank: "This is a bank product.",
+            low_premium: "This product has a relatively low premium for similar coverage.",
+            online_join: "You can apply online.",
+            low_rate: "This product has a relatively low average interest rate among similar loans.",
+        },
+
+        checkReasons: {
+            foreigner_unspecified: "Foreign eligibility requirements have not been disclosed.",
+            region_limit: "Enrollment is limited to these regions: {{regions}}",
+            rate_outlier:
+                "Its interest rate is much higher than other products. Check whether special eligibility requirements apply.",
+            kakao_withdrawal_only:
+                "Only a basic transaction account is currently available to foreigners. Check whether you can also join this product.",
+            insurer_review:
+                "Foreign eligibility review standards vary by insurer.",
+            limit_after_review: "The loan limit is determined after review.",
+            special_target:
+                "This product is intended for specific groups, such as young adults or newlyweds. Check whether you are eligible.",
+            rate_not_disclosed: "The average interest rate has not been disclosed.",
+            rate_inconsistent:
+                "Last month's average rate differs significantly from the current rate range. Check the actual rate with the financial institution.",
+        },
+
+        mismatchReasons: {
+            domestic_only: "This product is available only to Korean nationals.",
+            visit_required: "You must visit a branch to apply.",
+            term_over_stay: "The savings period is longer than your remaining stay period.",
+            kbank_not_yet: "Foreign enrollment service is still being prepared.",
+        },
+
+        guides: {
+            join_at_company:
+                "This product is indicated as available to foreigners. Apply through the financial institution's app or website.",
+            ask_foreigner_eligibility:
+                "Foreign eligibility requirements have not been disclosed. Ask the financial institution whether foreigners can join before applying.",
+            ask_insurer_eligibility:
+                "Before joining, ask the insurer whether you can apply based on your visa status and stay period.",
+            ask_loan_eligibility:
+                "Foreign loan requirements have not been disclosed. Before applying, ask the financial institution whether you are eligible based on your visa status, income, and stay period.",
+        },
+
+        moreFromCompany: "{{count}} more products from this financial institution",
+
+        separate: {
+            title: "Other Products You May Consider",
+            senior: "Senior Indemnity Insurance",
+            simplified: "Simplified Underwriting Indemnity Insurance",
+            description:
+                "These are shown separately because their eligibility requirements and coverage differ from standard indemnity insurance.",
+        },
+
+        notices: {
+            rate_may_change: "Interest rates are based on the {{month}} disclosure and may change.",
+            savings_bank_protected:
+                "Deposits and savings products from savings banks are also protected by deposit insurance.",
+            reference_only:
+                "Recommendations are for reference only. Actual eligibility and terms depend on the financial institution's review.",
+            premium_may_change:
+                "Premiums are based on the {{date}} disclosure and may change.",
+            insurance_age_basis:
+                "Premiums use insurance age, so the actual premium may differ slightly.",
+            rate_by_credit:
+                "The average rate is based on people who borrowed last month. Your actual rate depends on credit review.",
+        },
+    },
+
     footer: {
         description: "This is the footer. It smells terribly of feet here.",
         copyright: "© Is this the best you can do, human?",

@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from "react";
+import { useTranslation } from "react-i18next";
 import SelectBox from "../SelectBox/SelectBox.jsx";
 import {
     validateIntegerInput,
@@ -19,33 +20,39 @@ import "../../styles/monthlyPayment.css";
 const numericFields = [
     {
         name: "loanAmount",
-        label: "대출 금액",
-        unit: "만원",
+        labelKey: "loanAmount",
+        unitKey: "tenThousandWon",
         maximum: 999999999999,
     },
     {
         name: "annualInterestRate",
-        label: "연 금리",
-        unit: "%",
+        labelKey: "annualInterestRate",
+        unitKey: "percent",
     },
     {
         name: "loanMonths",
-        label: "대출 기간",
-        unit: "개월",
+        labelKey: "loanMonths",
+        unitKey: "months",
         maximum: 600,
     },
     {
         name: "graceMonths",
-        label: "거치 기간",
-        unit: "개월",
+        labelKey: "graceMonths",
+        unitKey: "months",
         maximum: 600,
     },
 ];
 
 export default function LoanCalculator({ mode = "monthly" }) {
+    const { t } = useTranslation();
     // 여러 계산기의 입력 식별자가 겹치지 않도록 생성
     const formId = useId();
     const isInterestPage = mode === "interest";
+
+    const repaymentMethodOptions = repaymentMethods.map((item) => ({
+        ...item,
+        label: t(`loanCalculator.methods.${item.value}`),
+    }));
 
     // 상환 방식의 기본 선택은 만기일시
     const [method, setMethod] = useState("bullet");
@@ -216,7 +223,7 @@ export default function LoanCalculator({ mode = "monthly" }) {
             setCalculationError(
                 error instanceof Error
                     ? error.message
-                    : "계산하지 못했습니다. 입력을 확인해주세요.",
+                    : t("loanCalculator.fallbackError"),
             );
         }
     }
@@ -230,18 +237,22 @@ export default function LoanCalculator({ mode = "monthly" }) {
                 {/* 왼쪽 위: 기존 설명 없이 제목과 입력만 표시 */}
                 <div className="loan-input-column">
                     <h2 id={formId + "-title"} className="loan-calculator-title">
-                        {isInterestPage ? "총 이자" : "월 상환액"}
+                        {t(
+                            isInterestPage
+                                ? "loanCalculator.titles.interest"
+                                : "loanCalculator.titles.monthly",
+                        )}
                     </h2>
 
                     <form className="monthly-payment-fields" onSubmit={handleCalculate} noValidate>
                         {/* 상환 방식 선택창은 입력 영역 맨 위에 배치 */}
                         <div className="form-field loan-method-field">
-                            <span id={formId + "-method-label"}>상환 방식</span>
+                            <span id={formId + "-method-label"}>{t("loanCalculator.fields.repaymentMethod")}</span>
                             <SelectBox
                                 id={formId + "-method"}
                                 labelledBy={formId + "-method-label"}
                                 value={method}
-                                options={repaymentMethods}
+                                options={repaymentMethodOptions}
                                 onChange={handleMethodChange}
                             />
                         </div>
@@ -255,7 +266,9 @@ export default function LoanCalculator({ mode = "monthly" }) {
 
                             return (
                                 <div key={field.name} className="monthly-number-field">
-                                    <label htmlFor={inputId}>{field.label}</label>
+                                    <label htmlFor={inputId}>
+                                        {t(`loanCalculator.fields.${field.labelKey}`)}
+                                    </label>
 
                                     <div className="monthly-number-line">
                                         <input
@@ -279,7 +292,7 @@ export default function LoanCalculator({ mode = "monthly" }) {
                                             onBlur={() => handleInputBlur(field.name)}
                                         />
 
-                                        <span className="monthly-input-unit">{field.unit}</span>
+                                        <span className="monthly-input-unit">{t(`loanCalculator.units.${field.unitKey}`)}</span>
                                     </div>
 
                                     {/* 거치 관계 오류는 기간 환산 문구 대신 표시 */}

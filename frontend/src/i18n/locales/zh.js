@@ -41,6 +41,78 @@ const zh = {
         },
     },
 
+    preparationCard: {
+        title: "请整理您需要咨询的内容。",
+        givenName: "名字",
+        surname: "姓氏",
+        birthDate: "出生日期",
+        gender: "性别",
+        male: "男",
+        female: "女",
+        occurrence: "发生时间",
+        choose: "请选择",
+        issue: "遇到的问题",
+        other: "其他",
+        taxKeyword: "报税与缴纳",
+        keywordHelp: "请选择相关的具体问题，可多选。",
+        details: "详细内容",
+        characterCount: "{{count}}/300字",
+        guidanceTitle: "咨询准备指南",
+        acknowledge: "我已确认。",
+        translationQuestion: "您需要韩语翻译稿吗？",
+        yes: "是",
+        no: "否",
+        complete: "完成咨询准备",
+        incomplete: "咨询准备尚未完成。\n请选择并填写所有项目。",
+        results: "已创建的咨询准备卡",
+        print: "打印卡片",
+        originalTitle: "咨询准备卡 - 原文",
+        translatedTitle: "咨询准备卡 - 韩语译文",
+        translating: "正在翻译为韩语。",
+        retryTranslation: "重新翻译",
+        translationFailed:
+            "韩语翻译失败，原文将被保留。请稍后重试。",
+        translationTimeout:
+            "翻译响应较慢，原文将被保留。请稍后重试。",
+        translationUnavailable:
+            "翻译服务暂时不可用，原文将被保留。请稍后重试。",
+        translationRateLimited:
+            "翻译使用量已达上限，原文将被保留。请稍后重试。",
+        translationConnectionFailed:
+            "无法连接到服务器，原文将被保留。请检查网络连接后重试。",
+        translationReview: "这是 AI 翻译稿。请与原文对照确认内容。",
+        translationNotice:
+            "选择韩语翻译后，完成准备时详细内容将发送至 Google Gemini。名字、姓氏和出生日期不会被发送。",
+        institution: "已选择机构：{{name}}",
+        nameRule:
+            "请输入不含空格、数字或特殊字符的姓名，最多20个字符。可以输入外语。",
+        birthYear: "年",
+        birthMonth: "月",
+        birthDay: "日",
+        birthYearPlaceholder: "YYYY",
+        birthMonthValue: "{{value}}月",
+        birthDayValue: "{{value}}日",
+        birthDateInvalid:
+            "请输入1900年1月1日至今天之间有效的出生日期。",
+        periods: {
+            under1: "不足1个月",
+            months1to3: "1至3个月",
+            months3to6: "3至6个月",
+            months6to12: "6个月至1年",
+            years1: "1年以上",
+            years3: "3年以上",
+            years5: "5年以上",
+            years10: "10年以上",
+        },
+        notices: {
+            1: "在涉及安全的重要国家设施、公共机构内部或研究所等场所，可能限制拍摄。\n请确认各设施的拍摄限制，并遵从安全人员的指引与管理。",
+            2: "请停止对工作人员进行辱骂、暴力、威胁或反复骚扰。\n根据行为情况，咨询可能终止，并可能依照相关法律采取措施。",
+            3: "并非所有民愿都会立即处理。\n请确认各业务的处理期限及是否需要补交材料，并在需要结果的日期前预留充足时间申请。",
+            4: "咨询窗口的工作时间及午休安排因机构和业务而异。\n到访前请确认该机构的工作时间和是否需要预约。",
+            5: "代理申请所需材料因业务而异。\n请提前确认委托书、本人及代理人身份证明等所需材料，以及是否可以代理申请。",
+        },
+    },
+
     homeOverview: {
         translation: {
             title: "翻译",
@@ -231,6 +303,57 @@ const zh = {
             checkedAt: "信息确认日期",
         },
         multipleKeywords: "（可多选）",
+
+        selectionLabels: {
+            "출입국·행정": "出入境与行政",
+            "비자·체류": "签证与居留",
+            외국인등록: "外国人登记",
+            "민원·증명서": "民政服务与证明材料",
+
+            "노동·취업": "劳动与就业",
+            "임금·퇴직금": "工资与遣散费",
+            "근로계약·근무조건": "劳动合同与工作条件",
+            "취업·고용": "求职与雇佣",
+
+            "금융·채무": "金融与债务",
+            "대출·서민금융": "贷款与普惠金融",
+            "채무·신용회복": "债务与信用恢复",
+            "금융민원·피해": "金融投诉与损失",
+
+            "보험·연금": "保险与养老金",
+            건강보험: "健康保险",
+            국민연금: "国民年金",
+            "산재·고용보험": "工伤与雇佣保险",
+
+            세금: "税务",
+            "세금신고·납부": "报税与缴纳",
+            연말정산: "年终结算",
+            세금환급: "退税",
+
+            "생활·복지·법률": "生活、福利与法律",
+            복지지원: "福利支持",
+            "가족·생활상담": "家庭与生活咨询",
+            "법률·주거분쟁": "法律与住房纠纷",
+        },
+        topics: {
+            bank: "账户与银行",
+            loan: "贷款",
+            repayment: "债务与还款",
+            credit: "信用管理",
+            living: "生活费与支出",
+            wages: "工资与薪酬",
+            employment_contract: "劳动合同与工作条件",
+            retirement: "离职与遣散费",
+            employment: "就业与求职",
+            remittance: "汇款与转账",
+            payment: "银行卡与支付",
+            housing: "住房支出",
+            tax: "税务",
+            insurance: "保险与社会保障",
+            fraud: "金融诈骗与损失",
+            financial_support: "金融支持与福利",
+            financial_information: "金融信息与基础咨询",
+        },
     },
 
     notification: {
@@ -1112,6 +1235,232 @@ const zh = {
             TIMEOUT: "响应时间较长，请稍后再试。",
         },
     },
+
+    recommendForm: {
+        choose: "请选择",
+        submit: "获取推荐",
+        required: "选择所有项目后即可获取推荐。",
+        changed: "条件已更改。请重新获取推荐。",
+        residenceStatus: "居留资格",
+        loading: "正在加载推荐结果。",
+        loadingChoices: "正在加载问题。",
+        loadError: "无法加载推荐结果。",
+        invalidInput: "请检查输入内容。",
+        retry: "重试",
+        resultsTitle: "推荐结果",
+        empty: "没有符合条件的产品。请尝试更改条件。",
+        groupCount: "{{companies}} 家金融机构 · {{total}} 个产品",
+        productCount: "{{total}} 个产品",
+        showMore: "查看更多",
+        showLess: "收起",
+        mismatchToggle: "查看可能难以加入的产品 ({{count}})",
+        detail: "查看详情",
+        close: "关闭",
+        reasonsTitle: "推荐理由",
+        checksTitle: "加入前需确认的事项",
+        nextTitle: "下一步",
+        homepage: "官网",
+        phone: "电话",
+        noContact: "暂无联系信息。",
+        residenceStatuses: {
+            "비전문취업(E-9)": "非专业就业（E-9）",
+            "방문취업(H-2)": "访问就业（H-2）",
+            전문인력: "专业人才",
+            유학생: "留学生",
+            "재외동포(F-4)": "海外同胞（F-4）",
+            "영주(F-5)": "永久居留（F-5）",
+            "결혼이민(F-6)": "婚姻移民（F-6）",
+            기타: "其他",
+        },
+    },
+
+    recommendAccount: {
+        title: "账户推荐",
+        description: "回答几个问题后，可比较外国人可办理的定期存款和储蓄账户。",
+        gateTitle: "请先确认以下内容",
+        fastTitle: "您在寻找什么产品？",
+        ownAccount: "您是否有本人名义的活期账户？",
+        visit: "前往营业网点",
+        purpose: "目的",
+        term: "存款期限",
+        institution: "金融机构",
+        yes: "是",
+        no: "否",
+        visitOptions: {
+            상관없음: "可以前往网点",
+            "원치 않음": "不想前往营业网点",
+        },
+        purposeOptions: {
+            예금: "定期存款 · 一次存入一笔资金",
+            적금: "储蓄存款 · 每月存入少量资金",
+        },
+        termOption: "{{count}}个月",
+        termNotice:
+            "请勿选择超过剩余居留期限的期限。提前解约时可能适用较低的提前解约利率，利息会减少。",
+        institutionOptions: {
+            "은행 선호": "偏好银行",
+            상관없음: "不限",
+        },
+        noAccountTitle: "请先开设活期账户",
+        noAccountBody:
+            "办理定期存款和储蓄存款时，需要关联本人名义的活期账户。请先向附近银行咨询外国人开户所需材料。",
+        noAccountAction: "查找帮助机构",
+        rate: "基础利率",
+        rateValue: "年利率 {{rate}}% · {{type}}",
+        period: "期限",
+        joinWay: "申请方式",
+        institutionType: "金融机构类型",
+        visitRequired: "需前往营业网点",
+        chartTitle: "预计利息比较（税前）",
+        chartDeposit: "存入1,000万韩元，期限为{{term}}个月时",
+        chartSaving: "每月存入50万韩元，持续{{term}}个月时",
+        interest: "预计利息（税前）",
+        interestValue: "{{amount}} 韩元",
+    },
+
+    recommendInsurance: {
+        title: "实损医疗保险推荐",
+        description: "回答几个问题后，可按保费比较保障相同的实损医疗保险。",
+        gateTitle: "请先确认以下内容",
+        healthInsurance: "您是否加入了国民健康保险？",
+        healthOptions: {
+            예: "是",
+            아니오: "否",
+            모름: "不太清楚",
+        },
+        fastTitle: "请提供计算保费所需的信息",
+        sex: "性别",
+        sexOptions: {
+            남: "男性",
+            여: "女性",
+        },
+        age: "年龄",
+        agePlaceholder: "例如：30",
+        ageError: "请输入 {{min}} 至 {{max}} 岁之间的数字。",
+        noInsuranceTitle: "请先确认健康保险加入情况",
+        noInsuranceBody:
+            "需要确认的内容会因健康保险加入情况而不同。请先在帮助机构获得适合您情况的咨询。",
+        noInsuranceAction: "查找帮助机构",
+        premium: "月保费",
+        premiumValue: "{{amount}} 韩元",
+        breakdown: "保费构成",
+        breakdownValue: "基本型 {{basic}} · 附加险1 {{rider1}} · 附加险2 {{rider2}}",
+        insurerType: "保险类型",
+        joinWay: "投保方式",
+        online: "可在线投保",
+        offline: "请咨询保险公司或保险代理人",
+        chartTitle: "月保费比较",
+        chartBasis: "以{{sex}}、{{age}}岁为基准",
+        basic: "基本型",
+        rider1: "附加险1",
+        rider2: "附加险2",
+    },
+
+    recommendLoan: {
+        title: "贷款推荐",
+        description: "选择用途后，可按平均利率比较外国人可了解的贷款。",
+        fastTitle: "您在寻找什么类型的贷款？",
+        purpose: "用途",
+        purposeOptions: {
+            생활비: "生活费（信用贷款）",
+            "전세 보증금": "全租押金（担保贷款）",
+        },
+        visit: "前往营业网点",
+        visitOptions: {
+            상관없음: "可以前往网点",
+            "원치 않음": "不想前往营业网点",
+        },
+        rateAvg: "上月平均利率",
+        rateValue: "年利率 {{rate}}%",
+        rateRange: {
+            credit: "按信用评分的利率",
+            jeonse: "当前利率范围",
+        },
+        rateRangeValue: "年利率 {{min}}–{{max}}%",
+        noRate: "未公布",
+        kind: "产品类型",
+        joinWay: "申请方式",
+        visitRequired: "需前往营业网点",
+        limit: "贷款额度",
+        repay: "还款方式",
+        chartTitle: "上月平均利率比较",
+        chartBasis: "利率越低，利息负担通常越小。",
+    },
+
+    recommendResult: {
+        groups: {
+            match: "外国人可办理",
+            check: "需要确认办理条件",
+            mismatch: "较难办理的产品",
+        },
+
+        reasons: {
+            high_rate: "在相同条件的产品中，利率相对较高。",
+            no_visit: "无需前往营业网点即可办理。",
+            bank: "这是银行产品。",
+            low_premium: "在相同保障的产品中，保费相对较低。",
+            online_join: "可在线办理。",
+            low_rate: "在同类贷款中，平均利率相对较低。",
+        },
+
+        checkReasons: {
+            foreigner_unspecified: "未公开外国人的办理条件。",
+            region_limit: "可办理地区已限定：{{regions}}",
+            rate_outlier:
+                "利率明显高于其他产品。请确认是否有特殊办理条件。",
+            kakao_withdrawal_only:
+                "目前仅向外国人 안내普通交易账户。请确认是否也可以办理该产品。",
+            insurer_review: "各保险公司对外国人的审核标准不同。",
+            limit_after_review: "贷款额度将在审核后确定。",
+            special_target:
+                "这是面向青年、新婚夫妇等特定对象的产品。请确认您是否符合条件。",
+            rate_not_disclosed: "未公开平均利率。",
+            rate_inconsistent:
+                "上月平均利率与当前利率范围差异较大。请向金融机构确认实际利率。",
+        },
+
+        mismatchReasons: {
+            domestic_only: "仅限韩国国籍人士办理。",
+            visit_required: "必须前往营业网点办理。",
+            term_over_stay: "储蓄期限长于您的剩余停留期限。",
+            kbank_not_yet: "面向外国人的办理服务正在准备中。",
+        },
+
+        guides: {
+            join_at_company:
+                "该产品 안내外国人可办理。请通过金融机构的应用程序或网站办理。",
+            ask_foreigner_eligibility:
+                "未公开外国人的办理条件。办理前请向金融机构确认外国人是否可以办理。",
+            ask_insurer_eligibility:
+                "办理前请向保险公司确认，您是否能以当前签证资格和停留期限办理。",
+            ask_loan_eligibility:
+                "未公开外国人贷款条件。申请前请向金融机构确认，您是否能以签证资格、收入和停留期限申请贷款。",
+        },
+
+        moreFromCompany: "该金融机构还有 {{count}} 个产品",
+
+        separate: {
+            title: "还有这些产品",
+            senior: "老年人实损医疗保险",
+            simplified: "简易核保实损医疗保险",
+            description:
+                "由于办理条件和保障内容与普通实损医疗保险不同，因此单独显示。",
+        },
+
+        notices: {
+            rate_may_change: "利率以 {{month}} 公示为准，可能发生变化。",
+            savings_bank_protected:
+                "储蓄银行的定期存款和储蓄产品也受存款人保护制度保障。",
+            reference_only:
+                "推荐仅供参考。实际是否可办理及具体条件取决于金融机构的审核。",
+            premium_may_change: "保费以 {{date}} 公示为准，可能发生变化。",
+            insurance_age_basis:
+                "保费以保险年龄为准，因此可能与实际保费略有差异。",
+            rate_by_credit:
+                "平均利率是上月实际借款人的平均值。您的实际利率取决于信用审核。",
+        },
+    },
+
     footer: {
         description: "这里是页脚。这里有一股浓烈的脚臭味。",
         copyright: "© 这就是你能做到的最好水平吗，人类？",

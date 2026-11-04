@@ -1,11 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Bar, BarChart, ResponsiveContainer, Text, Tooltip, XAxis, YAxis } from "recharts";
 import { useTranslation } from "react-i18next";
-import {
-    formatWon,
-    repaymentMethods,
-    getRepaymentDescription,
-} from "../../utils/loanCalculator.js";
+import { formatWon } from "../../utils/loanCalculator.js";
 
 // 막대에 해당하는 항목 이름과 정확한 원 단위 금액을 표시한다.
 function PaymentTooltip({ active, payload }) {
@@ -27,28 +23,28 @@ function PaymentTooltip({ active, payload }) {
 
 // 계산기 종류에 맞는 결과 항목 표시
 export function LoanResults({ mode = "monthly", result }) {
+    const { t } = useTranslation();
     // 계산 전에는 오른쪽 결과 영역을 비워 둠
     if (!result) return null;
 
     const method = repaymentMethods.find((item) => item.value === result.method);
 
-    // 월 상환액은 첫 회차·평균·최대·총액 순서
     const monthlyItems = [
-        ["첫 회차 상환 금액", result.firstPayment],
-        ["평균 상환 금액", result.averagePayment],
-        ["최대 상환 금액", result.maximumPayment],
-        ["총 상환 금액", result.totalPayment],
+        ["firstPayment", result.firstPayment],
+        ["averagePayment", result.averagePayment],
+        ["maximumPayment", result.maximumPayment],
+        ["totalPayment", result.totalPayment],
     ];
 
-    // 총 이자는 원금균등만 첫 달로 표시
-    // 만기일시의 매월 금액은 원금을 제외한 월 이자
     const interestItems = [
         [
-            result.method === "equalPrincipal" ? "첫 달 상환 금액" : "매월 상환 금액",
+            result.method === "equalPrincipal"
+                ? "firstMonthPayment"
+                : "regularPayment",
             result.regularPayment,
         ],
-        ["총 상환 금액", result.totalPayment],
-        ["총 이자 금액", result.totalInterest],
+        ["totalPayment", result.totalPayment],
+        ["totalInterest", result.totalInterest],
     ];
 
     const items = mode === "interest" ? interestItems : monthlyItems;
@@ -56,17 +52,17 @@ export function LoanResults({ mode = "monthly", result }) {
     return (
         <div className="loan-result-area" aria-live="polite">
             {/* 상환 방식 이름은 위쪽에 고정한다. */}
-            <h3 className="loan-method-heading">{method.label}</h3>
+            <h3 className="loan-method-heading">{methodLabel}</h3>
 
             {/* 설명과 금액을 한 묶음으로 아래쪽에 여유 있게 배치한다. */}
             <div className="loan-result-details">
-                <p className="loan-method-description">{getRepaymentDescription(result)}</p>
+                <p className="loan-method-description">{t(`loanCalculator.descriptions.${descriptionKey}`)}</p>
 
                 {/* 기존 계산 금액과 표시 순서는 유지한다. */}
                 <dl className="loan-summary">
                     {items.map(([label, value]) => (
                         <div key={label}>
-                            <dt>{label}</dt>
+                            <dt>{t(`loanChart.items.${label}`)}</dt>
                             <dd>{formatWon(value)}</dd>
                         </div>
                     ))}
@@ -122,9 +118,7 @@ export function LoanChart({
     // 스케줄 펼침과 막대 상승이 모두 끝나야 툴팁을 허용한다.
     const tooltipReady = screenReady && barReady;
     // 그래프 문구는 번역 항목을 통해 표시한다.
-    const { t } = useTranslation("translation", {
-        keyPrefix: "loanChart",
-    });
+    const { t } = useTranslation();
 
     // 계산 결과나 언어가 바뀔 때만 그래프 데이터를 새로 만든다.
     // 툴팁 준비 상태가 바뀌어도 막대 애니메이션을 다시 시작하지 않는다.
@@ -154,7 +148,7 @@ export function LoanChart({
         // 막대 높이만 만원으로 변환하고 툴팁의 원 단위 금액은 보존한다.
         return items.map(([key, amount]) => ({
             key,
-            label: t(`items.${key}`),
+            label: t(`loanChart.items.${key}`),
             amount,
             chartValue: Number(amount) / 10000,
         }));
@@ -163,11 +157,13 @@ export function LoanChart({
     // 모든 Hook을 실행한 다음 빈 결과 여부를 확인한다.
     if (!result) return null;
 
-    const method = repaymentMethods.find((item) => item.value === result.method);
-
     return (
         <section className="loan-chart-panel" aria-labelledby={chartId}>
-            <h3 id={chartId}>{t("title", { method: method.label })}</h3>
+            <h3 id={chartId}>
+                {t("loanChart.title", {
+                    method: t(`loanCalculator.methods.${result.method}`),
+                })}
+            </h3>
             {/* 기존 그래프 영역의 크기와 배치를 사용한다. */}
             <div className="loan-chart">
                 <ResponsiveContainer width="100%" height="100%">
@@ -224,7 +220,7 @@ export function LoanChart({
                         {/* 0.9초 동안 움직이고 끝으로 갈수록 천천히 멈춘다. */}
                         <Bar
                             dataKey="chartValue"
-                            name={t("amount")}
+                            name={t("loanChart.amount")}
                             fill="var(--primary)"
                             // 비활성화된 계산하기 버튼과 같은 농도로 표시
                             fillOpacity={0.5}
@@ -247,32 +243,38 @@ export function LoanChart({
 
 // 같은 계산 결과에서 계산기 종류별로 필요한 열만 선택
 export function LoanSchedule({ mode = "monthly", result, scheduleId }) {
+    const { t } = useTranslation();
+
     if (!result) return null;
-    const method = repaymentMethods.find((item) => item.value === result.method);
+
+    const methodLabel = t(`loanCalculator.methods.${result.method}`);
     // 총 이자 표는 4열, 월 상환액 표는 6열
     const columns =
         mode === "interest"
             ? [
-                  ["month", "회차"],
-                  ["principal", "원금"],
-                  ["interest", "이자"],
-                  ["payment", "총 금액"],
-              ]
+                "month",
+                "principal",
+                "interest",
+                "payment",
+            ]
             : [
-                  ["month", "회차"],
-                  ["payment", "상환금"],
-                  ["principal", "납입 원금"],
-                  ["interest", "이자"],
-                  ["cumulativePrincipal", "납입 원금 합계"],
-                  ["balance", "잔금"],
-              ];
+                "month",
+                "payment",
+                "principal",
+                "interest",
+                "cumulativePrincipal",
+                "balance",
+            ];
 
     return (
         <section className="loan-schedule-panel" aria-labelledby={scheduleId + "-title"}>
-            <h3 id={scheduleId + "-title"}>월별 상환 스케줄</h3>
+            <h3 id={scheduleId + "-title"}>{t("loanCalculator.schedule.title")}</h3>
 
             <p className="form-help">
-                {method.label} · 총 {result.totalMonths}회
+                {t("loanCalculator.schedule.summary", {
+                    method: methodLabel,
+                    count: result.totalMonths,
+                })}
             </p>
 
             {/* 긴 금액은 자르지 않고 기존 스크롤 영역에서 확인 */}
@@ -280,7 +282,9 @@ export function LoanSchedule({ mode = "monthly", result, scheduleId }) {
                 className="loan-table-scroll"
                 tabIndex={0}
                 role="region"
-                aria-label={method.label + " 월별 상환 스케줄 표"}
+                aria-label={t("loanCalculator.schedule.ariaLabel", {
+                    method: methodLabel,
+                })}
             >
                 <table
                     className={
@@ -291,9 +295,9 @@ export function LoanSchedule({ mode = "monthly", result, scheduleId }) {
                     {/* 모드별로 지정한 순서 그대로 열 제목 표시 */}
                     <thead>
                         <tr>
-                            {columns.map(([key, label]) => (
+                            {columns.map((key) => (
                                 <th key={key} scope="col">
-                                    {label}
+                                    {t(`loanCalculator.schedule.columns.${key}`)}
                                 </th>
                             ))}
                         </tr>
@@ -303,7 +307,7 @@ export function LoanSchedule({ mode = "monthly", result, scheduleId }) {
                     <tbody>
                         {result.schedule.map((row) => (
                             <tr key={row.month}>
-                                {columns.map(([key]) =>
+                                {columns.map((key) =>
                                     key === "month" ? (
                                         <th key={key} scope="row">
                                             {row.month}

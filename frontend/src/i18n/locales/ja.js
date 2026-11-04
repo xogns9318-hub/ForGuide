@@ -41,6 +41,78 @@ const ja = {
         },
     },
 
+    preparationCard: {
+        title: "相談内容を整理してください。",
+        givenName: "名",
+        surname: "姓",
+        birthDate: "生年月日",
+        gender: "性別",
+        male: "男性",
+        female: "女性",
+        occurrence: "発生時期",
+        choose: "選択してください",
+        issue: "発生した問題",
+        other: "その他",
+        taxKeyword: "税務申告・納付",
+        keywordHelp: "該当する詳細な問題を選択してください。複数選択できます。",
+        details: "詳細内容",
+        characterCount: "{{count}}/300文字",
+        guidanceTitle: "相談準備の案内",
+        acknowledge: "確認しました。",
+        translationQuestion: "韓国語の翻訳文が必要ですか？",
+        yes: "はい",
+        no: "いいえ",
+        complete: "相談準備完了",
+        incomplete: "まだ相談準備が完了していません。\nすべての項目を選択・入力してください。",
+        results: "作成された相談準備カード",
+        print: "カードを印刷",
+        originalTitle: "相談準備カード - 作成原文",
+        translatedTitle: "相談準備カード - 韓国語翻訳文",
+        translating: "韓国語に翻訳しています。",
+        retryTranslation: "もう一度翻訳",
+        translationFailed:
+            "韓国語への翻訳に失敗しました。作成原文は保持されます。しばらくしてからもう一度お試しください。",
+        translationTimeout:
+            "翻訳の応答が遅れています。作成原文は保持されます。しばらくしてからもう一度お試しください。",
+        translationUnavailable:
+            "翻訳サービスを一時的に利用できません。作成原文は保持されます。しばらくしてからもう一度お試しください。",
+        translationRateLimited:
+            "翻訳の利用上限に達しました。作成原文は保持されます。しばらくしてからもう一度お試しください。",
+        translationConnectionFailed:
+            "サーバーに接続できませんでした。作成原文は保持されます。接続状態を確認してもう一度お試しください。",
+        translationReview: "AI翻訳文です。作成原文と比較して内容を確認してください。",
+        translationNotice:
+            "韓国語翻訳を選択すると、準備完了時に詳細内容がGoogle Geminiへ送信されます。名・姓・生年月日は送信されません。",
+        institution: "選択した機関: {{name}}",
+        nameRule:
+            "空白・数字・特殊文字なしで最大20文字まで入力してください。外国語も入力できます。",
+        birthYear: "年",
+        birthMonth: "月",
+        birthDay: "日",
+        birthYearPlaceholder: "YYYY",
+        birthMonthValue: "{{value}}月",
+        birthDayValue: "{{value}}日",
+        birthDateInvalid:
+            "1900年1月1日から今日までの正しい生年月日を入力してください。",
+        periods: {
+            under1: "1か月未満",
+            months1to3: "1か月〜3か月",
+            months3to6: "3か月〜6か月",
+            months6to12: "6か月〜1年",
+            years1: "1年以上",
+            years3: "3年以上",
+            years5: "5年以上",
+            years10: "10年以上",
+        },
+        notices: {
+            1: "安全保障上重要な施設や公共機関の内部、研究所などでは撮影が制限される場合があります。\n施設ごとの撮影制限を確認し、安全要員の案内と統制に従ってください。",
+            2: "職員に対する暴言、暴行、脅迫、または繰り返しの嫌がらせは中止してください。\n行為によっては相談が終了し、関係法令に基づく措置を受ける場合があります。",
+            3: "すべての申請・苦情がすぐに処理されるわけではありません。\n業務ごとの処理期間や追加書類の要否を確認し、結果が必要な時期より余裕を持って申請してください。",
+            4: "相談・苦情窓口の運営時間や昼休みの有無は、機関と業務によって異なります。\n訪問前に、該当機関の運営時間と予約の要否を確認してください。",
+            5: "代理人が申請する際に必要な書類は業務ごとに異なります。\n委任状、本人・代理人の身分証明書など、必要書類と代理申請の可否を事前に確認してください。",
+        },
+    },
+
     homeOverview: {
         translation: {
             title: "翻訳",
@@ -231,6 +303,57 @@ const ja = {
             checkedAt: "情報基準日",
         },
         multipleKeywords: "（複数選択可）",
+
+        selectionLabels: {
+            "출입국·행정": "出入国・行政",
+            "비자·체류": "ビザ・在留",
+            외국인등록: "外国人登録",
+            "민원·증명서": "行政手続き・証明書",
+
+            "노동·취업": "労働・就職",
+            "임금·퇴직금": "賃金・退職金",
+            "근로계약·근무조건": "雇用契約・勤務条件",
+            "취업·고용": "就職・雇用",
+
+            "금융·채무": "金融・債務",
+            "대출·서민금융": "ローン・生活金融",
+            "채무·신용회복": "債務・信用回復",
+            "금융민원·피해": "金融苦情・被害",
+
+            "보험·연금": "保険・年金",
+            건강보험: "健康保険",
+            국민연금: "国民年金",
+            "산재·고용보험": "労災・雇用保険",
+
+            세금: "税金",
+            "세금신고·납부": "税務申告・納付",
+            연말정산: "年末調整",
+            세금환급: "税金還付",
+
+            "생활·복지·법률": "生活・福祉・法律",
+            복지지원: "福祉支援",
+            "가족·생활상담": "家族・生活相談",
+            "법률·주거분쟁": "法律・住宅紛争",
+        },
+        topics: {
+            bank: "口座・銀行",
+            loan: "ローン",
+            repayment: "債務・返済",
+            credit: "信用管理",
+            living: "生活費・支出",
+            wages: "給与・賃金",
+            employment_contract: "雇用契約・勤務条件",
+            retirement: "退職・退職金",
+            employment: "就職・求職",
+            remittance: "送金・振込",
+            payment: "カード・決済",
+            housing: "住居費",
+            tax: "税金",
+            insurance: "保険・社会保障",
+            fraud: "金融詐欺・被害",
+            financial_support: "金融支援・福祉",
+            financial_information: "金融情報・基礎相談",
+        },
     },
 
     notification: {
@@ -1138,6 +1261,236 @@ const ja = {
             TIMEOUT: "応答に時間がかかっています。しばらくしてからもう一度お試しください。",
         },
     },
+
+    recommendForm: {
+        choose: "選択してください",
+        submit: "おすすめを見る",
+        required: "すべての項目を選択すると、おすすめを確認できます。",
+        changed: "条件が変更されました。もう一度おすすめを確認してください。",
+        residenceStatus: "在留資格",
+        loading: "おすすめ結果を読み込んでいます。",
+        loadingChoices: "質問を読み込んでいます。",
+        loadError: "おすすめ結果を読み込めませんでした。",
+        invalidInput: "入力内容を確認してください。",
+        retry: "再試行",
+        resultsTitle: "おすすめ結果",
+        empty: "条件に合う商品がありません。条件を変更してみてください。",
+        groupCount: "{{companies}}社の金融機関・{{total}}件の商品",
+        productCount: "商品 {{total}}件",
+        showMore: "もっと見る",
+        showLess: "閉じる",
+        mismatchToggle: "加入が難しい商品の表示 ({{count}})",
+        detail: "詳細を見る",
+        close: "閉じる",
+        reasonsTitle: "おすすめの理由",
+        checksTitle: "加入前に確認すること",
+        nextTitle: "次にすること",
+        homepage: "ホームページ",
+        phone: "電話",
+        noContact: "連絡先情報がありません。",
+        residenceStatuses: {
+            "비전문취업(E-9)": "非専門就業（E-9）",
+            "방문취업(H-2)": "訪問就業（H-2）",
+            전문인력: "専門人材",
+            유학생: "留学生",
+            "재외동포(F-4)": "在外同胞（F-4）",
+            "영주(F-5)": "永住（F-5）",
+            "결혼이민(F-6)": "結婚移民（F-6）",
+            기타: "その他",
+        },
+    },
+
+    recommendAccount: {
+        title: "口座おすすめ",
+        description:
+            "いくつかの質問に答えると、外国人が加入できる定期預金・積立預金を比較できます。",
+        gateTitle: "まず確認しましょう",
+        fastTitle: "どの商品をお探しですか？",
+        ownAccount: "本人名義の普通預金口座はありますか？",
+        visit: "支店訪問",
+        purpose: "目的",
+        term: "預ける期間",
+        institution: "金融機関",
+        yes: "はい",
+        no: "いいえ",
+        visitOptions: {
+            상관없음: "訪問しても大丈夫です",
+            "원치 않음": "支店を訪問したくありません",
+        },
+        purposeOptions: {
+            예금: "定期預金・まとまった金額を一度に",
+            적금: "積立預金・毎月少しずつ",
+        },
+        termOption: "{{count}}か月",
+        termNotice:
+            "残りの在留期間より長い期間は選ばないでください。満期前に解約すると、中途解約利率が適用され利息が少なくなる場合があります。",
+        institutionOptions: {
+            "은행 선호": "銀行を希望します",
+            상관없음: "こだわりません",
+        },
+        noAccountTitle: "普通預金口座を先に作ってください",
+        noAccountBody:
+            "定期預金・積立預金は本人名義の普通預金口座と連携して加入します。近くの銀行で外国人の口座開設に必要な書類を確認してください。",
+        noAccountAction: "支援機関を探す",
+        rate: "基本金利",
+        rateValue: "年 {{rate}}%・{{type}}",
+        period: "期間",
+        joinWay: "申込方法",
+        institutionType: "金融機関の種類",
+        visitRequired: "支店訪問が必要",
+        chartTitle: "予想利息比較（税引前）",
+        chartDeposit: "1,000万ウォンを{{term}}か月預けた場合",
+        chartSaving: "毎月50万ウォンを{{term}}か月積み立てた場合",
+        interest: "予想利息（税引前）",
+        interestValue: "{{amount}}ウォン",
+    },
+
+    recommendInsurance: {
+        title: "実損保険おすすめ",
+        description:
+            "いくつかの質問に答えると、同じ補償の実損保険を保険料順に比較できます。",
+        gateTitle: "まず確認しましょう",
+        healthInsurance: "国民健康保険に加入していますか？",
+        healthOptions: {
+            예: "はい",
+            아니오: "いいえ",
+            모름: "よく分かりません",
+        },
+        fastTitle: "保険料の計算に必要な情報を教えてください",
+        sex: "性別",
+        sexOptions: {
+            남: "男性",
+            여: "女性",
+        },
+        age: "年齢",
+        agePlaceholder: "例：30",
+        ageError: "{{min}}～{{max}}歳の数字を入力してください。",
+        noInsuranceTitle: "健康保険の加入状況を先に確認してください",
+        noInsuranceBody:
+            "健康保険の加入状況によって確認する内容が異なります。まず支援機関で状況に合った相談を受けてください。",
+        noInsuranceAction: "支援機関を探す",
+        premium: "月額保険料",
+        premiumValue: "{{amount}}ウォン",
+        breakdown: "保険料の内訳",
+        breakdownValue: "基本型 {{basic}} · 特約1 {{rider1}} · 特約2 {{rider2}}",
+        insurerType: "保険種類",
+        joinWay: "申込方法",
+        online: "オンライン加入可能",
+        offline: "保険会社・保険代理店にお問い合わせください",
+        chartTitle: "月額保険料比較",
+        chartBasis: "{{sex}}・満{{age}}歳基準",
+        basic: "基本型",
+        rider1: "特約1",
+        rider2: "特約2",
+    },
+
+    recommendLoan: {
+        title: "ローンおすすめ",
+        description:
+            "用途を選ぶと、外国人が検討できるローンを平均金利順に比較できます。",
+        fastTitle: "どのようなローンをお探しですか？",
+        purpose: "用途",
+        purposeOptions: {
+            생활비: "生活費（信用ローン）",
+            "전세 보증금": "チョンセ保証金（担保ローン）",
+        },
+        visit: "支店訪問",
+        visitOptions: {
+            상관없음: "訪問しても大丈夫です",
+            "원치 않음": "支店を訪問したくありません",
+        },
+        rateAvg: "先月の平均金利",
+        rateValue: "年 {{rate}}%",
+        rateRange: {
+            credit: "信用スコア別金利",
+            jeonse: "現在の金利範囲",
+        },
+        rateRangeValue: "年 {{min}}～{{max}}%",
+        noRate: "公示なし",
+        kind: "商品種類",
+        joinWay: "申込方法",
+        visitRequired: "支店訪問が必要",
+        limit: "融資限度額",
+        repay: "返済方法",
+        chartTitle: "先月の平均金利比較",
+        chartBasis: "低いほど利息の負担が少なくなります。",
+    },
+
+    recommendResult: {
+        groups: {
+            match: "外国人の加入が可能",
+            check: "加入条件の確認が必要",
+            mismatch: "加入が難しい商品",
+        },
+
+        reasons: {
+            high_rate: "同じ条件の商品と比べて金利が高いほうです。",
+            no_visit: "支店を訪問せずに加入できます。",
+            bank: "銀行の商品です。",
+            low_premium: "同じ保障の商品と比べて保険料が低いほうです。",
+            online_join: "オンラインで加入できます。",
+            low_rate: "同じ種類のローンの中で平均金利が低いほうです。",
+        },
+
+        checkReasons: {
+            foreigner_unspecified: "外国人の加入条件が公表されていません。",
+            region_limit: "加入できる地域が決められています: {{regions}}",
+            rate_outlier:
+                "金利が他の商品より大幅に高いです。特別な加入条件があるか確認してください。",
+            kakao_withdrawal_only:
+                "外国人には入出金口座のみ案内されています。この商品にも加入できるか確認してください。",
+            insurer_review: "保険会社ごとに外国人の加入審査基準が異なります。",
+            limit_after_review: "ローン限度額は審査後に決まります。",
+            special_target:
+                "若者・新婚夫婦など対象が決められた商品です。加入対象か確認してください。",
+            rate_not_disclosed: "平均金利が公表されていません。",
+            rate_inconsistent:
+                "先月の平均金利が現在の金利範囲と大きく異なります。金融機関に実際の金利を確認してください。",
+        },
+
+        mismatchReasons: {
+            domestic_only: "韓国籍の方のみ加入できます。",
+            visit_required: "加入には支店への訪問が必要です。",
+            term_over_stay: "貯蓄期間が残りの在留期間より長いです。",
+            kbank_not_yet: "外国人向け加入サービスを準備中です。",
+        },
+
+        guides: {
+            join_at_company:
+                "外国人も加入できると案内されている商品です。金融機関のアプリまたはホームページから加入してください。",
+            ask_foreigner_eligibility:
+                "外国人の加入条件が公表されていません。加入前に金融機関へ外国人も加入できるか確認してください。",
+            ask_insurer_eligibility:
+                "加入前に、在留資格と在留期間で加入できるか保険会社に確認してください。",
+            ask_loan_eligibility:
+                "外国人向けローン条件が公表されていません。申請前に、在留資格・所得・在留期間で借入できるか金融機関に確認してください。",
+        },
+
+        moreFromCompany: "この金融機関の商品をあと{{count}}件",
+
+        separate: {
+            title: "このような商品もあります",
+            senior: "高齢者向け実損保険",
+            simplified: "簡易審査型実損保険",
+            description:
+                "一般の実損保険とは加入条件と保障内容が異なるため、別に表示しています。",
+        },
+
+        notices: {
+            rate_may_change: "金利は{{month}}の公示基準であり、変更される場合があります。",
+            savings_bank_protected:
+                "貯蓄銀行の預金・積立商品も預金者保護の対象です。",
+            reference_only:
+                "おすすめは参考用です。実際の加入可否と条件は金融機関の審査により異なります。",
+            premium_may_change:
+                "保険料は{{date}}の公示基準であり、変更される場合があります。",
+            insurance_age_basis:
+                "保険料は保険年齢を基準とするため、実際の保険料と少し異なる場合があります。",
+            rate_by_credit:
+                "平均金利は先月実際に借りた人の平均です。実際の金利は信用審査により異なります。",
+        },
+    },
+
     footer: {
         description: "ここはフッターです。ひどい足の臭いがします。",
         copyright: "© これがベストなのですか、人間？",
