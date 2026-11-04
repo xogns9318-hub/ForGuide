@@ -7,6 +7,7 @@ import ResultGroups from "../components/ResultGroups.jsx";
 import ProductDialog from "../components/ProductDialog.jsx";
 import PremiumChart from "../components/PremiumChart.jsx";
 import { getInsuranceChoices, getInsuranceRecommendation } from "../api/recommendApi.js";
+import { getResidenceStatusKey } from "../../i18n/recommendationLabels.js";
 import styles from "../recommend.module.css";
 
 const EMPTY_FORM = {
@@ -105,9 +106,9 @@ export default function InsuranceRecommend() {
         { value: "", label: t("recommendForm.choose") },
         ...(choices?.residence_status ?? []).map((value) => ({
             value,
-            label: t(`recommendForm.residenceStatuses.${value}`, {
-                defaultValue: value,
-            }),
+            label: getResidenceStatusKey(value)
+                ? t(`recommendForm.residenceStatuses.${getResidenceStatusKey(value)}`)
+                : value,
         })),
     ];
 

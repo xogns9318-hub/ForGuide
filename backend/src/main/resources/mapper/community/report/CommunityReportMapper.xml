@@ -3,17 +3,134 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.forguide.community.report.CommunityReportMapper">
 
-    <insert id="insert">
+    <insert
+            id="insert"
+            useGeneratedKeys="true"
+            keyProperty="command.reportId"
+            keyColumn="report_id"
+    >
         INSERT INTO community_reports (
             reporter_member_id,
             resource_type,
             resource_id,
             report_reason
         ) VALUES (
-            #{reporterMemberId},
-            #{resourceType},
-            #{resourceId},
-            #{reportReason}
+            #{command.reporterMemberId},
+            #{command.resourceType},
+            #{command.resourceId},
+            #{command.reportReason}
         )
     </insert>
+
+    <insert id="insertImage">
+        INSERT INTO community_report_images (
+            report_id,
+            image_url,
+            display_order
+        ) VALUES (
+            #{reportId},
+            #{imageUrl},
+            #{displayOrder}
+        )
+    </insert>
+
+    <select
+            id="findImageByIdAndReportIdAndReporterMemberId"
+            resultType="com.example.forguide.community.report.CommunityReportImageResponse"
+    >
+        SELECT
+            ri.report_image_id AS reportImageId,
+            ri.report_id AS reportId,
+            ri.image_url AS imageUrl,
+            ri.display_order AS displayOrder
+        FROM community_report_images ri
+        INNER JOIN community_reports r ON r.report_id = ri.report_id
+        WHERE ri.report_id = #{reportId}
+            AND ri.report_image_id = #{reportImageId}
+            AND r.reporter_member_id = #{reporterMemberId}
+    </select>
+
+    <select
+            id="findImageByIdAndReportId"
+            resultType="com.example.forguide.community.report.CommunityReportImageResponse"
+    >
+        SELECT
+            report_image_id AS reportImageId,
+            report_id AS reportId,
+            image_url AS imageUrl,
+            display_order AS displayOrder
+        FROM community_report_images
+        WHERE report_id = #{reportId}
+            AND report_image_id = #{reportImageId}
+    </select>
+
+    <select
+            id="findImagesByReportIdAndReporterMemberId"
+            resultType="com.example.forguide.community.report.CommunityReportImageResponse"
+    >
+        SELECT
+            ri.report_image_id AS reportImageId,
+            ri.report_id AS reportId,
+            ri.image_url AS imageUrl,
+            ri.display_order AS displayOrder
+        FROM community_report_images ri
+        INNER JOIN community_reports r ON r.report_id = ri.report_id
+        WHERE ri.report_id = #{reportId}
+            AND r.reporter_member_id = #{reporterMemberId}
+        ORDER BY ri.display_order
+    </select>
+
+    <select
+            id="findImagesByReportId"
+            resultType="com.example.forguide.community.report.CommunityReportImageResponse"
+    >
+        SELECT
+            report_image_id AS reportImageId,
+            report_id AS reportId,
+            image_url AS imageUrl,
+            display_order AS displayOrder
+        FROM community_report_images
+        WHERE report_id = #{reportId}
+        ORDER BY display_order
+    </select>
+
+    <select
+            id="findPendingRecipientsByResource"
+            resultType="com.example.forguide.community.report.CommunityReportRecipient"
+    >
+        SELECT
+            report_id AS reportId,
+            reporter_member_id AS reporterMemberId,
+            resource_type AS resourceType,
+            resource_id AS resourceId
+        FROM community_reports
+        WHERE resource_type = #{resourceType}
+            AND resource_id = #{resourceId}
+            AND report_status = 'PENDING'
+        ORDER BY report_id
+    </select>
+
+    <select
+            id="findPendingRecipientByReportId"
+            resultType="com.example.forguide.community.report.CommunityReportRecipient"
+    >
+        SELECT
+            report_id AS reportId,
+            reporter_member_id AS reporterMemberId,
+            resource_type AS resourceType,
+            resource_id AS resourceId
+        FROM community_reports
+        WHERE report_id = #{reportId}
+            AND report_status = 'PENDING'
+    </select>
+
+    <update id="updateStatusIfPending">
+        UPDATE community_reports
+        SET
+            report_status = #{reportStatus},
+            handled_by_member_id = #{handledByMemberId},
+            handled_at = CURRENT_TIMESTAMP
+        WHERE report_id = #{reportId}
+            AND report_status = 'PENDING'
+    </update>
 </mapper>

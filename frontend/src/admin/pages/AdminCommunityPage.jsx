@@ -7,7 +7,11 @@ import {
 import { useTranslation } from "react-i18next";
 import {
     getAdminCommunityContents,
+    getAdminCommunityReports,
+    getAdminCommunityReportImages,
     updateAdminCommunityModeration,
+    getAdminCommunityReportImageBlob,
+    dismissAdminCommunityReport,
 } from "../../api/adminApi.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import { formatDateTime } from "../../utils/formatDateTime.js";
@@ -23,6 +27,21 @@ export default function AdminCommunityPage() {
     const { t, i18n } = useTranslation();
 
     const [contents, setContents] = useState([]);
+    const [reports, setReports] = useState([]);
+    const [isReportsLoading, setIsReportsLoading] = useState(true);
+    const [reportsError, setReportsError] = useState("");
+    const [processingReportId, setProcessingReportId] = useState(null);
+    const [reportActionResult, setReportActionResult] = useState({
+        reportId: null,
+        error: "",
+        success: "",
+    });
+    const [openedReport, setOpenedReport] = useState(null);
+    const [reportImages, setReportImages] = useState([]);
+    const [isImagesLoading, setIsImagesLoading] = useState(false);
+    const [imagesError, setImagesError] = useState("");
+    const reportImageUrlsRef = useRef(new Set());
+
     const [resourceType, setResourceType] = useState("");
     const [moderationStatus, setModerationStatus] = useState("");
     const [keywordInput, setKeywordInput] = useState("");
@@ -132,6 +151,156 @@ export default function AdminCommunityPage() {
     useEffect(() => {
         void loadContents({ reset: true });
     }, [loadContents]);
+
+    const loadReports = useCallback(async () => {
+        setIsReportsLoading(true);
+        setReportsError("");
+
+        try {
+            const response = await getAdminCommunityReports();
+            setReports(Array.isArray(response) ? response : []);
+        } catch (requestError) {
+            setReportsError(
+                requestError?.message ||
+                t("admin.community.reportsLoadError"),
+            );
+        } finally {
+            setIsReportsLoading(false);
+        }
+    }, [t]);
+
+    useEffect(() => {
+        void loadReports();
+    }, [loadReports]);
+
+    // 관리자 모달을 닫거나 다시 열 때 Blob 미리보기 주소를 해제한다.
+    function clearReportImagePreviews() {
+        reportImageUrlsRef.current.forEach((url) =>
+            URL.revokeObjectURL(url),);
+        reportImageUrlsRef.current.clear();
+    }
+
+    async function openReportImages(report) {
+        setOpenedReport(report);
+        setReportImages([]);
+        setImagesError("");
+        setIsImagesLoading(true);
+
+        try {
+            const response = await getAdminCommunityReportImages(
+                report.reportId,
+            );
+
+            clearReportImagePreviews();
+
+            const images = Array.isArray(response) ? response : [];
+
+            const imagesWithPreviewUrl = await Promise.all(
+                images.map(async (image) => {
+                    const blob = await getAdminCommunityReportImageBlob(
+                        report.reportId,
+                        image.reportImageId,
+                    );
+
+                    const previewUrl = URL.createObjectURL(blob);
+                    reportImageUrlsRef.current.add(previewUrl);
+
+                    return {
+                        ...image,
+                        previewUrl,
+                    };
+                }),
+            );
+
+            setReportImages(imagesWithPreviewUrl);
+
+        } catch (requestError) {
+            setImagesError(
+                requestError?.message ||
+                t("admin.community.reportImagesLoadError"),
+            );
+        } finally {
+            setIsImagesLoading(false);
+        }
+    }
+
+    function closeReportImages() {
+        setOpenedReport(null);
+        clearReportImagePreviews();
+        setReportImages([]);
+        setImagesError("");
+    }
+
+    // 콘텐츠를 숨기면 같은 콘텐츠의 대기 신고도 함께 처리된다.
+    async function hideReportedContent(report) {
+        setProcessingReportId(report.reportId);
+        setReportActionResult({
+            reportId: null,
+            error: "",
+            success: "",
+        });
+
+        try {
+            await updateAdminCommunityModeration(
+                report.resourceType,
+                report.resourceId,
+                "HIDDEN",
+                null,
+            );
+
+            await Promise.all([
+                loadReports(),
+                loadContents({ reset: true }),
+            ]);
+
+            setReportActionResult({
+                reportId: report.reportId,
+                error: "",
+                success: t("admin.community.reportHiddenSuccess"),
+            });
+        } catch (requestError) {
+            setReportActionResult({
+                reportId: report.reportId,
+                error:
+                    requestError?.message ||
+                    t("admin.community.reportActionError"),
+                success: "",
+            });
+        } finally {
+            setProcessingReportId(null);
+        }
+    }
+
+    // 신고만 기각하며, 콘텐츠 자체의 공개 상태는 바꾸지 않는다.
+    async function dismissReport(report) {
+        setProcessingReportId(report.reportId);
+        setReportActionResult({
+            reportId: null,
+            error: "",
+            success: "",
+        });
+
+        try {
+            await dismissAdminCommunityReport(report.reportId);
+            await loadReports();
+
+            setReportActionResult({
+                reportId: report.reportId,
+                error: "",
+                success: t("admin.community.reportDismissSuccess"),
+            });
+        } catch (requestError) {
+            setReportActionResult({
+                reportId: report.reportId,
+                error:
+                    requestError?.message ||
+                    t("admin.community.reportActionError"),
+                success: "",
+            });
+        } finally {
+            setProcessingReportId(null);
+        }
+    }
 
     const observerTarget = useInfiniteScroll({
         enabled: hasMore && !isLoading && !listError,
@@ -304,6 +473,227 @@ export default function AdminCommunityPage() {
                     {t("admin.community.search")}
                 </button>
             </form>
+
+            <section
+                className={styles.reportSection}
+                aria-labelledby="admin-community-reports-title"
+            >
+                <div className={styles.reportSectionHeading}>
+                    <h2 id="admin-community-reports-title">
+                        {t("admin.community.reportsTitle")}
+                    </h2>
+
+                    <button
+                        type="button"
+                        className="button"
+                        onClick={loadReports}
+                        disabled={isReportsLoading}
+                    >
+                        {t("admin.community.retry")}
+                    </button>
+                </div>
+
+                {isReportsLoading && (
+                    <p className={styles.stateMessage}>
+                        {t("admin.community.reportsLoading")}
+                    </p>
+                )}
+
+                {!isReportsLoading && reportsError && (
+                    <p className={styles.itemError} role="alert">
+                        {reportsError}
+                    </p>
+                )}
+
+                {!isReportsLoading &&
+                    !reportsError &&
+                    reports.length === 0 && (
+                        <p className={styles.stateMessage}>
+                            {t("admin.community.reportsEmpty")}
+                        </p>
+                    )}
+
+                {!isReportsLoading &&
+                    !reportsError &&
+                    reports.length > 0 && (
+                        <ul className={styles.reportList}>
+                            {reports.map((report) => (
+                                <li
+                                    key={report.reportId}
+                                    className={styles.reportItem}
+                                >
+                                    <div>
+                                        <strong>
+                                            {report.resourceType === "POST"
+                                                ? t(
+                                                    "admin.community.resourceTypePost",
+                                                )
+                                                : t(
+                                                    "admin.community.resourceTypeComment",
+                                                )}
+                                        </strong>
+
+                                        <p>
+                                            {t(
+                                                "admin.community.reportReasonLabel",
+                                            )}
+                                            :{" "}
+                                            {t(
+                                                `community.report.reasons.${report.reportReason}`,
+                                            )}
+                                        </p>
+
+                                        <p>
+                                            {t(
+                                                "admin.community.reporterLabel",
+                                            )}
+                                            :{" "}
+                                            {report.reporterNickname ||
+                                                report.reporterLoginId}
+                                        </p>
+
+                                        <p>
+                                            {t("admin.community.targetLabel")}:{" "}
+                                            {report.targetNickname || report.targetLoginId || "-"}
+                                        </p>
+
+                                        <p>
+                                            {t("admin.community.reportStatusLabel")}:{" "}
+                                            {t(`admin.community.reportStatus.${report.reportStatus}`)}
+                                        </p>
+
+                                        {report.handledAt && (
+                                            <p>
+                                                {t("admin.community.handledAtLabel")}:{" "}
+                                                {formatDateTime(report.handledAt, i18n.language)}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className={styles.reportActions}>
+                                        <button
+                                            type="button"
+                                            className="button"
+                                            onClick={() => openReportImages(report)}
+                                        >
+                                            {t("admin.community.viewEvidence")}
+                                        </button>
+
+                                        {report.reportStatus === "PENDING" && (
+                                            <>
+                                                <button
+                                                    type="button"
+                                                    className="button"
+                                                    onClick={() => hideReportedContent(report)}
+                                                    disabled={processingReportId === report.reportId}
+                                                >
+                                                    {processingReportId === report.reportId
+                                                        ? t("admin.community.updating")
+                                                        : t("admin.community.hideReportedContent")}
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="button"
+                                                    onClick={() => dismissReport(report)}
+                                                    disabled={processingReportId === report.reportId}
+                                                >
+                                                    {processingReportId === report.reportId
+                                                        ? t("admin.community.updating")
+                                                        : t("admin.community.dismissReport")}
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+
+                                    {reportActionResult.reportId === report.reportId &&
+                                        reportActionResult.error && (
+                                            <p className={styles.itemError} role="alert">
+                                                {reportActionResult.error}
+                                            </p>
+                                        )}
+
+                                    {reportActionResult.reportId === report.reportId &&
+                                        reportActionResult.success && (
+                                            <p className={styles.itemSuccess} role="status">
+                                                {reportActionResult.success}
+                                            </p>
+                                        )}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+            </section>
+
+            {openedReport && (
+                <div
+                    className={styles.imageModalBackdrop}
+                    role="presentation"
+                    onMouseDown={closeReportImages}
+                >
+                    <section
+                        className={styles.imageModal}
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="report-evidence-title"
+                        onMouseDown={(event) => event.stopPropagation()}
+                    >
+                        <div className={styles.imageModalHeading}>
+                            <h2 id="report-evidence-title">
+                                {t("admin.community.evidenceTitle")}
+                            </h2>
+
+                            <button
+                                type="button"
+                                className="button"
+                                onClick={closeReportImages}
+                            >
+                                {t("admin.community.close")}
+                            </button>
+                        </div>
+
+                        {isImagesLoading && (
+                            <p className={styles.stateMessage}>
+                                {t("admin.community.evidenceLoading")}
+                            </p>
+                        )}
+
+                        {!isImagesLoading && imagesError && (
+                            <p className={styles.itemError} role="alert">
+                                {imagesError}
+                            </p>
+                        )}
+
+                        {!isImagesLoading &&
+                            !imagesError &&
+                            reportImages.length === 0 && (
+                                <p className={styles.stateMessage}>
+                                    {t("admin.community.evidenceEmpty")}
+                                </p>
+                            )}
+
+                        {!isImagesLoading &&
+                            !imagesError &&
+                            reportImages.length > 0 && (
+                                <ul className={styles.evidenceImageList}>
+                                    {reportImages.map((image) => (
+                                        <li key={image.reportImageId}>
+                                            <img
+                                                src={image.previewUrl}
+                                                alt={t(
+                                                    "admin.community.evidenceImageAlt",
+                                                    {
+                                                        index: image.displayOrder + 1,
+                                                    },
+                                                )}
+                                            />
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                    </section>
+                </div>
+            )}
 
             {isLoading && contents.length === 0 && (
                 <p className={styles.stateMessage}>

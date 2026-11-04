@@ -14,11 +14,27 @@ import {
     readDate,
     wonParts,
 } from "../../utils/budgetSimulator.js";
+import { formatKrw } from "../../utils/currencyFormat.js";
 import styles from "../../styles/simulator.module.css";
 
 const emptyValues = Object.fromEntries(
     [...MONEY_FIELDS, "start", "end"].map((key) => [key, ""]),
 );
+
+// 날짜 숫자를 YYYY-MM-DD 형식으로 정리한다.
+function formatDateInput(value) {
+    const digits = value.replace(/\D/g, "").slice(0, 8);
+
+    if (digits.length <= 4) {
+        return digits;
+    }
+
+    if (digits.length <= 6) {
+        return `${digits.slice(0, 4)}-${digits.slice(4)}`;
+    }
+
+    return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
+}
 
 function MoneyField({ id, label, value, hint, onChange, won }) {
     return (
@@ -64,20 +80,33 @@ export default function Simulator() {
     const calendarRef = useRef(null);
     const touchStart = useRef(null);
 
-    const formatter = useMemo(
+    const numberFormatter = useMemo(
         () => new Intl.NumberFormat(i18n.language),
         [i18n.language],
     );
 
-    const won = (value) => formatter.format(value) + text("units.won");
+    // 실제 계산 금액은 모두 원화이므로, 현재 언어에 맞는 KRW 표기로 보여준다.
+    const won = (value) => formatKrw(value, i18n.language);
 
-    const converted = (value) =>
-        wonParts(value)
+    // 한국어에서는 만·억·조 보조 표기를 유지하고,
+    // 외국어에서는 실제 KRW 금액으로 명확하게 안내한다.
+    const converted = (value) => {
+        if (value === "") {
+            return "";
+        }
+
+        if (i18n.language !== "ko") {
+            return formatKrw(value, i18n.language);
+        }
+
+        return wonParts(value)
             .map(
                 (part) =>
-                    formatter.format(part.count) + text("units." + part.unit),
+                    numberFormatter.format(part.count) +
+                    text("units." + part.unit),
             )
             .join(" ");
+    };
 
     const canCalculate = inputError(values) === "";
 
@@ -235,7 +264,7 @@ export default function Simulator() {
                 value={values[field]}
                 hint={converted(values[field])}
                 onChange={(value) => changeValue(field, value)}
-                won={text("units.won")}
+                won={i18n.language === "ko" ? text("units.won") : "KRW"}
             />
         );
     }
@@ -290,15 +319,15 @@ export default function Simulator() {
 
                                         <input
                                             id={id + "-" + field}
-                                            type="date"
-                                            min="0001-01-01"
-                                            max="9999-12-31"
+                                            type="text"
+                                            inputMode="numeric"
+                                            autoComplete="off"
+                                            maxLength={10}
+                                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+                                            placeholder={text("dateFormat")}
                                             value={values[field]}
                                             onChange={(event) =>
-                                                changeValue(
-                                                    field,
-                                                    event.target.value,
-                                                )
+                                                changeValue(field, formatDateInput(event.target.value))
                                             }
                                         />
                                     </div>
@@ -526,7 +555,7 @@ export default function Simulator() {
                                             label={text("extraAmount")}
                                             value={extra}
                                             hint={converted(extra)}
-                                            won={text("units.won")}
+                                            won={i18n.language === "ko" ? text("units.won") : "KRW"}
                                             onChange={(value) => {
                                                 if (
                                                     value !== "" &&
@@ -650,7 +679,7 @@ export default function Simulator() {
                                 })}{" "}
                                 {plan.remainder > 0n &&
                                     text("remainder", {
-                                        count: formatter.format(plan.remainder),
+                                        count: numberFormatter.format(plan.remainder),
                                     })}
                             </p>
 

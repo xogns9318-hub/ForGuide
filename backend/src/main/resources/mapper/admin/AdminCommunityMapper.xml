@@ -128,4 +128,46 @@
             updated_at = CURRENT_TIMESTAMP
     </insert>
 
+    <select
+            id="findRecentReports"
+            resultType="com.example.forguide.admin.dto.AdminCommunityReportResponse"
+    >
+        SELECT
+            r.report_id AS reportId,
+            r.resource_type AS resourceType,
+            r.resource_id AS resourceId,
+            r.report_reason AS reportReason,
+            r.report_status AS reportStatus,
+            r.reporter_member_id AS reporterMemberId,
+            m.login_id AS reporterLoginId,
+            m.nickname AS reporterNickname,
+
+            COALESCE(p.member_id, c.member_id) AS targetMemberId,
+            target.login_id AS targetLoginId,
+            target.nickname AS targetNickname,
+
+            r.handled_by_member_id AS handledByMemberId,
+            handler.login_id AS handledByLoginId,
+            handler.nickname AS handledByNickname,
+            r.handled_at AS handledAt,
+
+            r.created_at AS createdAt
+
+        FROM community_reports r
+        INNER JOIN members m
+            ON m.member_id = r.reporter_member_id
+        LEFT JOIN community_posts p
+            ON r.resource_type = 'POST'
+            AND r.resource_id = p.post_id
+        LEFT JOIN community_comments c
+            ON r.resource_type = 'COMMENT'
+            AND r.resource_id = c.comment_id
+        LEFT JOIN members target
+            ON target.member_id = COALESCE(p.member_id, c.member_id)
+        LEFT JOIN members handler
+            ON handler.member_id = r.handled_by_member_id
+        ORDER BY r.created_at DESC
+        LIMIT 50
+    </select>
+
 </mapper>

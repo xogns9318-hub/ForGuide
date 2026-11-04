@@ -182,6 +182,69 @@ const vi = {
         },
     },
 
+    loanChart: {
+        title: "So sánh số tiền theo {{method}}",
+        amount: "Số tiền",
+        items: {
+            firstPayment: "Khoản thanh toán đầu tiên",
+            averagePayment: "Khoản thanh toán trung bình",
+            maximumPayment: "Khoản thanh toán cao nhất",
+            totalPayment: "Tổng số tiền thanh toán",
+            regularPayment: "Khoản thanh toán hàng tháng",
+            firstMonthPayment: "Khoản thanh toán tháng đầu",
+            totalInterest: "Tổng tiền lãi",
+        },
+    },
+
+    loanCalculator: {
+        titles: {
+            monthly: "Khoản thanh toán hàng tháng",
+            interest: "Tổng tiền lãi",
+        },
+        fields: {
+            loanAmount: "Số tiền vay",
+            annualInterestRate: "Lãi suất năm",
+            loanMonths: "Thời hạn vay",
+            graceMonths: "Thời gian ân hạn",
+            repaymentMethod: "Phương thức trả nợ",
+        },
+        units: {
+            tenThousandWon: "vạn won",
+            months: "tháng",
+            percent: "%",
+        },
+        methods: {
+            bullet: "Trả gốc cuối kỳ",
+            equalPayment: "Trả góp đều cả gốc lẫn lãi",
+            equalPrincipal: "Trả đều tiền gốc",
+        },
+        descriptions: {
+            bullet: "Chỉ trả lãi trong thời hạn vay và thanh toán tiền gốc khi đáo hạn.",
+            equalPayment: "Thanh toán cùng một tổng số tiền gốc và lãi mỗi tháng.",
+            equalPrincipal: "Trả cùng một khoản tiền gốc mỗi tháng, tiền lãi sẽ giảm dần.",
+            equalPaymentWithGrace:
+                "Chỉ trả lãi trong thời gian ân hạn, sau đó thanh toán cùng một tổng số tiền gốc và lãi mỗi tháng.",
+            equalPrincipalWithGrace:
+                "Chỉ trả lãi trong thời gian ân hạn, sau đó trả cùng một khoản tiền gốc mỗi tháng và tiền lãi sẽ giảm dần.",
+        },
+        schedule: {
+            title: "Lịch trả nợ hàng tháng",
+            summary: "{{method}} · Tổng cộng {{count}} kỳ",
+            ariaLabel: "Bảng lịch trả nợ hàng tháng theo {{method}}",
+            columns: {
+                month: "Kỳ",
+                principal: "Tiền gốc",
+                interest: "Tiền lãi",
+                payment: "Tổng số tiền",
+                repayment: "Khoản trả nợ",
+                cumulativePrincipal: "Tổng tiền gốc đã trả",
+                balance: "Dư nợ còn lại",
+            },
+        },
+        calculate: "Tính toán",
+        fallbackError: "Không thể tính toán. Vui lòng kiểm tra dữ liệu nhập.",
+    },
+
     institutionGuide: {
         title: "Bạn cần tư vấn về vấn đề gì?",
         optionsLoadError: "Không thể tải các mục lựa chọn.",
@@ -356,6 +419,213 @@ const vi = {
         },
     },
 
+    admin: {
+        dashboard: {
+            eyebrow: "Tình trạng vận hành",
+            title: "Bảng điều khiển quản trị",
+            description: "Xem tình trạng vận hành hiện tại của dịch vụ ForGuide.",
+            loading: "Đang tải tình trạng vận hành.",
+            loadError: "Không thể tải tình trạng vận hành.",
+            retry: "Thử lại",
+            metrics: {
+                members: "Tổng thành viên",
+                posts: "Tổng bài viết",
+                comments: "Tổng bình luận",
+            },
+            management: {
+                title: "Menu quản lý",
+                members: {
+                    title: "Quản lý thành viên",
+                    description: "Xem danh sách và quản lý trạng thái thành viên.",
+                },
+                inquiries: {
+                    title: "Quản lý yêu cầu",
+                    description: "Xem yêu cầu của thành viên và gửi câu trả lời.",
+                },
+                community: {
+                    title: "Quản lý cộng đồng",
+                    description: "Xem bài viết, bình luận và quản lý trạng thái hiển thị.",
+                },
+            },
+        },
+        inquiries: {
+            title: "Quản lý yêu cầu",
+            description: "Xem yêu cầu của thành viên và gửi câu trả lời.",
+            filter: { all: "Tất cả", received: "Đã tiếp nhận", answered: "Đã trả lời" },
+            loading: "Đang tải danh sách yêu cầu.",
+            empty: "Không có yêu cầu để hiển thị.",
+            loadError: "Không thể tải danh sách yêu cầu.",
+            retry: "Thử lại",
+            loadMore: "Xem thêm yêu cầu",
+            member: "Thành viên yêu cầu",
+            answer: "Gửi câu trả lời",
+            answerPlaceholder: "Nhập câu trả lời gửi đến thành viên.",
+            submitting: "Đang gửi...",
+            answerSuccess: "Đã gửi câu trả lời.",
+            answerError: "Không thể gửi câu trả lời.",
+            alreadyAnswered: "Yêu cầu này đã được trả lời.",
+            answerRequired: "Vui lòng nhập nội dung trả lời.",
+        },
+        members: {
+            eyebrow: "Quản lý thành viên",
+            title: "Quản lý trạng thái thành viên",
+            description: "Tìm thành viên và tạm ngưng hoặc kích hoạt trạng thái sử dụng.",
+            statusLabel: "Trạng thái thành viên",
+            statusAll: "Tất cả trạng thái",
+            statusActive: "Thành viên hoạt động",
+            statusSuspended: "Thành viên bị tạm ngưng",
+            searchLabel: "Tìm thành viên",
+            searchPlaceholder: "ID, tên, biệt danh hoặc email",
+            search: "Tìm kiếm",
+            loading: "Đang tải danh sách thành viên.",
+            empty: "Không có thành viên để hiển thị.",
+            loadError: "Không thể tải danh sách thành viên.",
+            retry: "Thử lại",
+            updateError: "Không thể thay đổi trạng thái thành viên.",
+            suspend: "Tạm ngưng",
+            activate: "Kích hoạt",
+            updating: "Đang thay đổi...",
+            suspendSuccess: "Đã tạm ngưng thành viên.",
+            activateSuccess: "Đã kích hoạt lại thành viên.",
+            joinedAt: "Ngày đăng ký",
+            status: { ACTIVE: "Hoạt động", SUSPENDED: "Tạm ngưng" },
+            role: { USER: "Thành viên", ADMIN: "Quản trị viên" },
+        },
+        community: {
+            eyebrow: "Quản lý cộng đồng",
+            title: "Quản lý nội dung cộng đồng",
+            description: "Xem bài viết và bình luận, rồi ẩn hoặc khôi phục khi cần.",
+
+            resourceTypeLabel: "Loại nội dung",
+            resourceTypeAll: "Tất cả nội dung",
+            resourceTypePost: "Bài viết",
+            resourceTypeComment: "Bình luận",
+
+            statusLabel: "Trạng thái hiển thị",
+            statusAll: "Tất cả trạng thái",
+            statusVisible: "Hiển thị",
+            statusHidden: "Đã ẩn",
+            confirmHide: "Ẩn nội dung",
+            cancel: "Hủy",
+
+            searchLabel: "Tìm nội dung",
+            searchPlaceholder: "Nội dung, ID tác giả hoặc biệt danh",
+            search: "Tìm kiếm",
+
+            loading: "Đang tải nội dung cộng đồng.",
+            empty: "Không có nội dung cộng đồng để hiển thị.",
+            loadError: "Không thể tải nội dung cộng đồng.",
+            retry: "Thử lại",
+            loadMore: "Xem thêm nội dung",
+
+            reportsTitle: "Báo cáo đã gửi",
+            reportsLoading: "Đang tải danh sách báo cáo.",
+            reportsLoadError: "Không thể tải danh sách báo cáo.",
+            reportsEmpty: "Chưa có báo cáo nào được gửi.",
+            reportReasonLabel: "Lý do báo cáo",
+            reporterLabel: "Người báo cáo",
+            viewEvidence: "Xem ảnh bằng chứng",
+
+            evidenceTitle: "Ảnh bằng chứng báo cáo",
+            evidenceLoading: "Đang tải ảnh bằng chứng.",
+            evidenceEmpty: "Không có ảnh bằng chứng đính kèm.",
+            evidenceImageAlt: "Ảnh bằng chứng báo cáo {{index}}",
+            reportImagesLoadError: "Không thể tải ảnh bằng chứng.",
+            close: "Đóng",
+
+            hide: "Ẩn",
+            restore: "Khôi phục",
+            updating: "Đang thay đổi...",
+            updateError: "Không thể thay đổi trạng thái hiển thị.",
+            hideSuccess: "Nội dung đã được ẩn.",
+            restoreSuccess: "Nội dung đã được khôi phục.",
+
+            reasonLabel: "Lý do quản lý",
+            reasonPlaceholder: "Có thể nhập lý do ẩn nội dung.",
+            reasonNone: "Không có lý do quản lý được ghi nhận.",
+            createdAt: "Ngày tạo",
+            moderatedAt: "Ngày xử lý",
+        },
+        recommendationUsage: {
+            eyebrow: "Tình trạng sử dụng đề xuất",
+            title: "Tình trạng vận hành đề xuất",
+            description: "Tình trạng thực hiện đề xuất khoản vay, bảo hiểm và tài khoản không lưu thông tin cá nhân.",
+            periodLabel: "Khoảng thời gian",
+            period7: "7 ngày gần đây",
+            period30: "30 ngày gần đây",
+            period90: "90 ngày gần đây",
+            totalUsage: "Tổng lượt đề xuất",
+            loanUsage: "Đề xuất khoản vay",
+            insuranceUsage: "Đề xuất bảo hiểm",
+            accountUsage: "Đề xuất tài khoản",
+            latestUsedAt: "Lần đề xuất gần nhất",
+            outcomeTitle: "Kết quả đề xuất",
+            productResult: "Kết quả sản phẩm",
+            consultationRedirect: "Chuyển đến hướng dẫn tư vấn",
+            chartTitle: "Xu hướng đề xuất theo ngày",
+            chartTotal: "Tổng",
+            chartLoan: "Khoản vay",
+            chartInsurance: "Bảo hiểm",
+            chartAccount: "Tài khoản",
+            chartTooltip: "Số lần thực hiện",
+            loading: "Đang tải tình trạng sử dụng đề xuất.",
+            loadError: "Không thể tải tình trạng sử dụng đề xuất.",
+            retry: "Thử lại",
+            emptyLatestUsedAt: "Chưa có lịch sử đề xuất.",
+            dashboardTitle: "Tình trạng sử dụng đề xuất",
+            dashboardDescription: "Xem tình trạng thực hiện đề xuất khoản vay, bảo hiểm và tài khoản.",
+        },
+    },
+
+    inquiry: {
+        title: "Liên hệ",
+        description:
+            "Hãy để lại câu hỏi hoặc nội dung bạn cần hỗ trợ khi sử dụng dịch vụ.",
+        form: {
+            category: "Loại yêu cầu",
+            title: "Tiêu đề",
+            content: "Nội dung yêu cầu",
+            titlePlaceholder: "Nhập tiêu đề yêu cầu.",
+            contentPlaceholder:
+                "Hãy mô tả chi tiết yêu cầu của bạn. Quản trị viên sẽ kiểm tra và phản hồi.",
+            submit: "Gửi yêu cầu",
+            submitting: "Đang gửi...",
+            success: "Yêu cầu của bạn đã được gửi.",
+            submitError:
+                "Không thể gửi yêu cầu. Vui lòng thử lại sau.",
+        },
+        images: {
+            add: "Thêm ảnh",
+            help: "JPG/PNG · Tối đa 4 ảnh · 20 MB mỗi ảnh",
+            selected: "Đã chọn {{count}} ảnh.",
+            label: "Ảnh đính kèm yêu cầu",
+            alt: "Ảnh đính kèm yêu cầu {{index}}",
+            previewLabel: "Xem trước ảnh yêu cầu đã chọn",
+            previewAlt: "Ảnh yêu cầu đã chọn {{index}}",
+        },
+        category: {
+            SERVICE: "Sử dụng dịch vụ",
+            ACCOUNT: "Tài khoản và đăng nhập",
+            FINANCE: "Thông tin tài chính",
+            OTHER: "Khác",
+        },
+        myList: {
+            title: "Yêu cầu của tôi",
+            loading: "Đang tải danh sách yêu cầu.",
+            empty: "Bạn chưa gửi yêu cầu nào.",
+            loadError: "Không thể tải danh sách yêu cầu.",
+            retry: "Thử lại",
+            loadMore: "Xem thêm yêu cầu",
+        },
+        status: {
+            RECEIVED: "Đã tiếp nhận",
+            ANSWERED: "Đã phản hồi",
+        },
+        answer: {
+            title: "Phản hồi của quản trị viên",
+        },
+    },
+
     notification: {
         bellAria: "Thông báo, {{count}} chưa đọc",
         title: "Thông báo",
@@ -473,6 +743,11 @@ const vi = {
             cancel: "Hủy",
             submit: "Gửi báo cáo",
             submitting: "Đang gửi...",
+            addImage: "Thêm ảnh",
+            imageGuide: "JPG/PNG · Tối đa 4 ảnh · 20 MB mỗi ảnh",
+            maxImageCount: "Bạn có thể đính kèm tối đa {{count}} ảnh.",
+            selectedImageAlt: "Ảnh bằng chứng báo cáo đã chọn {{index}}",
+            removeImage: "Xóa ảnh",
             error: "Không thể gửi báo cáo. Vui lòng thử lại sau.",
         },
         post: {
@@ -670,6 +945,83 @@ const vi = {
         community: {
             description:
                 "Chia sẻ kinh nghiệm, thông tin về cuộc sống tại Hàn Quốc và kết nối với mọi người.",
+        },
+    },
+
+    simulator: {
+        title: "Trình mô phỏng kế hoạch chi tiêu",
+        period: "Thời gian tính toán",
+        dateFormat: "YYYY-MM-DD",
+        fields: {
+            payment: "Khoản trả vay hằng tháng",
+            start: "Ngày bắt đầu",
+            end: "Ngày kết thúc",
+            cash: "Tiền đang có",
+            income: "Thu nhập hằng tháng",
+            fixed: "Chi phí cố định hằng tháng",
+            food: "Chi phí ăn uống hằng tháng",
+            living: "Chi phí sinh hoạt hằng tháng",
+        },
+        units: {
+            won: "KRW",
+            tenThousand: "vạn",
+            hundredMillion: "trăm triệu",
+            trillion: "nghìn tỷ",
+        },
+        calculate: "Tính toán",
+        calendar: "Lịch chi tiêu theo ngày",
+        previous: "Tháng trước",
+        next: "Tháng sau",
+        weekdays: {
+            0: "CN",
+            1: "Th 2",
+            2: "Th 3",
+            3: "Th 4",
+            4: "Th 5",
+            5: "Th 6",
+            6: "Th 7",
+        },
+        calendarHint:
+            "Dùng con lăn hoặc vuốt để chuyển tháng. Chọn ngày để phân bổ thêm tiền.",
+        dayLabel:
+            "{{date}} · Số tiền có thể dùng thêm: {{amount}} · Đặt ngày chi tiêu lớn",
+        outsideDay: "{{date}} · Ngoài thời gian tính toán",
+        extraTitle: "Đặt ngày chi tiêu lớn: {{date}}",
+        extraAmount: "Số tiền phân bổ thêm vào ngày này",
+        extraHint:
+            "Ngân sách cơ bản của các ngày khác sẽ giảm tương ứng. Bạn có thể áp dụng 0 KRW hoặc hủy phân bổ.",
+        apply: "Áp dụng",
+        remove: "Hủy phân bổ",
+        close: "Đóng",
+        results: "Kết quả tính toán",
+        available: "Tổng số tiền có thể sử dụng thêm",
+        days: "Số ngày tính toán",
+        daily: "Ngân sách cơ bản thêm mỗi ngày",
+        extraTotal: "Tổng phân bổ thêm cho ngày chi tiêu lớn",
+        dayCount: "{{count}} ngày",
+        formula:
+            "Tiền có sẵn {{cash}} + Thu nhập trong kỳ {{income}} − Trả vay {{payment}} − Chi phí cố định {{fixed}} − Chi phí ăn uống {{food}} − Chi phí sinh hoạt {{living}} = {{balance}}",
+        dailyFormula:
+            "({{available}} − Phân bổ thêm {{extra}}) ÷ {{days}} ngày = Mức cơ bản mỗi ngày {{daily}}.",
+        remainder:
+            "Phần còn lại được phân bổ thêm 1 KRW cho mỗi ngày trong {{count}} ngày đầu.",
+        shortfall:
+            "Bạn thiếu {{amount}} so với chi phí dự kiến. Ngân sách thêm trên lịch sẽ hiển thị là 0 KRW.",
+        assumption:
+            "Bao gồm cả ngày bắt đầu và ngày kết thúc. Thu nhập và chi phí tháng được tính theo tỷ lệ số ngày của tháng lẻ và làm tròn theo KRW. Không phản ánh ngày thu chi thực tế hoặc biến động số dư.",
+        chartLabel:
+            "So sánh chi phí dự kiến và số tiền có thể dùng thêm trong kỳ",
+        chartLegend:
+            "Xanh bạc hà nhạt: chi phí dự kiến · Xanh đậm: số tiền có thể dùng thêm",
+        errors: {
+            required: "Hãy nhập số tiền. Nhập 0 nếu không có số tiền.",
+            digits: "Chỉ có thể nhập số.",
+            limit: "Số tiền tối đa là 10 nghìn tỷ KRW.",
+            dates: "Hãy nhập ngày bắt đầu và ngày kết thúc hợp lệ.",
+            dateOrder: "Ngày kết thúc phải bằng hoặc sau ngày bắt đầu.",
+            extraLimit:
+                "Tổng phân bổ thêm vượt quá tổng số tiền có thể sử dụng.",
+            outside: "Hãy chọn ngày trong thời gian tính toán.",
         },
     },
 
@@ -1045,6 +1397,7 @@ const vi = {
             retryButton: "Thử lại",
             retryError: "Thử lại không thành công. Vui lòng thử lại sau.",
         },
+
         empty: {
             title: "Không tìm thấy kết quả.",
             description: "Hãy thay đổi điều kiện và thử lại.",
@@ -1065,6 +1418,23 @@ const vi = {
             requiredError: "Đây là trường bắt buộc.",
         },
     },
+
+    exampleBadge: {
+        value: "Giá trị ví dụ",
+        data: "Dữ liệu mẫu",
+    },
+
+    modal: {
+        confirm: "Xác nhận",
+        cancel: "Hủy",
+    },
+
+    underConstruction: {
+        title: "Trang này đang được xây dựng.",
+        description: "Chúng tôi sẽ hoàn thiện trong thời gian sớm nhất.",
+        duckLabel: "Chú vịt pixel cúi đầu chào",
+    },
+
     auth: {
         common: {
             show: "Hiện",
@@ -1310,14 +1680,14 @@ const vi = {
         phone: "Điện thoại",
         noContact: "Không có thông tin liên hệ.",
         residenceStatuses: {
-            "비전문취업(E-9)": "Lao động không chuyên môn (E-9)",
-            "방문취업(H-2)": "Lao động thăm thân (H-2)",
-            전문인력: "Nhân lực chuyên môn",
-            유학생: "Du học sinh",
-            "재외동포(F-4)": "Người Hàn ở nước ngoài (F-4)",
-            "영주(F-5)": "Thường trú nhân (F-5)",
-            "결혼이민(F-6)": "Người nhập cư theo diện kết hôn (F-6)",
-            기타: "Khác",
+            nonProfessionalEmployment: "Lao động không chuyên môn (E-9)",
+            visitingEmployment: "Lao động thăm thân (H-2)",
+            professional: "Nhân lực chuyên môn",
+            student: "Du học sinh",
+            overseasKorean: "Người Hàn ở nước ngoài (F-4)",
+            permanentResident: "Thường trú nhân (F-5)",
+            marriageMigrant: "Người nhập cư theo diện kết hôn (F-6)",
+            other: "Khác",
         },
     },
 

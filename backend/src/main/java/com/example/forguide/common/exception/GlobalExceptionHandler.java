@@ -18,6 +18,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 
 @Slf4j
 @RestControllerAdvice
@@ -87,6 +88,14 @@ public class GlobalExceptionHandler {
             HttpRequestMethodNotSupportedException exception
     ) {
         return respond(ErrorCode.METHOD_NOT_ALLOWED);
+    }
+
+    // SSE 연결 시간 만료는 일반 API 오류 응답으로 변환하지 않는다.
+    @ExceptionHandler(AsyncRequestTimeoutException.class)
+    public void handleAsyncRequestTimeout(
+            AsyncRequestTimeoutException exception
+    ) {
+        log.debug("SSE 연결 시간이 만료되어 재연결을 기다립니다.");
     }
 
     @ExceptionHandler(Exception.class)

@@ -51,8 +51,7 @@ public class SecurityConfig {
                 // ③ 주소별 접근 규칙 — 위에서부터 차례로 검사한다
                 .authorizeHttpRequests(auth -> auth
                         // 오류 응답 전달(내부 이동)은 막지 않는다 (공개 주소의 오류가 401로 바뀌는 것 방지)
-                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
-
+                        .dispatcherTypeMatchers(DispatcherType.ERROR, DispatcherType.ASYNC).permitAll()
                         // ── 관리자 주소: ADMIN 역할만 (토큰 없음 401, 일반 회원 403) ──
                         // 관리자 기능은 모두 /api/v1/admin/ 아래에 둔다
                         .requestMatchers("/api/v1/admin/**").hasRole(JwtProvider.ROLE_ADMIN)

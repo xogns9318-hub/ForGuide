@@ -182,6 +182,69 @@ const ja = {
         },
     },
 
+    loanChart: {
+        title: "{{method}}の金額比較",
+        amount: "金額",
+        items: {
+            firstPayment: "初回返済額",
+            averagePayment: "平均返済額",
+            maximumPayment: "最大返済額",
+            totalPayment: "総返済額",
+            regularPayment: "毎月の返済額",
+            firstMonthPayment: "初月の返済額",
+            totalInterest: "総利息額",
+        },
+    },
+
+    loanCalculator: {
+        titles: {
+            monthly: "月々の返済額",
+            interest: "総利息",
+        },
+        fields: {
+            loanAmount: "ローン金額",
+            annualInterestRate: "年利",
+            loanMonths: "ローン期間",
+            graceMonths: "据置期間",
+            repaymentMethod: "返済方法",
+        },
+        units: {
+            tenThousandWon: "万ウォン",
+            months: "か月",
+            percent: "%",
+        },
+        methods: {
+            bullet: "満期一括返済",
+            equalPayment: "元利均等返済",
+            equalPrincipal: "元金均等返済",
+        },
+        descriptions: {
+            bullet: "ローン期間中は利息のみを支払い、元金は満期時に返済する方法です。",
+            equalPayment: "元金と利息を合わせた同じ金額を毎月支払う方法です。",
+            equalPrincipal: "毎月同じ元金を返済し、利息は徐々に減少する方法です。",
+            equalPaymentWithGrace:
+                "据置期間中は利息のみを支払い、その後は元金と利息を合わせた同じ金額を毎月支払う方法です。",
+            equalPrincipalWithGrace:
+                "据置期間中は利息のみを支払い、その後は毎月同じ元金を返済し、利息は徐々に減少する方法です。",
+        },
+        schedule: {
+            title: "月別返済スケジュール",
+            summary: "{{method}} · 全{{count}}回",
+            ariaLabel: "{{method}}の月別返済スケジュール表",
+            columns: {
+                month: "回数",
+                principal: "元金",
+                interest: "利息",
+                payment: "合計金額",
+                repayment: "返済額",
+                cumulativePrincipal: "元金返済累計",
+                balance: "残高",
+            },
+        },
+        calculate: "計算する",
+        fallbackError: "計算できませんでした。入力内容を確認してください。",
+    },
+
     institutionGuide: {
         title: "どのような相談が必要ですか？",
         optionsLoadError: "選択項目を読み込めませんでした。",
@@ -356,6 +419,212 @@ const ja = {
         },
     },
 
+    admin: {
+        dashboard: {
+            eyebrow: "運営状況",
+            title: "管理者ダッシュボード",
+            description: "ForGuideサービスの現在の運営状況を確認します。",
+            loading: "運営状況を読み込んでいます。",
+            loadError: "運営状況を読み込めませんでした。",
+            retry: "再試行",
+            metrics: {
+                members: "全会員",
+                posts: "全投稿",
+                comments: "全コメント",
+            },
+            management: {
+                title: "管理メニュー",
+                members: {
+                    title: "会員管理",
+                    description: "会員一覧を確認し、利用状態を管理します。",
+                },
+                inquiries: {
+                    title: "お問い合わせ管理",
+                    description: "受け付けたお問い合わせを確認し、回答を登録します。",
+                },
+                community: {
+                    title: "コミュニティ管理",
+                    description: "投稿とコメントを確認し、公開状態を管理します。",
+                },
+            },
+        },
+        inquiries: {
+            title: "お問い合わせ管理",
+            description: "会員のお問い合わせを確認し、回答を登録します。",
+            filter: { all: "すべて", received: "受付済み", answered: "回答済み" },
+            loading: "お問い合わせ一覧を読み込んでいます。",
+            empty: "表示するお問い合わせがありません。",
+            loadError: "お問い合わせ一覧を読み込めませんでした。",
+            retry: "再試行",
+            loadMore: "お問い合わせをさらに表示",
+            member: "お問い合わせ会員",
+            answer: "回答を登録",
+            answerPlaceholder: "会員に送る回答を入力してください。",
+            submitting: "登録中...",
+            answerSuccess: "回答を登録しました。",
+            answerError: "回答の登録に失敗しました。",
+            alreadyAnswered: "回答が登録済みのお問い合わせです。",
+            answerRequired: "回答内容を入力してください。",
+        },
+        members: {
+            eyebrow: "会員管理",
+            title: "会員状態管理",
+            description: "会員を検索し、利用状態を停止または有効に変更します。",
+            statusLabel: "会員状態",
+            statusAll: "すべての状態",
+            statusActive: "通常会員",
+            statusSuspended: "停止会員",
+            searchLabel: "会員検索",
+            searchPlaceholder: "ID、名前、ニックネーム、メールアドレス",
+            search: "検索",
+            loading: "会員一覧を読み込んでいます。",
+            empty: "表示する会員がいません。",
+            loadError: "会員一覧を読み込めませんでした。",
+            retry: "再試行",
+            updateError: "会員状態を変更できませんでした。",
+            suspend: "利用停止",
+            activate: "停止解除",
+            updating: "変更中...",
+            suspendSuccess: "会員の利用を停止しました。",
+            activateSuccess: "会員の利用停止を解除しました。",
+            joinedAt: "登録日",
+            status: { ACTIVE: "通常", SUSPENDED: "停止" },
+            role: { USER: "一般会員", ADMIN: "管理者" },
+        },
+        community: {
+            eyebrow: "コミュニティ管理",
+            title: "コミュニティコンテンツ管理",
+            description: "投稿とコメントを確認し、必要に応じて非表示または公開に戻します。",
+
+            resourceTypeLabel: "コンテンツ種類",
+            resourceTypeAll: "すべてのコンテンツ",
+            resourceTypePost: "投稿",
+            resourceTypeComment: "コメント",
+
+            statusLabel: "公開状態",
+            statusAll: "すべての状態",
+            statusVisible: "公開",
+            statusHidden: "非表示",
+            confirmHide: "非表示にする",
+            cancel: "キャンセル",
+
+            searchLabel: "コンテンツ検索",
+            searchPlaceholder: "本文、作成者ID、ニックネーム",
+            search: "検索",
+
+            loading: "コミュニティコンテンツを読み込んでいます。",
+            empty: "表示するコンテンツがありません。",
+            loadError: "コミュニティコンテンツを読み込めませんでした。",
+            retry: "再試行",
+            loadMore: "さらに表示",
+
+            reportsTitle: "受付済みの通報",
+            reportsLoading: "通報一覧を読み込んでいます。",
+            reportsLoadError: "通報一覧を読み込めませんでした。",
+            reportsEmpty: "受付済みの通報はありません。",
+            reportReasonLabel: "通報理由",
+            reporterLabel: "通報者",
+            viewEvidence: "証拠写真を見る",
+
+            evidenceTitle: "通報の証拠写真",
+            evidenceLoading: "証拠写真を読み込んでいます。",
+            evidenceEmpty: "添付された証拠写真はありません。",
+            evidenceImageAlt: "通報の証拠写真 {{index}}",
+            reportImagesLoadError: "証拠写真を読み込めませんでした。",
+            close: "閉じる",
+
+            hide: "非表示",
+            restore: "公開に戻す",
+            updating: "変更中...",
+            updateError: "公開状態を変更できませんでした。",
+            hideSuccess: "コンテンツを非表示にしました。",
+            restoreSuccess: "コンテンツを公開に戻しました。",
+
+            reasonLabel: "管理理由",
+            reasonPlaceholder: "非表示の理由を任意で入力してください。",
+            reasonNone: "登録された管理理由はありません。",
+            createdAt: "作成日",
+            moderatedAt: "管理処理日",
+        },
+        recommendationUsage: {
+            eyebrow: "おすすめ利用状況",
+            title: "おすすめ機能の運営状況",
+            description: "個人情報なしで記録したローン・保険・口座おすすめの実行状況です。",
+            periodLabel: "照会期間",
+            period7: "過去7日間",
+            period30: "過去30日間",
+            period90: "過去90日間",
+            totalUsage: "おすすめ実行数",
+            loanUsage: "ローンおすすめ",
+            insuranceUsage: "保険おすすめ",
+            accountUsage: "口座おすすめ",
+            latestUsedAt: "最新のおすすめ実行",
+            outcomeTitle: "おすすめ結果の流れ",
+            productResult: "商品結果の表示",
+            consultationRedirect: "相談案内へ移動",
+            chartTitle: "日別おすすめ実行推移",
+            chartTotal: "全体",
+            chartLoan: "ローン",
+            chartInsurance: "保険",
+            chartAccount: "口座",
+            chartTooltip: "実行回数",
+            loading: "おすすめ利用状況を読み込んでいます。",
+            loadError: "おすすめ利用状況を読み込めませんでした。",
+            retry: "再試行",
+            emptyLatestUsedAt: "おすすめ実行履歴がありません。",
+            dashboardTitle: "おすすめ利用状況",
+            dashboardDescription: "ローン・保険・口座おすすめの実行状況を確認します。",
+        },
+    },
+
+    inquiry: {
+        title: "お問い合わせ",
+        description: "サービスの利用中に気になったことや、サポートが必要な内容をお知らせください。",
+        form: {
+            category: "お問い合わせの種類",
+            title: "件名",
+            content: "お問い合わせ内容",
+            titlePlaceholder: "お問い合わせの件名を入力してください。",
+            contentPlaceholder:
+                "お問い合わせ内容を詳しく入力してください。管理者が確認後に回答します。",
+            submit: "お問い合わせを送信",
+            submitting: "送信中...",
+            success: "お問い合わせを受け付けました。",
+            submitError:
+                "お問い合わせを送信できませんでした。しばらくしてからもう一度お試しください。",
+        },
+        images: {
+            add: "画像を追加",
+            help: "JPG/PNG・最大4枚・1枚あたり20MB",
+            selected: "{{count}}枚の画像を選択しました。",
+            label: "お問い合わせの添付画像",
+            alt: "お問い合わせ添付画像 {{index}}",
+            previewLabel: "選択したお問い合わせ画像のプレビュー",
+            previewAlt: "選択したお問い合わせ画像 {{index}}",
+        },
+        category: {
+            SERVICE: "サービス利用",
+            ACCOUNT: "アカウント・ログイン",
+            FINANCE: "金融情報",
+            OTHER: "その他",
+        },
+        myList: {
+            title: "お問い合わせ履歴",
+            loading: "お問い合わせを読み込んでいます。",
+            empty: "送信したお問い合わせはありません。",
+            loadError: "お問い合わせを読み込めませんでした。",
+            retry: "再試行",
+            loadMore: "さらに表示",
+        },
+        status: {
+            RECEIVED: "受付済み",
+            ANSWERED: "回答済み",
+        },
+        answer: {
+            title: "管理者からの回答",
+        },
+    },
+
     notification: {
         bellAria: "通知、未読 {{count}} 件",
         title: "通知",
@@ -473,6 +742,11 @@ const ja = {
             cancel: "キャンセル",
             submit: "報告する",
             submitting: "報告中...",
+            addImage: "画像を追加",
+            imageGuide: "JPG/PNG・最大4枚・1枚20MBまで",
+            maxImageCount: "画像は最大{{count}}枚まで添付できます。",
+            selectedImageAlt: "選択した報告証拠画像 {{index}}",
+            removeImage: "画像を削除",
             error: "報告を送信できませんでした。しばらくしてからもう一度お試しください。",
         },
         post: {
@@ -665,6 +939,82 @@ const ja = {
         },
         community: {
             description: "韓国生活の経験や情報を共有し、さまざまな人と交流しましょう。",
+        },
+    },
+
+    simulator: {
+        title: "支出計画シミュレーター",
+        period: "計算期間",
+        dateFormat: "YYYY-MM-DD",
+        fields: {
+            payment: "毎月のローン返済額",
+            start: "開始日",
+            end: "終了日",
+            cash: "現在の保有金",
+            income: "月収",
+            fixed: "毎月の固定支出",
+            food: "毎月の食費",
+            living: "毎月の生活費",
+        },
+        units: {
+            won: "KRW",
+            tenThousand: "万",
+            hundredMillion: "億",
+            trillion: "兆",
+        },
+        calculate: "計算する",
+        calendar: "日別支出カレンダー",
+        previous: "前月",
+        next: "翌月",
+        weekdays: {
+            0: "日",
+            1: "月",
+            2: "火",
+            3: "水",
+            4: "木",
+            5: "金",
+            6: "土",
+        },
+        calendarHint:
+            "ホイールまたはスワイプで月を移動できます。日付を選択すると追加金額を配分できます。",
+        dayLabel:
+            "{{date}} ・追加で使用できる金額 {{amount}} ・大きな支出日を設定",
+        outsideDay: "{{date}} ・計算期間外",
+        extraTitle: "{{date}}の大きな支出日を設定",
+        extraAmount: "この日に追加で配分する金額",
+        extraHint:
+            "この金額分、他の日の基本予算が減ります。0 KRWを適用するか、配分を解除できます。",
+        apply: "適用",
+        remove: "配分を解除",
+        close: "閉じる",
+        results: "計算結果",
+        available: "期間全体で追加使用可能な金額",
+        days: "計算日数",
+        daily: "1日の基本追加予算",
+        extraTotal: "大きな支出日の追加配分合計",
+        dayCount: "{{count}}日",
+        formula:
+            "保有金 {{cash}} + 期間収入 {{income}} − 返済額 {{payment}} − 固定支出 {{fixed}} − 食費 {{food}} − 生活費 {{living}} = {{balance}}",
+        dailyFormula:
+            "({{available}} − 追加配分 {{extra}}) ÷ {{days}}日 = 1日の基本額 {{daily}}。",
+        remainder:
+            "残額は最初の{{count}}日に1 KRWずつ追加配分されます。",
+        shortfall:
+            "予定支出に対して{{amount}}不足しています。カレンダーの追加予算は0 KRWで表示されます。",
+        assumption:
+            "開始日と終了日を含みます。月収・月支出は月の一部の日数に応じて計算し、KRW単位で四捨五入します。実際の入出金日や残高の流れは反映しません。",
+        chartLabel:
+            "期間全体の予定支出と追加使用可能額の比較",
+        chartLegend:
+            "薄いミント: 予定支出 ・濃い緑: 追加使用可能額",
+        errors: {
+            required: "金額を入力してください。金額がない場合は0を入力してください。",
+            digits: "数字のみ入力できます。",
+            limit: "金額は最大10兆KRWまで入力できます。",
+            dates: "正しい開始日と終了日を入力してください。",
+            dateOrder: "終了日は開始日と同じか、それ以降である必要があります。",
+            extraLimit: "追加配分の合計が使用可能金額を超えています。",
+            outside: "計算期間内の日付を選択してください。",
         },
     },
 
@@ -1017,6 +1367,7 @@ const ja = {
             retryButton: "再試行",
             retryError: "再試行に失敗しました。しばらくしてからお試しください。",
         },
+
         empty: {
             title: "結果が見つかりませんでした。",
             description: "条件を変更して、もう一度検索してください。",
@@ -1037,6 +1388,23 @@ const ja = {
             requiredError: "必須入力項目です。",
         },
     },
+
+    exampleBadge: {
+        value: "例示値",
+        data: "サンプルデータ",
+    },
+
+    modal: {
+        confirm: "確認",
+        cancel: "キャンセル",
+    },
+
+    underConstruction: {
+        title: "このページは現在制作中です。",
+        description: "できるだけ早く完成させます。",
+        duckLabel: "頭を下げてあいさつするピクセルのアヒル",
+    },
+
     auth: {
         common: {
             show: "表示",
@@ -1289,14 +1657,14 @@ const ja = {
         phone: "電話",
         noContact: "連絡先情報がありません。",
         residenceStatuses: {
-            "비전문취업(E-9)": "非専門就業（E-9）",
-            "방문취업(H-2)": "訪問就業（H-2）",
-            전문인력: "専門人材",
-            유학생: "留学生",
-            "재외동포(F-4)": "在外同胞（F-4）",
-            "영주(F-5)": "永住（F-5）",
-            "결혼이민(F-6)": "結婚移民（F-6）",
-            기타: "その他",
+            nonProfessionalEmployment: "非専門就業（E-9）",
+            visitingEmployment: "訪問就業（H-2）",
+            professional: "専門人材",
+            student: "留学生",
+            overseasKorean: "在外同胞（F-4）",
+            permanentResident: "永住（F-5）",
+            marriageMigrant: "結婚移民（F-6）",
+            other: "その他",
         },
     },
 

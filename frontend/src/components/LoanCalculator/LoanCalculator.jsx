@@ -4,9 +4,11 @@ import SelectBox from "../SelectBox/SelectBox.jsx";
 import {
     validateIntegerInput,
     validateRateInput,
-    formatAmount,
-    formatMonths,
 } from "../../utils/calculatorInput.js";
+import {
+    formatLoanAmount,
+    formatLoanMonths,
+} from "../../utils/currencyFormat.js";
 import {
     calculateLoan,
     getGraceError,
@@ -44,7 +46,7 @@ const numericFields = [
 ];
 
 export default function LoanCalculator({ mode = "monthly" }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     // 여러 계산기의 입력 식별자가 겹치지 않도록 생성
     const formId = useId();
     const isInterestPage = mode === "interest";
@@ -180,11 +182,10 @@ export default function LoanCalculator({ mode = "monthly" }) {
     function getConvertedText(name) {
         // 금액과 기간은 기존 환산 함수를 그대로 사용
         if (name === "loanAmount") {
-            return formatAmount(values[name]);
-        }
+            return formatLoanAmount(values[name], i18n.language);        }
 
         if (name === "loanMonths" || name === "graceMonths") {
-            return formatMonths(values[name]);
+            return formatLoanMonths(values[name], i18n.language);
         }
 
         return "";

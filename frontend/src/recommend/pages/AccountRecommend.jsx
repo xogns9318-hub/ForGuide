@@ -7,6 +7,7 @@ import ResultGroups from "../components/ResultGroups.jsx";
 import ProductDialog from "../components/ProductDialog.jsx";
 import InterestChart from "../components/InterestChart.jsx";
 import { getAccountChoices, getAccountRecommendation } from "../api/recommendApi.js";
+import { getResidenceStatusKey } from "../../i18n/recommendationLabels.js";
 import { estimateInterest } from "../utils/interest.js";
 import styles from "../recommend.module.css";
 
@@ -118,9 +119,9 @@ export default function AccountRecommend() {
         { value: "", label: t("recommendForm.choose") },
         ...(choices?.residence_status ?? []).map((value) => ({
             value,
-            label: t(`recommendForm.residenceStatuses.${value}`, {
-                defaultValue: value,
-            }),
+            label: getResidenceStatusKey(value)
+                ? t(`recommendForm.residenceStatuses.${getResidenceStatusKey(value)}`)
+                : value,
         })),
     ];
 

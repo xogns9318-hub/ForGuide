@@ -610,3 +610,20 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - 사용량 제한과 키·권한 오류는 자동 재시도하지 않는다.
 - 상담 번역의 프론트 대기 시간은 35초이며 다른 API의 기본 10초 제한은 유지한다.
 - 실패 코드는 TRANSLATION_TIMEOUT, TRANSLATION_UNAVAILABLE, TRANSLATION_RATE_LIMITED로 구분한다.
+# 커뮤니티 신고 증빙 이미지 API
+
+- `POST /api/v1/community/posts/{postId}/reports`
+  - 로그인 회원이 게시글을 신고한다.
+  - `multipart/form-data`로 `reportReason`과 선택 `images`를 전송한다.
+  - `images`는 JPG/PNG, 최대 4장, 장당 20MB다.
+- `POST /api/v1/community/posts/{postId}/comments/{commentId}/reports`
+  - 댓글 신고의 동일한 형식이다.
+- `GET /api/v1/community/reports/{reportId}/images`
+  - 신고 작성자 본인만 자신의 증빙 이미지 목록을 조회한다.
+- `GET /api/v1/community/reports/{reportId}/images/{reportImageId}`
+  - 신고 작성자 본인만 증빙 이미지 파일을 조회한다.
+- `GET /api/v1/admin/community/reports/{reportId}/images`
+  - 관리자만 신고 증빙 이미지 목록을 조회한다.
+- `GET /api/v1/admin/community/reports/{reportId}/images/{reportImageId}`
+  - 관리자만 신고 증빙 이미지 파일을 조회한다.
+
