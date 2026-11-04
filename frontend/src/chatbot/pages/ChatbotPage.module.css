@@ -114,11 +114,6 @@
     color: var(--ink);
 }
 
-.assistant a {
-    color: var(--primary);
-    font-weight: 600;
-}
-
 .speaker {
     color: var(--muted);
     font-size: 13px;
