@@ -118,9 +118,21 @@ export async function deleteCommunityPost(postId) {
     return client.delete(`/community/posts/${postId}`);
 }
 
+// 신고 사유와 선택한 증빙 사진을 multipart/form-data로 함께 보낸다.
+function createReportFormData(reportReason, images = []) {
+    const formData = new FormData();
+    formData.append("reportReason", reportReason);
+
+    images.forEach((image) => formData.append("images", image));
+    return formData;
+}
+
 // 로그인한 회원이 다른 회원의 게시글을 신고한다.
-export async function reportCommunityPost(postId, reportReason) {
-    return client.post(`/community/posts/${postId}/reports`, { reportReason });
+export async function reportCommunityPost(postId, reportReason, images = []) {
+    return client.post(
+        `/community/posts/${postId}/reports`,
+        createReportFormData(reportReason, images),
+    );
 }
 
 // 게시글 본문과 사진을 multipart/form-data로 수정
@@ -178,10 +190,16 @@ export async function deleteCommunityComment(postId, commentId) {
 }
 
 // 로그인한 회원이 다른 회원의 댓글을 신고한다.
-export async function reportCommunityComment(postId, commentId, reportReason) {
-    return client.post(`/community/posts/${postId}/comments/${commentId}/reports`, {
-        reportReason,
-    });
+export async function reportCommunityComment(
+    postId,
+    commentId,
+    reportReason,
+    images = [],
+) {
+    return client.post(
+        `/community/posts/${postId}/comments/${commentId}/reports`,
+        createReportFormData(reportReason, images),
+    );
 }
 
 // 로그인 회원의 댓글 공감 추가

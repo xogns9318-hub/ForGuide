@@ -340,6 +340,71 @@
     font: inherit;
 }
 
+.community-report-images {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.community-report-image-add {
+    display: inline-flex !important;
+    align-items: center;
+    min-height: 42px;
+    padding: 0 16px;
+    border: 1px solid #cfe3da;
+    border-radius: 999px;
+    color: #2f6d5d !important;
+    cursor: pointer;
+}
+
+.community-report-image-add input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+}
+
+.community-report-image-preview-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.community-report-image-preview-list li {
+    position: relative;
+    width: 74px;
+    height: 74px;
+}
+
+.community-report-image-preview-list img {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #cfe3da;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.community-report-image-preview-list button {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    display: grid;
+    width: 22px;
+    height: 22px;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: #385f52;
+    color: #fff;
+    cursor: pointer;
+}
+
 .community-report-actions {
     display: flex;
     justify-content: flex-end;

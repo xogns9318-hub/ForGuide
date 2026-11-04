@@ -633,3 +633,20 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | `CHATBOT_DAILY_LIMIT`       | 429  | 하루 30회 초과                        |
 | `CHATBOT_UNAVAILABLE`       | 503  | 서버에 키 없음                        |
 | `CHATBOT_FAILED`            | 502  | OpenAI 응답 실패 (횟수·질문은 되돌림) |
+
+# 커뮤니티 신고 증빙 이미지 API
+
+- `POST /api/v1/community/posts/{postId}/reports`
+  - 로그인 회원이 게시글을 신고한다.
+  - `multipart/form-data`로 `reportReason`과 선택 `images`를 전송한다.
+  - `images`는 JPG/PNG, 최대 4장, 장당 20MB다.
+- `POST /api/v1/community/posts/{postId}/comments/{commentId}/reports`
+  - 댓글 신고의 동일한 형식이다.
+- `GET /api/v1/community/reports/{reportId}/images`
+  - 신고 작성자 본인만 자신의 증빙 이미지 목록을 조회한다.
+- `GET /api/v1/community/reports/{reportId}/images/{reportImageId}`
+  - 신고 작성자 본인만 증빙 이미지 파일을 조회한다.
+- `GET /api/v1/admin/community/reports/{reportId}/images`
+  - 관리자만 신고 증빙 이미지 목록을 조회한다.
+- `GET /api/v1/admin/community/reports/{reportId}/images/{reportImageId}`
+  - 관리자만 신고 증빙 이미지 파일을 조회한다.

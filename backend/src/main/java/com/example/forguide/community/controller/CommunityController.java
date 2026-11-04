@@ -17,6 +17,7 @@ import com.example.forguide.community.dto.CommunityPostResponse;
 import com.example.forguide.community.dto.CommunityPostUpdateRequest;
 import com.example.forguide.community.service.CommunityService;
 import com.example.forguide.community.report.CommunityReportCreateRequest;
+import com.example.forguide.community.report.CommunityReportImageResponse;
 import com.example.forguide.community.report.CommunityReportService;
 import com.example.forguide.translation.cache.TranslationCacheResource;
 import com.example.forguide.translation.dto.TranslationRequest;
@@ -47,6 +48,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
+import java.nio.file.Path;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaTypeFactory;
+import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api/v1/community")
@@ -231,14 +237,47 @@ public class CommunityController {
     }
 
     // 로그인한 회원은 다른 회원의 게시글을 한 번만 신고할 수 있다.
-    @PostMapping("/posts/{postId}/reports")
+    @PostMapping(
+            value = "/posts/{postId}/reports",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public ApiResponse<Void> reportPost(
             @PathVariable Long postId,
             @AuthenticationPrincipal Long memberId,
-            @Valid @RequestBody CommunityReportCreateRequest request
+            @Valid @ModelAttribute CommunityReportCreateRequest request,
+            @RequestParam(value = "images", required = false)
+            @Size(max = 4, message = "신고 증빙 사진은 최대 4장까지 올릴 수 있습니다.")
+            List<MultipartFile> images
     ) {
-        communityReportService.reportPost(postId, memberId, request);
+        communityReportService.reportPost(postId, memberId, request, images);
         return ApiResponse.ok();
+    }
+
+    // 신고 작성자 본인만 자신이 제출한 증빙 이미지 목록을 확인할 수 있다.
+    @GetMapping("/reports/{reportId}/images")
+    public ApiResponse<List<CommunityReportImageResponse>> getMyReportImages(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long reportId
+    ) {
+        return ApiResponse.ok(
+                communityReportService.getMyReportImages(memberId, reportId)
+        );
+    }
+
+    // 신고 작성자 본인만 자신이 제출한 증빙 이미지 파일을 확인할 수 있다.
+    @GetMapping("/reports/{reportId}/images/{reportImageId}")
+    public ResponseEntity<Resource> getMyReportImage(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long reportId,
+            @PathVariable Long reportImageId
+    ) {
+        Path imagePath = communityReportService.getMyReportImage(
+                memberId,
+                reportId,
+                reportImageId
+        );
+
+        return imageResponse(imagePath);
     }
 
     // 비로그인 사용자도 게시글의 댓글 목록을 볼 수 있다
@@ -319,14 +358,26 @@ public class CommunityController {
     }
 
     // 로그인한 회원은 다른 회원의 댓글을 한 번만 신고할 수 있다.
-    @PostMapping("/posts/{postId}/comments/{commentId}/reports")
+    @PostMapping(
+            value = "/posts/{postId}/comments/{commentId}/reports",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     public ApiResponse<Void> reportComment(
             @PathVariable Long postId,
             @PathVariable Long commentId,
             @AuthenticationPrincipal Long memberId,
-            @Valid @RequestBody CommunityReportCreateRequest request
+            @Valid @ModelAttribute CommunityReportCreateRequest request,
+            @RequestParam(value = "images", required = false)
+            @Size(max = 4, message = "신고 증빙 사진은 최대 4장까지 올릴 수 있습니다.")
+            List<MultipartFile> images
     ) {
-        communityReportService.reportComment(postId, commentId, memberId, request);
+        communityReportService.reportComment(
+                postId,
+                commentId,
+                memberId,
+                request,
+                images
+        );
         return ApiResponse.ok();
     }
 
@@ -439,5 +490,15 @@ public class CommunityController {
         return ApiResponse.ok(
                 communityService.unrepostPost(postId, memberId)
         );
+    }
+
+    private ResponseEntity<Resource> imageResponse(Path imagePath) {
+        return ResponseEntity.ok()
+                .contentType(
+                        MediaTypeFactory
+                                .getMediaType(imagePath.getFileName().toString())
+                                .orElse(MediaType.APPLICATION_OCTET_STREAM)
+                )
+                .body(new FileSystemResource(imagePath));
     }
 }

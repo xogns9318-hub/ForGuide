@@ -129,3 +129,30 @@ export function updateAdminCommunityModeration(
         },
     );
 }
+
+// 관리자가 최근 커뮤니티 신고를 조회한다.
+export function getAdminCommunityReports() {
+    return client.get("/admin/community/reports");
+}
+
+// 신고 증빙 이미지 목록을 조회한다.
+export function getAdminCommunityReportImages(reportId) {
+    return client.get(`/admin/community/reports/${reportId}/images`);
+}
+
+// 관리자 권한으로 신고 증빙 이미지 파일을 받아온다.
+export function getAdminCommunityReportImageBlob(
+    reportId,
+    reportImageId,
+) {
+    return client.getBlob(
+        `/admin/community/reports/${reportId}/images/${reportImageId}`,
+    );
+}
+
+// 관리자가 신고 한 건만 기각한다. 콘텐츠 공개 상태는 바꾸지 않는다.
+export function dismissAdminCommunityReport(reportId) {
+    return client.patch(
+        `/admin/community/reports/${reportId}/dismiss`,
+    );
+}

@@ -163,6 +163,69 @@ const zh = {
         },
     },
 
+    loanChart: {
+        title: "{{method}}金额比较",
+        amount: "金额",
+        items: {
+            firstPayment: "首期还款金额",
+            averagePayment: "平均还款金额",
+            maximumPayment: "最高还款金额",
+            totalPayment: "还款总额",
+            regularPayment: "每月还款金额",
+            firstMonthPayment: "首月还款金额",
+            totalInterest: "利息总额",
+        },
+    },
+
+    loanCalculator: {
+        titles: {
+            monthly: "每月还款额",
+            interest: "利息总额",
+        },
+        fields: {
+            loanAmount: "贷款金额",
+            annualInterestRate: "年利率",
+            loanMonths: "贷款期限",
+            graceMonths: "宽限期",
+            repaymentMethod: "还款方式",
+        },
+        units: {
+            tenThousandWon: "万韩元",
+            months: "个月",
+            percent: "%",
+        },
+        methods: {
+            bullet: "到期一次性还款",
+            equalPayment: "等额本息",
+            equalPrincipal: "等额本金",
+        },
+        descriptions: {
+            bullet: "在贷款期限内只支付利息，并在到期时偿还本金的方式。",
+            equalPayment: "每月支付相同本金和利息总额的方式。",
+            equalPrincipal: "每月偿还相同本金，利息逐渐减少的方式。",
+            equalPaymentWithGrace:
+                "在宽限期内只支付利息，之后每月支付相同本金和利息总额的方式。",
+            equalPrincipalWithGrace:
+                "在宽限期内只支付利息，之后每月偿还相同本金，利息逐渐减少的方式。",
+        },
+        schedule: {
+            title: "每月还款计划",
+            summary: "{{method}} · 共{{count}}期",
+            ariaLabel: "{{method}}每月还款计划表",
+            columns: {
+                month: "期数",
+                principal: "本金",
+                interest: "利息",
+                payment: "总金额",
+                repayment: "还款额",
+                cumulativePrincipal: "累计偿还本金",
+                balance: "剩余余额",
+            },
+        },
+        calculate: "计算",
+        fallbackError: "无法计算，请检查输入内容。",
+    },
+
     institutionGuide: {
         title: "您需要哪方面的咨询？",
         optionsLoadError: "无法加载选择项目。",
@@ -334,6 +397,211 @@ const zh = {
         },
     },
 
+    admin: {
+        dashboard: {
+            eyebrow: "运营概况",
+            title: "管理员仪表盘",
+            description: "查看 ForGuide 服务当前的运营情况。",
+            loading: "正在加载运营概况。",
+            loadError: "无法加载运营概况。",
+            retry: "重试",
+            metrics: {
+                members: "会员总数",
+                posts: "帖子总数",
+                comments: "评论总数",
+            },
+            management: {
+                title: "管理菜单",
+                members: {
+                    title: "会员管理",
+                    description: "查看会员列表并管理使用状态。",
+                },
+                inquiries: {
+                    title: "咨询管理",
+                    description: "查看会员咨询并登记回复。",
+                },
+                community: {
+                    title: "社区管理",
+                    description: "查看帖子和评论并管理公开状态。",
+                },
+            },
+        },
+        inquiries: {
+            title: "咨询管理",
+            description: "查看会员咨询并登记回复。",
+            filter: { all: "全部", received: "已受理", answered: "已回复" },
+            loading: "正在加载咨询列表。",
+            empty: "没有可显示的咨询。",
+            loadError: "无法加载咨询列表。",
+            retry: "重试",
+            loadMore: "查看更多咨询",
+            member: "咨询会员",
+            answer: "登记回复",
+            answerPlaceholder: "请输入要发送给会员的回复。",
+            submitting: "正在登记...",
+            answerSuccess: "回复已登记。",
+            answerError: "回复登记失败。",
+            alreadyAnswered: "该咨询已登记回复。",
+            answerRequired: "请输入回复内容。",
+        },
+        members: {
+            eyebrow: "会员管理",
+            title: "会员状态管理",
+            description: "搜索会员，并将使用状态更改为暂停或启用。",
+            statusLabel: "会员状态",
+            statusAll: "全部状态",
+            statusActive: "正常会员",
+            statusSuspended: "已暂停会员",
+            searchLabel: "搜索会员",
+            searchPlaceholder: "ID、姓名、昵称或邮箱",
+            search: "搜索",
+            loading: "正在加载会员列表。",
+            empty: "没有可显示的会员。",
+            loadError: "无法加载会员列表。",
+            retry: "重试",
+            updateError: "无法更改会员状态。",
+            suspend: "暂停",
+            activate: "解除暂停",
+            updating: "正在更改...",
+            suspendSuccess: "已暂停该会员的使用权限。",
+            activateSuccess: "已解除该会员的暂停状态。",
+            joinedAt: "注册日期",
+            status: { ACTIVE: "正常", SUSPENDED: "暂停" },
+            role: { USER: "普通会员", ADMIN: "管理员" },
+        },
+        community: {
+            eyebrow: "社区管理",
+            title: "社区内容管理",
+            description: "查看帖子和评论，并在需要时隐藏或恢复公开。",
+
+            resourceTypeLabel: "内容类型",
+            resourceTypeAll: "全部内容",
+            resourceTypePost: "帖子",
+            resourceTypeComment: "评论",
+
+            statusLabel: "公开状态",
+            statusAll: "全部状态",
+            statusVisible: "公开",
+            statusHidden: "隐藏",
+            confirmHide: "隐藏处理",
+            cancel: "取消",
+
+            searchLabel: "搜索内容",
+            searchPlaceholder: "正文、作者 ID 或昵称",
+            search: "搜索",
+
+            loading: "正在加载社区内容。",
+            empty: "没有可显示的社区内容。",
+            loadError: "无法加载社区内容。",
+            retry: "重试",
+            loadMore: "查看更多内容",
+
+            reportsTitle: "已提交的举报",
+            reportsLoading: "正在加载举报列表。",
+            reportsLoadError: "无法加载举报列表。",
+            reportsEmpty: "暂无已提交的举报。",
+            reportReasonLabel: "举报原因",
+            reporterLabel: "举报人",
+            viewEvidence: "查看证据图片",
+
+            evidenceTitle: "举报证据图片",
+            evidenceLoading: "正在加载证据图片。",
+            evidenceEmpty: "没有附加的证据图片。",
+            evidenceImageAlt: "举报证据图片 {{index}}",
+            reportImagesLoadError: "无法加载证据图片。",
+            close: "关闭",
+
+            hide: "隐藏",
+            restore: "恢复公开",
+            updating: "正在更改...",
+            updateError: "无法更改公开状态。",
+            hideSuccess: "内容已隐藏。",
+            restoreSuccess: "内容已恢复公开。",
+
+            reasonLabel: "管理原因",
+            reasonPlaceholder: "可选填隐藏原因。",
+            reasonNone: "没有登记管理原因。",
+            createdAt: "创建日期",
+            moderatedAt: "管理处理日期",
+        },
+        recommendationUsage: {
+            eyebrow: "推荐使用情况",
+            title: "推荐功能运营情况",
+            description: "不含个人信息记录的贷款、保险和开户推荐执行情况。",
+            periodLabel: "查询期间",
+            period7: "最近 7 天",
+            period30: "最近 30 天",
+            period90: "最近 90 天",
+            totalUsage: "推荐执行总数",
+            loanUsage: "贷款推荐",
+            insuranceUsage: "保险推荐",
+            accountUsage: "开户推荐",
+            latestUsedAt: "最近推荐执行",
+            outcomeTitle: "推荐结果流程",
+            productResult: "提供产品结果",
+            consultationRedirect: "跳转至咨询指南",
+            chartTitle: "每日推荐执行趋势",
+            chartTotal: "全部",
+            chartLoan: "贷款",
+            chartInsurance: "保险",
+            chartAccount: "账户",
+            chartTooltip: "执行次数",
+            loading: "正在加载推荐使用情况。",
+            loadError: "无法加载推荐使用情况。",
+            retry: "重试",
+            emptyLatestUsedAt: "暂无推荐执行记录。",
+            dashboardTitle: "推荐使用情况",
+            dashboardDescription: "查看贷款、保险和开户推荐的执行情况。",
+        },
+    },
+
+    inquiry: {
+        title: "联系我们",
+        description: "如果您在使用服务时有疑问或需要帮助，请留下您的咨询内容。",
+        form: {
+            category: "咨询类型",
+            title: "标题",
+            content: "咨询内容",
+            titlePlaceholder: "请输入咨询标题。",
+            contentPlaceholder:
+                "请详细填写咨询内容。管理员确认后会回复您。",
+            submit: "提交咨询",
+            submitting: "提交中...",
+            success: "您的咨询已提交。",
+            submitError: "提交咨询失败，请稍后重试。",
+        },
+        images: {
+            add: "添加图片",
+            help: "JPG/PNG · 最多4张 · 每张最大20MB",
+            selected: "已选择 {{count}} 张图片。",
+            label: "咨询附件图片",
+            alt: "咨询附件图片 {{index}}",
+            previewLabel: "已选择咨询图片预览",
+            previewAlt: "已选择的咨询图片 {{index}}",
+        },
+        category: {
+            SERVICE: "服务使用",
+            ACCOUNT: "账户与登录",
+            FINANCE: "金融信息",
+            OTHER: "其他",
+        },
+        myList: {
+            title: "我的咨询",
+            loading: "正在加载咨询列表。",
+            empty: "您还没有提交过咨询。",
+            loadError: "无法加载咨询列表。",
+            retry: "重试",
+            loadMore: "查看更多咨询",
+        },
+        status: {
+            RECEIVED: "已受理",
+            ANSWERED: "已回复",
+        },
+        answer: {
+            title: "管理员回复",
+        },
+    },
+
     notification: {
         bellAria: "通知，{{count}} 条未读",
         title: "通知",
@@ -451,6 +719,11 @@ const zh = {
             cancel: "取消",
             submit: "提交举报",
             submitting: "正在提交...",
+            addImage: "添加图片",
+            imageGuide: "JPG/PNG · 最多4张 · 每张20MB",
+            maxImageCount: "最多可附加 {{count}} 张图片。",
+            selectedImageAlt: "已选择的举报证据图片 {{index}}",
+            removeImage: "删除图片",
             error: "无法提交举报，请稍后重试。",
         },
         post: {
@@ -636,6 +909,82 @@ const zh = {
         },
         community: {
             description: "分享在韩国生活的经验和信息，交流彼此的故事。",
+        },
+    },
+
+    simulator: {
+        title: "支出计划模拟器",
+        period: "计算期间",
+        dateFormat: "YYYY-MM-DD",
+        fields: {
+            payment: "每月贷款还款额",
+            start: "开始日期",
+            end: "结束日期",
+            cash: "当前持有资金",
+            income: "月收入",
+            fixed: "每月固定支出",
+            food: "每月餐饮费",
+            living: "每月生活费",
+        },
+        units: {
+            won: "KRW",
+            tenThousand: "万",
+            hundredMillion: "亿",
+            trillion: "万亿",
+        },
+        calculate: "计算",
+        calendar: "每日支出日历",
+        previous: "上个月",
+        next: "下个月",
+        weekdays: {
+            0: "日",
+            1: "一",
+            2: "二",
+            3: "三",
+            4: "四",
+            5: "五",
+            6: "六",
+        },
+        calendarHint:
+            "可使用滚轮或滑动按月移动。选择日期后可分配额外金额。",
+        dayLabel:
+            "{{date}} · 可额外使用金额 {{amount}} · 设置大额支出日",
+        outsideDay: "{{date}} · 不在计算期间内",
+        extraTitle: "设置 {{date}} 为大额支出日",
+        extraAmount: "在此日期额外分配的金额",
+        extraHint:
+            "其他日期的基本预算会减少相同金额。可应用 0 KRW 或取消分配。",
+        apply: "应用",
+        remove: "取消分配",
+        close: "关闭",
+        results: "计算结果",
+        available: "期间内可额外使用总金额",
+        days: "计算天数",
+        daily: "每日基本额外预算",
+        extraTotal: "大额支出日额外分配总额",
+        dayCount: "{{count}} 天",
+        formula:
+            "持有资金 {{cash}} + 期间收入 {{income}} − 还款额 {{payment}} − 固定支出 {{fixed}} − 餐饮费 {{food}} − 生活费 {{living}} = {{balance}}",
+        dailyFormula:
+            "({{available}} − 额外分配 {{extra}}) ÷ {{days}} 天 = 每日基本金额 {{daily}}。",
+        remainder:
+            "剩余金额将从前 {{count}} 天起每天额外分配 1 KRW。",
+        shortfall:
+            "与预计支出相比还差 {{amount}}。日历中的额外预算将显示为 0 KRW。",
+        assumption:
+            "包含开始日和结束日。月收入和月支出会按部分月份的天数比例计算，并按 KRW 四舍五入。实际收支日期和余额变化不包含在内。",
+        chartLabel:
+            "期间预计支出与可额外使用金额对比",
+        chartLegend:
+            "浅薄荷色：预计支出 · 深绿色：可额外使用金额",
+        errors: {
+            required: "请输入金额。没有金额时请输入 0。",
+            digits: "只能输入数字。",
+            limit: "最高可输入 10 万亿 KRW。",
+            dates: "请输入正确的开始日期和结束日期。",
+            dateOrder: "结束日期必须与开始日期相同或更晚。",
+            extraLimit: "额外分配总额超过了可使用总金额。",
+            outside: "请选择计算期间内的日期。",
         },
     },
 
@@ -984,6 +1333,7 @@ const zh = {
             retryButton: "重试",
             retryError: "重试失败，请稍后再试。",
         },
+
         empty: {
             title: "未找到结果。",
             description: "请修改您的条件后重新查询。",
@@ -1004,6 +1354,23 @@ const zh = {
             requiredError: "此项为必填项。",
         },
     },
+
+    exampleBadge: {
+        value: "示例值",
+        data: "示例数据",
+    },
+
+    modal: {
+        confirm: "确认",
+        cancel: "取消",
+    },
+
+    underConstruction: {
+        title: "此页面正在制作中。",
+        description: "我们会尽快完成。",
+        duckLabel: "低头致意的像素小鸭",
+    },
+
     auth: {
         common: {
             show: "显示",
@@ -1241,14 +1608,14 @@ const zh = {
         phone: "电话",
         noContact: "暂无联系信息。",
         residenceStatuses: {
-            "비전문취업(E-9)": "非专业就业（E-9）",
-            "방문취업(H-2)": "访问就业（H-2）",
-            전문인력: "专业人才",
-            유학생: "留学生",
-            "재외동포(F-4)": "海外同胞（F-4）",
-            "영주(F-5)": "永久居留（F-5）",
-            "결혼이민(F-6)": "婚姻移民（F-6）",
-            기타: "其他",
+            nonProfessionalEmployment: "非专业就业（E-9）",
+            visitingEmployment: "访问就业（H-2）",
+            professional: "专业人才",
+            student: "留学生",
+            overseasKorean: "海外同胞（F-4）",
+            permanentResident: "永久居留（F-5）",
+            marriageMigrant: "婚姻移民（F-6）",
+            other: "其他",
         },
     },
 

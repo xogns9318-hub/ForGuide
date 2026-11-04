@@ -15,5 +15,8 @@ public enum NotificationType {
     POPULAR_TOP_10,
     POPULAR_TOP_3,
     POPULAR_TOP_2,
-    POPULAR_TOP_1
+    POPULAR_TOP_1,
+
+    REPORT_HIDDEN,
+    REPORT_DISMISSED
 }

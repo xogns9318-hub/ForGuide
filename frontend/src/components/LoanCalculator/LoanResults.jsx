@@ -1,10 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 import { Bar, BarChart, ResponsiveContainer, Text, Tooltip, XAxis, YAxis } from "recharts";
 import { useTranslation } from "react-i18next";
-import { formatWon } from "../../utils/loanCalculator.js";
+import { formatKrw } from "../../utils/currencyFormat.js";
 
 // 막대에 해당하는 항목 이름과 정확한 원 단위 금액을 표시한다.
 function PaymentTooltip({ active, payload }) {
+
+    const { i18n } = useTranslation();
     // 현재 가리킨 막대의 원본 데이터를 가져온다.
     const row = payload?.[0]?.payload;
 
@@ -16,14 +18,14 @@ function PaymentTooltip({ active, payload }) {
             <strong>{row.label}</strong>
 
             {/* 그래프 좌표로 변환하기 전의 원본 금액을 사용한다. */}
-            <p>{formatWon(row.amount)}</p>
+            <p>{formatKrw(row.amount, i18n.language)}</p>
         </div>
     );
 }
 
 // 계산기 종류에 맞는 결과 항목 표시
 export function LoanResults({ mode = "monthly", result }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     // 계산 전에는 오른쪽 결과 영역을 비워 둠
     if (!result) return null;
 
@@ -70,7 +72,7 @@ export function LoanResults({ mode = "monthly", result }) {
                     {items.map(([label, value]) => (
                         <div key={label}>
                             <dt>{t(`loanChart.items.${label}`)}</dt>
-                            <dd>{formatWon(value)}</dd>
+                            <dd>{formatKrw(value, i18n.language)}</dd>
                         </div>
                     ))}
                 </dl>
@@ -250,7 +252,7 @@ export function LoanChart({
 
 // 같은 계산 결과에서 계산기 종류별로 필요한 열만 선택
 export function LoanSchedule({ mode = "monthly", result, scheduleId }) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     if (!result) return null;
 
@@ -320,7 +322,7 @@ export function LoanSchedule({ mode = "monthly", result, scheduleId }) {
                                             {row.month}
                                         </th>
                                     ) : (
-                                        <td key={key}>{formatWon(row[key])}</td>
+                                        <td key={key}>{formatKrw(row[key], i18n.language)}</td>
                                     ),
                                 )}
                             </tr>

@@ -416,6 +416,7 @@ const ko = {
             financial_information: "금융정보·기초상담",
         },
     },
+
     admin: {
         dashboard: {
             eyebrow: "운영 현황",
@@ -528,6 +529,21 @@ const ko = {
             retry: "다시 시도",
             loadMore: "콘텐츠 더 보기",
 
+            reportsTitle: "접수된 신고",
+            reportsLoading: "신고 목록을 불러오는 중입니다.",
+            reportsLoadError: "신고 목록을 불러오지 못했습니다.",
+            reportsEmpty: "접수된 신고가 없습니다.",
+            reportReasonLabel: "신고 사유",
+            reporterLabel: "신고자",
+            viewEvidence: "증빙 사진 보기",
+
+            evidenceTitle: "신고 증빙 사진",
+            evidenceLoading: "증빙 사진을 불러오는 중입니다.",
+            evidenceEmpty: "첨부된 증빙 사진이 없습니다.",
+            evidenceImageAlt: "신고 증빙 사진 {{index}}",
+            reportImagesLoadError: "증빙 사진을 불러오지 못했습니다.",
+            close: "닫기",
+
             hide: "숨김",
             restore: "공개 복구",
             updating: "변경 중...",
@@ -540,6 +556,7 @@ const ko = {
             reasonNone: "등록된 관리 사유가 없습니다.",
             createdAt: "작성일",
             moderatedAt: "관리 처리일",
+
         },
 
         recommendationUsage: {
@@ -946,6 +963,11 @@ const ko = {
             cancel: "취소",
             submit: "신고하기",
             submitting: "신고 중...",
+            addImage: "사진 추가",
+            imageGuide: "JPG/PNG · 최대 4장 · 장당 20MB",
+            maxImageCount: "사진은 최대 {{count}}장까지 첨부할 수 있습니다.",
+            selectedImageAlt: "선택한 신고 증빙 사진 {{index}}",
+            removeImage: "사진 삭제",
             error: "신고를 접수하지 못했습니다. 잠시 후 다시 시도해주세요.",
         },
     },
@@ -990,6 +1012,7 @@ const ko = {
     simulator: {
         title: "지출 계획 시뮬레이터",
         period: "계산 기간",
+        dateFormat: "YYYY-MM-DD",
         fields: {
             payment: "월 대출 상환액",
             start: "시작일",
@@ -1240,14 +1263,22 @@ const ko = {
         },
     },
 
-    // 미구현 서비스의 제작 중 안내
+    exampleBadge: {
+        value: "예시값",
+        data: "예시 데이터",
+    },
+
+    modal: {
+        confirm: "확인",
+        cancel: "취소",
+    },
+
     underConstruction: {
         title: "현재 페이지는 제작중입니다.",
         description: "빠른 시일 내에 완성하겠습니다.",
         duckLabel: "고개를 숙여 인사하는 픽셀 오리",
     },
 
-    // 회원가입·로그인·마이페이지·프로필 수정 (src/auth)
     auth: {
         common: {
             show: "보기",
@@ -1462,12 +1493,6 @@ const ko = {
             NETWORK_ERROR: "서버에 연결하지 못했습니다. 네트워크를 확인해주세요.",
             TIMEOUT: "응답이 늦어지고 있습니다. 잠시 후 다시 시도해주세요.",
         },
-    },
-
-    // 공통 확인창·알림 버튼 (components/Modal)
-    modal: {
-        confirm: "확인",
-        cancel: "취소",
     },
 
     recommendForm: {

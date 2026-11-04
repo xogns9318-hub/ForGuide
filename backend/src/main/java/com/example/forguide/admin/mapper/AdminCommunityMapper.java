@@ -4,6 +4,7 @@ import com.example.forguide.admin.dto.AdminCommunityContentCursorRequest;
 import com.example.forguide.admin.dto.AdminCommunityContentResponse;
 import com.example.forguide.admin.dto.AdminCommunityModerationStatus;
 import com.example.forguide.admin.dto.AdminCommunityResourceType;
+import com.example.forguide.admin.dto.AdminCommunityReportResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -32,4 +33,6 @@ public interface AdminCommunityMapper {
             @Param("reason") String reason,
             @Param("moderatedByMemberId") Long moderatedByMemberId
     );
+
+    List<AdminCommunityReportResponse> findRecentReports();
 }

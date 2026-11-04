@@ -183,6 +183,69 @@ const en = {
         },
     },
 
+    loanChart: {
+        title: "{{method}} Result Amount Comparison",
+        amount: "Amount",
+        items: {
+            firstPayment: "First Payment",
+            averagePayment: "Average Payment",
+            maximumPayment: "Maximum Payment",
+            totalPayment: "Total Payment",
+            regularPayment: "Monthly Payment",
+            firstMonthPayment: "First Month Payment",
+            totalInterest: "Total Interest",
+        },
+    },
+
+    loanCalculator: {
+        titles: {
+            monthly: "Monthly Payment",
+            interest: "Total Interest",
+        },
+        fields: {
+            loanAmount: "Loan Amount",
+            annualInterestRate: "Annual Interest Rate",
+            loanMonths: "Loan Term",
+            graceMonths: "Grace Period",
+            repaymentMethod: "Repayment Method",
+        },
+        units: {
+            tenThousandWon: "10,000 KRW",
+            months: "months",
+            percent: "%",
+        },
+        methods: {
+            bullet: "Bullet Repayment",
+            equalPayment: "Equal Payment",
+            equalPrincipal: "Equal Principal",
+        },
+        descriptions: {
+            bullet: "Pay interest until the end of the loan term and repay the principal at maturity.",
+            equalPayment: "Pay the same total amount of principal and interest each month.",
+            equalPrincipal: "Repay the same amount of principal each month while interest gradually decreases.",
+            equalPaymentWithGrace:
+                "Pay interest only during the grace period, then pay the same total amount of principal and interest each month.",
+            equalPrincipalWithGrace:
+                "Pay interest only during the grace period, then repay the same amount of principal each month while interest gradually decreases.",
+        },
+        schedule: {
+            title: "Monthly Repayment Schedule",
+            summary: "{{method}} · {{count}} payments",
+            ariaLabel: "{{method}} monthly repayment schedule table",
+            columns: {
+                month: "Payment No.",
+                principal: "Principal",
+                interest: "Interest",
+                payment: "Total Payment",
+                repayment: "Repayment",
+                cumulativePrincipal: "Cumulative Principal",
+                balance: "Remaining Balance",
+            },
+        },
+        calculate: "Calculate",
+        fallbackError: "Unable to calculate. Please check your input.",
+    },
+
     institutionGuide: {
         title: "What kind of consultation do you need?",
         optionsLoadError: "Unable to load selection options.",
@@ -358,6 +421,229 @@ const en = {
         },
     },
 
+    admin: {
+        dashboard: {
+            eyebrow: "Operations Overview",
+            title: "Admin Dashboard",
+            description: "View the current operational status of ForGuide.",
+            loading: "Loading operations overview.",
+            loadError: "Failed to load operations overview.",
+            retry: "Try Again",
+            metrics: {
+                members: "Total Members",
+                posts: "Total Posts",
+                comments: "Total Comments",
+            },
+            management: {
+                title: "Management",
+                members: {
+                    title: "Member Management",
+                    description: "View members and manage account status.",
+                },
+                inquiries: {
+                    title: "Inquiry Management",
+                    description: "Review member inquiries and submit answers.",
+                },
+                community: {
+                    title: "Community Management",
+                    description: "Review posts and comments and manage visibility.",
+                },
+            },
+        },
+
+        inquiries: {
+            title: "Inquiry Management",
+            description: "Review member inquiries and submit answers.",
+            filter: {
+                all: "All",
+                received: "Received",
+                answered: "Answered",
+            },
+            loading: "Loading inquiries.",
+            empty: "There are no inquiries to display.",
+            loadError: "Failed to load inquiries.",
+            retry: "Try Again",
+            loadMore: "Load More Inquiries",
+            member: "Member",
+            answer: "Submit Answer",
+            answerPlaceholder: "Write an answer for the member.",
+            submitting: "Submitting...",
+            answerSuccess: "The answer has been submitted.",
+            answerError: "Failed to submit the answer.",
+            alreadyAnswered: "This inquiry has already been answered.",
+            answerRequired: "Please enter an answer.",
+        },
+
+        members: {
+            eyebrow: "Member Management",
+            title: "Manage Member Status",
+            description: "Search members and suspend or activate their accounts.",
+            statusLabel: "Member Status",
+            statusAll: "All Statuses",
+            statusActive: "Active Members",
+            statusSuspended: "Suspended Members",
+            searchLabel: "Search Members",
+            searchPlaceholder: "ID, name, nickname, or email",
+            search: "Search",
+            loading: "Loading members.",
+            empty: "There are no members to display.",
+            loadError: "Failed to load members.",
+            retry: "Try Again",
+            updateError: "Failed to change member status.",
+            suspend: "Suspend",
+            activate: "Activate",
+            updating: "Updating...",
+            suspendSuccess: "The member has been suspended.",
+            activateSuccess: "The member has been activated.",
+            joinedAt: "Joined At",
+            status: {
+                ACTIVE: "Active",
+                SUSPENDED: "Suspended",
+            },
+            role: {
+                USER: "Member",
+                ADMIN: "Administrator",
+            },
+        },
+
+        community: {
+            eyebrow: "Community Management",
+            title: "Manage Community Content",
+            description:
+                "Review posts and comments, then hide or restore them when necessary.",
+
+            resourceTypeLabel: "Content Type",
+            resourceTypeAll: "All Content",
+            resourceTypePost: "Posts",
+            resourceTypeComment: "Comments",
+
+            statusLabel: "Visibility",
+            statusAll: "All Statuses",
+            statusVisible: "Visible",
+            statusHidden: "Hidden",
+            confirmHide: "Hide Content",
+            cancel: "Cancel",
+
+            searchLabel: "Search Content",
+            searchPlaceholder: "Content, author ID, or nickname",
+            search: "Search",
+
+            loading: "Loading community content.",
+            empty: "There is no community content to display.",
+            loadError: "Failed to load community content.",
+            retry: "Try Again",
+            loadMore: "Load More Content",
+
+            reportsTitle: "Submitted Reports",
+            reportsLoading: "Loading reports.",
+            reportsLoadError: "Failed to load reports.",
+            reportsEmpty: "There are no submitted reports.",
+            reportReasonLabel: "Report reason",
+            reporterLabel: "Reporter",
+            viewEvidence: "View evidence",
+
+            evidenceTitle: "Report Evidence Images",
+            evidenceLoading: "Loading evidence images.",
+            evidenceEmpty: "There are no attached evidence images.",
+            evidenceImageAlt: "Report evidence image {{index}}",
+            reportImagesLoadError: "Failed to load evidence images.",
+            close: "Close",
+
+            hide: "Hide",
+            restore: "Restore",
+            updating: "Updating...",
+            updateError: "Failed to change visibility.",
+            hideSuccess: "The content has been hidden.",
+            restoreSuccess: "The content has been restored.",
+
+            reasonLabel: "Management Reason",
+            reasonPlaceholder: "Optionally enter a reason for hiding.",
+            reasonNone: "No management reason was recorded.",
+            createdAt: "Created At",
+            moderatedAt: "Moderated At",
+        },
+
+        recommendationUsage: {
+            eyebrow: "Recommendation Usage",
+            title: "Recommendation Operations",
+            description:
+                "Usage statistics for loan, insurance, and account recommendations recorded without personal information.",
+            periodLabel: "Period",
+            period7: "Last 7 Days",
+            period30: "Last 30 Days",
+            period90: "Last 90 Days",
+            totalUsage: "Total Recommendations",
+            loanUsage: "Loan Recommendations",
+            insuranceUsage: "Insurance Recommendations",
+            accountUsage: "Account Recommendations",
+            latestUsedAt: "Latest Recommendation",
+            outcomeTitle: "Recommendation Outcome",
+            productResult: "Product Results",
+            consultationRedirect: "Consultation Redirect",
+            chartTitle: "Daily Recommendation Trend",
+            chartTotal: "Total",
+            chartLoan: "Loans",
+            chartInsurance: "Insurance",
+            chartAccount: "Accounts",
+            chartTooltip: "Usage Count",
+            loading: "Loading recommendation usage.",
+            loadError: "Failed to load recommendation usage.",
+            retry: "Try Again",
+            emptyLatestUsedAt: "No recommendation activity yet.",
+            dashboardTitle: "Recommendation Usage",
+            dashboardDescription:
+                "View usage statistics for loan, insurance, and account recommendations.",
+        },
+    },
+
+    inquiry: {
+        title: "Contact Us",
+        description: "Leave your questions or requests for help while using the service.",
+        form: {
+            category: "Inquiry type",
+            title: "Title",
+            content: "Inquiry details",
+            titlePlaceholder: "Enter an inquiry title.",
+            contentPlaceholder:
+                "Describe your inquiry in detail. An administrator will review it and reply.",
+            submit: "Submit Inquiry",
+            submitting: "Submitting...",
+            success: "Your inquiry has been submitted.",
+            submitError:
+                "Unable to submit your inquiry. Please try again shortly.",
+        },
+        images: {
+            add: "Add Image",
+            help: "JPG/PNG · Up to 4 images · 20 MB each",
+            selected: "{{count}} image(s) selected.",
+            label: "Inquiry attachments",
+            alt: "Inquiry attachment {{index}}",
+            previewLabel: "Selected inquiry image preview",
+            previewAlt: "Selected inquiry image {{index}}",
+        },
+        category: {
+            SERVICE: "Using the service",
+            ACCOUNT: "Account & login",
+            FINANCE: "Financial information",
+            OTHER: "Other",
+        },
+        myList: {
+            title: "My Inquiries",
+            loading: "Loading your inquiries...",
+            empty: "You have not submitted any inquiries.",
+            loadError: "Unable to load your inquiries.",
+            retry: "Try Again",
+            loadMore: "Load More Inquiries",
+        },
+        status: {
+            RECEIVED: "Received",
+            ANSWERED: "Answered",
+        },
+        answer: {
+            title: "Administrator Reply",
+        },
+    },
+
     notification: {
         bellAria: "Notifications, {{count}} unread",
         title: "Notifications",
@@ -478,6 +764,11 @@ const en = {
             cancel: "Cancel",
             submit: "Submit report",
             submitting: "Submitting...",
+            addImage: "Add image",
+            imageGuide: "JPG/PNG · Up to 4 images · 20 MB each",
+            maxImageCount: "You can attach up to {{count}} images.",
+            selectedImageAlt: "Selected report evidence image {{index}}",
+            removeImage: "Remove image",
             error: "We could not submit the report. Please try again shortly.",
         },
 
@@ -686,6 +977,83 @@ const en = {
         community: {
             description:
                 "Share experiences and information about life in Korea and connect with others.",
+        },
+    },
+
+    simulator: {
+        title: "Spending Plan Simulator",
+        period: "Calculation Period",
+        dateFormat: "YYYY-MM-DD",
+        fields: {
+            payment: "Monthly Loan Payment",
+            start: "Start Date",
+            end: "End Date",
+            cash: "Current Cash",
+            income: "Monthly Income",
+            fixed: "Monthly Fixed Expenses",
+            food: "Monthly Food Expenses",
+            living: "Monthly Living Expenses",
+        },
+        units: {
+            won: "KRW",
+            tenThousand: "ten thousand",
+            hundredMillion: "hundred million",
+            trillion: "trillion",
+        },
+        calculate: "Calculate",
+        calendar: "Daily Spending Calendar",
+        previous: "Previous Month",
+        next: "Next Month",
+        weekdays: {
+            0: "Sun",
+            1: "Mon",
+            2: "Tue",
+            3: "Wed",
+            4: "Thu",
+            5: "Fri",
+            6: "Sat",
+        },
+        calendarHint:
+            "Use the wheel or swipe to move by month. Select a date to allocate an extra amount.",
+        dayLabel:
+            "{{date}} · Additional amount available: {{amount}} · Set as a large-expense day",
+        outsideDay: "{{date}} · Outside the calculation period",
+        extraTitle: "Set large-expense day: {{date}}",
+        extraAmount: "Additional amount to allocate on this date",
+        extraHint:
+            "The base budget for other days is reduced by this amount. Apply 0 KRW or remove the allocation.",
+        apply: "Apply",
+        remove: "Remove Allocation",
+        close: "Close",
+        results: "Calculation Results",
+        available: "Total Additional Amount Available",
+        days: "Calculation Days",
+        daily: "Daily Base Additional Budget",
+        extraTotal: "Total Large-Expense Allocation",
+        dayCount: "{{count}} days",
+        formula:
+            "Cash {{cash}} + Period income {{income}} − Payment {{payment}} − Fixed expenses {{fixed}} − Food {{food}} − Living expenses {{living}} = {{balance}}",
+        dailyFormula:
+            "({{available}} − Extra allocation {{extra}}) ÷ {{days}} days = Daily base amount {{daily}}.",
+        remainder:
+            "The remaining amount is distributed by adding 1 KRW to each of the first {{count}} days.",
+        shortfall:
+            "You are short by {{amount}} compared with planned expenses. Additional daily budgets are shown as 0 KRW.",
+        assumption:
+            "The start and end dates are included. Monthly income and expenses are prorated for partial months and rounded to the nearest KRW. Cash is also allocated across the full period. Actual deposit and withdrawal dates are not reflected.",
+        chartLabel:
+            "Comparison of planned expenses and additional amount available for the period",
+        chartLegend:
+            "Light mint: planned expenses · Dark green: additional amount available",
+        errors: {
+            required: "Enter an amount. Enter 0 if there is no amount.",
+            digits: "Only numbers can be entered.",
+            limit: "The maximum amount is KRW 10 trillion.",
+            dates: "Enter valid start and end dates.",
+            dateOrder: "The end date must be the same as or later than the start date.",
+            extraLimit:
+                "The total extra allocation exceeds the total available amount.",
+            outside: "Select a date within the calculation period.",
         },
     },
 
@@ -1083,6 +1451,23 @@ const en = {
             requiredError: "This field is required.",
         },
     },
+
+    exampleBadge: {
+        value: "Example Value",
+        data: "Sample Data",
+    },
+
+    modal: {
+        confirm: "Confirm",
+        cancel: "Cancel",
+    },
+
+    underConstruction: {
+        title: "This page is under construction.",
+        description: "We will complete it as soon as possible.",
+        duckLabel: "A pixel duck bowing its head",
+    },
+
     auth: {
         common: {
             show: "Show",
@@ -1331,14 +1716,14 @@ const en = {
         phone: "Phone",
         noContact: "No contact information is available.",
         residenceStatuses: {
-            "비전문취업(E-9)": "Non-professional Employment (E-9)",
-            "방문취업(H-2)": "Visiting Employment (H-2)",
-            전문인력: "Professional",
-            유학생: "Student",
-            "재외동포(F-4)": "Overseas Korean (F-4)",
-            "영주(F-5)": "Permanent Resident (F-5)",
-            "결혼이민(F-6)": "Marriage Migrant (F-6)",
-            기타: "Other",
+            nonProfessionalEmployment: "Non-professional Employment (E-9)",
+            visitingEmployment: "Visiting Employment (H-2)",
+            professional: "Professional",
+            student: "Student",
+            overseasKorean: "Overseas Korean (F-4)",
+            permanentResident: "Permanent Resident (F-5)",
+            marriageMigrant: "Marriage Migrant (F-6)",
+            other: "Other",
         },
     },
 
