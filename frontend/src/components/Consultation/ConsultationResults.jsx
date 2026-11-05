@@ -467,7 +467,13 @@ export default function ConsultationResults({ filters, visible, reloadKey }) {
 
             {error && (
                 <div role="alert" className={styles.error}>
-                    <p>{error.message === "INVALID_INPUT" ? t("invalidInput") : t("loadError")}</p>
+                    <p>
+                        {error.code === "INVALID_INPUT" || error.message === "INVALID_INPUT"
+                            ? t("invalidInput")
+                            : error.code === "INSTITUTION_SEARCH_UNAVAILABLE"
+                              ? t("searchUnavailable")
+                              : t("loadError")}
+                    </p>
                     <button
                         className="button"
                         type="button"

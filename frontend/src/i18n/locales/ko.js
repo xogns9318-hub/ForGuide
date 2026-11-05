@@ -281,6 +281,8 @@ const ko = {
         resultCount: "기관 {{count}}곳",
         loading: "기관 정보를 불러오는 중입니다.",
         loadError: "기관 정보를 불러오지 못했습니다. 서버 연결을 확인하고 다시 시도해주세요.",
+        searchUnavailable:
+            "기관 검색 서비스를 일시적으로 이용할 수 없습니다. 잠시 후 다시 시도해주세요.",
         invalidInput: "검색 조건을 확인해주세요.",
         retry: "다시 시도",
         empty: "조건에 맞는 기관이 없습니다. 키워드를 줄이거나 전체 기관을 확인해주세요.",
@@ -556,7 +558,6 @@ const ko = {
             reasonNone: "등록된 관리 사유가 없습니다.",
             createdAt: "작성일",
             moderatedAt: "관리 처리일",
-
         },
 
         recommendationUsage: {
