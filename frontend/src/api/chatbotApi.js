@@ -93,6 +93,7 @@ export async function streamChatbotQuestion({ question, language, onStart, onDel
 
     let started = null;
     let answer = "";
+    let completed = false;
 
     try {
         resetIdleTimer();
@@ -141,6 +142,7 @@ export async function streamChatbotQuestion({ question, language, onStart, onDel
                     answer += event.data.text;
                     onDelta?.(event.data.text);
                 } else if (event.name === "done") {
+                    completed = true;
                     return {
                         question: started?.question,
                         answer: { role: "ASSISTANT", content: answer },
@@ -173,6 +175,9 @@ export async function streamChatbotQuestion({ question, language, onStart, onDel
     } finally {
         clearTimeout(idleTimer);
         signal?.removeEventListener("abort", abortFromCaller);
-        controller.abort();
+        // 다 받았으면 서버가 연결을 닫으므로 그대로 두고, 그 밖에는 연결을 끊어 서버도 멈추게 한다
+        if (!completed) {
+            controller.abort();
+        }
     }
 }
