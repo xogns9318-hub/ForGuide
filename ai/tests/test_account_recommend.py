@@ -14,6 +14,8 @@ from baseline import PROCESSED_DIR, WEIGHTS, load_options, recommend_fast
 from clean_finlife_savings import classify_foreigner, display_company
 from pairs import eval_split, labeled_rows, make_row, pair_key, snapshot_entry
 from add_labels import parse as parse_answers
+from agreement import agreement, answer, cohen_kappa
+from train import LABELS_PATH
 from recommend import CHOICES, recommend, validate
 
 KO_JS = AI_DIR.parent / "frontend" / "src" / "i18n" / "locales" / "ko.js"
@@ -184,6 +186,29 @@ class SnapshotLabelTest(unittest.TestCase):
         judge, pair_date, answers = parse_answers("판정 결과 (판정자: 홍길동, 쌍 20261105, 2/98쌍): AH0001=A, AH0002=같음")
         self.assertEqual((judge, pair_date), ("홍길동", "20261105"))
         self.assertEqual(answers, {"AH0001": "A", "AH0002": "같음"})
+
+
+class AgreementTest(unittest.TestCase):
+    KEY = "예금|12|상관없음|상관없음|a-1|b-2"
+
+    def test_answer_reads_snapshot_and_legacy_labels(self):
+        self.assertEqual(answer(self.KEY, {"winner": "a-1"}), "A")
+        self.assertEqual(answer(self.KEY, "b-2"), "B")
+        self.assertEqual(answer(self.KEY, {"winner": "같음"}), "같음")
+
+    def test_kappa(self):
+        self.assertEqual(cohen_kappa(["A", "B", "A", "B"], ["A", "B", "A", "B"]), 1.0)
+        self.assertEqual(cohen_kappa(["A", "B"], ["B", "A"]), -1.0)
+        self.assertAlmostEqual(cohen_kappa(["A", "A", "B", "B"], ["A", "B", "A", "B"]), 0.0)
+
+    def test_agreement_uses_only_pairs_both_judged(self):
+        other = self.KEY.replace("12", "24")
+        rows = agreement({"사람": {self.KEY: "a-1", other: "a-1"}, "AI": {self.KEY: {"winner": "a-1"}}})
+        self.assertEqual(rows[0]["count"], 1)
+        self.assertEqual(rows[0]["agree"], 1.0)
+
+    def test_training_reads_human_labels_only(self):
+        self.assertEqual(LABELS_PATH.name, "labels.json")
 
 
 class OverrideTest(unittest.TestCase):

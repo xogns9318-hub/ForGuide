@@ -1,0 +1,7310 @@
+{
+ "AI-금리우선": {
+  "예금|12|상관없음|상관없음|0010390-240036|0012889-240071": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5567",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|상관없음|0010390-240036|0012889-240076": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240076": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "IBKSB e-회전정기예금(변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.66",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|상관없음|0010390-240042|0010576-240011": {
+   "winner": "0010390-240042",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-240011": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "M-정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.691",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|상관없음|0012711-24241|0015130-10-01-20-388-0002": {
+   "winner": "0012711-24241",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0015130-10-01-20-388-0002": {
+     "kor_co_nm": "주식회사 카카오뱅크",
+     "fin_prdt_nm": "카카오뱅크 정기예금",
+     "institution_type": "은행",
+     "effective_rate": "3.7",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010022-10-01-20-024-0059-0000|0010389-24-1": {
+   "winner": "0010389-24-1",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0059-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 123 정기예금 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.33",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010389-24-1": {
+     "kor_co_nm": "유안타저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.929",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010390-240036|0012889-240071": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5567",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010390-240036|0012889-240076": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240076": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "IBKSB e-회전정기예금(변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.66",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010390-240042|0010576-240011": {
+   "winner": "0010390-240042",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-240011": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "M-정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.691",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010460-240017|0012711-24241": {
+   "winner": "0012711-24241",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010460-240017": {
+     "kor_co_nm": "평택저축은행",
+     "fin_prdt_nm": "회전식정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5051",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010467-243000|0012711-24241": {
+   "winner": "0012711-24241",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010467-243000": {
+     "kor_co_nm": "융창저축은행",
+     "fin_prdt_nm": "e회전식 정기예금 (변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7013",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|12|원치 않음|은행 선호|0010001-WR0001B|0012711-24541": {
+   "winner": "0012711-24541",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010001-WR0001B": {
+     "kor_co_nm": "우리은행",
+     "fin_prdt_nm": "WON플러스예금",
+     "institution_type": "은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24541": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "비대면농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|원치 않음|은행 선호|0010022-10-01-20-024-0046-0000|0010478-240003": {
+   "winner": "0010478-240003",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0046-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트예금통장 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.92",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010478-240003": {
+     "kor_co_nm": "CK저축은행",
+     "fin_prdt_nm": "정기예금(인터넷,모바일,비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1157",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|원치 않음|은행 선호|0010022-10-01-20-024-0059-0000|0010389-24-1": {
+   "winner": "0010389-24-1",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0059-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 123 정기예금 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.33",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010389-24-1": {
+     "kor_co_nm": "유안타저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.929",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010345-HK00013|0012711-24241": {
+   "winner": "0012711-24241",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010345-HK00013": {
+     "kor_co_nm": "애큐온저축은행",
+     "fin_prdt_nm": "다시만난예금(모바일전용)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4065",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010358-240018|0010389-24": {
+   "winner": "0010389-24",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240018": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6199",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010389-24": {
+     "kor_co_nm": "유안타저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0062",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010390-240038|0010390-240042": {
+   "winner": "0010390-240042",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240038": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "2.982",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010390-240042|0010576-240027": {
+   "winner": "0010390-240042",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-240027": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "회전정기예금(비대면) [변동금리]",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7591",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0012711-24541|0013351-240070": {
+   "winner": "0013351-240070",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0012711-24541": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "비대면농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0013351-240070": {
+     "kor_co_nm": "OK저축은행",
+     "fin_prdt_nm": "OK안심정기예금(변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|원치 않음|은행 선호|0010019-TD11300027000|0012711-24541": {
+   "winner": "0012711-24541",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010019-TD11300027000": {
+     "kor_co_nm": "광주은행",
+     "fin_prdt_nm": "미즈월복리정기예금",
+     "institution_type": "은행",
+     "effective_rate": "3.3001",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24541": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "비대면농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|원치 않음|은행 선호|0010022-10-01-20-024-0068-0000|0010456-240013": {
+   "winner": "0010456-240013",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0068-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트(자유만기) 예금",
+     "institution_type": "은행",
+     "effective_rate": "3.94",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010456-240013": {
+     "kor_co_nm": "키움저축은행",
+     "fin_prdt_nm": "e-plus정기예금 (인터넷뱅킹,스마트뱅킹)",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|원치 않음|은행 선호|0010026-01211310130|0011767-240060": {
+   "winner": "0011767-240060",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010026-01211310130": {
+     "kor_co_nm": "중소기업은행",
+     "fin_prdt_nm": "IBK더굴리기통장(실세금리정기예금)",
+     "institution_type": "은행",
+     "effective_rate": "3.47",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0011767-240060": {
+     "kor_co_nm": "JT저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0601",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|상관없음|0010358-240033|0013351-240062": {
+   "winner": "0013351-240062",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0013351-240062": {
+     "kor_co_nm": "OK저축은행",
+     "fin_prdt_nm": "OK정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0335",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|6|상관없음|상관없음|0010388-240069|0010467-241000": {
+   "winner": "0010388-240069",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010388-240069": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 리볼빙 정기예금(6M)(대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6271",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010467-241000": {
+     "kor_co_nm": "융창저축은행",
+     "fin_prdt_nm": "e정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.2214",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|상관없음|0010390-240036|0012889-240071": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3228",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "2.5131",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010022-10-01-20-024-0046-0000|0010358-240033": {
+   "winner": "0010358-240033",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0046-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트예금통장 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.45",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010026-01211310142|0010358-240035": {
+   "winner": "0010358-240035",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010026-01211310142": {
+     "kor_co_nm": "중소기업은행",
+     "fin_prdt_nm": "IBK굴리기통장(정기예금)",
+     "institution_type": "은행",
+     "effective_rate": "3.44",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240035": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "스마트 6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010345-HK00014|0010471-24-0089": {
+   "winner": "0010345-HK00014",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010345-HK00014": {
+     "kor_co_nm": "애큐온저축은행",
+     "fin_prdt_nm": "플러스회전식(6M)정기예금(영업점)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8302",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010471-24-0089": {
+     "kor_co_nm": "페퍼저축은행",
+     "fin_prdt_nm": "페퍼스6개월회전정기예금 (디지털페퍼앱)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4749",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010358-240033|0013351-240062": {
+   "winner": "0013351-240062",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0013351-240062": {
+     "kor_co_nm": "OK저축은행",
+     "fin_prdt_nm": "OK정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0335",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010388-240069|0010467-241000": {
+   "winner": "0010388-240069",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010388-240069": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 리볼빙 정기예금(6M)(대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6271",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010467-241000": {
+     "kor_co_nm": "융창저축은행",
+     "fin_prdt_nm": "e정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.2214",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010390-240036|0012889-240071": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3228",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "2.5131",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010022-10-01-20-024-0046-0000|0010358-240033": {
+   "winner": "0010358-240033",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0046-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트예금통장 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.45",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010022-10-01-20-024-0068-0000|0012840-TD": {
+   "winner": "0012840-TD",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0068-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트(자유만기) 예금",
+     "institution_type": "은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012840-TD": {
+     "kor_co_nm": "대신저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0843",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010026-01211310142|0010358-240035": {
+   "winner": "0010358-240035",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010026-01211310142": {
+     "kor_co_nm": "중소기업은행",
+     "fin_prdt_nm": "IBK굴리기통장(정기예금)",
+     "institution_type": "은행",
+     "effective_rate": "3.44",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240035": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "스마트 6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010358-240033|0014807-10120114700011": {
+   "winner": "0010358-240033",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0014807-10120114700011": {
+     "kor_co_nm": "수협은행",
+     "fin_prdt_nm": "헤이(Hey)정기예금",
+     "institution_type": "은행",
+     "effective_rate": "3.65",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010370-310037|0010485-310009": {
+   "winner": "0010485-310009",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010370-310037": {
+     "kor_co_nm": "SBI저축은행",
+     "fin_prdt_nm": "마이홈 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010485-310009": {
+     "kor_co_nm": "대명상호저축은행",
+     "fin_prdt_nm": "자유적립식예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1518",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010390-310008|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010390-310008|0010576-310007": {
+   "winner": "0010576-310007",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010464-310008|0010576-310009": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010468-310058|0013127-310006": {
+   "winner": "0010468-310058",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010468-310058": {
+     "kor_co_nm": "세람저축은행",
+     "fin_prdt_nm": "펫밀리 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "5.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0013127-310006": {
+     "kor_co_nm": "KB저축은행",
+     "fin_prdt_nm": "KB착한누리적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5625",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010370-310037|0010485-310009": {
+   "winner": "0010485-310009",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010370-310037": {
+     "kor_co_nm": "SBI저축은행",
+     "fin_prdt_nm": "마이홈 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010485-310009": {
+     "kor_co_nm": "대명상호저축은행",
+     "fin_prdt_nm": "자유적립식예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1518",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010390-310008|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010390-310008|0010576-310007": {
+   "winner": "0010576-310007",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010430-310040|0010509-240019": {
+   "winner": "0010430-310040",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010430-310040": {
+     "kor_co_nm": "모아저축은행",
+     "fin_prdt_nm": "모아 다자녀 적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010509-240019": {
+     "kor_co_nm": "아산저축은행",
+     "fin_prdt_nm": "SB톡톡-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1518",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010464-310008|0010576-310009": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010468-310058|0013127-310006": {
+   "winner": "0010468-310058",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010468-310058": {
+     "kor_co_nm": "세람저축은행",
+     "fin_prdt_nm": "펫밀리 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "5.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0013127-310006": {
+     "kor_co_nm": "KB저축은행",
+     "fin_prdt_nm": "KB착한누리적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5625",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|원치 않음|은행 선호|0010022-10-01-30-031-0036|0010370-310037": {
+   "winner": "0010370-310037",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-30-031-0036": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트적금(정액적립식)",
+     "institution_type": "은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010370-310037": {
+     "kor_co_nm": "SBI저축은행",
+     "fin_prdt_nm": "마이홈 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|원치 않음|은행 선호|0010022-10-01-30-031-0036|0010388-310019": {
+   "winner": "0010388-310019",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-30-031-0036": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트적금(정액적립식)",
+     "institution_type": "은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010388-310019": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 정기적금 (비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|원치 않음|은행 선호|0010030-03101|0010356-2001": {
+   "winner": "0010356-2001",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03101": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 기업정기적금",
+     "institution_type": "은행",
+     "effective_rate": "3.61",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010356-2001": {
+     "kor_co_nm": "푸른저축은행",
+     "fin_prdt_nm": "푸른 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.2",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010421-KH3102|0010430-310036": {
+   "winner": "0010430-310036",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010421-KH3102": {
+     "kor_co_nm": "금화저축은행",
+     "fin_prdt_nm": "e-행복더드림정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010430-310036": {
+     "kor_co_nm": "모아저축은행",
+     "fin_prdt_nm": "12干支정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010464-310010|0010576-310010": {
+   "winner": "0010464-310010",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310010": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9989",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010576-310007|0012889-310040": {
+   "winner": "0010576-310007",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-310040": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참똑똑한IBK저축은행정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0583",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010576-310009|0010576-310010": {
+   "winner": "0010576-310010",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010354-MK310004|0010449-NY310006": {
+   "winner": "0010449-NY310006",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010354-MK310004": {
+     "kor_co_nm": "민국저축은행",
+     "fin_prdt_nm": "e-행복정기적금(인터넷)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010449-NY310006": {
+     "kor_co_nm": "남양저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010421-KH3102|0010430-310036": {
+   "winner": "0010430-310036",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010421-KH3102": {
+     "kor_co_nm": "금화저축은행",
+     "fin_prdt_nm": "e-행복더드림정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010430-310036": {
+     "kor_co_nm": "모아저축은행",
+     "fin_prdt_nm": "12干支정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010426-310006|0010449-NY310007": {
+   "winner": "0010426-310006",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010426-310006": {
+     "kor_co_nm": "인천저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010449-NY310007": {
+     "kor_co_nm": "남양저축은행",
+     "fin_prdt_nm": "e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010464-310010|0010576-310010": {
+   "winner": "0010464-310010",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310010": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9989",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010576-310007|0012889-310040": {
+   "winner": "0010576-310007",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-310040": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참똑똑한IBK저축은행정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0583",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010576-310009|0010576-310010": {
+   "winner": "0010576-310010",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|원치 않음|은행 선호|0010030-03101|0010356-2001": {
+   "winner": "0010356-2001",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03101": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 기업정기적금",
+     "institution_type": "은행",
+     "effective_rate": "3.66",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010356-2001": {
+     "kor_co_nm": "푸른저축은행",
+     "fin_prdt_nm": "푸른 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.2",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|원치 않음|은행 선호|0010030-03700|0010354-MK310004": {
+   "winner": "0010354-MK310004",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03700": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.76",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010354-MK310004": {
+     "kor_co_nm": "민국저축은행",
+     "fin_prdt_nm": "e-행복정기적금(인터넷)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|원치 않음|은행 선호|0010030-03700|0010551-310012": {
+   "winner": "0010551-310012",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03700": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.76",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010551-310012": {
+     "kor_co_nm": "드림저축은행",
+     "fin_prdt_nm": "인터넷정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1041",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010390-310008|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "1.5",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010390-310017|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310017": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "마이버킷정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.0",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010404-DH004|0012120-310013": {
+   "winner": "0012120-310013",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010404-DH004": {
+     "kor_co_nm": "DH저축은행",
+     "fin_prdt_nm": "정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0125",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012120-310013": {
+     "kor_co_nm": "삼호저축은행",
+     "fin_prdt_nm": "정기적금(자유적립식)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4161",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010437-310005|0010537-310005": {
+   "winner": "0010437-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010437-310005": {
+     "kor_co_nm": "대백저축은행",
+     "fin_prdt_nm": "한마음정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010537-310005": {
+     "kor_co_nm": "한국투자저축은행",
+     "fin_prdt_nm": "한투 ACE e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010388-310018|0010537-310005": {
+   "winner": "0010388-310018",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010388-310018": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 정기적금 (대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010537-310005": {
+     "kor_co_nm": "한국투자저축은행",
+     "fin_prdt_nm": "한투 ACE e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010390-310008|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "1.5",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010390-310017|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310017": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "마이버킷정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.0",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010404-DH004|0012120-310013": {
+   "winner": "0012120-310013",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010404-DH004": {
+     "kor_co_nm": "DH저축은행",
+     "fin_prdt_nm": "정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0125",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012120-310013": {
+     "kor_co_nm": "삼호저축은행",
+     "fin_prdt_nm": "정기적금(자유적립식)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4161",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010437-310005|0010537-310005": {
+   "winner": "0010437-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010437-310005": {
+     "kor_co_nm": "대백저축은행",
+     "fin_prdt_nm": "한마음정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010537-310005": {
+     "kor_co_nm": "한국투자저축은행",
+     "fin_prdt_nm": "한투 ACE e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|원치 않음|은행 선호|0010024-21001116|0010388-310019": {
+   "winner": "0010388-310019",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010024-21001116": {
+     "kor_co_nm": "경남은행",
+     "fin_prdt_nm": "BNK더조은자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010388-310019": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 정기적금 (비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|원치 않음|은행 선호|0010024-21001116|0010437-310007": {
+   "winner": "0010437-310007",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010024-21001116": {
+     "kor_co_nm": "경남은행",
+     "fin_prdt_nm": "BNK더조은자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010437-310007": {
+     "kor_co_nm": "대백저축은행",
+     "fin_prdt_nm": "애플정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|원치 않음|은행 선호|0010030-03101|0010478-310005": {
+   "winner": "0010478-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03101": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 기업정기적금",
+     "institution_type": "은행",
+     "effective_rate": "3.03",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010478-310005": {
+     "kor_co_nm": "CK저축은행",
+     "fin_prdt_nm": "정기적금(인터넷,모바일,비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5171",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  }
+ },
+ "AI-방문회피": {
+  "예금|12|상관없음|상관없음|0010390-240036|0012889-240071": {
+   "winner": "0012889-240071",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5567",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|상관없음|0010390-240036|0012889-240076": {
+   "winner": "0012889-240076",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240076": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "IBKSB e-회전정기예금(변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.66",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|상관없음|0010390-240042|0010576-240011": {
+   "winner": "0010576-240011",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-240011": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "M-정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.691",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|상관없음|0012711-24241|0015130-10-01-20-388-0002": {
+   "winner": "0015130-10-01-20-388-0002",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0015130-10-01-20-388-0002": {
+     "kor_co_nm": "주식회사 카카오뱅크",
+     "fin_prdt_nm": "카카오뱅크 정기예금",
+     "institution_type": "은행",
+     "effective_rate": "3.7",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010022-10-01-20-024-0059-0000|0010389-24-1": {
+   "winner": "0010389-24-1",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0059-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 123 정기예금 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.33",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010389-24-1": {
+     "kor_co_nm": "유안타저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.929",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010390-240036|0012889-240071": {
+   "winner": "0012889-240071",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5567",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010390-240036|0012889-240076": {
+   "winner": "0012889-240076",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240076": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "IBKSB e-회전정기예금(변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.66",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010390-240042|0010576-240011": {
+   "winner": "0010576-240011",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-240011": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "M-정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.691",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010460-240017|0012711-24241": {
+   "winner": "0010460-240017",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010460-240017": {
+     "kor_co_nm": "평택저축은행",
+     "fin_prdt_nm": "회전식정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5051",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010467-243000|0012711-24241": {
+   "winner": "0010467-243000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010467-243000": {
+     "kor_co_nm": "융창저축은행",
+     "fin_prdt_nm": "e회전식 정기예금 (변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7013",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|12|원치 않음|은행 선호|0010001-WR0001B|0012711-24541": {
+   "winner": "0012711-24541",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010001-WR0001B": {
+     "kor_co_nm": "우리은행",
+     "fin_prdt_nm": "WON플러스예금",
+     "institution_type": "은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24541": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "비대면농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|원치 않음|은행 선호|0010022-10-01-20-024-0046-0000|0010478-240003": {
+   "winner": "0010478-240003",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0046-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트예금통장 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.92",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010478-240003": {
+     "kor_co_nm": "CK저축은행",
+     "fin_prdt_nm": "정기예금(인터넷,모바일,비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1157",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|원치 않음|은행 선호|0010022-10-01-20-024-0059-0000|0010389-24-1": {
+   "winner": "0010389-24-1",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0059-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 123 정기예금 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.33",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010389-24-1": {
+     "kor_co_nm": "유안타저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.929",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010345-HK00013|0012711-24241": {
+   "winner": "0010345-HK00013",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010345-HK00013": {
+     "kor_co_nm": "애큐온저축은행",
+     "fin_prdt_nm": "다시만난예금(모바일전용)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4065",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010358-240018|0010389-24": {
+   "winner": "0010358-240018",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240018": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6199",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010389-24": {
+     "kor_co_nm": "유안타저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0062",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010390-240038|0010390-240042": {
+   "winner": "0010390-240038",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240038": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "2.982",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010390-240042|0010576-240027": {
+   "winner": "0010576-240027",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-240027": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "회전정기예금(비대면) [변동금리]",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7591",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0012711-24541|0013351-240070": {
+   "winner": "0012711-24541",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0012711-24541": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "비대면농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0013351-240070": {
+     "kor_co_nm": "OK저축은행",
+     "fin_prdt_nm": "OK안심정기예금(변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|원치 않음|은행 선호|0010019-TD11300027000|0012711-24541": {
+   "winner": "0012711-24541",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010019-TD11300027000": {
+     "kor_co_nm": "광주은행",
+     "fin_prdt_nm": "미즈월복리정기예금",
+     "institution_type": "은행",
+     "effective_rate": "3.3001",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24541": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "비대면농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|원치 않음|은행 선호|0010022-10-01-20-024-0068-0000|0010456-240013": {
+   "winner": "0010456-240013",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0068-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트(자유만기) 예금",
+     "institution_type": "은행",
+     "effective_rate": "3.94",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010456-240013": {
+     "kor_co_nm": "키움저축은행",
+     "fin_prdt_nm": "e-plus정기예금 (인터넷뱅킹,스마트뱅킹)",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|원치 않음|은행 선호|0010026-01211310130|0011767-240060": {
+   "winner": "0011767-240060",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010026-01211310130": {
+     "kor_co_nm": "중소기업은행",
+     "fin_prdt_nm": "IBK더굴리기통장(실세금리정기예금)",
+     "institution_type": "은행",
+     "effective_rate": "3.47",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0011767-240060": {
+     "kor_co_nm": "JT저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0601",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|상관없음|0010358-240033|0013351-240062": {
+   "winner": "0010358-240033",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0013351-240062": {
+     "kor_co_nm": "OK저축은행",
+     "fin_prdt_nm": "OK정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0335",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|6|상관없음|상관없음|0010388-240069|0010467-241000": {
+   "winner": "0010467-241000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010388-240069": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 리볼빙 정기예금(6M)(대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6271",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010467-241000": {
+     "kor_co_nm": "융창저축은행",
+     "fin_prdt_nm": "e정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.2214",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|상관없음|0010390-240036|0012889-240071": {
+   "winner": "0012889-240071",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3228",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "2.5131",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010022-10-01-20-024-0046-0000|0010358-240033": {
+   "winner": "0010358-240033",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0046-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트예금통장 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.45",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010026-01211310142|0010358-240035": {
+   "winner": "0010358-240035",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010026-01211310142": {
+     "kor_co_nm": "중소기업은행",
+     "fin_prdt_nm": "IBK굴리기통장(정기예금)",
+     "institution_type": "은행",
+     "effective_rate": "3.44",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240035": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "스마트 6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010345-HK00014|0010471-24-0089": {
+   "winner": "0010471-24-0089",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010345-HK00014": {
+     "kor_co_nm": "애큐온저축은행",
+     "fin_prdt_nm": "플러스회전식(6M)정기예금(영업점)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8302",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010471-24-0089": {
+     "kor_co_nm": "페퍼저축은행",
+     "fin_prdt_nm": "페퍼스6개월회전정기예금 (디지털페퍼앱)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4749",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010358-240033|0013351-240062": {
+   "winner": "0010358-240033",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0013351-240062": {
+     "kor_co_nm": "OK저축은행",
+     "fin_prdt_nm": "OK정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0335",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010388-240069|0010467-241000": {
+   "winner": "0010467-241000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010388-240069": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 리볼빙 정기예금(6M)(대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6271",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010467-241000": {
+     "kor_co_nm": "융창저축은행",
+     "fin_prdt_nm": "e정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.2214",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010390-240036|0012889-240071": {
+   "winner": "0012889-240071",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3228",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "2.5131",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010022-10-01-20-024-0046-0000|0010358-240033": {
+   "winner": "0010358-240033",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0046-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트예금통장 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.45",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010022-10-01-20-024-0068-0000|0012840-TD": {
+   "winner": "0012840-TD",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0068-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트(자유만기) 예금",
+     "institution_type": "은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012840-TD": {
+     "kor_co_nm": "대신저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0843",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010026-01211310142|0010358-240035": {
+   "winner": "0010358-240035",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010026-01211310142": {
+     "kor_co_nm": "중소기업은행",
+     "fin_prdt_nm": "IBK굴리기통장(정기예금)",
+     "institution_type": "은행",
+     "effective_rate": "3.44",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240035": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "스마트 6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010358-240033|0014807-10120114700011": {
+   "winner": "0010358-240033",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0014807-10120114700011": {
+     "kor_co_nm": "수협은행",
+     "fin_prdt_nm": "헤이(Hey)정기예금",
+     "institution_type": "은행",
+     "effective_rate": "3.65",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010370-310037|0010485-310009": {
+   "winner": "0010370-310037",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010370-310037": {
+     "kor_co_nm": "SBI저축은행",
+     "fin_prdt_nm": "마이홈 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010485-310009": {
+     "kor_co_nm": "대명상호저축은행",
+     "fin_prdt_nm": "자유적립식예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1518",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010390-310008|0010464-310008": {
+   "winner": "0010390-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010390-310008|0010576-310007": {
+   "winner": "0010390-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010464-310008|0010576-310009": {
+   "winner": "0010576-310009",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010468-310058|0013127-310006": {
+   "winner": "0013127-310006",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010468-310058": {
+     "kor_co_nm": "세람저축은행",
+     "fin_prdt_nm": "펫밀리 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "5.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0013127-310006": {
+     "kor_co_nm": "KB저축은행",
+     "fin_prdt_nm": "KB착한누리적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5625",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010370-310037|0010485-310009": {
+   "winner": "0010370-310037",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010370-310037": {
+     "kor_co_nm": "SBI저축은행",
+     "fin_prdt_nm": "마이홈 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010485-310009": {
+     "kor_co_nm": "대명상호저축은행",
+     "fin_prdt_nm": "자유적립식예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1518",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010390-310008|0010464-310008": {
+   "winner": "0010390-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010390-310008|0010576-310007": {
+   "winner": "0010390-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010430-310040|0010509-240019": {
+   "winner": "0010509-240019",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010430-310040": {
+     "kor_co_nm": "모아저축은행",
+     "fin_prdt_nm": "모아 다자녀 적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010509-240019": {
+     "kor_co_nm": "아산저축은행",
+     "fin_prdt_nm": "SB톡톡-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1518",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010464-310008|0010576-310009": {
+   "winner": "0010576-310009",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010468-310058|0013127-310006": {
+   "winner": "0013127-310006",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010468-310058": {
+     "kor_co_nm": "세람저축은행",
+     "fin_prdt_nm": "펫밀리 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "5.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0013127-310006": {
+     "kor_co_nm": "KB저축은행",
+     "fin_prdt_nm": "KB착한누리적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5625",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|원치 않음|은행 선호|0010022-10-01-30-031-0036|0010370-310037": {
+   "winner": "0010370-310037",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-30-031-0036": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트적금(정액적립식)",
+     "institution_type": "은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010370-310037": {
+     "kor_co_nm": "SBI저축은행",
+     "fin_prdt_nm": "마이홈 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|원치 않음|은행 선호|0010022-10-01-30-031-0036|0010388-310019": {
+   "winner": "0010388-310019",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-30-031-0036": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트적금(정액적립식)",
+     "institution_type": "은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010388-310019": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 정기적금 (비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|원치 않음|은행 선호|0010030-03101|0010356-2001": {
+   "winner": "0010356-2001",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03101": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 기업정기적금",
+     "institution_type": "은행",
+     "effective_rate": "3.61",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010356-2001": {
+     "kor_co_nm": "푸른저축은행",
+     "fin_prdt_nm": "푸른 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.2",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010421-KH3102|0010430-310036": {
+   "winner": "0010421-KH3102",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010421-KH3102": {
+     "kor_co_nm": "금화저축은행",
+     "fin_prdt_nm": "e-행복더드림정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010430-310036": {
+     "kor_co_nm": "모아저축은행",
+     "fin_prdt_nm": "12干支정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010464-310010|0010576-310010": {
+   "winner": "0010464-310010",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310010": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9989",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010576-310007|0012889-310040": {
+   "winner": "0012889-310040",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-310040": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참똑똑한IBK저축은행정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0583",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010576-310009|0010576-310010": {
+   "winner": "0010576-310009",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010354-MK310004|0010449-NY310006": {
+   "winner": "0010354-MK310004",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010354-MK310004": {
+     "kor_co_nm": "민국저축은행",
+     "fin_prdt_nm": "e-행복정기적금(인터넷)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010449-NY310006": {
+     "kor_co_nm": "남양저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010421-KH3102|0010430-310036": {
+   "winner": "0010421-KH3102",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010421-KH3102": {
+     "kor_co_nm": "금화저축은행",
+     "fin_prdt_nm": "e-행복더드림정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010430-310036": {
+     "kor_co_nm": "모아저축은행",
+     "fin_prdt_nm": "12干支정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010426-310006|0010449-NY310007": {
+   "winner": "0010449-NY310007",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010426-310006": {
+     "kor_co_nm": "인천저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010449-NY310007": {
+     "kor_co_nm": "남양저축은행",
+     "fin_prdt_nm": "e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010464-310010|0010576-310010": {
+   "winner": "0010464-310010",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310010": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9989",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010576-310007|0012889-310040": {
+   "winner": "0012889-310040",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-310040": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참똑똑한IBK저축은행정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0583",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010576-310009|0010576-310010": {
+   "winner": "0010576-310009",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|원치 않음|은행 선호|0010030-03101|0010356-2001": {
+   "winner": "0010356-2001",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03101": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 기업정기적금",
+     "institution_type": "은행",
+     "effective_rate": "3.66",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010356-2001": {
+     "kor_co_nm": "푸른저축은행",
+     "fin_prdt_nm": "푸른 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.2",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|원치 않음|은행 선호|0010030-03700|0010354-MK310004": {
+   "winner": "0010354-MK310004",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03700": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.76",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010354-MK310004": {
+     "kor_co_nm": "민국저축은행",
+     "fin_prdt_nm": "e-행복정기적금(인터넷)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|원치 않음|은행 선호|0010030-03700|0010551-310012": {
+   "winner": "0010551-310012",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03700": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.76",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010551-310012": {
+     "kor_co_nm": "드림저축은행",
+     "fin_prdt_nm": "인터넷정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1041",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010390-310008|0010464-310008": {
+   "winner": "0010390-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "1.5",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010390-310017|0010464-310008": {
+   "winner": "0010390-310017",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310017": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "마이버킷정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.0",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010404-DH004|0012120-310013": {
+   "winner": "0010404-DH004",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010404-DH004": {
+     "kor_co_nm": "DH저축은행",
+     "fin_prdt_nm": "정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0125",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012120-310013": {
+     "kor_co_nm": "삼호저축은행",
+     "fin_prdt_nm": "정기적금(자유적립식)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4161",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010437-310005|0010537-310005": {
+   "winner": "0010537-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010437-310005": {
+     "kor_co_nm": "대백저축은행",
+     "fin_prdt_nm": "한마음정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010537-310005": {
+     "kor_co_nm": "한국투자저축은행",
+     "fin_prdt_nm": "한투 ACE e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010388-310018|0010537-310005": {
+   "winner": "0010537-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010388-310018": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 정기적금 (대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010537-310005": {
+     "kor_co_nm": "한국투자저축은행",
+     "fin_prdt_nm": "한투 ACE e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010390-310008|0010464-310008": {
+   "winner": "0010390-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "1.5",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010390-310017|0010464-310008": {
+   "winner": "0010390-310017",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310017": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "마이버킷정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.0",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010404-DH004|0012120-310013": {
+   "winner": "0010404-DH004",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010404-DH004": {
+     "kor_co_nm": "DH저축은행",
+     "fin_prdt_nm": "정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0125",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012120-310013": {
+     "kor_co_nm": "삼호저축은행",
+     "fin_prdt_nm": "정기적금(자유적립식)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4161",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010437-310005|0010537-310005": {
+   "winner": "0010537-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010437-310005": {
+     "kor_co_nm": "대백저축은행",
+     "fin_prdt_nm": "한마음정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010537-310005": {
+     "kor_co_nm": "한국투자저축은행",
+     "fin_prdt_nm": "한투 ACE e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|원치 않음|은행 선호|0010024-21001116|0010388-310019": {
+   "winner": "0010388-310019",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010024-21001116": {
+     "kor_co_nm": "경남은행",
+     "fin_prdt_nm": "BNK더조은자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010388-310019": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 정기적금 (비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|원치 않음|은행 선호|0010024-21001116|0010437-310007": {
+   "winner": "0010437-310007",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010024-21001116": {
+     "kor_co_nm": "경남은행",
+     "fin_prdt_nm": "BNK더조은자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010437-310007": {
+     "kor_co_nm": "대백저축은행",
+     "fin_prdt_nm": "애플정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|원치 않음|은행 선호|0010030-03101|0010478-310005": {
+   "winner": "0010478-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03101": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 기업정기적금",
+     "institution_type": "은행",
+     "effective_rate": "3.03",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010478-310005": {
+     "kor_co_nm": "CK저축은행",
+     "fin_prdt_nm": "정기적금(인터넷,모바일,비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5171",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  }
+ },
+ "AI-안전우선": {
+  "예금|12|상관없음|상관없음|0010390-240036|0012889-240071": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5567",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|상관없음|0010390-240036|0012889-240076": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240076": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "IBKSB e-회전정기예금(변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.66",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|상관없음|0010390-240042|0010576-240011": {
+   "winner": "0010390-240042",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-240011": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "M-정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.691",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|상관없음|0012711-24241|0015130-10-01-20-388-0002": {
+   "winner": "0015130-10-01-20-388-0002",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0015130-10-01-20-388-0002": {
+     "kor_co_nm": "주식회사 카카오뱅크",
+     "fin_prdt_nm": "카카오뱅크 정기예금",
+     "institution_type": "은행",
+     "effective_rate": "3.7",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010022-10-01-20-024-0059-0000|0010389-24-1": {
+   "winner": "0010022-10-01-20-024-0059-0000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0059-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 123 정기예금 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.33",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010389-24-1": {
+     "kor_co_nm": "유안타저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.929",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010390-240036|0012889-240071": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5567",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010390-240036|0012889-240076": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240076": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "IBKSB e-회전정기예금(변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.66",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010390-240042|0010576-240011": {
+   "winner": "0010390-240042",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-240011": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "M-정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.691",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010460-240017|0012711-24241": {
+   "winner": "0012711-24241",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010460-240017": {
+     "kor_co_nm": "평택저축은행",
+     "fin_prdt_nm": "회전식정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5051",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010467-243000|0012711-24241": {
+   "winner": "0012711-24241",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010467-243000": {
+     "kor_co_nm": "융창저축은행",
+     "fin_prdt_nm": "e회전식 정기예금 (변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7013",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|12|원치 않음|은행 선호|0010001-WR0001B|0012711-24541": {
+   "winner": "0010001-WR0001B",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010001-WR0001B": {
+     "kor_co_nm": "우리은행",
+     "fin_prdt_nm": "WON플러스예금",
+     "institution_type": "은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24541": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "비대면농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|원치 않음|은행 선호|0010022-10-01-20-024-0046-0000|0010478-240003": {
+   "winner": "0010022-10-01-20-024-0046-0000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0046-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트예금통장 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.92",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010478-240003": {
+     "kor_co_nm": "CK저축은행",
+     "fin_prdt_nm": "정기예금(인터넷,모바일,비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1157",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|원치 않음|은행 선호|0010022-10-01-20-024-0059-0000|0010389-24-1": {
+   "winner": "0010022-10-01-20-024-0059-0000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0059-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 123 정기예금 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.33",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010389-24-1": {
+     "kor_co_nm": "유안타저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.929",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010345-HK00013|0012711-24241": {
+   "winner": "0012711-24241",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010345-HK00013": {
+     "kor_co_nm": "애큐온저축은행",
+     "fin_prdt_nm": "다시만난예금(모바일전용)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4065",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010358-240018|0010389-24": {
+   "winner": "0010389-24",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240018": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6199",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010389-24": {
+     "kor_co_nm": "유안타저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0062",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010390-240038|0010390-240042": {
+   "winner": "0010390-240042",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240038": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "2.982",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010390-240042|0010576-240027": {
+   "winner": "0010390-240042",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-240027": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "회전정기예금(비대면) [변동금리]",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7591",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0012711-24541|0013351-240070": {
+   "winner": "0013351-240070",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0012711-24541": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "비대면농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0013351-240070": {
+     "kor_co_nm": "OK저축은행",
+     "fin_prdt_nm": "OK안심정기예금(변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|원치 않음|은행 선호|0010019-TD11300027000|0012711-24541": {
+   "winner": "0010019-TD11300027000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010019-TD11300027000": {
+     "kor_co_nm": "광주은행",
+     "fin_prdt_nm": "미즈월복리정기예금",
+     "institution_type": "은행",
+     "effective_rate": "3.3001",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24541": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "비대면농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|원치 않음|은행 선호|0010022-10-01-20-024-0068-0000|0010456-240013": {
+   "winner": "0010022-10-01-20-024-0068-0000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0068-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트(자유만기) 예금",
+     "institution_type": "은행",
+     "effective_rate": "3.94",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010456-240013": {
+     "kor_co_nm": "키움저축은행",
+     "fin_prdt_nm": "e-plus정기예금 (인터넷뱅킹,스마트뱅킹)",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|원치 않음|은행 선호|0010026-01211310130|0011767-240060": {
+   "winner": "0010026-01211310130",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010026-01211310130": {
+     "kor_co_nm": "중소기업은행",
+     "fin_prdt_nm": "IBK더굴리기통장(실세금리정기예금)",
+     "institution_type": "은행",
+     "effective_rate": "3.47",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0011767-240060": {
+     "kor_co_nm": "JT저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0601",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|상관없음|0010358-240033|0013351-240062": {
+   "winner": "0013351-240062",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0013351-240062": {
+     "kor_co_nm": "OK저축은행",
+     "fin_prdt_nm": "OK정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0335",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|6|상관없음|상관없음|0010388-240069|0010467-241000": {
+   "winner": "0010388-240069",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010388-240069": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 리볼빙 정기예금(6M)(대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6271",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010467-241000": {
+     "kor_co_nm": "융창저축은행",
+     "fin_prdt_nm": "e정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.2214",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|상관없음|0010390-240036|0012889-240071": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3228",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "2.5131",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010022-10-01-20-024-0046-0000|0010358-240033": {
+   "winner": "0010022-10-01-20-024-0046-0000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0046-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트예금통장 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.45",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010026-01211310142|0010358-240035": {
+   "winner": "0010026-01211310142",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010026-01211310142": {
+     "kor_co_nm": "중소기업은행",
+     "fin_prdt_nm": "IBK굴리기통장(정기예금)",
+     "institution_type": "은행",
+     "effective_rate": "3.44",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240035": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "스마트 6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010345-HK00014|0010471-24-0089": {
+   "winner": "0010345-HK00014",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010345-HK00014": {
+     "kor_co_nm": "애큐온저축은행",
+     "fin_prdt_nm": "플러스회전식(6M)정기예금(영업점)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8302",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010471-24-0089": {
+     "kor_co_nm": "페퍼저축은행",
+     "fin_prdt_nm": "페퍼스6개월회전정기예금 (디지털페퍼앱)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4749",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010358-240033|0013351-240062": {
+   "winner": "0013351-240062",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0013351-240062": {
+     "kor_co_nm": "OK저축은행",
+     "fin_prdt_nm": "OK정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0335",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010388-240069|0010467-241000": {
+   "winner": "0010388-240069",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010388-240069": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 리볼빙 정기예금(6M)(대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6271",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010467-241000": {
+     "kor_co_nm": "융창저축은행",
+     "fin_prdt_nm": "e정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.2214",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010390-240036|0012889-240071": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3228",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "2.5131",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010022-10-01-20-024-0046-0000|0010358-240033": {
+   "winner": "0010022-10-01-20-024-0046-0000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0046-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트예금통장 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.45",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010022-10-01-20-024-0068-0000|0012840-TD": {
+   "winner": "0010022-10-01-20-024-0068-0000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0068-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트(자유만기) 예금",
+     "institution_type": "은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012840-TD": {
+     "kor_co_nm": "대신저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0843",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010026-01211310142|0010358-240035": {
+   "winner": "0010026-01211310142",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010026-01211310142": {
+     "kor_co_nm": "중소기업은행",
+     "fin_prdt_nm": "IBK굴리기통장(정기예금)",
+     "institution_type": "은행",
+     "effective_rate": "3.44",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240035": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "스마트 6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010358-240033|0014807-10120114700011": {
+   "winner": "0014807-10120114700011",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0014807-10120114700011": {
+     "kor_co_nm": "수협은행",
+     "fin_prdt_nm": "헤이(Hey)정기예금",
+     "institution_type": "은행",
+     "effective_rate": "3.65",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010370-310037|0010485-310009": {
+   "winner": "0010485-310009",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010370-310037": {
+     "kor_co_nm": "SBI저축은행",
+     "fin_prdt_nm": "마이홈 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010485-310009": {
+     "kor_co_nm": "대명상호저축은행",
+     "fin_prdt_nm": "자유적립식예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1518",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010390-310008|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010390-310008|0010576-310007": {
+   "winner": "0010576-310007",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010464-310008|0010576-310009": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010468-310058|0013127-310006": {
+   "winner": "0010468-310058",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010468-310058": {
+     "kor_co_nm": "세람저축은행",
+     "fin_prdt_nm": "펫밀리 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "5.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0013127-310006": {
+     "kor_co_nm": "KB저축은행",
+     "fin_prdt_nm": "KB착한누리적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5625",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010370-310037|0010485-310009": {
+   "winner": "0010485-310009",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010370-310037": {
+     "kor_co_nm": "SBI저축은행",
+     "fin_prdt_nm": "마이홈 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010485-310009": {
+     "kor_co_nm": "대명상호저축은행",
+     "fin_prdt_nm": "자유적립식예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1518",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010390-310008|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010390-310008|0010576-310007": {
+   "winner": "0010576-310007",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010430-310040|0010509-240019": {
+   "winner": "0010430-310040",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010430-310040": {
+     "kor_co_nm": "모아저축은행",
+     "fin_prdt_nm": "모아 다자녀 적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010509-240019": {
+     "kor_co_nm": "아산저축은행",
+     "fin_prdt_nm": "SB톡톡-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1518",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010464-310008|0010576-310009": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010468-310058|0013127-310006": {
+   "winner": "0010468-310058",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010468-310058": {
+     "kor_co_nm": "세람저축은행",
+     "fin_prdt_nm": "펫밀리 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "5.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0013127-310006": {
+     "kor_co_nm": "KB저축은행",
+     "fin_prdt_nm": "KB착한누리적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5625",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|원치 않음|은행 선호|0010022-10-01-30-031-0036|0010370-310037": {
+   "winner": "0010022-10-01-30-031-0036",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-30-031-0036": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트적금(정액적립식)",
+     "institution_type": "은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010370-310037": {
+     "kor_co_nm": "SBI저축은행",
+     "fin_prdt_nm": "마이홈 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|원치 않음|은행 선호|0010022-10-01-30-031-0036|0010388-310019": {
+   "winner": "0010022-10-01-30-031-0036",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-30-031-0036": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트적금(정액적립식)",
+     "institution_type": "은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010388-310019": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 정기적금 (비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|원치 않음|은행 선호|0010030-03101|0010356-2001": {
+   "winner": "0010030-03101",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03101": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 기업정기적금",
+     "institution_type": "은행",
+     "effective_rate": "3.61",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010356-2001": {
+     "kor_co_nm": "푸른저축은행",
+     "fin_prdt_nm": "푸른 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.2",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010421-KH3102|0010430-310036": {
+   "winner": "0010430-310036",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010421-KH3102": {
+     "kor_co_nm": "금화저축은행",
+     "fin_prdt_nm": "e-행복더드림정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010430-310036": {
+     "kor_co_nm": "모아저축은행",
+     "fin_prdt_nm": "12干支정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010464-310010|0010576-310010": {
+   "winner": "같음",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310010": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9989",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010576-310007|0012889-310040": {
+   "winner": "0010576-310007",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-310040": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참똑똑한IBK저축은행정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0583",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010576-310009|0010576-310010": {
+   "winner": "0010576-310010",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010354-MK310004|0010449-NY310006": {
+   "winner": "0010449-NY310006",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010354-MK310004": {
+     "kor_co_nm": "민국저축은행",
+     "fin_prdt_nm": "e-행복정기적금(인터넷)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010449-NY310006": {
+     "kor_co_nm": "남양저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010421-KH3102|0010430-310036": {
+   "winner": "0010430-310036",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010421-KH3102": {
+     "kor_co_nm": "금화저축은행",
+     "fin_prdt_nm": "e-행복더드림정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010430-310036": {
+     "kor_co_nm": "모아저축은행",
+     "fin_prdt_nm": "12干支정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010426-310006|0010449-NY310007": {
+   "winner": "0010426-310006",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010426-310006": {
+     "kor_co_nm": "인천저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010449-NY310007": {
+     "kor_co_nm": "남양저축은행",
+     "fin_prdt_nm": "e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010464-310010|0010576-310010": {
+   "winner": "같음",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310010": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9989",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010576-310007|0012889-310040": {
+   "winner": "0010576-310007",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-310040": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참똑똑한IBK저축은행정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0583",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010576-310009|0010576-310010": {
+   "winner": "0010576-310010",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|원치 않음|은행 선호|0010030-03101|0010356-2001": {
+   "winner": "0010030-03101",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03101": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 기업정기적금",
+     "institution_type": "은행",
+     "effective_rate": "3.66",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010356-2001": {
+     "kor_co_nm": "푸른저축은행",
+     "fin_prdt_nm": "푸른 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.2",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|원치 않음|은행 선호|0010030-03700|0010354-MK310004": {
+   "winner": "0010030-03700",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03700": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.76",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010354-MK310004": {
+     "kor_co_nm": "민국저축은행",
+     "fin_prdt_nm": "e-행복정기적금(인터넷)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|원치 않음|은행 선호|0010030-03700|0010551-310012": {
+   "winner": "0010030-03700",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03700": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.76",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010551-310012": {
+     "kor_co_nm": "드림저축은행",
+     "fin_prdt_nm": "인터넷정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1041",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010390-310008|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "1.5",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010390-310017|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310017": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "마이버킷정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.0",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010404-DH004|0012120-310013": {
+   "winner": "0012120-310013",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010404-DH004": {
+     "kor_co_nm": "DH저축은행",
+     "fin_prdt_nm": "정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0125",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012120-310013": {
+     "kor_co_nm": "삼호저축은행",
+     "fin_prdt_nm": "정기적금(자유적립식)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4161",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010437-310005|0010537-310005": {
+   "winner": "0010437-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010437-310005": {
+     "kor_co_nm": "대백저축은행",
+     "fin_prdt_nm": "한마음정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010537-310005": {
+     "kor_co_nm": "한국투자저축은행",
+     "fin_prdt_nm": "한투 ACE e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010388-310018|0010537-310005": {
+   "winner": "0010388-310018",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010388-310018": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 정기적금 (대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010537-310005": {
+     "kor_co_nm": "한국투자저축은행",
+     "fin_prdt_nm": "한투 ACE e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010390-310008|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "1.5",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010390-310017|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310017": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "마이버킷정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.0",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010404-DH004|0012120-310013": {
+   "winner": "0012120-310013",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010404-DH004": {
+     "kor_co_nm": "DH저축은행",
+     "fin_prdt_nm": "정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0125",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012120-310013": {
+     "kor_co_nm": "삼호저축은행",
+     "fin_prdt_nm": "정기적금(자유적립식)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4161",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010437-310005|0010537-310005": {
+   "winner": "0010437-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010437-310005": {
+     "kor_co_nm": "대백저축은행",
+     "fin_prdt_nm": "한마음정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010537-310005": {
+     "kor_co_nm": "한국투자저축은행",
+     "fin_prdt_nm": "한투 ACE e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|원치 않음|은행 선호|0010024-21001116|0010388-310019": {
+   "winner": "0010024-21001116",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010024-21001116": {
+     "kor_co_nm": "경남은행",
+     "fin_prdt_nm": "BNK더조은자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010388-310019": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 정기적금 (비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|원치 않음|은행 선호|0010024-21001116|0010437-310007": {
+   "winner": "0010024-21001116",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010024-21001116": {
+     "kor_co_nm": "경남은행",
+     "fin_prdt_nm": "BNK더조은자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010437-310007": {
+     "kor_co_nm": "대백저축은행",
+     "fin_prdt_nm": "애플정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|원치 않음|은행 선호|0010030-03101|0010478-310005": {
+   "winner": "0010030-03101",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03101": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 기업정기적금",
+     "institution_type": "은행",
+     "effective_rate": "3.03",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010478-310005": {
+     "kor_co_nm": "CK저축은행",
+     "fin_prdt_nm": "정기적금(인터넷,모바일,비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5171",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  }
+ },
+ "AI-균형형": {
+  "예금|12|상관없음|상관없음|0010390-240036|0012889-240071": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5567",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|상관없음|0010390-240036|0012889-240076": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240076": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "IBKSB e-회전정기예금(변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.66",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|상관없음|0010390-240042|0010576-240011": {
+   "winner": "0010390-240042",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-240011": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "M-정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.691",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|상관없음|0012711-24241|0015130-10-01-20-388-0002": {
+   "winner": "0015130-10-01-20-388-0002",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0015130-10-01-20-388-0002": {
+     "kor_co_nm": "주식회사 카카오뱅크",
+     "fin_prdt_nm": "카카오뱅크 정기예금",
+     "institution_type": "은행",
+     "effective_rate": "3.7",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010022-10-01-20-024-0059-0000|0010389-24-1": {
+   "winner": "0010389-24-1",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0059-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 123 정기예금 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.33",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010389-24-1": {
+     "kor_co_nm": "유안타저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.929",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010390-240036|0012889-240071": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5567",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010390-240036|0012889-240076": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240076": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "IBKSB e-회전정기예금(변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.66",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010390-240042|0010576-240011": {
+   "winner": "0010390-240042",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0223",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-240011": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "M-정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.691",
+     "best_rate": "4.0223",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010460-240017|0012711-24241": {
+   "winner": "0012711-24241",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010460-240017": {
+     "kor_co_nm": "평택저축은행",
+     "fin_prdt_nm": "회전식정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5051",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|12|상관없음|은행 선호|0010467-243000|0012711-24241": {
+   "winner": "0010467-243000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010467-243000": {
+     "kor_co_nm": "융창저축은행",
+     "fin_prdt_nm": "e회전식 정기예금 (변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7013",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|12|원치 않음|은행 선호|0010001-WR0001B|0012711-24541": {
+   "winner": "0012711-24541",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010001-WR0001B": {
+     "kor_co_nm": "우리은행",
+     "fin_prdt_nm": "WON플러스예금",
+     "institution_type": "은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24541": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "비대면농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|원치 않음|은행 선호|0010022-10-01-20-024-0046-0000|0010478-240003": {
+   "winner": "0010022-10-01-20-024-0046-0000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0046-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트예금통장 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.92",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010478-240003": {
+     "kor_co_nm": "CK저축은행",
+     "fin_prdt_nm": "정기예금(인터넷,모바일,비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1157",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|12|원치 않음|은행 선호|0010022-10-01-20-024-0059-0000|0010389-24-1": {
+   "winner": "0010389-24-1",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0059-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 123 정기예금 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.33",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010389-24-1": {
+     "kor_co_nm": "유안타저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.929",
+     "best_rate": "4.1779",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010345-HK00013|0012711-24241": {
+   "winner": "0010345-HK00013",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010345-HK00013": {
+     "kor_co_nm": "애큐온저축은행",
+     "fin_prdt_nm": "다시만난예금(모바일전용)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4065",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24241": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010358-240018|0010389-24": {
+   "winner": "0010389-24",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240018": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6199",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010389-24": {
+     "kor_co_nm": "유안타저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0062",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010390-240038|0010390-240042": {
+   "winner": "0010390-240042",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240038": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "2.982",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0010390-240042|0010576-240027": {
+   "winner": "0010390-240042",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240042": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-240027": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "회전정기예금(비대면) [변동금리]",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7591",
+     "best_rate": "4.1032",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|상관없음|은행 선호|0012711-24541|0013351-240070": {
+   "winner": "0013351-240070",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0012711-24541": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "비대면농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0013351-240070": {
+     "kor_co_nm": "OK저축은행",
+     "fin_prdt_nm": "OK안심정기예금(변동금리)",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|24|원치 않음|은행 선호|0010019-TD11300027000|0012711-24541": {
+   "winner": "0012711-24541",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010019-TD11300027000": {
+     "kor_co_nm": "광주은행",
+     "fin_prdt_nm": "미즈월복리정기예금",
+     "institution_type": "은행",
+     "effective_rate": "3.3001",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012711-24541": {
+     "kor_co_nm": "엔에이치저축은행",
+     "fin_prdt_nm": "비대면농촌사랑정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.7",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|원치 않음|은행 선호|0010022-10-01-20-024-0068-0000|0010456-240013": {
+   "winner": "0010022-10-01-20-024-0068-0000",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0068-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트(자유만기) 예금",
+     "institution_type": "은행",
+     "effective_rate": "3.94",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010456-240013": {
+     "kor_co_nm": "키움저축은행",
+     "fin_prdt_nm": "e-plus정기예금 (인터넷뱅킹,스마트뱅킹)",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1032",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|24|원치 않음|은행 선호|0010026-01211310130|0011767-240060": {
+   "winner": "0011767-240060",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010026-01211310130": {
+     "kor_co_nm": "중소기업은행",
+     "fin_prdt_nm": "IBK더굴리기통장(실세금리정기예금)",
+     "institution_type": "은행",
+     "effective_rate": "3.47",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0011767-240060": {
+     "kor_co_nm": "JT저축은행",
+     "fin_prdt_nm": "e-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0601",
+     "best_rate": "4.2652",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|상관없음|0010358-240033|0013351-240062": {
+   "winner": "0010358-240033",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0013351-240062": {
+     "kor_co_nm": "OK저축은행",
+     "fin_prdt_nm": "OK정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0335",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|6|상관없음|상관없음|0010388-240069|0010467-241000": {
+   "winner": "0010388-240069",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010388-240069": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 리볼빙 정기예금(6M)(대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6271",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010467-241000": {
+     "kor_co_nm": "융창저축은행",
+     "fin_prdt_nm": "e정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.2214",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|상관없음|0010390-240036|0012889-240071": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3228",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "2.5131",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010022-10-01-20-024-0046-0000|0010358-240033": {
+   "winner": "0010358-240033",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0046-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트예금통장 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.45",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010026-01211310142|0010358-240035": {
+   "winner": "0010358-240035",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010026-01211310142": {
+     "kor_co_nm": "중소기업은행",
+     "fin_prdt_nm": "IBK굴리기통장(정기예금)",
+     "institution_type": "은행",
+     "effective_rate": "3.44",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240035": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "스마트 6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010345-HK00014|0010471-24-0089": {
+   "winner": "0010345-HK00014",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010345-HK00014": {
+     "kor_co_nm": "애큐온저축은행",
+     "fin_prdt_nm": "플러스회전식(6M)정기예금(영업점)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8302",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010471-24-0089": {
+     "kor_co_nm": "페퍼저축은행",
+     "fin_prdt_nm": "페퍼스6개월회전정기예금 (디지털페퍼앱)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4749",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010358-240033|0013351-240062": {
+   "winner": "0010358-240033",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0013351-240062": {
+     "kor_co_nm": "OK저축은행",
+     "fin_prdt_nm": "OK정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0335",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010388-240069|0010467-241000": {
+   "winner": "0010388-240069",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010388-240069": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 리볼빙 정기예금(6M)(대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6271",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010467-241000": {
+     "kor_co_nm": "융창저축은행",
+     "fin_prdt_nm": "e정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.2214",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|상관없음|은행 선호|0010390-240036|0012889-240071": {
+   "winner": "0010390-240036",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-240036": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3228",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-240071": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참기특한정기예금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "2.5131",
+     "best_rate": "3.4952",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010022-10-01-20-024-0046-0000|0010358-240033": {
+   "winner": "0010358-240033",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0046-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트예금통장 (만기일시지급식)",
+     "institution_type": "은행",
+     "effective_rate": "3.45",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010022-10-01-20-024-0068-0000|0012840-TD": {
+   "winner": "0012840-TD",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-20-024-0068-0000": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트(자유만기) 예금",
+     "institution_type": "은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012840-TD": {
+     "kor_co_nm": "대신저축은행",
+     "fin_prdt_nm": "정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0843",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010026-01211310142|0010358-240035": {
+   "winner": "0010358-240035",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010026-01211310142": {
+     "kor_co_nm": "중소기업은행",
+     "fin_prdt_nm": "IBK굴리기통장(정기예금)",
+     "institution_type": "은행",
+     "effective_rate": "3.44",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010358-240035": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "스마트 6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "예금|6|원치 않음|은행 선호|0010358-240033|0014807-10120114700011": {
+   "winner": "0014807-10120114700011",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010358-240033": {
+     "kor_co_nm": "HB저축은행",
+     "fin_prdt_nm": "e-6개월 회전정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8404",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0014807-10120114700011": {
+     "kor_co_nm": "수협은행",
+     "fin_prdt_nm": "헤이(Hey)정기예금",
+     "institution_type": "은행",
+     "effective_rate": "3.65",
+     "best_rate": "4.1352",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010370-310037|0010485-310009": {
+   "winner": "0010370-310037",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010370-310037": {
+     "kor_co_nm": "SBI저축은행",
+     "fin_prdt_nm": "마이홈 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010485-310009": {
+     "kor_co_nm": "대명상호저축은행",
+     "fin_prdt_nm": "자유적립식예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1518",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010390-310008|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010390-310008|0010576-310007": {
+   "winner": "0010576-310007",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010464-310008|0010576-310009": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|상관없음|0010468-310058|0013127-310006": {
+   "winner": "0010468-310058",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010468-310058": {
+     "kor_co_nm": "세람저축은행",
+     "fin_prdt_nm": "펫밀리 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "5.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0013127-310006": {
+     "kor_co_nm": "KB저축은행",
+     "fin_prdt_nm": "KB착한누리적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5625",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010370-310037|0010485-310009": {
+   "winner": "0010370-310037",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010370-310037": {
+     "kor_co_nm": "SBI저축은행",
+     "fin_prdt_nm": "마이홈 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010485-310009": {
+     "kor_co_nm": "대명상호저축은행",
+     "fin_prdt_nm": "자유적립식예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1518",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010390-310008|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010390-310008|0010576-310007": {
+   "winner": "0010576-310007",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010430-310040|0010509-240019": {
+   "winner": "0010430-310040",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010430-310040": {
+     "kor_co_nm": "모아저축은행",
+     "fin_prdt_nm": "모아 다자녀 적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010509-240019": {
+     "kor_co_nm": "아산저축은행",
+     "fin_prdt_nm": "SB톡톡-정기예금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1518",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010464-310008|0010576-310009": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8445",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0493",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|상관없음|은행 선호|0010468-310058|0013127-310006": {
+   "winner": "0010468-310058",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010468-310058": {
+     "kor_co_nm": "세람저축은행",
+     "fin_prdt_nm": "펫밀리 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "5.0",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0013127-310006": {
+     "kor_co_nm": "KB저축은행",
+     "fin_prdt_nm": "KB착한누리적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5625",
+     "best_rate": "5.0",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|원치 않음|은행 선호|0010022-10-01-30-031-0036|0010370-310037": {
+   "winner": "0010370-310037",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-30-031-0036": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트적금(정액적립식)",
+     "institution_type": "은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010370-310037": {
+     "kor_co_nm": "SBI저축은행",
+     "fin_prdt_nm": "마이홈 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|원치 않음|은행 선호|0010022-10-01-30-031-0036|0010388-310019": {
+   "winner": "0010022-10-01-30-031-0036",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010022-10-01-30-031-0036": {
+     "kor_co_nm": "전북은행",
+     "fin_prdt_nm": "JB 다이렉트적금(정액적립식)",
+     "institution_type": "은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010388-310019": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 정기적금 (비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.8",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|12|원치 않음|은행 선호|0010030-03101|0010356-2001": {
+   "winner": "0010356-2001",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03101": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 기업정기적금",
+     "institution_type": "은행",
+     "effective_rate": "3.61",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010356-2001": {
+     "kor_co_nm": "푸른저축은행",
+     "fin_prdt_nm": "푸른 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.2",
+     "best_rate": "4.5625",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010421-KH3102|0010430-310036": {
+   "winner": "0010430-310036",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010421-KH3102": {
+     "kor_co_nm": "금화저축은행",
+     "fin_prdt_nm": "e-행복더드림정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010430-310036": {
+     "kor_co_nm": "모아저축은행",
+     "fin_prdt_nm": "12干支정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010464-310010|0010576-310010": {
+   "winner": "0010464-310010",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310010": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9989",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010576-310007|0012889-310040": {
+   "winner": "0010576-310007",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-310040": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참똑똑한IBK저축은행정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0583",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|상관없음|0010576-310009|0010576-310010": {
+   "winner": "0010576-310010",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010354-MK310004|0010449-NY310006": {
+   "winner": "0010354-MK310004",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010354-MK310004": {
+     "kor_co_nm": "민국저축은행",
+     "fin_prdt_nm": "e-행복정기적금(인터넷)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010449-NY310006": {
+     "kor_co_nm": "남양저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010421-KH3102|0010430-310036": {
+   "winner": "0010430-310036",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010421-KH3102": {
+     "kor_co_nm": "금화저축은행",
+     "fin_prdt_nm": "e-행복더드림정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010430-310036": {
+     "kor_co_nm": "모아저축은행",
+     "fin_prdt_nm": "12干支정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010426-310006|0010449-NY310007": {
+   "winner": "0010426-310006",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010426-310006": {
+     "kor_co_nm": "인천저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.5",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010449-NY310007": {
+     "kor_co_nm": "남양저축은행",
+     "fin_prdt_nm": "e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010464-310010|0010576-310010": {
+   "winner": "0010464-310010",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010464-310010": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9989",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010576-310007|0012889-310040": {
+   "winner": "0010576-310007",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310007": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    },
+    "0012889-310040": {
+     "kor_co_nm": "IBK저축은행",
+     "fin_prdt_nm": "참똑똑한IBK저축은행정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0583",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|상관없음|은행 선호|0010576-310009|0010576-310010": {
+   "winner": "0010576-310010",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010576-310009": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "E-정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.6",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010576-310010": {
+     "kor_co_nm": "진주저축은행",
+     "fin_prdt_nm": "자유적립식적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.0",
+     "best_rate": "4.0",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|24|원치 않음|은행 선호|0010030-03101|0010356-2001": {
+   "winner": "0010356-2001",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03101": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 기업정기적금",
+     "institution_type": "은행",
+     "effective_rate": "3.66",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010356-2001": {
+     "kor_co_nm": "푸른저축은행",
+     "fin_prdt_nm": "푸른 정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.2",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|원치 않음|은행 선호|0010030-03700|0010354-MK310004": {
+   "winner": "0010030-03700",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03700": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.76",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010354-MK310004": {
+     "kor_co_nm": "민국저축은행",
+     "fin_prdt_nm": "e-행복정기적금(인터넷)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.9",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|24|원치 않음|은행 선호|0010030-03700|0010551-310012": {
+   "winner": "0010551-310012",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03700": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.76",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010551-310012": {
+     "kor_co_nm": "드림저축은행",
+     "fin_prdt_nm": "인터넷정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "4.1041",
+     "best_rate": "4.5",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010390-310008|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "1.5",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010390-310017|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310017": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "마이버킷정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.0",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010404-DH004|0012120-310013": {
+   "winner": "0012120-310013",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010404-DH004": {
+     "kor_co_nm": "DH저축은행",
+     "fin_prdt_nm": "정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0125",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012120-310013": {
+     "kor_co_nm": "삼호저축은행",
+     "fin_prdt_nm": "정기적금(자유적립식)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4161",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|상관없음|0010437-310005|0010537-310005": {
+   "winner": "0010437-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010437-310005": {
+     "kor_co_nm": "대백저축은행",
+     "fin_prdt_nm": "한마음정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010537-310005": {
+     "kor_co_nm": "한국투자저축은행",
+     "fin_prdt_nm": "한투 ACE e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010388-310018|0010537-310005": {
+   "winner": "0010537-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010388-310018": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 정기적금 (대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010537-310005": {
+     "kor_co_nm": "한국투자저축은행",
+     "fin_prdt_nm": "한투 ACE e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010390-310008|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310008": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "응답하라2030정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "1.5",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010390-310017|0010464-310008": {
+   "winner": "0010464-310008",
+   "pair_date": "20261026",
+   "group": "부합",
+   "sides": {
+    "0010390-310017": {
+     "kor_co_nm": "고려저축은행",
+     "fin_prdt_nm": "마이버킷정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.0",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "0"
+    },
+    "0010464-310008": {
+     "kor_co_nm": "영진저축은행",
+     "fin_prdt_nm": "정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "2.408",
+     "best_rate": "2.5087",
+     "foreigner_status": "부합",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010404-DH004|0012120-310013": {
+   "winner": "0012120-310013",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010404-DH004": {
+     "kor_co_nm": "DH저축은행",
+     "fin_prdt_nm": "정기적금(비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.0125",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0012120-310013": {
+     "kor_co_nm": "삼호저축은행",
+     "fin_prdt_nm": "정기적금(자유적립식)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.4161",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    }
+   }
+  },
+  "적금|6|상관없음|은행 선호|0010437-310005|0010537-310005": {
+   "winner": "0010437-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010437-310005": {
+     "kor_co_nm": "대백저축은행",
+     "fin_prdt_nm": "한마음정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "1"
+    },
+    "0010537-310005": {
+     "kor_co_nm": "한국투자저축은행",
+     "fin_prdt_nm": "한투 ACE e-정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|원치 않음|은행 선호|0010024-21001116|0010388-310019": {
+   "winner": "0010024-21001116",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010024-21001116": {
+     "kor_co_nm": "경남은행",
+     "fin_prdt_nm": "BNK더조은자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010388-310019": {
+     "kor_co_nm": "다올저축은행",
+     "fin_prdt_nm": "Fi 정기적금 (비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.3",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|원치 않음|은행 선호|0010024-21001116|0010437-310007": {
+   "winner": "0010437-310007",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010024-21001116": {
+     "kor_co_nm": "경남은행",
+     "fin_prdt_nm": "BNK더조은자유적금",
+     "institution_type": "은행",
+     "effective_rate": "3.1",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010437-310007": {
+     "kor_co_nm": "대백저축은행",
+     "fin_prdt_nm": "애플정기적금",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  },
+  "적금|6|원치 않음|은행 선호|0010030-03101|0010478-310005": {
+   "winner": "0010478-310005",
+   "pair_date": "20261026",
+   "group": "확인 필요",
+   "sides": {
+    "0010030-03101": {
+     "kor_co_nm": "한국산업은행",
+     "fin_prdt_nm": "KDB 기업정기적금",
+     "institution_type": "은행",
+     "effective_rate": "3.03",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    },
+    "0010478-310005": {
+     "kor_co_nm": "CK저축은행",
+     "fin_prdt_nm": "정기적금(인터넷,모바일,비대면)",
+     "institution_type": "저축은행",
+     "effective_rate": "3.5171",
+     "best_rate": "4.0223",
+     "foreigner_status": "확인 필요",
+     "visit_required": "0"
+    }
+   }
+  }
+ }
+}
