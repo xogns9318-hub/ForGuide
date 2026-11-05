@@ -1,4 +1,3 @@
-import csv
 import json
 import sys
 from datetime import date
@@ -9,13 +8,11 @@ from sklearn.linear_model import LogisticRegression
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from common import MODELS_DIR, PROCESSED_DIR, date_of, latest, read_csv
 from baseline import WEIGHTS, load_options
 from pairs import labeled_rows
 
 ACCOUNT_DIR = Path(__file__).resolve().parent
-AI_DIR = ACCOUNT_DIR.parent.parent
-PROCESSED_DIR = AI_DIR / "data" / "processed"
-MODELS_DIR = AI_DIR / "models"
 LABELS_PATH = ACCOUNT_DIR / "labels.json"
 WEIGHTS_PATH = MODELS_DIR / "account_fast_weights.json"
 
@@ -33,9 +30,8 @@ def load_labels(path=LABELS_PATH):
 
 
 def load_auto_pairs():
-    path = sorted(PROCESSED_DIR.glob("account_pairs_auto_*.csv"))[-1]
-    with path.open(encoding="utf-8-sig") as f:
-        return list(csv.DictReader(f)), path.stem.rsplit("_", 1)[-1]
+    path = latest(PROCESSED_DIR, "account_pairs_auto_*.csv")
+    return read_csv(path), date_of(path)
 
 
 def diff_matrix(rows):

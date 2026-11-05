@@ -1,10 +1,9 @@
-import csv
 import sys
-from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from common import PROCESSED_DIR, latest, print_summary, read_csv
 from engine import (
     GROUP_MISMATCH,
     absolute_score,
@@ -13,9 +12,6 @@ from engine import (
     top_reasons,
     weighted_score,
 )
-
-AI_DIR = Path(__file__).resolve().parent.parent.parent
-PROCESSED_DIR = AI_DIR / "data" / "processed"
 
 WEIGHTS = {
     "rate": 0.5,
@@ -31,10 +27,7 @@ OUTLIER_REASON = "rate_outlier"
 
 
 def load_options(path=None):
-    if path is None:
-        path = sorted(PROCESSED_DIR.glob("finlife_savings_*.csv"))[-1]
-    with Path(path).open(encoding="utf-8-sig") as f:
-        return list(csv.DictReader(f))
+    return read_csv(path or latest(PROCESSED_DIR, "finlife_savings_*.csv"))
 
 
 def best_option_per_product(options, purpose, term):
@@ -127,20 +120,10 @@ def recommend_fast(options, user, weights=None):
     return term, sort_results(results)
 
 
-def print_summary(user, term, results, per_group=5):
-    print(f"\n## {user['purpose']} {term}개월, 방문 {user['visit']}, 금융기관 {user['institution']}")
-    shown = defaultdict(int)
-    for r in results:
-        if shown[r["group"]] >= per_group:
-            continue
-        shown[r["group"]] += 1
-        score = "-" if r["score"] is None else f"{r['score']:.3f}"
-        extra = r["mismatch_reasons"] or r["check_reasons"]
-        print(f"  [{r['group']}] {score:>6} | {r['effective_rate']:.3f}% | {r['kor_co_nm']} {r['fin_prdt_nm']} | {', '.join(extra)}")
-    counts = defaultdict(int)
-    for r in results:
-        counts[r["group"]] += 1
-    print("  그룹별 개수:", dict(counts))
+def describe(r):
+    score = "-" if r["score"] is None else f"{r['score']:.3f}"
+    extra = r["mismatch_reasons"] or r["check_reasons"]
+    return f"{score:>6} | {r['effective_rate']:.3f}% | {r['kor_co_nm']} {r['fin_prdt_nm']} | {', '.join(extra)}"
 
 
 def main():
@@ -153,7 +136,8 @@ def main():
     ]
     for user in examples:
         term, results = recommend_fast(options, user)
-        print_summary(user, term, results)
+        title = f"{user['purpose']} {term}개월, 방문 {user['visit']}, 금융기관 {user['institution']}"
+        print_summary(title, results, describe)
 
 
 if __name__ == "__main__":

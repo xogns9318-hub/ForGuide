@@ -204,6 +204,8 @@
 - 상품은 `purpose` + `product_id`로 구분한다. 금융상품한눈에에서 같은 상품 번호가 예금과 적금에 함께 나오는 경우가 있다(2026-10-23 기준 3건).
 - 테스트: `python -m unittest discover -s ai/tests` (부적격 추천률 0 확인 포함, 정제 데이터가 없으면 실제 데이터 검사는 건너뜀).
 - 서빙(fast): 입력 조합이 정해져 있으므로 모든 조합의 결과를 미리 계산해(배치 추론) `backend/src/main/resources/recommend/account_fast.json`에 둔다(`export_results.py`, 32가지, 그룹당 상위 20개). Spring은 입력을 `key_order` 순서로 `|`로 이어 키를 만들어 `results`에서 찾는다. 데이터나 가중치가 바뀌면 다시 만든다.
+- 전체 다시 만들기: `python ai/run_pipeline.py` (수집 → 정제 → 가상 사용자 → 비교 쌍 → 학습 → 결과 내보내기 → 판정 페이지). 수집 없이 가장 최신 원본으로 돌리려면 `--skip-collect`. 단계가 실패하면 멈추고 몇 번째 어느 단계인지 출력한다. 모든 스크립트는 날짜 인자 없이 가장 최신 파일을 읽고, 결과 파일에는 생성일(`generated_on`)을 남긴다. 공통 코드(경로, 최신 파일 찾기, 입력 검증, 금융사당 대표 1개, 결과 키, 내보내기)는 `ai/recommend/common.py`에 있다.
+- 실손보험 원본은 `collect_insurance.py`가 실손보험정보 API에서 2025-01-01 이후 기준일 자료를 300행씩 받는다(500행 이상은 게이트웨이 시간 초과). 약 20만 행이라 수십 분 걸린다.
 - plus처럼 연속값 입력이 생기면 Python 추천 서버를 붙인다. 결과 형식은 같다.
 - 보험 fast: `ai/recommend/insurance/recommend.py`의 `recommend(user)`. 입력은 `health_insurance`, `residence_status`, `sex`, `age`. 건강보험이 "예"가 아니면 `{"redirect": "consultation"}`. 출력은 계좌와 같은 틀에 `monthly_premium`·`premium_breakdown`·`online`, 별도 안내 `separate`(`senior`, `simplified`)가 붙는다. 서빙 파일은 `resources/recommend/insurance_fast.json`(`성별|나이` 162가지, 관문은 키에 넣지 않음).
 - 대출 화면(`/service/loan`, 2026-10-26): 관문 없이 체류자격·용도·영업점 방문. 결과는 고정 안내, 평균 금리 가로 막대(낮은 순, 상위 5개), 카드(평균 금리·금리 범위·상품 종류·한도·상환 방식·가입 방법), 불일치 접기, 상세 팝업. 상품 이자 계산기 팝업(Figma `#calculator`)은 미정.

@@ -4,12 +4,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from common import one_per_company
+from common import validate as validate_choices
 from engine import GROUP_CHECK, GROUP_MISMATCH
 from baseline import PURPOSE_TO_LOAN_TYPE, VISIT_NOT_WANTED, load_products, recommend_fast
 
-RESIDENCE_STATUSES = [
-    "비전문취업(E-9)", "방문취업(H-2)", "전문인력", "유학생", "재외동포(F-4)", "영주(F-5)", "결혼이민(F-6)", "기타",
-]
 CHOICES = {"purpose": list(PURPOSE_TO_LOAN_TYPE), "visit": ["상관없음", VISIT_NOT_WANTED]}
 TOP_N = 5
 MISMATCH_N = 3
@@ -21,16 +20,7 @@ LOAN_TYPE_KEYS = {"신용대출": "credit", "전세자금대출": "jeonse"}
 
 
 def validate(user):
-    errors = {}
-    if user.get("purpose") not in CHOICES["purpose"]:
-        errors["purpose"] = CHOICES["purpose"]
-    if user.get("visit") not in CHOICES["visit"]:
-        errors["visit"] = CHOICES["visit"]
-    if user.get("residence_status") not in RESIDENCE_STATUSES:
-        errors["residence_status"] = RESIDENCE_STATUSES
-    if errors:
-        raise ValueError(errors)
-    return user
+    return validate_choices(user, CHOICES, residence=True)
 
 
 def reason_keys(result, best_rate, user):
@@ -79,18 +69,6 @@ def mismatch_card(result, rank):
     }
 
 
-def one_per_company(results):
-    leaders, more = [], {}
-    for r in results:
-        name = r["kor_co_nm"]
-        if name in more:
-            more[name] += 1
-        else:
-            more[name] = 0
-            leaders.append(r)
-    return leaders, more
-
-
 def recommend(user, products=None, top_n=TOP_N):
     user = validate(user)
     products = products if products is not None else load_products()
@@ -98,7 +76,7 @@ def recommend(user, products=None, top_n=TOP_N):
     results = [r for r in all_results if r["group"] != GROUP_MISMATCH]
     mismatched = [r for r in all_results if r["group"] == GROUP_MISMATCH]
     best_rate = min((r["rate_avg"] for r in results if r["rate_avg"] is not None), default=None)
-    leaders, more = one_per_company(results)
+    leaders, more = one_per_company(results, "kor_co_nm")
     items = []
     for i, r in enumerate(leaders[:top_n], start=1):
         item = card(r, i, best_rate, user)

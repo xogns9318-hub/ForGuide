@@ -1,14 +1,12 @@
-import csv
 import json
 import re
 import sys
 from collections import defaultdict
-from datetime import date
 from pathlib import Path
 
-AI_DIR = Path(__file__).resolve().parent.parent
-RAW_DIR = AI_DIR / "data" / "raw"
-PROCESSED_DIR = AI_DIR / "data" / "processed"
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "recommend"))
+
+from common import PROCESSED_DIR, RAW_DIR, latest, today, write_csv
 
 EXCLUDED_COMPANIES = {"MG손보"}
 UNBORN_AGES = {"태아", "-1"}
@@ -80,9 +78,8 @@ def coverage_group(product_type, coverage):
     return None
 
 
-def load_raw(collected):
-    path = RAW_DIR / f"insurance_latest_by_company_{collected}.json"
-    return json.loads(path.read_text(encoding="utf-8"))
+def load_raw():
+    return json.loads(latest(RAW_DIR, "insurance_latest_by_company_*.json").read_text(encoding="utf-8"))
 
 
 def collect_premiums(records):
@@ -133,8 +130,8 @@ def load_contacts():
     return contacts
 
 
-def build_rows(collected):
-    products, premiums = collect_premiums(load_raw(collected))
+def build_rows():
+    products, premiums = collect_premiums(load_raw())
     contacts = load_contacts()
     rows = []
     for (product_key, age), groups in sorted(premiums.items()):
@@ -167,20 +164,10 @@ def build_rows(collected):
     return rows
 
 
-def save_rows(rows, output_path):
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    with output_path.open("w", encoding="utf-8-sig", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=COLUMNS)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    collected = sys.argv[1] if len(sys.argv) > 1 else "20261015"
-    rows = build_rows(collected)
-    output_path = PROCESSED_DIR / f"insurance_{date.today():%Y%m%d}.csv"
-    save_rows(rows, output_path)
+    rows = build_rows()
+    output_path = write_csv(rows, PROCESSED_DIR / f"insurance_{today()}.csv", COLUMNS)
     print(f"{len(rows)}행 저장: {output_path}")
 
 

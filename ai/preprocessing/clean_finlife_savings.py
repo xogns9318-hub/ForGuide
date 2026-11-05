@@ -1,15 +1,13 @@
-import csv
 import json
 import re
 import statistics
 import sys
 from collections import defaultdict
-from datetime import date
 from pathlib import Path
 
-AI_DIR = Path(__file__).resolve().parent.parent
-RAW_DIR = AI_DIR / "data" / "raw"
-PROCESSED_DIR = AI_DIR / "data" / "processed"
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "recommend"))
+
+from common import PROCESSED_DIR, RAW_DIR, load_finlife, today, write_csv
 
 SOURCES = {
     "depositProductsSearch": "예금",
@@ -118,12 +116,6 @@ def effective_rate(purpose, rate, months, rate_type):
     return saving_effective_rate(rate, months, rate_type)
 
 
-def load_raw(service, group, collected):
-    path = RAW_DIR / f"finlife_{service}_{group}_{collected}.json"
-    data = json.loads(path.read_text(encoding="utf-8"))
-    return data["baseList"], data["optionList"]
-
-
 def load_companies():
     companies = {}
     for group in INSTITUTION_TYPES:
@@ -138,12 +130,12 @@ def load_companies():
     return companies
 
 
-def build_rows(collected):
+def build_rows():
     companies = load_companies()
     rows = []
     for service, purpose in SOURCES.items():
         for group, institution_type in INSTITUTION_TYPES.items():
-            base_list, option_list = load_raw(service, group, collected)
+            base_list, option_list = load_finlife(service, group)
             products = {(b["fin_co_no"], b["fin_prdt_cd"]): b for b in base_list}
             for option in option_list:
                 product = products.get((option["fin_co_no"], option["fin_prdt_cd"]))
@@ -200,20 +192,10 @@ def mark_rate_outliers(rows):
     return rows
 
 
-def save_rows(rows, output_path):
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    with output_path.open("w", encoding="utf-8-sig", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=COLUMNS)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    collected = sys.argv[1] if len(sys.argv) > 1 else "20261014"
-    rows = mark_rate_outliers(build_rows(collected))
-    output_path = PROCESSED_DIR / f"finlife_savings_{date.today():%Y%m%d}.csv"
-    save_rows(rows, output_path)
+    rows = mark_rate_outliers(build_rows())
+    output_path = write_csv(rows, PROCESSED_DIR / f"finlife_savings_{today()}.csv", COLUMNS)
     print(f"{len(rows)}행 저장: {output_path}")
     print(f"금리 이상값 {sum(row['rate_outlier'] for row in rows)}행 표시")
 

@@ -194,13 +194,14 @@ class RealDataTest(unittest.TestCase):
     def test_export_covers_every_input(self):
         import json
         import tempfile
-        from export_results import export, result_key
+        from common import result_key
+        from export_results import export
 
         with tempfile.TemporaryDirectory() as folder:
             path, count = export(Path(folder) / "account_fast.json")
             payload = json.loads(path.read_text(encoding="utf-8"))
         self.assertEqual(count, len(ALL_USERS))
-        self.assertEqual(set(payload["results"]), {result_key(u) for u in ALL_USERS})
+        self.assertEqual(set(payload["results"]), {result_key(u, CHOICES) for u in ALL_USERS})
         self.assertEqual(payload["key_order"], list(CHOICES))
 
 

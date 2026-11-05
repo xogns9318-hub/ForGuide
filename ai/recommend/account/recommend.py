@@ -4,11 +4,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from common import MODELS_DIR, one_per_company
+from common import validate as validate_choices
 from engine import GROUP_CHECK, GROUP_MATCH, GROUP_MISMATCH
 from baseline import BANK, PREFER_BANK, VISIT_NOT_WANTED, WEIGHTS, load_options, recommend_fast
 
-AI_DIR = Path(__file__).resolve().parent.parent.parent
-WEIGHTS_PATH = AI_DIR / "models" / "account_fast_weights.json"
+WEIGHTS_PATH = MODELS_DIR / "account_fast_weights.json"
 
 CHOICES = {
     "purpose": ["예금", "적금"],
@@ -35,19 +36,7 @@ def load_weights(path=WEIGHTS_PATH):
 
 
 def validate(user):
-    errors = {}
-    for name, allowed in CHOICES.items():
-        value = user.get(name)
-        if name == "term":
-            try:
-                value = int(value)
-            except (TypeError, ValueError):
-                value = None
-        if value not in allowed:
-            errors[name] = allowed
-    if errors:
-        raise ValueError(errors)
-    return {**user, "term": int(user["term"])}
+    return validate_choices(user, CHOICES, numbers=("term",))
 
 
 def reason_keys(result, weights, user, limit=3):
@@ -91,18 +80,6 @@ def card(result, rank, weights, user):
     return item
 
 
-def one_per_company(members):
-    leaders, more = [], {}
-    for r in members:
-        name = r["kor_co_nm"]
-        if name in more:
-            more[name] += 1
-        else:
-            more[name] = 0
-            leaders.append(r)
-    return leaders, more
-
-
 def recommend(user, options=None, weights=None, top_n=TOP_N, mismatch_n=MISMATCH_N):
     user = validate(user)
     options = options if options is not None else load_options()
@@ -115,7 +92,7 @@ def recommend(user, options=None, weights=None, top_n=TOP_N, mismatch_n=MISMATCH
     groups = []
     for group in (GROUP_MATCH, GROUP_CHECK):
         members = [r for r in results if r["group"] == group]
-        leaders, more = one_per_company(members)
+        leaders, more = one_per_company(members, "kor_co_nm")
         items = []
         for i, r in enumerate(leaders[:top_n], start=1):
             item = card(r, i, weights, user)

@@ -1,19 +1,15 @@
-import csv
 import hashlib
 import random
 import sys
 from collections import defaultdict
-from datetime import date
 from itertools import combinations
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from common import PROCESSED_DIR, latest, read_csv, today, write_csv
 from engine import GROUP_MISMATCH, compare_features
 from baseline import load_options, recommend_fast
-
-AI_DIR = Path(__file__).resolve().parent.parent.parent
-PROCESSED_DIR = AI_DIR / "data" / "processed"
 
 SEED = 20261019
 DIRECTIONS = {"rate": 1, "check_count": -1, "visit_required": -1, "non_preferred_institution": -1}
@@ -43,10 +39,7 @@ PAIR_COLUMNS = (
 
 
 def load_users(path=None):
-    if path is None:
-        path = sorted(PROCESSED_DIR.glob("virtual_users_*.csv"))[-1]
-    with Path(path).open(encoding="utf-8-sig") as f:
-        return list(csv.DictReader(f))
+    return read_csv(path or latest(PROCESSED_DIR, "virtual_users_*.csv"))
 
 
 def build_contexts(users):
@@ -221,10 +214,7 @@ def labeled_rows(options, labels):
 def save_rows(rows, prefix, path):
     for index, row in enumerate(rows, start=1):
         row["pair_id"] = f"{prefix}{index:04d}"
-    with path.open("w", encoding="utf-8-sig", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=PAIR_COLUMNS)
-        writer.writeheader()
-        writer.writerows(rows)
+    write_csv(rows, path, PAIR_COLUMNS)
 
 
 def main():
@@ -234,9 +224,8 @@ def main():
     contexts = build_contexts(load_users())
     auto_rows, judge_rows, stats = build_pairs(options, contexts, rng)
     assign_splits(auto_rows, judge_rows)
-    today = f"{date.today():%Y%m%d}"
-    auto_path = PROCESSED_DIR / f"account_pairs_auto_{today}.csv"
-    judge_path = PROCESSED_DIR / f"account_pairs_judge_{today}.csv"
+    auto_path = PROCESSED_DIR / f"account_pairs_auto_{today()}.csv"
+    judge_path = PROCESSED_DIR / f"account_pairs_judge_{today()}.csv"
     save_rows(auto_rows, "AA", auto_path)
     save_rows(judge_rows, "AH", judge_path)
 
