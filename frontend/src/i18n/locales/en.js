@@ -1944,6 +1944,7 @@ const en = {
         send: "Send",
         sending: "Waiting for the answer...",
         answering: "Preparing an answer...",
+        resend: "Send again",
         privacyNotice:
             "Resident registration, alien registration, passport, account and phone numbers are hidden automatically before being sent to the AI. It is safest not to enter personal information.",
         speaker: {
@@ -1958,6 +1959,8 @@ const en = {
             timeout: "The answer is taking longer than usual. Please try again shortly.",
             network: "Could not connect to the server. Please check your network.",
             failed: "Could not get an answer. Please try again shortly.",
+            interrupted:
+                "The answer was cut off. Your question was not counted, so please try again.",
             clearFailed: "Could not clear the conversation. Please try again shortly.",
         },
         handoff: {

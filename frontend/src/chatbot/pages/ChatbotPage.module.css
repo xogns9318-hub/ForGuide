@@ -114,6 +114,30 @@
     color: var(--ink);
 }
 
+/* 답변을 받는 동안 글자 끝에 보이는 커서 */
+.cursor {
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    background: currentColor;
+    opacity: 0.4;
+}
+
+/* 받다가 끊긴 답변: 받은 데까지만 흐리게 */
+.interrupted {
+    justify-items: start;
+}
+
+.interrupted .partial {
+    opacity: 0.55;
+}
+
+.interrupted :global(.form-error) {
+    margin: 0;
+}
+
 .speaker {
     color: var(--muted);
     font-size: 13px;

@@ -1904,6 +1904,7 @@ const vi = {
         send: "Gửi",
         sending: "Đang chờ trả lời...",
         answering: "Đang chuẩn bị câu trả lời...",
+        resend: "Gửi lại",
         privacyNotice:
             "Số đăng ký cư trú, số đăng ký người nước ngoài, số hộ chiếu, số tài khoản và số điện thoại sẽ được tự động che trước khi gửi cho AI. An toàn nhất là không nhập thông tin cá nhân.",
         speaker: {
@@ -1918,6 +1919,7 @@ const vi = {
             timeout: "Câu trả lời đang mất nhiều thời gian. Vui lòng thử lại sau ít phút.",
             network: "Không thể kết nối tới máy chủ. Vui lòng kiểm tra mạng.",
             failed: "Không nhận được câu trả lời. Vui lòng thử lại sau ít phút.",
+            interrupted: "Câu trả lời bị gián đoạn. Lượt hỏi này không bị tính, vui lòng thử lại.",
             clearFailed: "Không thể xóa cuộc trò chuyện. Vui lòng thử lại sau ít phút.",
         },
         handoff: {

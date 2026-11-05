@@ -6,10 +6,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.forguide.common.security.JwtProvider;
 import com.jayway.jsonpath.JsonPath;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -42,6 +45,8 @@ import tools.jackson.databind.ObjectMapper;
 class ChatbotControllerTest {
 
     private static final String URL = "/api/v1/chatbot/messages";
+    /** 화면과 같이 보낸다: 이어서 받기(SSE)와 연결 전 JSON 오류를 둘 다 받을 수 있게 */
+    private static final String STREAM_ACCEPT = "text/event-stream, application/json";
 
     private static final String PII_QUESTION = "주민번호 900101-1234567, 외국인등록번호 950505-6123456, "
             + "여권 M12345678, 계좌 123-456789-01-234, 전화 010-1234-5678 입니다";
@@ -214,6 +219,83 @@ class ChatbotControllerTest {
 
         mockMvc.perform(get(URL).header("Authorization", bearer(7L)))
                 .andExpect(jsonPath("$.data.messages.length()").value(0));
+    }
+
+    @Test
+    void 이어서_받기는_조각을_순서대로_보내고_다_받으면_대화에_남긴다() throws Exception {
+        int before = remaining(7L);
+
+        String events = stream(7L, "이어서 받을 질문");
+
+        assertThat(events).contains("event:start", "\"content\":\"이어서 받을 질문\"",
+                "\"remainingToday\":" + (before - 1), "event:done");
+        // 띄어쓰기로 시작하는 조각도 그대로 온다
+        assertThat(events).contains("data:{\"text\":\"예시\"}", "data:{\"text\":\" 답변입니다.\"}");
+        assertThat(events.indexOf("event:start")).isLessThan(events.indexOf("event:delta"));
+        assertThat(events.lastIndexOf("event:delta")).isLessThan(events.indexOf("event:done"));
+
+        mockMvc.perform(get(URL).header("Authorization", bearer(7L)))
+                .andExpect(jsonPath("$.data.remainingToday").value(before - 1))
+                .andExpect(jsonPath("$.data.messages.length()").value(2))
+                .andExpect(jsonPath("$.data.messages[1].content").value(FakeChatModel.ANSWER));
+    }
+
+    @Test
+    void 이어서_받다가_끊기면_error를_보내고_횟수와_질문을_되돌린다() throws Exception {
+        int before = remaining(7L);
+        fakeChatModel.nextFailure = new IllegalStateException("OpenAI 연결 끊김(테스트)");
+
+        String events = stream(7L, "끊길 질문");
+
+        assertThat(events).contains("data:{\"text\":\"예시\"}", "event:error", "\"code\":\"CHATBOT_FAILED\"")
+                .doesNotContain("event:done");
+        mockMvc.perform(get(URL).header("Authorization", bearer(7L)))
+                .andExpect(jsonPath("$.data.remainingToday").value(before))
+                .andExpect(jsonPath("$.data.messages.length()").value(0));
+    }
+
+    @Test
+    void 이어서_받기도_연결_전_오류는_JSON으로_온다() throws Exception {
+        mockMvc.perform(post(URL + "/stream")
+                        .accept(STREAM_ACCEPT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body("안녕하세요")))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.error.code").value("AUTH_REQUIRED"));
+
+        mockMvc.perform(post(URL + "/stream")
+                        .header("Authorization", bearer(7L))
+                        .accept(STREAM_ACCEPT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body("가".repeat(501))))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.code").value("CHATBOT_QUESTION_TOO_LONG"));
+
+        assertThat(fakeChatModel.prompts).isEmpty();
+    }
+
+    /** 이어서 받기를 끝까지 기다려 받은 SSE 글 전체를 돌려준다 */
+    private String stream(Long memberId, String question) throws Exception {
+        MvcResult result = mockMvc.perform(post(URL + "/stream")
+                        .header("Authorization", bearer(memberId))
+                        .accept(STREAM_ACCEPT)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body(question)))
+                .andExpect(request().asyncStarted())
+                .andReturn();
+
+        long deadline = System.currentTimeMillis() + 5000;
+        String content = "";
+        while (System.currentTimeMillis() < deadline) {
+            content = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            if (content.contains("event:done") || content.contains("event:error")) {
+                break;
+            }
+            Thread.sleep(20);
+        }
+        // 마지막 이벤트를 보낸 뒤 연결을 닫으며 되돌리는 처리까지 끝나기를 잠깐 기다린다
+        Thread.sleep(50);
+        return content.replace("data: ", "data:").replace("event: ", "event:");
     }
 
     private ResultActions ask(Long memberId, String question) throws Exception {
