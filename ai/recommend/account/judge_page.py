@@ -117,6 +117,8 @@ def build(judge=None):
         side = lambda p: [r[f"{p}_{n}"] for n in SIDE[:3]] + [float(r[f"{p}_effective_rate"]), int(r[f"{p}_visit_required"])]
         pairs.append([r["pair_id"], r["purpose"], int(r["save_trm"]), r["visit"], r["institution"], r["group"], side("a"), side("b")])
         winner = labels.get(r["pair_key"])
+        if isinstance(winner, dict):
+            winner = winner["winner"]
         if winner:
             preset[r["pair_id"]] = "A" if winner == r["a_product_id"] else "B" if winner == r["b_product_id"] else "같음"
     page = (PAGE.replace("__DATE__", date)

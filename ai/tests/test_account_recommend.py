@@ -12,7 +12,8 @@ sys.path.insert(0, str(AI_DIR / "preprocessing"))
 from engine import GROUP_CHECK, GROUP_MATCH, GROUP_MISMATCH, compare_features
 from baseline import PROCESSED_DIR, WEIGHTS, load_options, recommend_fast
 from clean_finlife_savings import classify_foreigner, display_company
-from pairs import eval_split, pair_key
+from pairs import eval_split, labeled_rows, make_row, pair_key, snapshot_entry
+from add_labels import parse as parse_answers
 from recommend import CHOICES, recommend, validate
 
 KO_JS = AI_DIR.parent / "frontend" / "src" / "i18n" / "locales" / "ko.js"
@@ -152,6 +153,37 @@ class PairTest(unittest.TestCase):
         self.assertEqual(compare_features({"rate": 1, "visit_required": 0}, {"rate": 0.5, "visit_required": 0}, directions), "A")
         self.assertIsNone(compare_features({"rate": 1, "visit_required": 1}, {"rate": 0.5, "visit_required": 0}, directions))
         self.assertEqual(compare_features({"rate": 1, "visit_required": 0}, {"rate": 1, "visit_required": 0}, directions), "같음")
+
+
+class SnapshotLabelTest(unittest.TestCase):
+    CONTEXT = {"purpose": "예금", "save_trm": 12, "visit": "상관없음", "institution": "은행 선호"}
+
+    def judged_row(self):
+        user = {"purpose": "예금", "term": 12, "visit": "상관없음", "institution": "은행 선호"}
+        _, results = recommend_fast(FIXTURE, user, WEIGHTS)
+        by_code = {r["product_id"].split("-")[1]: r for r in results}
+        row = make_row(self.CONTEXT, "확인 필요", by_code["B1"], by_code["V1"], "human", "")
+        return {k: str(v) for k, v in row.items()}
+
+    def test_snapshot_keeps_judged_values_when_data_changes(self):
+        row = self.judged_row()
+        entry = snapshot_entry(row, row["a_product_id"], "20261026")
+        rows, missing = labeled_rows([], {row["pair_key"]: entry})
+        self.assertEqual(missing, [])
+        self.assertEqual(rows[0]["label"], "A")
+        self.assertEqual(rows[0]["a_effective_rate"], float(row["a_effective_rate"]))
+        self.assertEqual(rows[0]["a_non_preferred_institution"], 0)
+        self.assertEqual(rows[0]["b_non_preferred_institution"], 1)
+
+    def test_legacy_label_without_snapshot_is_reported_missing(self):
+        row = self.judged_row()
+        _, missing = labeled_rows([], {row["pair_key"]: row["a_product_id"]})
+        self.assertEqual(missing, [row["pair_key"]])
+
+    def test_parse_judge_page_answers(self):
+        judge, pair_date, answers = parse_answers("판정 결과 (판정자: 홍길동, 쌍 20261105, 2/98쌍): AH0001=A, AH0002=같음")
+        self.assertEqual((judge, pair_date), ("홍길동", "20261105"))
+        self.assertEqual(answers, {"AH0001": "A", "AH0002": "같음"})
 
 
 class OverrideTest(unittest.TestCase):

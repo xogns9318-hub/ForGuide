@@ -60,6 +60,25 @@ def judge(product, user):
     return mismatch, check
 
 
+def raw_side(product, best_rate):
+    return {
+        "effective_rate": float(product["effective_rate"]),
+        "best_rate": best_rate,
+        "foreigner_status": product["foreigner_status"],
+        "visit_required": int(product["visit_required"]),
+        "institution_type": product["institution_type"],
+    }
+
+
+def features_of(raw, user):
+    return {
+        "rate": absolute_score(float(raw["best_rate"]), float(raw["effective_rate"]), RATE_FULL_GAP),
+        "check_count": 1 if raw["foreigner_status"] == "확인 필요" else 0,
+        "visit_required": int(raw["visit_required"]),
+        "non_preferred_institution": int(user["institution"] == PREFER_BANK and raw["institution_type"] != BANK),
+    }
+
+
 def recommend_fast(options, user, weights=None):
     weights = weights or WEIGHTS
     term = int(user["term"])
@@ -81,14 +100,10 @@ def recommend_fast(options, user, weights=None):
 
     results = []
     for product, mismatch, check, group in judged:
-        score, reasons, features = None, [], None
+        score, reasons, features, raw = None, [], None, None
         if group != GROUP_MISMATCH:
-            features = {
-                "rate": absolute_score(best_rate_by_group[group], float(product["effective_rate"]), RATE_FULL_GAP),
-                "check_count": 1 if product["foreigner_status"] == "확인 필요" else 0,
-                "visit_required": int(product["visit_required"]),
-                "non_preferred_institution": int(user["institution"] == PREFER_BANK and product["institution_type"] != BANK),
-            }
+            raw = raw_side(product, best_rate_by_group[group])
+            features = features_of(raw, user)
             score, contributions = weighted_score(features, weights)
             reasons = top_reasons(contributions)
         results.append({
@@ -109,6 +124,7 @@ def recommend_fast(options, user, weights=None):
             "group": group,
             "score": score,
             "features": features,
+            "raw": raw,
             "reasons": reasons,
             "check_reasons": check,
             "mismatch_reasons": mismatch,

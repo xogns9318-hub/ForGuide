@@ -8,8 +8,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from common import PROCESSED_DIR, latest, read_csv, today, write_csv
-from engine import GROUP_MISMATCH, compare_features
-from baseline import load_options, recommend_fast
+from engine import GROUP_MISMATCH, compare_features, weighted_score
+from baseline import WEIGHTS, features_of, load_options, recommend_fast
 
 SEED = 20261019
 DIRECTIONS = {"rate": 1, "check_count": -1, "visit_required": -1, "non_preferred_institution": -1}
@@ -26,8 +26,9 @@ MAX_APPEARANCE = 2
 EVAL_RATIO = 0.3
 
 CONTEXT_FIELDS = ["purpose", "save_trm", "visit", "institution"]
+SNAPSHOT_FIELDS = ["kor_co_nm", "fin_prdt_nm", "institution_type", "effective_rate", "best_rate", "foreigner_status", "visit_required"]
 SIDE_FIELDS = [
-    "product_id", "kor_co_nm", "fin_prdt_nm", "institution_type", "effective_rate",
+    "product_id", "kor_co_nm", "fin_prdt_nm", "institution_type", "effective_rate", "best_rate", "foreigner_status",
     "rate", "check_count", "visit_required", "non_preferred_institution", "baseline",
 ]
 PAIR_COLUMNS = (
@@ -73,6 +74,8 @@ def candidates_by_group(options, context):
 
 def side_values(result):
     values = {name: result[name] for name in ["product_id", "kor_co_nm", "fin_prdt_nm", "institution_type", "effective_rate"]}
+    values["best_rate"] = result["raw"]["best_rate"]
+    values["foreigner_status"] = result["raw"]["foreigner_status"]
     values.update(result["features"])
     values["baseline"] = round(result["score"], 4)
     return values
@@ -187,11 +190,43 @@ def parse_key(key):
     return context, values[len(CONTEXT_FIELDS):]
 
 
+def snapshot_entry(row, winner, pair_date):
+    sides = {}
+    for prefix in ("a", "b"):
+        sides[row[f"{prefix}_product_id"]] = {name: row[f"{prefix}_{name}"] for name in SNAPSHOT_FIELDS}
+    return {"winner": winner, "pair_date": pair_date, "group": row["group"], "sides": sides}
+
+
+def snapshot_result(product_id, side, context):
+    user = {"visit": context["visit"], "institution": context["institution"]}
+    raw = {name: side[name] for name in SNAPSHOT_FIELDS}
+    features = features_of(raw, user)
+    return {
+        "product_id": product_id,
+        "kor_co_nm": side["kor_co_nm"],
+        "fin_prdt_nm": side["fin_prdt_nm"],
+        "institution_type": side["institution_type"],
+        "effective_rate": float(side["effective_rate"]),
+        "raw": raw,
+        "features": features,
+        "score": weighted_score(features, WEIGHTS)[0],
+    }
+
+
 def labeled_rows(options, labels):
     cache = {}
     rows, missing = [], []
-    for key, winner in labels.items():
+    for key, entry in labels.items():
         context, product_ids = parse_key(key)
+        if isinstance(entry, dict):
+            a, b = (snapshot_result(pid, entry["sides"][pid], context) for pid in product_ids)
+            winner = entry["winner"]
+            label = "A" if winner == a["product_id"] else "B" if winner == b["product_id"] else "같음"
+            row = make_row(context, entry["group"], a, b, "human", label)
+            row["split"] = eval_split(key)
+            rows.append(row)
+            continue
+        winner = entry
         context_key = tuple(context[name] for name in CONTEXT_FIELDS)
         if context_key not in cache:
             cache[context_key] = candidates_by_group(options, context)
