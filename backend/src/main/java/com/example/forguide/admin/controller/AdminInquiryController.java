@@ -5,6 +5,8 @@ import com.example.forguide.inquiry.dto.InquiryAnswerRequest;
 import com.example.forguide.inquiry.dto.InquiryCursorRequest;
 import com.example.forguide.inquiry.dto.InquiryResponse;
 import com.example.forguide.inquiry.service.InquiryService;
+import com.example.forguide.translation.dto.TranslationResponse;
+import com.example.forguide.translation.dto.TranslationTargetRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import java.nio.file.Path;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,6 +71,21 @@ public class AdminInquiryController {
     }
 
     // 관리자 권한은 /api/v1/admin/** 보안 규칙이 검증한다.
+    @PostMapping("/{inquiryId}/translation/{field}")
+    public ApiResponse<TranslationResponse> translateInquiryText(
+            @PathVariable Long inquiryId,
+            @PathVariable String field,
+            @Valid @RequestBody TranslationTargetRequest request
+    ) {
+        return ApiResponse.ok(
+                inquiryService.translateInquiryTextForAdmin(
+                        inquiryId,
+                        field,
+                        request
+                )
+        );
+    }
+
     @PatchMapping("/{inquiryId}/answer")
     public ApiResponse<Void> answerInquiry(
             @AuthenticationPrincipal Long adminMemberId,

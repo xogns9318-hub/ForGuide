@@ -177,6 +177,11 @@ const en = {
             description:
                 "Ask questions about life in Korea\nand share experiences and useful information.",
         },
+        chatbot: {
+            headline: "Start with the AI chatbot",
+            description:
+                "Ask the AI chatbot about using the service\nand quickly find the information you need.",
+        },
         inquiry: {
             headline: "Feel free to ask if you have questions",
             description: "If you have questions while using the service,\nleave an inquiry for us.",
@@ -222,7 +227,8 @@ const en = {
         descriptions: {
             bullet: "Pay interest until the end of the loan term and repay the principal at maturity.",
             equalPayment: "Pay the same total amount of principal and interest each month.",
-            equalPrincipal: "Repay the same amount of principal each month while interest gradually decreases.",
+            equalPrincipal:
+                "Repay the same amount of principal each month while interest gradually decreases.",
             equalPaymentWithGrace:
                 "Pay interest only during the grace period, then pay the same total amount of principal and interest each month.",
             equalPrincipalWithGrace:
@@ -323,6 +329,14 @@ const en = {
         officialLink: "Official website",
         sourceLink: "Reference {{count}}",
         prepareCard: "Create a Consultation Preparation Card",
+
+        translation: {
+            show: "Show translation",
+            hide: "Show original",
+            translating: "Translating...",
+            label: "AI translation",
+            error: "Translation failed. Please try again shortly.",
+        },
 
         roles: {
             direct: "Direct consultation",
@@ -509,8 +523,7 @@ const en = {
         community: {
             eyebrow: "Community Management",
             title: "Manage Community Content",
-            description:
-                "Review posts and comments, then hide or restore them when necessary.",
+            description: "Review posts and comments, then hide or restore them when necessary.",
 
             resourceTypeLabel: "Content Type",
             resourceTypeAll: "All Content",
@@ -538,6 +551,20 @@ const en = {
             reportsLoading: "Loading reports.",
             reportsLoadError: "Failed to load reports.",
             reportsEmpty: "There are no submitted reports.",
+            targetLabel: "Reported author",
+            reportStatusLabel: "Report status",
+            handledAtLabel: "Handled at",
+            reportStatus: {
+                PENDING: "Pending",
+                HIDDEN: "Content hidden",
+                DISMISSED: "Report dismissed",
+            },
+            hideReportedContent: "Hide Content",
+            dismissReport: "Dismiss Report",
+            openMemberManagement: "Open Member Management",
+            reportHiddenSuccess: "The content was hidden and related reports were processed.",
+            reportDismissSuccess: "The report was dismissed.",
+            reportActionError: "Failed to process the report.",
             reportReasonLabel: "Report reason",
             reporterLabel: "Reporter",
             viewEvidence: "View evidence",
@@ -609,8 +636,7 @@ const en = {
             submit: "Submit Inquiry",
             submitting: "Submitting...",
             success: "Your inquiry has been submitted.",
-            submitError:
-                "Unable to submit your inquiry. Please try again shortly.",
+            submitError: "Unable to submit your inquiry. Please try again shortly.",
         },
         images: {
             add: "Add Image",
@@ -634,6 +660,10 @@ const en = {
             loadError: "Unable to load your inquiries.",
             retry: "Try Again",
             loadMore: "Load More Inquiries",
+            delete: "Delete",
+            deleting: "Deleting...",
+            deleteConfirm: "Delete this unanswered inquiry? Its attachments will also be deleted.",
+            deleteError: "Unable to delete the inquiry. Please try again later.",
         },
         status: {
             RECEIVED: "Received",
@@ -641,6 +671,14 @@ const en = {
         },
         answer: {
             title: "Administrator Reply",
+        },
+
+        translation: {
+            show: "Show translation",
+            hide: "Show original",
+            translating: "Translating...",
+            label: "AI translation",
+            error: "Translation failed. Please try again shortly.",
         },
     },
 
@@ -1015,8 +1053,7 @@ const en = {
         },
         calendarHint:
             "Use the wheel or swipe to move by month. Select a date to allocate an extra amount.",
-        dayLabel:
-            "{{date}} · Additional amount available: {{amount}} · Set as a large-expense day",
+        dayLabel: "{{date}} · Additional amount available: {{amount}} · Set as a large-expense day",
         outsideDay: "{{date}} · Outside the calculation period",
         extraTitle: "Set large-expense day: {{date}}",
         extraAmount: "Additional amount to allocate on this date",
@@ -1041,18 +1078,15 @@ const en = {
             "You are short by {{amount}} compared with planned expenses. Additional daily budgets are shown as 0 KRW.",
         assumption:
             "The start and end dates are included. Monthly income and expenses are prorated for partial months and rounded to the nearest KRW. Cash is also allocated across the full period. Actual deposit and withdrawal dates are not reflected.",
-        chartLabel:
-            "Comparison of planned expenses and additional amount available for the period",
-        chartLegend:
-            "Light mint: planned expenses · Dark green: additional amount available",
+        chartLabel: "Comparison of planned expenses and additional amount available for the period",
+        chartLegend: "Light mint: planned expenses · Dark green: additional amount available",
         errors: {
             required: "Enter an amount. Enter 0 if there is no amount.",
             digits: "Only numbers can be entered.",
             limit: "The maximum amount is KRW 10 trillion.",
             dates: "Enter valid start and end dates.",
             dateOrder: "The end date must be the same as or later than the start date.",
-            extraLimit:
-                "The total extra allocation exceeds the total available amount.",
+            extraLimit: "The total extra allocation exceeds the total available amount.",
             outside: "Select a date within the calculation period.",
         },
     },

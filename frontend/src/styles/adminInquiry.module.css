@@ -215,3 +215,33 @@
         flex-direction: column;
     }
 }
+
+.translation {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.65rem 0 1rem;
+}
+
+.translationResult {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--line-color);
+    border-radius: 0.75rem;
+    background: var(--soft-mint);
+}
+
+.translationResult strong {
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.translationResult p,
+.translationError {
+    margin: 0;
+}
+
+.translationError {
+    color: var(--error-color);
+}

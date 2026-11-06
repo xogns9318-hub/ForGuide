@@ -228,6 +228,7 @@ export default function AdminInquiryPage() {
                                     {t(`inquiry.category.${inquiry.inquiryCategory}`)}
                                 </p>
                                 <h2>{inquiry.title}</h2>
+
                                 <p className={styles.content}>{inquiry.content}</p>
                                 <InquiryImageList
                                     inquiryId={inquiry.inquiryId}

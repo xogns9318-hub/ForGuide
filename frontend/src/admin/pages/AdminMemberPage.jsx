@@ -5,6 +5,7 @@ import {
     useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 import {
     getAdminMembers,
     updateAdminMemberStatus,
@@ -17,11 +18,13 @@ const PAGE_SIZE = 20;
 
 export default function AdminMemberPage() {
     const { t, i18n } = useTranslation();
+    const [searchParams] = useSearchParams();
+    const initialKeyword = searchParams.get("keyword")?.trim() || "";
 
     const [members, setMembers] = useState([]);
     const [memberStatus, setMemberStatus] = useState("");
-    const [keywordInput, setKeywordInput] = useState("");
-    const [keyword, setKeyword] = useState("");
+    const [keywordInput, setKeywordInput] = useState(initialKeyword);
+    const [keyword, setKeyword] = useState(initialKeyword);
     const [isLoading, setIsLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true);
     const [listError, setListError] = useState("");

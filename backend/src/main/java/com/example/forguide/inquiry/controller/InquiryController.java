@@ -5,6 +5,10 @@ import com.example.forguide.inquiry.dto.InquiryCreateRequest;
 import com.example.forguide.inquiry.dto.InquiryCursorRequest;
 import com.example.forguide.inquiry.dto.InquiryResponse;
 import com.example.forguide.inquiry.service.InquiryService;
+import com.example.forguide.translation.dto.TranslationResponse;
+import com.example.forguide.translation.dto.TranslationTargetRequest;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -65,6 +63,30 @@ public class InquiryController {
     ) {
         return ApiResponse.ok(
                 inquiryService.getMyInquiry(memberId, inquiryId)
+        );
+    }
+
+    // 답변 전 문의는 작성자 본인만 삭제할 수 있다.
+    @DeleteMapping("/{inquiryId}")
+    public ApiResponse<Void> deleteMyReceivedInquiry(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long inquiryId
+    ) {
+        inquiryService.deleteMyReceivedInquiry(memberId, inquiryId);
+
+        return ApiResponse.ok();
+    }
+
+    @PostMapping("/{inquiryId}/translation/{field}")
+    public ApiResponse<TranslationResponse> translateMyInquiryText(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long inquiryId,
+            @PathVariable String field,
+            @Valid @RequestBody TranslationTargetRequest request
+    ) {
+        return ApiResponse.ok(
+                inquiryService.translateMyInquiryText(
+                        memberId, inquiryId, field, request)
         );
     }
 

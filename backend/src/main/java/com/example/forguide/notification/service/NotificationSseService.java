@@ -1,18 +1,23 @@
 package com.example.forguide.notification.service;
 
+import com.example.forguide.common.exception.ApiException;
+import com.example.forguide.common.exception.ErrorCode;
 import com.example.forguide.notification.config.NotificationProperties;
+import com.example.forguide.notification.dto.NotificationResponse;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import com.example.forguide.notification.dto.NotificationResponse;
 
 @Service
 public class NotificationSseService {
 
     private static final String NOTIFICATION_EVENT_NAME = "notification";
+    private static final String HEARTBEAT_EVENT_NAME = "ping";
 
     /*
         회원 번호별로 현재 접속 중인 SSE 연결을 보관한다.
@@ -38,9 +43,12 @@ public class NotificationSseService {
                 properties.sseTimeout().toMillis()
         );
 
-        emittersByMemberId
-                .computeIfAbsent(memberId, ignored -> ConcurrentHashMap.newKeySet())
-                .add(emitter);
+        boolean isSubscribed = addEmitter(memberId, emitter);
+
+        if (!isSubscribed) {
+            emitter.complete();
+            throw new ApiException(ErrorCode.SSE_CONNECTION_LIMIT);
+        }
 
         emitter.onCompletion(() -> removeEmitter(memberId, emitter));
         emitter.onTimeout(() -> removeEmitter(memberId, emitter));
@@ -72,7 +80,7 @@ public class NotificationSseService {
             return;
         }
 
-        for (SseEmitter emitter : emitters) {
+        for (SseEmitter emitter : Set.copyOf(emitters)) {
             try {
                 emitter.send(
                         SseEmitter.event()
@@ -85,6 +93,49 @@ public class NotificationSseService {
                 emitter.completeWithError(exception);
             }
         }
+    }
+
+    /*
+       프록시·브라우저가 조용히 끊은 연결을 주기적으로 확인한다.
+       전송에 실패한 emitter는 즉시 제거해 서버 메모리에 남지 않게 한다.
+    */
+    @Scheduled(fixedDelayString = "${forguide.notification.sse-heartbeat-interval:15s}")
+    public void sendHeartbeat() {
+        emittersByMemberId.forEach((memberId, emitters) -> {
+            for (SseEmitter emitter : Set.copyOf(emitters)) {
+                try {
+                    emitter.send(
+                            SseEmitter.event()
+                                    .name(HEARTBEAT_EVENT_NAME)
+                                    .data("ping")
+                    );
+                } catch (IOException | IllegalStateException exception) {
+                    removeEmitter(memberId, emitter);
+                    emitter.completeWithError(exception);
+                }
+            }
+        });
+    }
+
+    // 여러 탭이 동시에 연결해도 회원별 최대 연결 수를 넘지 않도록 원자적으로 등록한다.
+    private boolean addEmitter(Long memberId, SseEmitter emitter) {
+        boolean[] isSubscribed = {false};
+
+        emittersByMemberId.compute(memberId, (ignored, currentEmitters) -> {
+            Set<SseEmitter> emitters = currentEmitters == null
+                    ? ConcurrentHashMap.newKeySet()
+                    : currentEmitters;
+
+            if (emitters.size() >= properties.sseMaxConnectionsPerMember()) {
+                return emitters;
+            }
+
+            emitters.add(emitter);
+            isSubscribed[0] = true;
+            return emitters;
+        });
+
+        return isSubscribed[0];
     }
 
     private void removeEmitter(Long memberId, SseEmitter emitter) {

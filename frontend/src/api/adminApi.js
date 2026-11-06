@@ -156,3 +156,10 @@ export function dismissAdminCommunityReport(reportId) {
         `/admin/community/reports/${reportId}/dismiss`,
     );
 }
+
+export function translateAdminInquiryText(inquiryId, field, targetLanguage) {
+    return client.post(
+        `/admin/inquiries/${inquiryId}/translation/${field}`,
+        { targetLanguage },
+    );
+}

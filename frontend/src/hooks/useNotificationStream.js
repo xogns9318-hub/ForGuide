@@ -88,7 +88,9 @@ export function useNotificationStream({ enabled, onNotification, onConnectionErr
                 });
 
                 if (!response.ok || !response.body) {
-                    throw new Error("SSE 연결에 실패했습니다.");
+                    const error = new Error("SSE 연결에 실패했습니다.");
+                    error.status = response.status;
+                    throw error;
                 }
 
                 const reader = response.body.getReader();
@@ -114,6 +116,12 @@ export function useNotificationStream({ enabled, onNotification, onConnectionErr
             } catch (error) {
                 if (!abortController.signal.aborted) {
                     errorHandlerRef.current?.(error);
+
+                    // 서버가 회원당 연결 수 제한을 응답하면 반복 요청하지 않는다.
+                    // 사용하지 않는 탭을 닫은 뒤 새로고침하면 다시 연결할 수 있다.
+                    if (error.status === 429) {
+                        shouldReconnect = false;
+                    }
                 }
             }
 

@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { createInquiry, getMyInquiries } from "../../api/inquiryApi.js";
+import {
+    createInquiry,
+    deleteMyReceivedInquiry,
+    getMyInquiries,
+} from "../../api/inquiryApi.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import InquiryImageList from "../components/InquiryImageList.jsx";
 import styles from "../../styles/inquiry.module.css";
@@ -29,7 +33,8 @@ export default function InquiryPage() {
     const [successMessage, setSuccessMessage] = useState("");
     const [imageFiles, setImageFiles] = useState([]);
     const [imagePreviewUrls, setImagePreviewUrls] = useState([]);
-
+    const [deletingInquiryId, setDeletingInquiryId] = useState(null);
+    const [deleteError, setDeleteError] = useState("");
     const cursorInquiryIdRef = useRef(null);
     const isLoadingRef = useRef(false);
     const hasMoreRef = useRef(true);
@@ -126,6 +131,7 @@ export default function InquiryPage() {
         setIsSubmitting(true);
         setFormError("");
         setSuccessMessage("");
+        setDeleteError("");
 
         try {
             await createInquiry({
@@ -143,6 +149,24 @@ export default function InquiryPage() {
             setFormError(requestError?.message || t("inquiry.form.submitError"));
         } finally {
             setIsSubmitting(false);
+        }
+    }
+
+    async function handleDeleteInquiry(inquiryId) {
+        if (!window.confirm(t("inquiry.myList.deleteConfirm"))) {
+            return;
+        }
+
+        setDeletingInquiryId(inquiryId);
+        setDeleteError("");
+
+        try {
+            await deleteMyReceivedInquiry(inquiryId);
+            await loadInquiries({ reset: true });
+        } catch (requestError) {
+            setDeleteError(requestError?.message || t("inquiry.myList.deleteError"));
+        } finally {
+            setDeletingInquiryId(null);
         }
     }
 
@@ -244,6 +268,12 @@ export default function InquiryPage() {
             <section className={styles.listSection} aria-labelledby="my-inquiry-title">
                 <h2 id="my-inquiry-title">{t("inquiry.myList.title")}</h2>
 
+                {deleteError && (
+                    <p className={styles.error} role="alert">
+                        {deleteError}
+                    </p>
+                )}
+
                 {isListLoading && inquiries.length === 0 && <p>{t("inquiry.myList.loading")}</p>}
 
                 {!isListLoading && listError && (
@@ -284,6 +314,18 @@ export default function InquiryPage() {
                                     <time dateTime={inquiry.createdAt}>
                                         {formatDateTime(inquiry.createdAt, i18n.language)}
                                     </time>
+                                    {inquiry.inquiryStatus === "RECEIVED" && (
+                                        <button
+                                            type="button"
+                                            className="button"
+                                            onClick={() => handleDeleteInquiry(inquiry.inquiryId)}
+                                            disabled={deletingInquiryId === inquiry.inquiryId}
+                                        >
+                                            {deletingInquiryId === inquiry.inquiryId
+                                                ? t("inquiry.myList.deleting")
+                                                : t("inquiry.myList.delete")}
+                                        </button>
+                                    )}
                                 </div>
 
                                 <p className={styles.category}>

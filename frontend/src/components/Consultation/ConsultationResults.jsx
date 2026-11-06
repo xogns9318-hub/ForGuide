@@ -6,6 +6,7 @@ import {
     getConsultationInstitutions,
     getConsultationInstitution,
     getInstitutionGuide,
+    translateInstitutionText,
 } from "../../api/consultationApi.js";
 import { getConsultationLocationLabel } from "../../i18n/consultationLocationLabels.js";
 import styles from "../../styles/institutionResults.module.css";
@@ -67,6 +68,46 @@ function Field({ label, children }) {
             <dd>{children}</dd>
         </div>
     );
+}
+
+// 기관 안내의 긴 원문만 번역한다. 기관명·주소·전화번호 같은 사실값은 이 컴포넌트를 사용하지 않는다.
+function InstitutionTranslation({ institutionId, field, language }) {
+    const [translation, setTranslation] = useState("");
+
+    useEffect(() => {
+        setTranslation("");
+        const targetLanguage = language?.split("-")[0] || "ko";
+
+        if (!institutionId || targetLanguage === "ko") {
+            return undefined;
+        }
+
+        let isMounted = true;
+
+        async function loadTranslation() {
+            try {
+                const response = await translateInstitutionText(
+                    institutionId,
+                    field,
+                    targetLanguage,
+                );
+
+                if (isMounted) {
+                    setTranslation(response.translatedText || "");
+                }
+            } catch {
+                // 공개 기관 안내의 번역 실패 시 원문만 보인다.
+            }
+        }
+
+        void loadTranslation();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [field, institutionId, language]);
+
+    return translation ? <p className={styles.translationResult}>{translation}</p> : null;
 }
 
 // 카드에서는 언어를 요약하고, 상세에서는 원문과 이용 조건을 모두 보여준다.
@@ -295,6 +336,13 @@ function InstitutionDialog({ id, filters, language, onClose, t }) {
             {item && (
                 <div className={styles.detailBody}>
                     <p>{item.description || t("unknown")}</p>
+                    {item.description && (
+                        <InstitutionTranslation
+                            institutionId={item.id}
+                            field="description"
+                            language={language}
+                        />
+                    )}
 
                     {item.verificationStatus !== "verified" && (
                         <p className={styles.notice}>{t("partialNotice")}</p>
@@ -302,7 +350,14 @@ function InstitutionDialog({ id, filters, language, onClose, t }) {
 
                     <dl className={styles.fields}>
                         <Field label={t("fields.target")}>
-                            {item.targetDescription || t("unknown")}
+                            <p>{item.targetDescription || t("unknown")}</p>
+                            {item.targetDescription && (
+                                <InstitutionTranslation
+                                    institutionId={item.id}
+                                    field="target"
+                                    language={language}
+                                />
+                            )}
                         </Field>
 
                         <Field label={t("fields.address")}>{item.address || t("unknown")}</Field>
@@ -329,7 +384,14 @@ function InstitutionDialog({ id, filters, language, onClose, t }) {
                     ))}
 
                     {item.additionalNotes && (
-                        <p className={styles.notice}>{item.additionalNotes}</p>
+                        <div>
+                            <p className={styles.notice}>{item.additionalNotes}</p>
+                            <InstitutionTranslation
+                                institutionId={item.id}
+                                field="notes"
+                                language={language}
+                            />
+                        </div>
                     )}
 
                     <h3>{t("servicesTitle")}</h3>
@@ -345,14 +407,21 @@ function InstitutionDialog({ id, filters, language, onClose, t }) {
                     </dl>
 
                     {guide.scopeNotes.length > 0 && (
-                        <details>
-                            <summary>{t("scopeNotesTitle")}</summary>
-                            <ul>
-                                {guide.scopeNotes.map((note) => (
-                                    <li key={note}>{note}</li>
-                                ))}
-                            </ul>
-                        </details>
+                        <>
+                            <details>
+                                <summary>{t("scopeNotesTitle")}</summary>
+                                <ul>
+                                    {guide.scopeNotes.map((note) => (
+                                        <li key={note}>{note}</li>
+                                    ))}
+                                </ul>
+                            </details>
+                            <InstitutionTranslation
+                                institutionId={item.id}
+                                field="scope-notes"
+                                language={language}
+                            />
+                        </>
                     )}
 
                     <h3>{t("usageInfoTitle")}</h3>
@@ -369,6 +438,11 @@ function InstitutionDialog({ id, filters, language, onClose, t }) {
                                 service={group.service}
                                 guidance={item.guidance}
                                 t={t}
+                                language={language}
+                            />
+                            <InstitutionTranslation
+                                institutionId={item.id}
+                                field={`service-guide-${group.service.id}`}
                                 language={language}
                             />
                         </div>
@@ -573,6 +647,11 @@ export default function ConsultationResults({ filters, visible, reloadKey }) {
                                         t={t}
                                         language={i18n.language}
                                         compact
+                                    />
+                                    <InstitutionTranslation
+                                        institutionId={item.id}
+                                        field="guidance"
+                                        language={i18n.language}
                                     />
 
                                     <dl className={styles.fields}>

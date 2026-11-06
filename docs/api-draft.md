@@ -555,6 +555,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | ---- | ---------------------------------------- | --------------------------------- |
 | GET  | `/api/v1/consultation/institutions`      | 예시 기관을 제외한 기관 목록 조회 |
 | GET  | `/api/v1/consultation/institutions/{id}` | 기관 상세 조회                    |
+| POST | `/api/v1/consultation/institutions/{id}/translation/{field}` | 기관 안내의 긴 설명 번역 |
 
 두 API는 로그인 없이 GET으로 조회할 수 있다.
 
@@ -572,6 +573,8 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - 기관 목록·상세 응답에 guidance 객체를 추가한다.
 - guidance 항목: location, methods, reservation, preparation, phoneLanguages, visitLanguages, phoneWeekend, phoneHoliday, visitWeekend, visitHoliday.
 - guidance는 제공받은 기관 조사 원문의 조건부 설명을 전달한다.
+- 번역 API의 field는 `description`, `target`, `notes`, `guidance`, `scope-notes`, `service-guide-{serviceId}`만 허용한다.
+- 기관명·공식 주소·전화번호·URL·운영 시간처럼 사실 확인이 필요한 값은 번역하지 않고 원문을 유지한다.
 - services.languages는 검색에 사용하는 확인된 방식별 지원 언어를 유지한다.
 - 기본 6개 언어 외의 언어를 ‘다국어’로 묶는 처리는 카드 표시 단계에서만 수행한다.
 - 검색어 조회에는 featuredKeywords도 포함한다.
@@ -610,6 +613,17 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - 사용량 제한과 키·권한 오류는 자동 재시도하지 않는다.
 - 상담 번역의 프론트 대기 시간은 35초이며 다른 API의 기본 10초 제한은 유지한다.
 - 실패 코드는 TRANSLATION_TIMEOUT, TRANSLATION_UNAVAILABLE, TRANSLATION_RATE_LIMITED로 구분한다.
+
+## 내 문의 API
+
+| Method | Path | 권한 | 설명 |
+| --- | --- | --- | --- |
+| GET | `/api/v1/inquiries` | 로그인 | 내 문의를 커서 기준 최신순으로 조회 |
+| POST | `/api/v1/inquiries` | 로그인 | 문의와 JPG/PNG 첨부 이미지를 등록 |
+| DELETE | `/api/v1/inquiries/{inquiryId}` | 해당 문의 작성자 | `RECEIVED` 상태인 답변 전 문의만 삭제. 첨부 이미지 DB 행은 함께 삭제되고, 서버 파일은 DB 커밋 후 정리 |
+| POST | `/api/v1/inquiries/{inquiryId}/translation/{field}` | 해당 문의 작성자 | 제목·본문·답변(`title`, `content`, `answer`)을 화면에서만 번역 |
+
+답변 완료(`ANSWERED`) 문의는 문의 기록 보존을 위해 작성자 삭제를 허용하지 않는다. 문의 번역은 개인정보가 포함될 수 있어 DB·Redis에 저장하지 않는다.
 
 ## 문의 챗봇 API
 

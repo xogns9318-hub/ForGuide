@@ -262,6 +262,22 @@
     color: #49665d;
 }
 
+.reportActions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.reportActions .button {
+    white-space: nowrap;
+}
+
+.reportItem > .itemError,
+.reportItem > .itemSuccess {
+    flex-basis: 100%;
+}
+
 .imageModalBackdrop {
     position: fixed;
     z-index: 1000;
@@ -304,10 +320,14 @@
         flex-direction: column;
     }
 
-    .reportItem > button,
+    .reportActions {
+        width: 100%;
+    }
+
+    .reportActions > button,
     .reportSectionHeading > button,
     .imageModalHeading > button {
-        width: 100%;
+        flex: 1 1 140px;
     }
 }
 

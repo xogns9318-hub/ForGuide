@@ -20,7 +20,10 @@
         i.updated_at AS updatedAt
     </sql>
 
-    <insert id="insert">
+    <insert id="insert"
+            useGeneratedKeys="true"
+            keyProperty="request.inquiryId"
+            keyColumn="inquiry_id">
         INSERT INTO member_inquiries (
             member_id,
             inquiry_category,
@@ -97,6 +100,13 @@
         WHERE i.inquiry_id = #{inquiryId}
             AND i.member_id = #{memberId}
     </select>
+
+    <delete id="deleteReceivedByIdAndMemberId">
+        DELETE FROM member_inquiries
+        WHERE inquiry_id = #{inquiryId}
+            AND member_id = #{memberId}
+            AND inquiry_status = 'RECEIVED'
+    </delete>
 
     <select id="findAllByCursor"
             resultType="com.example.forguide.inquiry.dto.InquiryResponse">

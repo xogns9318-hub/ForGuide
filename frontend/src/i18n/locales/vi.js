@@ -173,6 +173,11 @@ const vi = {
             description:
                 "Hỏi những điều bạn thắc mắc về cuộc sống tại Hàn Quốc\nvà chia sẻ kinh nghiệm cùng thông tin hữu ích.",
         },
+        chatbot: {
+            headline: "Hãy tư vấn với chatbot AI trước",
+            description:
+                "Hãy hỏi chatbot AI về những điều bạn thắc mắc khi sử dụng dịch vụ\nvà nhanh chóng tìm thông tin cần thiết.",
+        },
         inquiry: {
             headline: "Hãy thoải mái hỏi nếu bạn có thắc mắc",
             description:
@@ -318,6 +323,14 @@ const vi = {
         officialLink: "Trang web chính thức",
         sourceLink: "Tài liệu tham khảo {{count}}",
         prepareCard: "Tạo thẻ chuẩn bị tư vấn",
+
+        translation: {
+            show: "Xem bản dịch",
+            hide: "Xem bản gốc",
+            translating: "Đang dịch...",
+            label: "Bản dịch AI",
+            error: "Không thể dịch. Vui lòng thử lại sau.",
+        },
 
         roles: {
             direct: "Tư vấn trực tiếp",
@@ -519,6 +532,20 @@ const vi = {
             reportsLoading: "Đang tải danh sách báo cáo.",
             reportsLoadError: "Không thể tải danh sách báo cáo.",
             reportsEmpty: "Chưa có báo cáo nào được gửi.",
+            targetLabel: "Tác giả nội dung bị báo cáo",
+            reportStatusLabel: "Trạng thái xử lý",
+            handledAtLabel: "Thời gian xử lý",
+            reportStatus: {
+                PENDING: "Đã tiếp nhận",
+                HIDDEN: "Đã ẩn nội dung",
+                DISMISSED: "Đã bác báo cáo",
+            },
+            hideReportedContent: "Ẩn nội dung",
+            dismissReport: "Bác báo cáo",
+            openMemberManagement: "Mở quản lý thành viên",
+            reportHiddenSuccess: "Nội dung đã được ẩn và các báo cáo liên quan đã được xử lý.",
+            reportDismissSuccess: "Báo cáo đã bị bác.",
+            reportActionError: "Không thể xử lý báo cáo.",
             reportReasonLabel: "Lý do báo cáo",
             reporterLabel: "Người báo cáo",
             viewEvidence: "Xem ảnh bằng chứng",
@@ -546,7 +573,8 @@ const vi = {
         recommendationUsage: {
             eyebrow: "Tình trạng sử dụng đề xuất",
             title: "Tình trạng vận hành đề xuất",
-            description: "Tình trạng thực hiện đề xuất khoản vay, bảo hiểm và tài khoản không lưu thông tin cá nhân.",
+            description:
+                "Tình trạng thực hiện đề xuất khoản vay, bảo hiểm và tài khoản không lưu thông tin cá nhân.",
             periodLabel: "Khoảng thời gian",
             period7: "7 ngày gần đây",
             period30: "30 ngày gần đây",
@@ -570,14 +598,14 @@ const vi = {
             retry: "Thử lại",
             emptyLatestUsedAt: "Chưa có lịch sử đề xuất.",
             dashboardTitle: "Tình trạng sử dụng đề xuất",
-            dashboardDescription: "Xem tình trạng thực hiện đề xuất khoản vay, bảo hiểm và tài khoản.",
+            dashboardDescription:
+                "Xem tình trạng thực hiện đề xuất khoản vay, bảo hiểm và tài khoản.",
         },
     },
 
     inquiry: {
         title: "Liên hệ",
-        description:
-            "Hãy để lại câu hỏi hoặc nội dung bạn cần hỗ trợ khi sử dụng dịch vụ.",
+        description: "Hãy để lại câu hỏi hoặc nội dung bạn cần hỗ trợ khi sử dụng dịch vụ.",
         form: {
             category: "Loại yêu cầu",
             title: "Tiêu đề",
@@ -588,8 +616,7 @@ const vi = {
             submit: "Gửi yêu cầu",
             submitting: "Đang gửi...",
             success: "Yêu cầu của bạn đã được gửi.",
-            submitError:
-                "Không thể gửi yêu cầu. Vui lòng thử lại sau.",
+            submitError: "Không thể gửi yêu cầu. Vui lòng thử lại sau.",
         },
         images: {
             add: "Thêm ảnh",
@@ -613,6 +640,10 @@ const vi = {
             loadError: "Không thể tải danh sách yêu cầu.",
             retry: "Thử lại",
             loadMore: "Xem thêm yêu cầu",
+            delete: "Xóa",
+            deleting: "Đang xóa...",
+            deleteConfirm: "Xóa yêu cầu chưa được trả lời này? Các ảnh đính kèm cũng sẽ bị xóa.",
+            deleteError: "Không thể xóa yêu cầu. Vui lòng thử lại sau.",
         },
         status: {
             RECEIVED: "Đã tiếp nhận",
@@ -620,6 +651,13 @@ const vi = {
         },
         answer: {
             title: "Phản hồi của quản trị viên",
+        },
+        translation: {
+            show: "Xem bản dịch",
+            hide: "Xem bản gốc",
+            translating: "Đang dịch...",
+            label: "Bản dịch AI",
+            error: "Không thể dịch. Vui lòng thử lại sau.",
         },
     },
 
@@ -978,10 +1016,8 @@ const vi = {
             5: "Th 6",
             6: "Th 7",
         },
-        calendarHint:
-            "Dùng con lăn hoặc vuốt để chuyển tháng. Chọn ngày để phân bổ thêm tiền.",
-        dayLabel:
-            "{{date}} · Số tiền có thể dùng thêm: {{amount}} · Đặt ngày chi tiêu lớn",
+        calendarHint: "Dùng con lăn hoặc vuốt để chuyển tháng. Chọn ngày để phân bổ thêm tiền.",
+        dayLabel: "{{date}} · Số tiền có thể dùng thêm: {{amount}} · Đặt ngày chi tiêu lớn",
         outsideDay: "{{date}} · Ngoài thời gian tính toán",
         extraTitle: "Đặt ngày chi tiêu lớn: {{date}}",
         extraAmount: "Số tiền phân bổ thêm vào ngày này",
@@ -1000,24 +1036,20 @@ const vi = {
             "Tiền có sẵn {{cash}} + Thu nhập trong kỳ {{income}} − Trả vay {{payment}} − Chi phí cố định {{fixed}} − Chi phí ăn uống {{food}} − Chi phí sinh hoạt {{living}} = {{balance}}",
         dailyFormula:
             "({{available}} − Phân bổ thêm {{extra}}) ÷ {{days}} ngày = Mức cơ bản mỗi ngày {{daily}}.",
-        remainder:
-            "Phần còn lại được phân bổ thêm 1 KRW cho mỗi ngày trong {{count}} ngày đầu.",
+        remainder: "Phần còn lại được phân bổ thêm 1 KRW cho mỗi ngày trong {{count}} ngày đầu.",
         shortfall:
             "Bạn thiếu {{amount}} so với chi phí dự kiến. Ngân sách thêm trên lịch sẽ hiển thị là 0 KRW.",
         assumption:
             "Bao gồm cả ngày bắt đầu và ngày kết thúc. Thu nhập và chi phí tháng được tính theo tỷ lệ số ngày của tháng lẻ và làm tròn theo KRW. Không phản ánh ngày thu chi thực tế hoặc biến động số dư.",
-        chartLabel:
-            "So sánh chi phí dự kiến và số tiền có thể dùng thêm trong kỳ",
-        chartLegend:
-            "Xanh bạc hà nhạt: chi phí dự kiến · Xanh đậm: số tiền có thể dùng thêm",
+        chartLabel: "So sánh chi phí dự kiến và số tiền có thể dùng thêm trong kỳ",
+        chartLegend: "Xanh bạc hà nhạt: chi phí dự kiến · Xanh đậm: số tiền có thể dùng thêm",
         errors: {
             required: "Hãy nhập số tiền. Nhập 0 nếu không có số tiền.",
             digits: "Chỉ có thể nhập số.",
             limit: "Số tiền tối đa là 10 nghìn tỷ KRW.",
             dates: "Hãy nhập ngày bắt đầu và ngày kết thúc hợp lệ.",
             dateOrder: "Ngày kết thúc phải bằng hoặc sau ngày bắt đầu.",
-            extraLimit:
-                "Tổng phân bổ thêm vượt quá tổng số tiền có thể sử dụng.",
+            extraLimit: "Tổng phân bổ thêm vượt quá tổng số tiền có thể sử dụng.",
             outside: "Hãy chọn ngày trong thời gian tính toán.",
         },
     },
