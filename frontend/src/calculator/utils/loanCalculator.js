@@ -78,30 +78,6 @@ export function validateLoanInput(values, method = "bullet") {
     return getGraceError(input, method);
 }
 
-// 큰 금액도 정밀도를 잃지 않고 원 단위로 표시
-export function formatWon(value) {
-    return BigInt(value).toLocaleString("ko-KR") + "원";
-}
-
-// 실제 계산 결과의 거치 여부에 맞춰 설명 선택
-export function getRepaymentDescription(result) {
-    if (result.method === "bullet") {
-        return "대출 만기까지 이자만 납부하고, 원금은 만기에 지불하는 방식입니다.";
-    }
-
-    // 거치가 없는 총 이자 계산기에서는 거치 설명을 붙이지 않음
-    const prefix =
-        result.graceMonths > 0
-            ? "거치기간에는 이자만 납부하고, 이후에는 "
-            : "";
-
-    return prefix + (
-        result.method === "equalPayment"
-            ? "원금과 이자를 합쳐 매달 동일한 금액을 납부하는 방식입니다."
-            : "매달 동일한 원금을 갚으며 이자는 점차 줄어드는 방식입니다."
-    );
-}
-
 // 두 계산기와 다른 기능에서 함께 사용할 공통 계산 함수
 export function calculateLoan(values, method = "bullet") {
     // 선택한 상환 방식과 입력값을 함께 검사

@@ -5,7 +5,6 @@
 공통 상태 페이지는 API를 직접 호출하지 않는다.
 
 실제 조회 실패 화면에서는 onRetry로 조회 함수를 전달한다.
-독립 /failure 화면의 재시도 버튼은 페이지를 새로고침한다.
 
 ## 인증 응답·예외 (백엔드 `common/response`, `common/exception`)
 

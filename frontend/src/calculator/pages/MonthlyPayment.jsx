@@ -1,4 +1,4 @@
-import LoanCalculator from "../LoanCalculator/LoanCalculator.jsx";
+import LoanCalculator from "../components/LoanCalculator.jsx";
 
 // 월 상환액 페이지도 공통 계산 화면 사용
 export default function MonthlyPayment() {

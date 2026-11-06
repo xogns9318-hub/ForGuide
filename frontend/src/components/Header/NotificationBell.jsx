@@ -8,7 +8,7 @@ import {
 } from "../../api/notificationApi.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import { useNotificationStream } from "../../hooks/useNotificationStream.js";
-import styles from "../../styles/NotificationBell.module.css";
+import styles from "./NotificationBell.module.css";
 
 const PAGE_SIZE = 20;
 

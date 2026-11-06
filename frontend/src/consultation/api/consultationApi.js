@@ -1,4 +1,4 @@
-import { client } from "./client.js";
+import { client } from "../../api/client.js";
 import consultationOptions from "./consultationOptions.json";
 
 // 선택 목록은 즉시 보여 주고 기관 검색은 Elasticsearch API에서 처리한다.

@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { initialConsultationOptions } from "../../api/consultationApi.js";
-import { translatePreparationDetails } from "../../api/preparationCardApi.js";
-import { alert } from "../Modal/modal.js";
-import SelectBox from "../SelectBox/SelectBox.jsx";
-import styles from "../../styles/preparationCard.module.css";
+import { initialConsultationOptions } from "../api/consultationApi.js";
+import { translatePreparationDetails } from "../api/preparationCardApi.js";
+import { alert } from "../../components/Modal/modal.js";
+import SelectBox from "../../components/SelectBox/SelectBox.jsx";
+import styles from "./PreparationCard.module.css";
 
 const TOPICS = initialConsultationOptions.topics;
 

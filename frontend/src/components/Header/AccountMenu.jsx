@@ -1,5 +1,5 @@
 import { useId, useRef, useState } from "react";
-import styles from "../../styles/headerModule.module.css";
+import styles from "./Header.module.css";
 
 export default function AccountMenu({ label, inline, children }) {
     const [open, setOpen] = useState(false);

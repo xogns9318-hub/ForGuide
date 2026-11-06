@@ -6,7 +6,7 @@ import LanguageSelector from "../LanguageSelector/LanguageSelector.jsx";
 import AccountMenu from "./AccountMenu.jsx";
 import NotificationBell from "./NotificationBell.jsx";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
-import styles from "../../styles/headerModule.module.css";
+import styles from "./Header.module.css";
 
 // 시뮬레이터와 커뮤니티는 하나의 확장 가이드 분류로 묶는다.
 const extendedIds = new Set(["simulator", "community"]);
