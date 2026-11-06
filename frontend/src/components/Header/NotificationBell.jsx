@@ -176,7 +176,30 @@ export default function NotificationBell({ onNotificationClick }) {
     }
 
     return (
-        <div className={styles.wrapper}>
+        <div
+            className={styles.wrapper}
+            data-header-notification
+            data-open={isOpen}
+            onPointerLeave={(event) => {
+                // 아이콘과 알림창을 모두 벗어나면 닫는다.
+                if (event.pointerType === "mouse") {
+                    setIsOpen(false);
+                }
+            }}
+            onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) {
+                    setIsOpen(false);
+                }
+            }}
+            onKeyDown={(event) => {
+                if (event.key !== "Escape") return;
+
+                event.preventDefault();
+                event.stopPropagation();
+                event.currentTarget.querySelector("button")?.focus();
+                setIsOpen(false);
+            }}
+        >
             <button
                 type="button"
                 className={styles.bellButton}
@@ -184,7 +207,12 @@ export default function NotificationBell({ onNotificationClick }) {
                     count: unreadCount,
                 })}
                 aria-expanded={isOpen}
-                onClick={() => setIsOpen((previous) => !previous)}
+                onPointerEnter={(event) => {
+                    // 주변 여백이 아닌 아이콘 영역에서만 목록을 연다.
+                    if (event.pointerType === "mouse") {
+                        setIsOpen(true);
+                    }
+                }}
             >
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M18 9a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />

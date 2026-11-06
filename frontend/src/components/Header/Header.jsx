@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { categories, contactRoutes } from "../../routes/routeConfig.js";
 import LanguageSelector from "../LanguageSelector/LanguageSelector.jsx";
+import AccountMenu from "./AccountMenu.jsx";
 import NotificationBell from "./NotificationBell.jsx";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import styles from "../../styles/headerModule.module.css";
@@ -203,7 +204,8 @@ export default function Header({ isLoggedIn = false, onLogout }) {
             previousY = currentY;
 
             const hasOpenSelector = header.querySelector('[aria-expanded="true"]') !== null;
-            const hasHeaderFocus = header.contains(document.activeElement);
+            // 키보드로 이동 중일 때만 포커스를 이유로 헤더를 유지한다.
+            const hasHeaderFocus = header.querySelector(":focus-visible") !== null;
 
             // 화면 상단이나 메뉴·언어 선택·키보드 조작 중에는 헤더를 유지한다.
             if (
@@ -347,18 +349,18 @@ export default function Header({ isLoggedIn = false, onLogout }) {
             >
                 {/* 기존 회원 메뉴와 로그아웃 동작 유지 */}
                 {isLoggedIn ? (
-                    <>
+                    <AccountMenu label={t("header.myPage")} inline={isMobile}>
                         <Link to="/mypage" onClick={closeMenus}>
-                            {t("header.myPage")}
+                            <span>{t("header.myPage")}</span>
                         </Link>
 
                         <Link to="/my-finance" onClick={closeMenus}>
-                            {t("header.myFinance")}
+                            <span>{t("header.myFinance")}</span>
                         </Link>
 
                         {isAdmin && (
                             <Link to="/admin" onClick={closeMenus}>
-                                {t("header.adminPage")}
+                                <span>{t("header.adminPage")}</span>
                             </Link>
                         )}
 
@@ -370,9 +372,9 @@ export default function Header({ isLoggedIn = false, onLogout }) {
                                 onLogout?.();
                             }}
                         >
-                            {t("header.logout")}
+                            <span>{t("header.logout")}</span>
                         </button>
-                    </>
+                    </AccountMenu>
                 ) : (
                     <>
                         <Link to="/login" onClick={closeMenus}>
