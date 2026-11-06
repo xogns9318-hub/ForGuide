@@ -157,6 +157,11 @@ const zh = {
             headline: "一起分享疑问和烦恼",
             description: "提出在韩国生活中遇到的问题，\n分享彼此的经验和实用信息。",
         },
+        chatbot: {
+            headline: "先向 AI 聊天机器人咨询吧",
+            description:
+                "使用服务时有疑问，可以询问 AI 聊天机器人，\n快速确认所需信息。",
+        },
         inquiry: {
             headline: "如有疑问，欢迎随时咨询",
             description: "使用服务时如有任何问题，\n请通过咨询页面留言。",
@@ -203,8 +208,7 @@ const zh = {
             bullet: "在贷款期限内只支付利息，并在到期时偿还本金的方式。",
             equalPayment: "每月支付相同本金和利息总额的方式。",
             equalPrincipal: "每月偿还相同本金，利息逐渐减少的方式。",
-            equalPaymentWithGrace:
-                "在宽限期内只支付利息，之后每月支付相同本金和利息总额的方式。",
+            equalPaymentWithGrace: "在宽限期内只支付利息，之后每月支付相同本金和利息总额的方式。",
             equalPrincipalWithGrace:
                 "在宽限期内只支付利息，之后每月偿还相同本金，利息逐渐减少的方式。",
         },
@@ -299,6 +303,14 @@ const zh = {
         officialLink: "官方网站",
         sourceLink: "参考资料 {{count}}",
         prepareCard: "创建咨询准备卡",
+
+        translation: {
+            show: "查看翻译",
+            hide: "查看原文",
+            translating: "翻译中...",
+            label: "AI 翻译",
+            error: "翻译失败，请稍后重试。",
+        },
 
         roles: {
             direct: "直接咨询",
@@ -500,6 +512,20 @@ const zh = {
             reportsLoading: "正在加载举报列表。",
             reportsLoadError: "无法加载举报列表。",
             reportsEmpty: "暂无已提交的举报。",
+            targetLabel: "被举报内容作者",
+            reportStatusLabel: "处理状态",
+            handledAtLabel: "处理时间",
+            reportStatus: {
+                PENDING: "待处理",
+                HIDDEN: "内容已隐藏",
+                DISMISSED: "举报已驳回",
+            },
+            hideReportedContent: "隐藏内容",
+            dismissReport: "驳回举报",
+            openMemberManagement: "前往会员管理",
+            reportHiddenSuccess: "内容已隐藏，相关举报已处理。",
+            reportDismissSuccess: "举报已驳回。",
+            reportActionError: "无法处理举报。",
             reportReasonLabel: "举报原因",
             reporterLabel: "举报人",
             viewEvidence: "查看证据图片",
@@ -563,8 +589,7 @@ const zh = {
             title: "标题",
             content: "咨询内容",
             titlePlaceholder: "请输入咨询标题。",
-            contentPlaceholder:
-                "请详细填写咨询内容。管理员确认后会回复您。",
+            contentPlaceholder: "请详细填写咨询内容。管理员确认后会回复您。",
             submit: "提交咨询",
             submitting: "提交中...",
             success: "您的咨询已提交。",
@@ -592,6 +617,10 @@ const zh = {
             loadError: "无法加载咨询列表。",
             retry: "重试",
             loadMore: "查看更多咨询",
+            delete: "删除",
+            deleting: "正在删除...",
+            deleteConfirm: "要删除这条未回复的咨询吗？附件图片也会一并删除。",
+            deleteError: "无法删除咨询，请稍后重试。",
         },
         status: {
             RECEIVED: "已受理",
@@ -599,6 +628,13 @@ const zh = {
         },
         answer: {
             title: "管理员回复",
+        },
+        translation: {
+            show: "查看翻译",
+            hide: "查看原文",
+            translating: "翻译中...",
+            label: "AI 翻译",
+            error: "翻译失败，请稍后重试。",
         },
     },
 
@@ -945,15 +981,12 @@ const zh = {
             5: "五",
             6: "六",
         },
-        calendarHint:
-            "可使用滚轮或滑动按月移动。选择日期后可分配额外金额。",
-        dayLabel:
-            "{{date}} · 可额外使用金额 {{amount}} · 设置大额支出日",
+        calendarHint: "可使用滚轮或滑动按月移动。选择日期后可分配额外金额。",
+        dayLabel: "{{date}} · 可额外使用金额 {{amount}} · 设置大额支出日",
         outsideDay: "{{date}} · 不在计算期间内",
         extraTitle: "设置 {{date}} 为大额支出日",
         extraAmount: "在此日期额外分配的金额",
-        extraHint:
-            "其他日期的基本预算会减少相同金额。可应用 0 KRW 或取消分配。",
+        extraHint: "其他日期的基本预算会减少相同金额。可应用 0 KRW 或取消分配。",
         apply: "应用",
         remove: "取消分配",
         close: "关闭",
@@ -967,16 +1000,12 @@ const zh = {
             "持有资金 {{cash}} + 期间收入 {{income}} − 还款额 {{payment}} − 固定支出 {{fixed}} − 餐饮费 {{food}} − 生活费 {{living}} = {{balance}}",
         dailyFormula:
             "({{available}} − 额外分配 {{extra}}) ÷ {{days}} 天 = 每日基本金额 {{daily}}。",
-        remainder:
-            "剩余金额将从前 {{count}} 天起每天额外分配 1 KRW。",
-        shortfall:
-            "与预计支出相比还差 {{amount}}。日历中的额外预算将显示为 0 KRW。",
+        remainder: "剩余金额将从前 {{count}} 天起每天额外分配 1 KRW。",
+        shortfall: "与预计支出相比还差 {{amount}}。日历中的额外预算将显示为 0 KRW。",
         assumption:
             "包含开始日和结束日。月收入和月支出会按部分月份的天数比例计算，并按 KRW 四舍五入。实际收支日期和余额变化不包含在内。",
-        chartLabel:
-            "期间预计支出与可额外使用金额对比",
-        chartLegend:
-            "浅薄荷色：预计支出 · 深绿色：可额外使用金额",
+        chartLabel: "期间预计支出与可额外使用金额对比",
+        chartLegend: "浅薄荷色：预计支出 · 深绿色：可额外使用金额",
         errors: {
             required: "请输入金额。没有金额时请输入 0。",
             digits: "只能输入数字。",

@@ -30,3 +30,12 @@ export function getMyInquiries({ cursorInquiryId = null, size = 10 } = {}) {
 export function getMyInquiry(inquiryId) {
     return client.get(`/inquiries/${inquiryId}`);
 }
+
+// 답변 전인 내 문의만 삭제할 수 있다.
+export function deleteMyReceivedInquiry(inquiryId) {
+    return client.delete(`/inquiries/${inquiryId}`);
+}
+
+export function translateMyInquiryText(inquiryId, field, targetLanguage) {
+    return client.post(`/inquiries/${inquiryId}/translation/${field}`, { targetLanguage });
+}

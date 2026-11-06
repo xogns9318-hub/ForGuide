@@ -5,6 +5,7 @@ import {
     useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import {
     getAdminCommunityContents,
     getAdminCommunityReports,
@@ -25,6 +26,7 @@ function getContentKey(content) {
 
 export default function AdminCommunityPage() {
     const { t, i18n } = useTranslation();
+    const navigate = useNavigate();
 
     const [contents, setContents] = useState([]);
     const [reports, setReports] = useState([]);
@@ -302,6 +304,17 @@ export default function AdminCommunityPage() {
         }
     }
 
+    // 대상 회원의 로그인 아이디를 회원 관리 검색어로 넘겨 바로 찾을 수 있게 한다.
+    function openTargetMemberManagement(report) {
+        const keyword = report.targetLoginId || report.targetNickname;
+
+        navigate(
+            keyword
+                ? `/admin/members?keyword=${encodeURIComponent(keyword)}`
+                : "/admin/members",
+        );
+    }
+
     const observerTarget = useInfiniteScroll({
         enabled: hasMore && !isLoading && !listError,
         onLoadMore: loadContents,
@@ -577,6 +590,18 @@ export default function AdminCommunityPage() {
                                             onClick={() => openReportImages(report)}
                                         >
                                             {t("admin.community.viewEvidence")}
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            className="button"
+                                            onClick={() =>
+                                                openTargetMemberManagement(report)
+                                            }
+                                        >
+                                            {t(
+                                                "admin.community.openMemberManagement",
+                                            )}
                                         </button>
 
                                         {report.reportStatus === "PENDING" && (

@@ -374,7 +374,6 @@ export async function getConsultationInstitution(id) {
     if (!Number.isSafeInteger(Number(id)) || Number(id) < 1) {
         throw new Error("INVALID_INPUT");
     }
-
     return normalizeInstitution(await client.get(`/consultation/institutions/${id}`));
 }
 
@@ -440,4 +439,11 @@ export function getInstitutionGuide(institution) {
             labels: unique(group.labels.filter(Boolean)),
         })),
     };
+}
+
+export function translateInstitutionText(id, field, targetLanguage) {
+    return client.post(
+        `/consultation/institutions/${id}/translation/${field}`,
+        { targetLanguage },
+    );
 }

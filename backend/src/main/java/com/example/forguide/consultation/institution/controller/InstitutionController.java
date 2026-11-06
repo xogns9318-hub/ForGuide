@@ -3,6 +3,11 @@ package com.example.forguide.consultation.institution.controller;
 import com.example.forguide.common.response.ApiResponse;
 import com.example.forguide.consultation.institution.dto.InstitutionDocument;
 import com.example.forguide.consultation.institution.service.InstitutionService;
+import com.example.forguide.translation.dto.TranslationResponse;
+import com.example.forguide.translation.dto.TranslationTargetRequest;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,5 +37,16 @@ public class InstitutionController {
             @PathVariable("id") long id
     ) {
         return ApiResponse.ok(service.findById(id));
+    }
+
+    @PostMapping("/{id}/translation/{field}")
+    public ApiResponse<TranslationResponse> translateText(
+            @PathVariable("id") long id,
+            @PathVariable String field,
+            @Valid @RequestBody TranslationTargetRequest request
+    ) {
+        return ApiResponse.ok(
+                service.translateText(id, field, request)
+        );
     }
 }

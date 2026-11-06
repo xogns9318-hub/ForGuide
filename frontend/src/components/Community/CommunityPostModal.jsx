@@ -57,11 +57,8 @@ export default function CommunityPostModal({
     const [isRepostSubmitting, setIsRepostSubmitting] = useState(false);
     const [reactionError, setReactionError] = useState("");
     const currentMemberId = useAuthStore((state) => state.member?.memberId);
-    const targetLanguage = i18n.resolvedLanguage || i18n.language || "ko";
+    const targetLanguage = (i18n.resolvedLanguage || i18n.language || "ko").split("-")[0];
     const [translatedText, setTranslatedText] = useState("");
-    const [isTranslationVisible, setIsTranslationVisible] = useState(false);
-    const [isTranslating, setIsTranslating] = useState(false);
-    const [translationError, setTranslationError] = useState("");
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [ownerActionError, setOwnerActionError] = useState("");
@@ -150,41 +147,30 @@ export default function CommunityPostModal({
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, [postId, onClose]);
 
-    // 다른 게시글을 열거나 사이트 언어를 바꾸면 이전 번역 결과를 초기화
+    // 공개 게시글은 현재 선택 언어가 원문 언어와 다를 때 자동으로 번역한다.
     useEffect(() => {
         setTranslatedText("");
-        setIsTranslationVisible(false);
-        setIsTranslating(false);
-        setTranslationError("");
-    }, [postId, targetLanguage]);
-
-    async function handleTranslationClick() {
-        // 이미 열린 번역은 API를 다시 호출하지 않고 접기만 한다.
-        if (isTranslationVisible) {
-            setIsTranslationVisible(false);
-            return;
+        if (!postId || !post?.language || post.language === targetLanguage) {
+            return undefined;
         }
 
-        // 같은 게시글·언어 조합을 다시 열 때는 화면 상태에 둔 결과를 재사용한다.
-        if (translatedText) {
-            setIsTranslationVisible(true);
-            return;
+        let isMounted = true;
+
+        async function loadTranslation() {
+            try {
+                const response = await translateCommunityPost(postId, targetLanguage);
+                if (isMounted) setTranslatedText(response.translatedText || "");
+            } catch {
+                // 번역 장애가 나도 원문 게시글은 계속 볼 수 있게 한다.
+            }
         }
 
-        setIsTranslating(true);
-        setTranslationError("");
+        loadTranslation();
 
-        try {
-            const response = await translateCommunityPost(postId, targetLanguage);
-
-            setTranslatedText(response.translatedText);
-            setIsTranslationVisible(true);
-        } catch (requestError) {
-            setTranslationError(requestError.message || t("community.postModal.translationError"));
-        } finally {
-            setIsTranslating(false);
-        }
-    }
+        return () => {
+            isMounted = false;
+        };
+    }, [postId, post?.language, targetLanguage]);
 
     function handleModalCommentCountChange(changedPostId, commentCount) {
         setPost((previous) =>
@@ -348,37 +334,11 @@ export default function CommunityPostModal({
                         ) : (
                             <p className="community-post-content">{post.content}</p>
                         )}
-                        {!isEditing && post.language !== targetLanguage && (
+                        {!isEditing && translatedText && (
                             <section className="community-post-translation">
-                                <button
-                                    type="button"
-                                    className="community-translation-toggle"
-                                    onClick={handleTranslationClick}
-                                    disabled={isTranslating}
-                                >
-                                    {isTranslating
-                                        ? t("community.postModal.translating")
-                                        : isTranslationVisible
-                                            ? t("community.postModal.hideTranslation")
-                                            : t("community.postModal.showTranslation")}
-                                </button>
-
-                                {translationError && (
-                                    <p className="community-translation-error" role="alert">
-                                        {translationError}
-                                    </p>
-                                )}
-
-                                {isTranslationVisible && translatedText && (
-                                    <div className="community-translation-result">
-                                        <p className="community-translation-label">
-                                            {t("community.postModal.aiTranslation")}
-                                        </p>
-                                        <p className="community-translation-text">
-                                            {translatedText}
-                                        </p>
-                                    </div>
-                                )}
+                                <div className="community-translation-result">
+                                    <p className="community-translation-text">{translatedText}</p>
+                                </div>
                             </section>
                         )}
                         {!isEditing && post.images?.length > 0 && (

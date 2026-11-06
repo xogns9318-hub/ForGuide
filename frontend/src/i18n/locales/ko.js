@@ -173,6 +173,11 @@ const ko = {
             description:
                 "한국 생활에서 궁금한 점을 물어보고,\n서로의 경험과 유용한 정보를 나눠보세요.",
         },
+        chatbot: {
+            headline: "AI 챗봇과 먼저 상담해 보세요",
+            description:
+                "서비스 이용 중 궁금한 점을 AI 챗봇에게 물어보고,\n필요한 정보를 빠르게 확인해 보세요.",
+        },
         inquiry: {
             headline: "궁금한 점이 있다면 편하게 물어보세요",
             description:
@@ -319,6 +324,14 @@ const ko = {
         officialLink: "공식 홈페이지",
         sourceLink: "참고자료 {{count}}",
         prepareCard: "상담 준비 카드 만들기",
+
+        translation: {
+            show: "번역 보기",
+            hide: "원문 보기",
+            translating: "번역 중...",
+            label: "AI 번역",
+            error: "번역하지 못했습니다. 잠시 후 다시 시도해주세요.",
+        },
 
         roles: {
             direct: "직접 상담",
@@ -533,6 +546,20 @@ const ko = {
             reportsLoading: "신고 목록을 불러오는 중입니다.",
             reportsLoadError: "신고 목록을 불러오지 못했습니다.",
             reportsEmpty: "접수된 신고가 없습니다.",
+            targetLabel: "대상 작성자",
+            reportStatusLabel: "처리 상태",
+            handledAtLabel: "처리 시각",
+            reportStatus: {
+                PENDING: "접수됨",
+                HIDDEN: "콘텐츠 숨김",
+                DISMISSED: "신고 기각",
+            },
+            hideReportedContent: "콘텐츠 숨김",
+            dismissReport: "신고 기각",
+            openMemberManagement: "회원 관리로 이동",
+            reportHiddenSuccess: "콘텐츠를 숨기고 관련 신고를 처리했습니다.",
+            reportDismissSuccess: "신고를 기각했습니다.",
+            reportActionError: "신고를 처리하지 못했습니다.",
             reportReasonLabel: "신고 사유",
             reporterLabel: "신고자",
             viewEvidence: "증빙 사진 보기",
@@ -556,7 +583,6 @@ const ko = {
             reasonNone: "등록된 관리 사유가 없습니다.",
             createdAt: "작성일",
             moderatedAt: "관리 처리일",
-
         },
 
         recommendationUsage: {
@@ -632,6 +658,10 @@ const ko = {
             loadError: "문의 목록을 불러오지 못했습니다.",
             retry: "다시 시도",
             loadMore: "문의 더 보기",
+            delete: "삭제",
+            deleting: "삭제 중...",
+            deleteConfirm: "답변 전 문의를 삭제할까요? 첨부 사진도 함께 삭제됩니다.",
+            deleteError: "문의 삭제에 실패했습니다. 잠시 후 다시 시도해주세요.",
         },
         status: {
             RECEIVED: "접수됨",
@@ -640,9 +670,15 @@ const ko = {
         answer: {
             title: "관리자 답변",
         },
+        translation: {
+            show: "번역 보기",
+            hide: "원문 보기",
+            translating: "번역 중...",
+            label: "AI 번역",
+            error: "번역하지 못했습니다. 잠시 후 다시 시도해주세요.",
+        },
     },
 
-    // 문의 챗봇 화면 (/contact/chatbot)
     chatbot: {
         title: "AI 챗봇 상담",
         description:

@@ -169,6 +169,11 @@ const ja = {
             description:
                 "韓国生活で気になることを質問して、\nお互いの経験や役立つ情報を共有しましょう。",
         },
+        chatbot: {
+            headline: "まずはAIチャットボットに相談してみましょう",
+            description:
+                "サービス利用中の疑問をAIチャットボットに聞いて、\n必要な情報をすばやく確認できます。",
+        },
         inquiry: {
             headline: "気になることがあれば気軽にお問い合わせください",
             description: "サービスの利用中に質問があれば、\nお問い合わせから質問を残してください。",
@@ -312,6 +317,14 @@ const ja = {
         officialLink: "公式ホームページ",
         sourceLink: "参考資料 {{count}}",
         prepareCard: "相談準備カードを作成",
+
+        translation: {
+            show: "翻訳を見る",
+            hide: "原文を見る",
+            translating: "翻訳中...",
+            label: "AI翻訳",
+            error: "翻訳できませんでした。しばらくしてから再試行してください。",
+        },
 
         roles: {
             direct: "直接相談",
@@ -513,6 +526,20 @@ const ja = {
             reportsLoading: "通報一覧を読み込んでいます。",
             reportsLoadError: "通報一覧を読み込めませんでした。",
             reportsEmpty: "受付済みの通報はありません。",
+            targetLabel: "対象の投稿者",
+            reportStatusLabel: "処理状況",
+            handledAtLabel: "処理日時",
+            reportStatus: {
+                PENDING: "受付済み",
+                HIDDEN: "コンテンツを非表示",
+                DISMISSED: "通報を却下",
+            },
+            hideReportedContent: "コンテンツを非表示",
+            dismissReport: "通報を却下",
+            openMemberManagement: "会員管理へ移動",
+            reportHiddenSuccess: "コンテンツを非表示にし、関連する通報を処理しました。",
+            reportDismissSuccess: "通報を却下しました。",
+            reportActionError: "通報を処理できませんでした。",
             reportReasonLabel: "通報理由",
             reporterLabel: "通報者",
             viewEvidence: "証拠写真を見る",
@@ -606,6 +633,10 @@ const ja = {
             loadError: "お問い合わせを読み込めませんでした。",
             retry: "再試行",
             loadMore: "さらに表示",
+            delete: "削除",
+            deleting: "削除中...",
+            deleteConfirm: "回答前のお問い合わせを削除しますか？添付画像も削除されます。",
+            deleteError: "お問い合わせを削除できませんでした。しばらくしてから再度お試しください。",
         },
         status: {
             RECEIVED: "受付済み",
@@ -613,6 +644,13 @@ const ja = {
         },
         answer: {
             title: "管理者からの回答",
+        },
+        translation: {
+            show: "翻訳を見る",
+            hide: "原文を見る",
+            translating: "翻訳中...",
+            label: "AI翻訳",
+            error: "翻訳できませんでした。しばらくしてからもう一度お試しください。",
         },
     },
 
@@ -968,8 +1006,7 @@ const ja = {
         },
         calendarHint:
             "ホイールまたはスワイプで月を移動できます。日付を選択すると追加金額を配分できます。",
-        dayLabel:
-            "{{date}} ・追加で使用できる金額 {{amount}} ・大きな支出日を設定",
+        dayLabel: "{{date}} ・追加で使用できる金額 {{amount}} ・大きな支出日を設定",
         outsideDay: "{{date}} ・計算期間外",
         extraTitle: "{{date}}の大きな支出日を設定",
         extraAmount: "この日に追加で配分する金額",
@@ -986,18 +1023,14 @@ const ja = {
         dayCount: "{{count}}日",
         formula:
             "保有金 {{cash}} + 期間収入 {{income}} − 返済額 {{payment}} − 固定支出 {{fixed}} − 食費 {{food}} − 生活費 {{living}} = {{balance}}",
-        dailyFormula:
-            "({{available}} − 追加配分 {{extra}}) ÷ {{days}}日 = 1日の基本額 {{daily}}。",
-        remainder:
-            "残額は最初の{{count}}日に1 KRWずつ追加配分されます。",
+        dailyFormula: "({{available}} − 追加配分 {{extra}}) ÷ {{days}}日 = 1日の基本額 {{daily}}。",
+        remainder: "残額は最初の{{count}}日に1 KRWずつ追加配分されます。",
         shortfall:
             "予定支出に対して{{amount}}不足しています。カレンダーの追加予算は0 KRWで表示されます。",
         assumption:
             "開始日と終了日を含みます。月収・月支出は月の一部の日数に応じて計算し、KRW単位で四捨五入します。実際の入出金日や残高の流れは反映しません。",
-        chartLabel:
-            "期間全体の予定支出と追加使用可能額の比較",
-        chartLegend:
-            "薄いミント: 予定支出 ・濃い緑: 追加使用可能額",
+        chartLabel: "期間全体の予定支出と追加使用可能額の比較",
+        chartLegend: "薄いミント: 予定支出 ・濃い緑: 追加使用可能額",
         errors: {
             required: "金額を入力してください。金額がない場合は0を入力してください。",
             digits: "数字のみ入力できます。",

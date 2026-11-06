@@ -62,9 +62,6 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     const [error, setError] = useState("");
     const [writeError, setWriteError] = useState("");
     const [commentTranslations, setCommentTranslations] = useState({});
-    const [visibleTranslationIds, setVisibleTranslationIds] = useState(new Set());
-    const [translatingCommentId, setTranslatingCommentId] = useState(null);
-    const [translationErrors, setTranslationErrors] = useState({});
     const replyTextareaRef = useRef(null);
     const loadingRef = useRef(false);
     const cursorCreatedAtRef = useRef(null);
@@ -77,7 +74,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
     const navigate = useNavigate();
     const location = useLocation();
     const { t, i18n } = useTranslation();
-    const targetLanguage = i18n.resolvedLanguage || i18n.language || "ko";
+    const targetLanguage = (i18n.resolvedLanguage || i18n.language || "ko").split("-")[0];
     const commentRows = useMemo(() => buildCommentRows(comments), [comments]);
     const commentCountChangeRef = useRef(onCommentCountChange);
 
@@ -202,10 +199,45 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
 
     useEffect(() => {
         setCommentTranslations({});
-        setVisibleTranslationIds(new Set());
-        setTranslatingCommentId(null);
-        setTranslationErrors({});
-    }, [postId, targetLanguage]);
+
+        if (!postId || targetLanguage === "ko" || comments.length === 0) {
+            return undefined;
+        }
+
+        let isMounted = true;
+
+        async function loadTranslations() {
+            const entries = await Promise.all(
+                comments
+                    .filter((comment) => !comment.deleted)
+                    .map(async (comment) => {
+                        try {
+                            const response = await translateCommunityComment(
+                                postId,
+                                comment.commentId,
+                                targetLanguage,
+                            );
+                            return [comment.commentId, response.translatedText || ""];
+                        } catch {
+                            // 공개 댓글 번역에 실패하면 원문만 보인다.
+                            return [comment.commentId, ""];
+                        }
+                    }),
+            );
+
+            if (isMounted) {
+                setCommentTranslations(
+                    Object.fromEntries(entries.filter(([, text]) => text)),
+                );
+            }
+        }
+
+        void loadTranslations();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [comments, postId, targetLanguage]);
 
     useEffect(() => {
         if (!replyTarget || !replyTextareaRef.current) return;
@@ -324,47 +356,6 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         if (event.key === "Backspace" && mentionPrefix && cursorAtMentionEnd) {
             event.preventDefault();
             setReplyContent((previousContent) => previousContent.slice(mentionPrefix.length));
-        }
-    }
-
-    async function handleCommentTranslation(commentId) {
-        // 이미 열린 번역은 API 요청 없이 접기만 한다.
-        if (visibleTranslationIds.has(commentId)) {
-            setVisibleTranslationIds((previous) => {
-                const next = new Set(previous);
-                next.delete(commentId);
-                return next;
-            });
-            return;
-        }
-
-        // 같은 댓글, 언어 조합은 현재 화면에 남아 있는 결과를 재사용한다.
-        if (commentTranslations[commentId]) {
-            setVisibleTranslationIds((previous) => new Set(previous).add(commentId));
-            return;
-        }
-
-        setTranslatingCommentId(commentId);
-        setTranslationErrors((previous) => ({
-            ...previous,
-            [commentId]: "",
-        }));
-
-        try {
-            const response = await translateCommunityComment(postId, commentId, targetLanguage);
-
-            setCommentTranslations((previous) => ({
-                ...previous,
-                [commentId]: response.translatedText,
-            }));
-            setVisibleTranslationIds((previous) => new Set(previous).add(commentId));
-        } catch (requestError) {
-            setTranslationErrors((previous) => ({
-                ...previous,
-                [commentId]: requestError.message || t("community.comments.translationError"),
-            }));
-        } finally {
-            setTranslatingCommentId(null);
         }
     }
 
@@ -563,22 +554,6 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                         <div className="community-comment-actions">
                                             <button
                                                 type="button"
-                                                className="community-comment-translation-button"
-                                                onClick={() =>
-                                                    handleCommentTranslation(comment.commentId)
-                                                }
-                                                disabled={
-                                                    translatingCommentId === comment.commentId
-                                                }
-                                            >
-                                                {translatingCommentId === comment.commentId
-                                                    ? t("community.comments.translating")
-                                                    : visibleTranslationIds.has(comment.commentId)
-                                                      ? t("community.comments.hideTranslation")
-                                                      : t("community.comments.showTranslation")}
-                                            </button>
-                                            <button
-                                                type="button"
                                                 className="community-comment-like-button"
                                                 onClick={() => handleCommentLike(comment)}
                                                 disabled={likingCommentId === comment.commentId}
@@ -635,23 +610,8 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
 
                                     {!comment.deleted &&
                                         !isEditing &&
-                                        translationErrors[comment.commentId] && (
-                                            <p
-                                                className="community-comment-translation-error"
-                                                role="alert"
-                                            >
-                                                {translationErrors[comment.commentId]}
-                                            </p>
-                                        )}
-
-                                    {!comment.deleted &&
-                                        !isEditing &&
-                                        visibleTranslationIds.has(comment.commentId) &&
                                         commentTranslations[comment.commentId] && (
                                             <div className="community-comment-translation-result">
-                                                <p className="community-comment-translation-label">
-                                                    {t("community.comments.aiTranslation")}
-                                                </p>
                                                 <p className="community-comment-translation-text">
                                                     {commentTranslations[comment.commentId]}
                                                 </p>

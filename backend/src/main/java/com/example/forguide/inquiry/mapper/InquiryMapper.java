@@ -5,7 +5,6 @@ import com.example.forguide.inquiry.dto.InquiryCursorRequest;
 import com.example.forguide.inquiry.dto.InquiryImageResponse;
 import com.example.forguide.inquiry.dto.InquiryResponse;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -13,11 +12,6 @@ import java.util.List;
 @Mapper
 public interface InquiryMapper {
 
-    @Options(
-            useGeneratedKeys = true,
-            keyProperty = "request.inquiryId",
-            keyColumn = "inquiry_id"
-    )
     int insert(
             @Param("memberId") Long memberId,
             @Param("request")InquiryCreateRequest request
@@ -45,6 +39,12 @@ public interface InquiryMapper {
     );
 
     InquiryResponse findByIdAndMemberId(
+            @Param("inquiryId") Long inquiryId,
+            @Param("memberId") Long memberId
+    );
+
+    // 답변 전인 본인 문의만 삭제한다.
+    int deleteReceivedByIdAndMemberId(
             @Param("inquiryId") Long inquiryId,
             @Param("memberId") Long memberId
     );

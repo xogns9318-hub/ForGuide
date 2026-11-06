@@ -14,6 +14,7 @@ public enum ErrorCode {
     NOT_FOUND(HttpStatus.NOT_FOUND, "요청한 정보를 찾을 수 없습니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "지원하지 않는 요청 방식입니다."),
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요."),
+    SSE_CONNECTION_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "알림 연결 수가 많습니다. 사용하지 않는 탭을 닫은 뒤 다시 시도해주세요."),
 
     // 상담 준비 카드 번역: 화면에서 실패 원인을 구분한다.
     TRANSLATION_TIMEOUT(HttpStatus.GATEWAY_TIMEOUT, "한국어 번역 시간이 초과되었습니다."),

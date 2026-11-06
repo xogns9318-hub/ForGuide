@@ -2,16 +2,24 @@ package com.example.forguide.inquiry.service;
 
 import com.example.forguide.common.exception.ApiException;
 import com.example.forguide.common.exception.ErrorCode;
+import com.example.forguide.common.transaction.AfterCommitExecutor;
 import com.example.forguide.inquiry.dto.InquiryAnswerRequest;
 import com.example.forguide.inquiry.dto.InquiryCreateRequest;
 import com.example.forguide.inquiry.dto.InquiryCursorRequest;
 import com.example.forguide.inquiry.dto.InquiryImageResponse;
 import com.example.forguide.inquiry.dto.InquiryResponse;
+import com.example.forguide.inquiry.dto.InquiryStatus;
 import com.example.forguide.inquiry.image.InquiryImageStorage;
 import com.example.forguide.inquiry.mapper.InquiryMapper;
+import com.example.forguide.translation.dto.TranslationRequest;
+import com.example.forguide.translation.dto.TranslationResponse;
+import com.example.forguide.translation.dto.TranslationTargetRequest;
+import com.example.forguide.translation.service.TranslationService;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +35,8 @@ public class InquiryService {
 
     private final InquiryMapper inquiryMapper;
     private final InquiryImageStorage inquiryImageStorage;
+    private final TranslationService translationService;
+    private final AfterCommitExecutor afterCommitExecutor;
 
     // 문의 작성은 INSERT 작업이므로 트랜잭션으로 처리한다.
     @Transactional
@@ -74,6 +84,17 @@ public class InquiryService {
         }
     }
 
+    public TranslationResponse translateMyInquiryText(
+            Long memberId,
+            Long inquiryId,
+            String field,
+            TranslationTargetRequest request
+    ) {
+        InquiryResponse inquiry = getMyInquiry(memberId, inquiryId);
+
+        return translateInquiryField(inquiry, field, request);
+    }
+
     // 목록 조회는 DB 상태를 바꾸지 않으므로 트랜잭션이 필요 없다.
     public List<InquiryResponse> getMyInquiries(
             Long memberId,
@@ -108,6 +129,47 @@ public class InquiryService {
         return attachImages(List.of(inquiry)).get(0);
     }
 
+    // 답변이 등록되기 전의 본인 문의만 삭제할 수 있다.
+    @Transactional
+    public void deleteMyReceivedInquiry(Long memberId, Long inquiryId) {
+        requireLogin(memberId);
+        requireInquiryId(inquiryId);
+
+        InquiryResponse inquiry = inquiryMapper.findByIdAndMemberId(
+                inquiryId,
+                memberId
+        );
+
+        if (inquiry == null) {
+            throw new ApiException(ErrorCode.NOT_FOUND, "문의 내용을 찾을 수 없습니다.");
+        }
+
+        if (inquiry.getInquiryStatus() != InquiryStatus.RECEIVED) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "답변이 등록된 문의는 삭제할 수 없습니다."
+            );
+        }
+
+        List<String> imageUrls = inquiryMapper.findImagesByInquiryIds(
+                        List.of(inquiryId)
+                ).stream()
+                .map(InquiryImageResponse::getImageUrl)
+                .toList();
+
+        if (inquiryMapper.deleteReceivedByIdAndMemberId(inquiryId, memberId) != 1) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "문의 상태가 변경되어 삭제할 수 없습니다."
+            );
+        }
+
+        // DB 삭제가 커밋된 뒤에만 실제 첨부 파일을 제거한다.
+        afterCommitExecutor.run(
+                () -> imageUrls.forEach(inquiryImageStorage::deleteIfOwned)
+        );
+    }
+
     // 관리자 전체 목록 조회도 SELECT만 수행한다.
     public List<InquiryResponse> getAllInquiries(
             InquiryCursorRequest cursor
@@ -128,6 +190,43 @@ public class InquiryService {
         }
 
         return attachImages(List.of(inquiry)).get(0);
+    }
+
+    public TranslationResponse translateInquiryTextForAdmin(
+            Long inquiryId, String field, TranslationTargetRequest request
+    ) {
+        InquiryResponse inquiry = getInquiryForAdmin(inquiryId);
+
+        return translateInquiryField(inquiry, field, request);
+    }
+
+    private TranslationResponse translateInquiryField(
+            InquiryResponse inquiry, String field, TranslationTargetRequest request
+    ) {
+        String sourceText = switch (field) {
+            case "title" -> inquiry.getTitle();
+            case "content" -> inquiry.getContent();
+            case "answer" -> inquiry.getAnswerContent();
+            default -> throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "번역할 문의 항목이 올바르지 않습니다."
+            );
+        };
+
+        if (sourceText == null || sourceText.isBlank()) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "번역할 내용이 없습니다."
+            );
+        }
+
+        TranslationRequest translationRequest = new TranslationRequest();
+        translationRequest.setSourceLanguage("auto");
+        translationRequest.setTargetLanguage(request.getTargetLanguage());
+        translationRequest.setSourceText(sourceText);
+
+        return translationService.translatePrivateText(translationRequest);
+
     }
 
     // 답변 등록은 문의 상태·답변 내용을 함께 바꾸므로 트랜잭션으로 처리한다.

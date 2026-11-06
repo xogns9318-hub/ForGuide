@@ -67,6 +67,28 @@
     font-size: 14px;
 }
 
+.translation {
+    display: grid;
+    gap: 10px;
+}
+
+.translationResult {
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--control-radius);
+    background: var(--mint-soft);
+}
+
+.translationResult p {
+    margin: 8px 0 0;
+    white-space: pre-line;
+}
+
+.translationError {
+    margin: 0;
+    color: var(--error);
+}
+
 .error {
     color: var(--error);
 }

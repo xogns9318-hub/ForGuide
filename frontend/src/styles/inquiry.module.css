@@ -287,3 +287,35 @@
         flex-direction: column;
     }
 }
+
+.translation {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0 14px;
+}
+
+.translationResult {
+    flex-basis: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--color-border, #d8e8e2);
+    border-radius: 12px;
+    background: #f5fbf8;
+}
+
+.translationResult strong {
+    color: var(--color-primary, #2f6b5d);
+    font-size: 0.9rem;
+}
+
+.translationResult p {
+    margin: 7px 0 0;
+    white-space: pre-wrap;
+}
+
+.translationError {
+    flex-basis: 100%;
+    margin: 0;
+    color: #b54a42;
+}
