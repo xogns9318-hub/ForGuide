@@ -11,13 +11,6 @@ import { useTranslation } from "react-i18next";
 import ResumeLoadModal from "./ResumeLoadModal.jsx";
 import ResumeTranslationModal from "./ResumeTranslationModal.jsx";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
-import {
-    readResumeTemporaryDraft,
-    readResumeTemporaryPhoto,
-    writeResumeTemporaryDraft,
-    writeResumeTemporaryPhoto,
-    clearResumeTemporaryPhoto,
-} from "../../utils/resumeDraftStorage.js";
 import "../../styles/employment-resume.css";
 
 const EMPTY_ROWS = Array.from({ length: 4 });
@@ -356,108 +349,19 @@ export default function EmploymentResume() {
 
     const [restoredMemberId, setRestoredMemberId] = useState(null);
 
-    // 로그인한 회원의 작성 중 이력서와 마지막 선택 탭을 복원
+    // 회원이 변경되면 이전 회원의 이력서 입력값을 초기화한다.
     useEffect(() => {
-        if (!memberId) {
-            return;
-        }
+        setBasicResume(createInitialBasicResume());
+        setBlindResume(createInitialBlindResume());
 
-        setRestoredMemberId(null);
-
-        const savedDraft = readResumeTemporaryDraft(memberId);
-
-        if (savedDraft?.basicResume) {
-            setBasicResume({
-                ...savedDraft.basicResume,
-                // 브라우저 임시 사진 주소는 새로고침 뒤 사용할 수 없다.
-                photoPreviewUrl: "",
-            });
-        }
-
-        if (savedDraft?.blindResume) {
-            setBlindResume(savedDraft.blindResume);
-        }
-
-        setBasicResumeId(savedDraft?.basicResumeId ?? null);
-        setBasicPhotoUrl(savedDraft?.basicPhotoUrl ?? null);
-        setHasTemporaryBasicPhoto(Boolean(savedDraft?.hasTemporaryBasicPhoto));
-
-        setResumeType(savedDraft?.resumeType === "blind" ? "blind" : "basic");
+        setBasicResumeId(null);
+        setBasicPhotoUrl(null);
+        setHasTemporaryBasicPhoto(false);
         setBasicPhotoFile(null);
+        setResumeType("basic");
+
         setRestoredMemberId(memberId);
     }, [memberId]);
-
-    // 입력값이 바뀔 때마다 회원별 브라우저 저장소에 임시 저장
-    useEffect(() => {
-        if (!memberId || restoredMemberId !== memberId) {
-            return;
-        }
-
-        // blol: 미리보기 주소는 새로고침 뒤 무효라 저장하지 않음.
-        const { photoPreviewUrl, ...basicResumeWithoutPreview } = basicResume;
-
-        const draftToSave = {
-            resumeType,
-            basicResume: basicResumeWithoutPreview,
-            blindResume,
-            // 서버에 저장된 사진을 새로고침 뒤 다시 조회하기 위한 식별값
-            basicResumeId,
-            basicPhotoUrl,
-            hasTemporaryBasicPhoto,
-        };
-
-        writeResumeTemporaryDraft(memberId, draftToSave);
-    }, [
-        memberId,
-        restoredMemberId,
-        resumeType,
-        basicResume,
-        blindResume,
-        basicResumeId,
-        basicPhotoUrl,
-        hasTemporaryBasicPhoto,
-    ]);
-
-    // 저장 전 선택한 사진도 새로고침 뒤 IndexedDB에서 복원한다.
-    useEffect(() => {
-        if (
-            !memberId ||
-            restoredMemberId !== memberId ||
-            !hasTemporaryBasicPhoto ||
-            basicPhotoFile
-        ) {
-            return;
-        }
-
-        let isCurrent = true;
-
-        readResumeTemporaryPhoto(memberId)
-            .then((photoFile) => {
-                if (!isCurrent) {
-                    return;
-                }
-
-                if (!photoFile) {
-                    setHasTemporaryBasicPhoto(false);
-                    return;
-                }
-
-                setBasicPhotoFile(photoFile);
-                setBasicResume((previousResume) => ({
-                    ...previousResume,
-                    photoPreviewUrl: URL.createObjectURL(photoFile),
-                }));
-            })
-            .catch(() => {
-                if (isCurrent) {
-                    setHasTemporaryBasicPhoto(false);
-                }
-            });
-
-        return () => {
-            isCurrent = false;
-        };
-    }, [memberId, restoredMemberId, hasTemporaryBasicPhoto, basicPhotoFile]);
 
     // 저장된 사진은 보호 API를 통해서만 다시 미리보기 주소로 바꾼다.
     useEffect(() => {
@@ -513,14 +417,14 @@ export default function EmploymentResume() {
         }));
     }
 
-    async function handleBasicPhotoChange(event) {
+    function handleBasicPhotoChange(event) {
         const selectedFile = event.target.files?.[0];
 
         if (!selectedFile) {
             return;
         }
 
-        // 선택 직후에는 즉시 미리보기를 보여 준다.
+        // 선택한 사진은 React 상태에서만 관리한다.
         const previewUrl = URL.createObjectURL(selectedFile);
 
         setBasicPhotoFile(selectedFile);
@@ -529,15 +433,9 @@ export default function EmploymentResume() {
             photoPreviewUrl: previewUrl,
         }));
 
-        try {
-            // 저장 전 사진도 새로고침 뒤 복원할 수 있도록 브라우저 DB에 보관한다.
-            await writeResumeTemporaryPhoto(memberId, selectedFile);
-            setHasTemporaryBasicPhoto(true);
-        } catch {
-            setSaveMessage(t("resume.messages.temporaryPhotoSaveFailed"));
-        }
+        setHasTemporaryBasicPhoto(false);
+        setSaveMessage("");
     }
-
     async function handleBasicPhotoRemove() {
         const previousPhotoPreviewUrl = basicResume.photoPreviewUrl;
         const previousPhotoFile = basicPhotoFile;
@@ -558,9 +456,6 @@ export default function EmploymentResume() {
             if (basicPhotoUrl && basicResumeId) {
                 await deleteResumePhoto(basicResumeId);
             }
-
-            // 저장 전 선택했던 사진도 IndexedDB에서 제거한다.
-            await clearResumeTemporaryPhoto(memberId);
 
             setBasicPhotoUrl(null);
             setHasTemporaryBasicPhoto(false);
@@ -756,15 +651,6 @@ export default function EmploymentResume() {
             if (!isBlind) {
                 setBasicResumeId(savedDraft.id);
                 setBasicPhotoUrl(savedDraft.photoUrl);
-
-                // 서버 저장이 끝났으므로 브라우저의 임시 사진 파일만 정리
-                // photoPreviewUrl은 건드리지 않아 현재 사진은 화면에 그대로
-                try {
-                    await clearResumeTemporaryPhoto(memberId);
-                } catch {
-                    // 서버 저장은 성공했으므로 IndexedDB 정리 실패만 기록
-                    console.warn("임시 사진을 정리하지 못했습니다.");
-                }
 
                 setHasTemporaryBasicPhoto(false);
                 setBasicPhotoFile(null);

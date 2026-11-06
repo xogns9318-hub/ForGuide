@@ -812,8 +812,6 @@ const th = {
             myReposts: "รีโพสต์ของฉัน",
             loading: "กำลังโหลดโพสต์...",
             retry: "ลองอีกครั้ง",
-            empty: "ยังไม่มีโพสต์",
-            end: "โหลดโพสต์ทั้งหมดแล้ว",
             popularAreaAria: "โพสต์ล่าสุด",
             popularTitle: "โพสต์ยอดนิยม",
             popularSortAria: "เรียงโพสต์ยอดนิยม",
@@ -854,7 +852,7 @@ const th = {
             postsLoadError: "ไม่สามารถโหลดโพสต์ได้",
             imageCountLimit: "คุณสามารถแนบรูปภาพได้สูงสุด {{count}} รูป",
             imageValidation:
-                "สามารถแนบได้เฉพาะไฟล์ JPG หรือ PNG โดยแต่ละรูปต้องมีขนาดไม่เกิน 20 MB",
+                "สามารถแนบได้เฉพาะไฟล์ JPG หรือ PNG โดยแต่ละรูปต้องมีขนาดไม่เกิน 4 MB",
             writeLoginRequired: "กรุณาเข้าสู่ระบบเพื่อโพสต์",
             contentRequired: "กรุณาเพิ่มเนื้อหาโพสต์หรือรูปภาพ",
             writeFailed: "ไม่สามารถโพสต์ได้",
@@ -923,8 +921,8 @@ const th = {
         postEdit: {
             contentAria: "แก้ไขเนื้อหาโพสต์",
             imageAlt: "รูปภาพโพสต์เดิม",
-            invalidImage: "สามารถเพิ่มได้เฉพาะรูป JPG หรือ PNG โดยแต่ละรูปต้องมีขนาดไม่เกิน 20 MB",
-            maxImageCount: "เพิ่มรูปภาพต่อโพสต์ได้สูงสุด 4 รูป",
+            invalidImage: "สามารถเพิ่มได้เฉพาะรูป JPG หรือ PNG โดยแต่ละรูปต้องมีขนาดไม่เกิน 4 MB",
+            maxImageCount: "เพิ่มรูปภาพต่อโพสต์ได้สูงสุด 5 รูป",
             contentRequired: "กรุณากรอกเนื้อหาโพสต์",
             updateError: "ไม่สามารถแก้ไขโพสต์ได้",
             removeCancel: "ยกเลิกการลบ",

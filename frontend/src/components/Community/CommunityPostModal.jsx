@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import {useTranslation} from "react-i18next";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
     deleteCommunityPost,
     getCommunityPost,
@@ -11,8 +11,8 @@ import {
     unlikeCommunityPost,
     unrepostCommunityPost,
 } from "../../api/communityApi.js";
-import {confirm} from "../Modal/modal.js";
-import {useAuthStore} from "../../auth/store/useAuthStore.js";
+import { confirm } from "../Modal/modal.js";
+import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import CommunityCommentSection from "./CommunityCommentSection.jsx";
 import CommunityPostEditForm from "./CommunityPostEditForm.jsx";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
@@ -39,18 +39,18 @@ const RELATED_SERVICE_LINKS = {
 
 // 피드에서 게시글 본문을 누르면 상세 내용을 모달로 보여준다.
 export default function CommunityPostModal({
-                                               postId,
-                                               onClose,
-                                               onPostLoaded,
-                                               onCommentCountChange,
-                                               onPostDeleted,
-                                           }) {
-    const {t, i18n} = useTranslation();
+    postId,
+    onClose,
+    onPostLoaded,
+    onCommentCountChange,
+    onPostDeleted,
+}) {
+    const { t, i18n } = useTranslation();
     const [post, setPost] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
-    const [likeInfo, setLikeInfo] = useState({likeCount: 0, likedByMe: false});
-    const [repostInfo, setRepostInfo] = useState({repostCount: 0, repostedByMe: false});
+    const [likeInfo, setLikeInfo] = useState({ likeCount: 0, likedByMe: false });
+    const [repostInfo, setRepostInfo] = useState({ repostCount: 0, repostedByMe: false });
     const [isLikeLoading, setIsLikeLoading] = useState(false);
     const [isRepostLoading, setIsRepostLoading] = useState(false);
     const [isLikeSubmitting, setIsLikeSubmitting] = useState(false);
@@ -58,6 +58,7 @@ export default function CommunityPostModal({
     const [reactionError, setReactionError] = useState("");
     const currentMemberId = useAuthStore((state) => state.member?.memberId);
     const targetLanguage = (i18n.resolvedLanguage || i18n.language || "ko").split("-")[0];
+    const sourceLanguage = (post?.language || post?.sourceLanguage || "").split("-")[0];
     const [translatedText, setTranslatedText] = useState("");
     const [isEditing, setIsEditing] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -150,7 +151,11 @@ export default function CommunityPostModal({
     // 공개 게시글은 현재 선택 언어가 원문 언어와 다를 때 자동으로 번역한다.
     useEffect(() => {
         setTranslatedText("");
-        if (!postId || !post?.language || post.language === targetLanguage) {
+        if (
+            !postId ||
+            !post?.content?.trim() ||
+            (sourceLanguage && sourceLanguage === targetLanguage)
+        ) {
             return undefined;
         }
 
@@ -170,12 +175,12 @@ export default function CommunityPostModal({
         return () => {
             isMounted = false;
         };
-    }, [postId, post?.language, targetLanguage]);
+    }, [postId, post?.content, sourceLanguage, targetLanguage]);
 
     function handleModalCommentCountChange(changedPostId, commentCount) {
         setPost((previous) =>
             previous && Number(previous.postId) === Number(changedPostId)
-                ? {...previous, commentCount}
+                ? { ...previous, commentCount }
                 : previous,
         );
         onCommentCountChange?.(changedPostId, commentCount);
@@ -321,26 +326,21 @@ export default function CommunityPostModal({
                                     </button>
                                 </div>
                             )}
-                            {!isOwner && <CommunityReportAction postId={post.postId}/>}
+                            {!isOwner && <CommunityReportAction postId={post.postId} />}
                         </header>
 
                         {isEditing ? (
                             <CommunityPostEditForm
-
                                 post={post}
                                 onCancel={() => setIsEditing(false)}
                                 onUpdated={handlePostUpdated}
                             />
                         ) : (
-                            <p className="community-post-content">{post.content}</p>
+                            <p className="community-post-content">
+                                {translatedText || post.content}
+                            </p>
                         )}
-                        {!isEditing && translatedText && (
-                            <section className="community-post-translation">
-                                <div className="community-translation-result">
-                                    <p className="community-translation-text">{translatedText}</p>
-                                </div>
-                            </section>
-                        )}
+
                         {!isEditing && post.images?.length > 0 && (
                             <div className="community-post-images">
                                 {post.images.map((image, index) => (
@@ -389,8 +389,8 @@ export default function CommunityPostModal({
                                         viewBox="0 0 24 24"
                                         aria-hidden="true"
                                     >
-                                        <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/>
-                                        <circle cx="12" cy="12" r="2.5"/>
+                                        <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+                                        <circle cx="12" cy="12" r="2.5" />
                                     </svg>
                                     {t("community.postModal.viewCount")}{" "}
                                     <strong>{post.viewCount ?? 0}</strong>

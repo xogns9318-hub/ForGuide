@@ -13,6 +13,10 @@ import com.example.forguide.notification.dto.NotificationType;
 import com.example.forguide.notification.service.NotificationService;
 import com.example.forguide.community.report.CommunityReportResourceType;
 import com.example.forguide.admin.dto.AdminCommunityReportResponse;
+import com.example.forguide.translation.cache.TranslationCacheResource;
+import com.example.forguide.translation.dto.TranslationRequest;
+import com.example.forguide.translation.dto.TranslationResponse;
+import com.example.forguide.translation.service.TranslationService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,6 +32,7 @@ public class AdminCommunityService {
     private final AdminCommunityMapper adminCommunityMapper;
     private final CommunityReportMapper communityReportMapper;
     private final NotificationService notificationService;
+    private final TranslationService translationService;
 
     public List<AdminCommunityContentResponse> getContents(
             AdminCommunityContentCursorRequest cursor
@@ -35,6 +40,53 @@ public class AdminCommunityService {
         cursor.setKeyword(normalizeKeyword(cursor.getKeyword()));
 
         return adminCommunityMapper.findContentsByCursor(cursor);
+    }
+
+    public TranslationResponse translateContent(
+            AdminCommunityResourceType resourceType,
+            Long resourceId,
+            String targetLanguage
+    ) {
+        requireResource(resourceType, resourceId);
+
+        AdminCommunityContentResponse content =
+                adminCommunityMapper.findContentByResource(
+                        resourceType, resourceId
+                );
+
+        if (content == null) {
+            throw new ApiException(
+                    ErrorCode.NOT_FOUND,
+                    "번역할 커뮤니티 콘텐츠를 찾을 수 없습니다."
+            );
+        }
+
+        if (content.getContent() == null
+                || content.getContent().isBlank()) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "번역할 내용이 없습니다."
+            );
+        }
+
+        TranslationRequest request = new TranslationRequest();
+        request.setSourceLanguage(content.getSourceLanguage());
+        request.setTargetLanguage(targetLanguage);
+        request.setSourceText(content.getContent());
+
+        String cacheType = switch (resourceType) {
+            case POST -> "community-post";
+            case COMMENT -> "community-comment";
+        };
+
+        return translationService.translatePublicText(
+                request,
+                new TranslationCacheResource(
+                        cacheType,
+                        resourceId,
+                        content.getContentVersion()
+                )
+        );
     }
 
     public List<AdminCommunityReportResponse> getRecentReports() {

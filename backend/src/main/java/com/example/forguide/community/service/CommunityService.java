@@ -167,7 +167,15 @@ public class CommunityService {
                 ? List.of()
                 : images.stream().filter(image -> !image.isEmpty()).toList();
 
-        // 사진만 올리는 게시글은 허용하되, 글과 사진이 모두 비어 있는 요청은 막는다.
+// 게시글 사진은 최대 5장까지 허용한다.
+        if (imageFiles.size() > 5) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "게시글 사진은 최대 5장까지 첨부할 수 있습니다."
+            );
+        }
+
+// 사진만 올리는 게시글은 허용하되, 글과 사진이 모두 비어 있는 요청은 막는다.
         if ((request.getContent() == null || request.getContent().isBlank())
                 && imageFiles.isEmpty()) {
             throw new ApiException(
@@ -260,8 +268,11 @@ public class CommunityService {
         int nextImageCount = existingImages.size() - imageIdsToRemove.size()
                 + newImages.size();
 
-        if (nextImageCount > 4) {
-            throw new ApiException(ErrorCode.INVALID_INPUT, "게시글 사진은 최대 4장까지 올릴 수 있습니다.");
+        if (nextImageCount > 5) {
+            throw new ApiException(
+                    ErrorCode.INVALID_INPUT,
+                    "게시글 사진은 최대 5장까지 올릴 수 있습니다."
+            );
         }
 
         List<String> newImageUrls = new ArrayList<>();

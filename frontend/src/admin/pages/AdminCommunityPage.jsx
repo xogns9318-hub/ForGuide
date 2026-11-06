@@ -13,6 +13,7 @@ import {
     updateAdminCommunityModeration,
     getAdminCommunityReportImageBlob,
     dismissAdminCommunityReport,
+    translateAdminCommunityContent,
 } from "../../api/adminApi.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import { formatDateTime } from "../../utils/formatDateTime.js";
@@ -29,6 +30,11 @@ export default function AdminCommunityPage() {
     const navigate = useNavigate();
 
     const [contents, setContents] = useState([]);
+    const [translatedContents, setTranslatedContents] = useState({});
+    const targetLanguage = (
+        i18n.resolvedLanguage || i18n.language || "ko"
+    ).split("-")[0];
+    const translationRequestsRef = useRef(new Set());
     const [reports, setReports] = useState([]);
     const [isReportsLoading, setIsReportsLoading] = useState(true);
     const [reportsError, setReportsError] = useState("");
@@ -153,6 +159,62 @@ export default function AdminCommunityPage() {
     useEffect(() => {
         void loadContents({ reset: true });
     }, [loadContents]);
+
+    useEffect(() => {
+        if (targetLanguage === "ko" || contents.length === 0) {
+            return;
+        }
+
+        contents.forEach((content) => {
+            const contentKey = getContentKey(content);
+            const requestKey =
+                `${targetLanguage}:${contentKey}:${content.contentVersion}`;
+
+            if (
+                translatedContents[targetLanguage]?.[contentKey] ||
+                translationRequestsRef.current.has(requestKey)
+            ) {
+                return;
+            }
+
+            translationRequestsRef.current.add(requestKey);
+
+            translateAdminCommunityContent(
+                content.resourceType,
+                content.resourceId,
+                targetLanguage
+            )
+                .then((response) => {
+                    // API 응답에서 실제 번역 결과 추출
+                    const translatedText =
+                        response?.translatedText ??
+                        response?.data?.translatedText;
+
+                    if (!translatedText) {
+                        console.warn("번역 결과가 없습니다:", response);
+                        return;
+                    }
+
+                    setTranslatedContents((previous) => ({
+                        ...previous,
+                        [targetLanguage]: {
+                            ...previous[targetLanguage],
+                            [contentKey]: translatedText,
+                        },
+                    }));
+                })
+                .catch((error) => {
+                    console.error(
+                        "관리자 커뮤니티 번역 실패:",
+                        contentKey,
+                        error
+                    );
+                })
+                .finally(() => {
+                    translationRequestsRef.current.delete(requestKey);
+                });
+        });
+    }, [contents, targetLanguage, translatedContents]);
 
     const loadReports = useCallback(async () => {
         setIsReportsLoading(true);
@@ -795,7 +857,8 @@ export default function AdminCommunityPage() {
                                     </div>
 
                                     <p className={styles.contentText}>
-                                        {content.content}
+                                        {translatedContents[targetLanguage]?.[contentKey]
+                                            || content.content}
                                     </p>
 
                                     <p className={styles.author}>

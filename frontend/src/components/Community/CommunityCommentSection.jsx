@@ -82,6 +82,11 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
         commentCountChangeRef.current = onCommentCountChange;
     }, [onCommentCountChange]);
 
+    useEffect(() => {
+        const visibleCommentCount = comments.filter((comment) => !comment.deleted).length;
+        commentCountChangeRef.current?.(postId, visibleCommentCount);
+    }, [comments, postId]);
+
     function moveToLogin() {
         const next = `${location.pathname}${location.search}${location.hash}`;
 
@@ -122,12 +127,6 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                         ...previousComments,
                         ...nextComments.filter((comment) => !commentIds.has(comment.commentId)),
                     ];
-
-                    // 삭제 표시 댓글은 화면 구조에는 남기되 게시글 댓글 수에는 포함하지 않는다.
-                    const visibleCommentCount = mergedComments.filter(
-                        (comment) => !comment.deleted,
-                    ).length;
-                    commentCountChangeRef.current?.(postId, visibleCommentCount);
 
                     return mergedComments;
                 });
@@ -226,9 +225,7 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
             );
 
             if (isMounted) {
-                setCommentTranslations(
-                    Object.fromEntries(entries.filter(([, text]) => text)),
-                );
+                setCommentTranslations(Object.fromEntries(entries.filter(([, text]) => text)));
             }
         }
 
@@ -542,10 +539,14 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                                         nickname={comment.mentionedLoginId}
                                                         variant="mention"
                                                     />{" "}
-                                                    {comment.content}
+                                                    {commentTranslations[comment.commentId] ||
+                                                        comment.content}
                                                 </div>
                                             ) : (
-                                                <p>{comment.content}</p>
+                                                <p>
+                                                    {commentTranslations[comment.commentId] ||
+                                                        comment.content}
+                                                </p>
                                             )}
                                         </>
                                     )}
@@ -607,16 +608,6 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                                             )}
                                         </div>
                                     )}
-
-                                    {!comment.deleted &&
-                                        !isEditing &&
-                                        commentTranslations[comment.commentId] && (
-                                            <div className="community-comment-translation-result">
-                                                <p className="community-comment-translation-text">
-                                                    {commentTranslations[comment.commentId]}
-                                                </p>
-                                            </div>
-                                        )}
 
                                     {isReplying && (
                                         <form

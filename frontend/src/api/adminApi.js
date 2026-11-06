@@ -163,3 +163,16 @@ export function translateAdminInquiryText(inquiryId, field, targetLanguage) {
         { targetLanguage },
     );
 }
+
+// 관리자 커뮤니티 게시글·댓글 번역
+export function translateAdminCommunityContent(
+    resourceType,
+    resourceId,
+    targetLanguage
+) {
+    return client.post(
+        `/admin/community/contents/${resourceType}/${resourceId}/translation`,
+        { targetLanguage },
+        { timeoutMs: 30000 }
+    );
+}
