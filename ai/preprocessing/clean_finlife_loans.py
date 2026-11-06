@@ -1,16 +1,11 @@
-import csv
-import json
+import re
 import sys
-from datetime import date
 from pathlib import Path
 
-import re
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "recommend"))
 
+from common import PROCESSED_DIR, load_finlife, today, write_csv
 from clean_finlife_savings import FOREIGNER_OVERRIDES, clean_text, display_company, load_companies
-
-AI_DIR = Path(__file__).resolve().parent.parent
-RAW_DIR = AI_DIR / "data" / "raw"
-PROCESSED_DIR = AI_DIR / "data" / "processed"
 
 INSTITUTION_TYPES = {
     "020000": "은행",
@@ -71,12 +66,6 @@ def is_rate_inconsistent(row):
     return int(average < float(row["rate_min"]) - RATE_GAP_LIMIT or average > float(row["rate_max"]) + RATE_GAP_LIMIT)
 
 
-def load_raw(service, group, collected):
-    path = RAW_DIR / f"finlife_{service}_{group}_{collected}.json"
-    data = json.loads(path.read_text(encoding="utf-8"))
-    return data["baseList"], data["optionList"]
-
-
 def options_by_product(option_list):
     grouped = {}
     for option in option_list:
@@ -102,10 +91,10 @@ def base_row(product, loan_type, institution_type):
     }
 
 
-def credit_rows(collected):
+def credit_rows():
     rows = []
     for group, institution_type in INSTITUTION_TYPES.items():
-        base_list, option_list = load_raw("creditLoanProductsSearch", group, collected)
+        base_list, option_list = load_finlife("creditLoanProductsSearch", group)
         options = options_by_product(option_list)
         for product in base_list:
             if product.get("crdt_prdt_type_nm") in EXCLUDED_CREDIT_TYPES:
@@ -132,10 +121,10 @@ def credit_rows(collected):
     return rows
 
 
-def rent_rows(collected):
+def rent_rows():
     rows = []
     for group, institution_type in INSTITUTION_TYPES.items():
-        base_list, option_list = load_raw("rentHouseLoanProductsSearch", group, collected)
+        base_list, option_list = load_finlife("rentHouseLoanProductsSearch", group)
         options = options_by_product(option_list)
         for product in base_list:
             product_options = options.get((product["fin_co_no"], product["fin_prdt_cd"]), [])
@@ -158,26 +147,16 @@ def rent_rows(collected):
     return rows
 
 
-def save_rows(rows, output_path):
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    with output_path.open("w", encoding="utf-8-sig", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=COLUMNS)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    collected = sys.argv[1] if len(sys.argv) > 1 else "20261014"
-    rows = credit_rows(collected) + rent_rows(collected)
+    rows = credit_rows() + rent_rows()
     companies = load_companies()
     for row in rows:
         contact = companies.get(row["fin_co_no"], {})
         row["homepage"] = contact.get("homepage", "")
         row["phone"] = contact.get("phone", "")
         row["rate_inconsistent"] = is_rate_inconsistent(row)
-    output_path = PROCESSED_DIR / f"finlife_loans_{date.today():%Y%m%d}.csv"
-    save_rows(rows, output_path)
+    output_path = write_csv(rows, PROCESSED_DIR / f"finlife_loans_{today()}.csv", COLUMNS)
     print(f"{len(rows)}행 저장: {output_path}")
 
 

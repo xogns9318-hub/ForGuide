@@ -3,12 +3,11 @@ import io
 import random
 import sys
 from collections import defaultdict
-from datetime import date
 from pathlib import Path
 
-AI_DIR = Path(__file__).resolve().parent.parent
-PROCESSED_DIR = AI_DIR / "data" / "processed"
-ENV_PATH = AI_DIR / ".env"
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "recommend"))
+
+from common import PROCESSED_DIR, read_env, today, write_csv
 
 SOURCE_PREFIX = "2025_공통항목"
 WEIGHT_COLUMN = "공통항목_가중값"
@@ -68,17 +67,8 @@ USER_COLUMNS = [
 ]
 
 
-def read_env():
-    env = {}
-    for line in ENV_PATH.read_text(encoding="utf-8").splitlines():
-        if "=" in line and not line.lstrip().startswith("#"):
-            key, value = line.split("=", 1)
-            env[key.strip()] = value.strip()
-    return env
-
-
 def load_respondents():
-    mdis_dir = Path(read_env()["MDIS_DIR"])
+    mdis_dir = Path(read_env("MDIS_DIR"))
     path = next(mdis_dir.glob(f"{SOURCE_PREFIX}*.csv"))
     text = path.read_bytes().decode("cp949")
     respondents = []
@@ -169,23 +159,15 @@ def save_distribution(respondents, path):
                 writer.writerow([field, value, round(share, 4)])
 
 
-def save_users(users, path):
-    with path.open("w", encoding="utf-8-sig", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=USER_COLUMNS)
-        writer.writeheader()
-        writer.writerows(users)
-
-
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
     respondents = load_respondents()
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
-    today = f"{date.today():%Y%m%d}"
-    distribution_path = PROCESSED_DIR / f"mdis_distribution_{today}.csv"
-    users_path = PROCESSED_DIR / f"virtual_users_{today}.csv"
+    distribution_path = PROCESSED_DIR / f"mdis_distribution_{today()}.csv"
+    users_path = PROCESSED_DIR / f"virtual_users_{today()}.csv"
     save_distribution(respondents, distribution_path)
     users = sample_users(respondents, USER_COUNT, random.Random(SEED))
-    save_users(users, users_path)
+    write_csv(users, users_path, USER_COLUMNS)
     print(f"외국인 응답자 {len(respondents):,}명 기준 분포 저장: {distribution_path}")
     print(f"가상 사용자 {len(users)}명 저장: {users_path}")
 

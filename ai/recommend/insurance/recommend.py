@@ -4,11 +4,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from common import RESIDENCE_STATUSES, one_per_company
+from common import validate as validate_choices
 from baseline import GATE_PASS, load_rows, recommend_fast, separate_products
 
-RESIDENCE_STATUSES = [
-    "비전문취업(E-9)", "방문취업(H-2)", "전문인력", "유학생", "재외동포(F-4)", "영주(F-5)", "결혼이민(F-6)", "기타",
-]
 CHOICES = {
     "sex": ["남", "여"],
     "age": list(range(19, 100)),
@@ -24,20 +23,7 @@ REDIRECT = "consultation"
 
 
 def validate(user):
-    errors = {}
-    if user.get("sex") not in CHOICES["sex"]:
-        errors["sex"] = CHOICES["sex"]
-    try:
-        age = int(user.get("age"))
-    except (TypeError, ValueError):
-        age = None
-    if age not in CHOICES["age"]:
-        errors["age"] = [CHOICES["age"][0], CHOICES["age"][-1]]
-    if user.get("residence_status") not in RESIDENCE_STATUSES:
-        errors["residence_status"] = RESIDENCE_STATUSES
-    if errors:
-        raise ValueError(errors)
-    return {**user, "age": age}
+    return validate_choices(user, CHOICES, numbers=("age",), ranges=("age",), residence=True)
 
 
 def card(result, rank, cheapest):
@@ -63,18 +49,6 @@ def card(result, rank, cheapest):
     return item
 
 
-def one_per_company(results):
-    leaders, more = [], {}
-    for r in results:
-        name = r["cmpy_nm"]
-        if name in more:
-            more[name] += 1
-        else:
-            more[name] = 0
-            leaders.append(r)
-    return leaders, more
-
-
 def recommend(user, rows=None, top_n=TOP_N, separate_n=SEPARATE_N):
     if user.get("health_insurance") != GATE_PASS:
         return {"mode": "fast", "redirect": REDIRECT}
@@ -83,7 +57,7 @@ def recommend(user, rows=None, top_n=TOP_N, separate_n=SEPARATE_N):
     output = recommend_fast(rows, user)
     results = output["results"]
     cheapest = min((r["premium"] for r in results), default=None)
-    leaders, more = one_per_company(results)
+    leaders, more = one_per_company(results, "cmpy_nm")
     items = []
     for i, r in enumerate(leaders[:top_n], start=1):
         item = card(r, i, cheapest)

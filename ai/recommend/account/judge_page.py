@@ -1,10 +1,11 @@
-import csv
 import json
 import sys
 from pathlib import Path
 
-AI_DIR = Path(__file__).resolve().parent.parent.parent
-PROCESSED_DIR = AI_DIR / "data" / "processed"
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from common import PROCESSED_DIR, date_of, latest, read_csv
+
 LABELS_PATH = Path(__file__).resolve().parent / "labels.json"
 
 SIDE = ["kor_co_nm", "fin_prdt_nm", "institution_type", "effective_rate", "visit_required"]
@@ -94,10 +95,6 @@ draw();
 """
 
 
-def latest_date():
-    return sorted(PROCESSED_DIR.glob("account_pairs_judge_*.csv"))[-1].stem.rsplit("_", 1)[-1]
-
-
 def saved_labels(judge=None):
     if not LABELS_PATH.exists():
         return {}
@@ -110,14 +107,18 @@ def saved_labels(judge=None):
     return merged
 
 
-def build(date, judge=None):
-    rows = list(csv.DictReader((PROCESSED_DIR / f"account_pairs_judge_{date}.csv").open(encoding="utf-8-sig")))
+def build(judge=None):
+    source = latest(PROCESSED_DIR, "account_pairs_judge_*.csv")
+    date = date_of(source)
+    rows = read_csv(source)
     labels = saved_labels(judge)
     pairs, preset = [], {}
     for r in rows:
         side = lambda p: [r[f"{p}_{n}"] for n in SIDE[:3]] + [float(r[f"{p}_effective_rate"]), int(r[f"{p}_visit_required"])]
         pairs.append([r["pair_id"], r["purpose"], int(r["save_trm"]), r["visit"], r["institution"], r["group"], side("a"), side("b")])
         winner = labels.get(r["pair_key"])
+        if isinstance(winner, dict):
+            winner = winner["winner"]
         if winner:
             preset[r["pair_id"]] = "A" if winner == r["a_product_id"] else "B" if winner == r["b_product_id"] else "같음"
     page = (PAGE.replace("__DATE__", date)
@@ -132,9 +133,8 @@ def build(date, judge=None):
 
 def main():
     sys.stdout.reconfigure(encoding="utf-8")
-    date = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1] != "-" else latest_date()
-    judge = sys.argv[2] if len(sys.argv) > 2 else None
-    path, total, preset = build(date, judge)
+    judge = sys.argv[1] if len(sys.argv) > 1 else None
+    path, total, preset = build(judge)
     print(f"판정 페이지 저장: {path} (쌍 {total}개, 이미 판정 {preset}개)")
 
 

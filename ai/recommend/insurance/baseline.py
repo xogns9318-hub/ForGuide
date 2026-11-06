@@ -1,9 +1,9 @@
-import csv
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+from common import PROCESSED_DIR, latest, print_summary, read_csv
 from engine import (
     absolute_score,
     decide_group,
@@ -11,9 +11,6 @@ from engine import (
     top_reasons,
     weighted_score,
 )
-
-AI_DIR = Path(__file__).resolve().parent.parent.parent
-PROCESSED_DIR = AI_DIR / "data" / "processed"
 
 WEIGHTS = {
     "premium": 1.0,
@@ -26,10 +23,7 @@ SEX_COLUMNS = {"남": "male_total", "여": "female_total"}
 
 
 def load_rows(path=None):
-    if path is None:
-        path = sorted(PROCESSED_DIR.glob("insurance_*.csv"))[-1]
-    with Path(path).open(encoding="utf-8-sig") as f:
-        return list(csv.DictReader(f))
+    return read_csv(path or latest(PROCESSED_DIR, "insurance_*.csv"))
 
 
 def passes_gate(user):
@@ -123,19 +117,9 @@ def recommend_fast(rows, user):
     }
 
 
-def print_summary(user, output, limit=5):
-    print(f"\n## 건강보험 {user['health_insurance']}, {user['residence_status']}, {user['age']}세, {user['sex']}")
-    if output["redirect"]:
-        print(f"  → {output['redirect']} 탭으로 연결")
-        return
-    for r in output["results"][:limit]:
-        direct = "다이렉트" if r["is_direct"] else ""
-        print(f"  [{r['group']}] {r['score']:.3f} | {r['premium']:>6,} | {r['cmpy_nm']} {r['prd_nm']} {direct}")
-    print(f"  비교 상품 {len(output['results'])}개", end="")
-    if output["separate_types"]:
-        print(f" / 별도 안내: {', '.join(output['separate_types'])}형")
-    else:
-        print()
+def describe(r):
+    direct = "다이렉트" if r["is_direct"] else ""
+    return f"{r['score']:.3f} | {r['premium']:>6,} | {r['cmpy_nm']} {r['prd_nm']} {direct}"
 
 
 def main():
@@ -148,7 +132,14 @@ def main():
         {"health_insurance": "모름", "residence_status": "유학생", "age": 23, "sex": "여"},
     ]
     for user in examples:
-        print_summary(user, recommend_fast(rows, user))
+        output = recommend_fast(rows, user)
+        title = f"건강보험 {user['health_insurance']}, {user['residence_status']}, {user['age']}세, {user['sex']}"
+        if output["redirect"]:
+            print(f"\n## {title}\n  → {output['redirect']} 탭으로 연결")
+            continue
+        print_summary(title, output["results"], describe)
+        if output["separate_types"]:
+            print(f"  별도 안내: {', '.join(output['separate_types'])}형")
 
 
 if __name__ == "__main__":
