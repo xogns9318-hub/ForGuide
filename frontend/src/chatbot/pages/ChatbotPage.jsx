@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import {
     clearChatbotMessages,
     getChatbotMessages,
-    sendChatbotQuestion,
+    streamChatbotQuestion,
 } from "../../api/chatbotApi.js";
 import ChatbotMessageText from "../components/ChatbotMessageText.jsx";
 import styles from "./ChatbotPage.module.css";
@@ -37,10 +37,18 @@ export default function ChatbotPage() {
     const [question, setQuestion] = useState("");
     // 답을 기다리는 동안 화면에만 먼저 보여 주는 질문 (서버 응답이 오면 가린 질문으로 바뀐다)
     const [pendingQuestion, setPendingQuestion] = useState("");
+    // 지금까지 받은 답변 글자 (다 받으면 대화 목록으로 옮긴다)
+    const [streamingAnswer, setStreamingAnswer] = useState("");
+    // 받다가 끊긴 질문과 그때까지 받은 답변 (서버는 횟수를 되돌리고 기록에서 뺐다)
+    const [interrupted, setInterrupted] = useState(null);
     const [sendError, setSendError] = useState("");
     const [isClearing, setIsClearing] = useState(false);
 
     const messageListRef = useRef(null);
+    const abortRef = useRef(null);
+
+    // 답변을 받는 중에 화면을 떠나면 연결을 끊는다 (서버도 답변 생성을 멈추고 횟수를 되돌린다)
+    useEffect(() => () => abortRef.current?.abort(), []);
 
     const loadMessages = useCallback(async () => {
         setIsLoading(true);
@@ -67,7 +75,7 @@ export default function ChatbotPage() {
         if (list) {
             list.scrollTop = list.scrollHeight;
         }
-    }, [messages, pendingQuestion]);
+    }, [messages, pendingQuestion, streamingAnswer, interrupted]);
 
     const isSending = pendingQuestion !== "";
     const maxLength = status?.maxQuestionLength ?? 500;
@@ -76,7 +84,7 @@ export default function ChatbotPage() {
     const isLimitReached = status != null && status.remainingToday <= 0;
     const canAsk = status?.available && !isLimitReached && !isSending;
 
-    async function handleSubmit(event) {
+    function handleSubmit(event) {
         event.preventDefault();
 
         const trimmed = question.trim();
@@ -84,20 +92,58 @@ export default function ChatbotPage() {
             return;
         }
 
+        ask(trimmed);
+    }
+
+    async function ask(trimmed) {
         setSendError("");
+        setInterrupted(null);
         setPendingQuestion(trimmed);
+        setStreamingAnswer("");
         setQuestion("");
 
+        const controller = new AbortController();
+        abortRef.current = controller;
+        const remainingBefore = status?.remainingToday;
+        let started = false;
+        let partial = "";
+
         try {
-            const reply = await sendChatbotQuestion({
+            const reply = await streamChatbotQuestion({
                 question: trimmed,
                 language: i18n.resolvedLanguage || i18n.language,
+                signal: controller.signal,
+                // 서버가 받아들이면 가린 질문으로 바꿔 보여 주고 남은 횟수를 줄인다
+                onStart: (start) => {
+                    started = true;
+                    setPendingQuestion(start.question?.content ?? trimmed);
+                    setStatus((previous) => ({
+                        ...previous,
+                        remainingToday: start.remainingToday,
+                    }));
+                },
+                // 받은 글자를 바로 이어 붙인다
+                onDelta: (text) => {
+                    partial += text;
+                    setStreamingAnswer((previous) => previous + text);
+                },
             });
 
-            // 서버가 가린 질문과 답변을 대화 끝에 붙이고 남은 횟수를 갱신한다
+            // 다 받으면 가린 질문과 답변을 대화 끝에 붙이고 남은 횟수를 갱신한다
             setMessages((previous) => [...previous, reply.question, reply.answer]);
             setStatus((previous) => ({ ...previous, remainingToday: reply.remainingToday }));
         } catch (error) {
+            if (error?.code === "ABORTED") {
+                return;
+            }
+
+            if (started) {
+                // 받던 중 끊김: 서버가 횟수를 되돌렸으므로 화면도 되돌리고, 받은 데까지는 흐리게 남긴다
+                setStatus((previous) => ({ ...previous, remainingToday: remainingBefore }));
+                setInterrupted({ question: trimmed, partial });
+                return;
+            }
+
             // 보내지 못한 질문은 입력칸에 되돌려 다시 보낼 수 있게 한다
             setQuestion(trimmed);
             setSendError(t(ERROR_KEYS[error?.code] ?? "chatbot.error.failed", { max: maxLength }));
@@ -110,6 +156,8 @@ export default function ChatbotPage() {
             }
         } finally {
             setPendingQuestion("");
+            setStreamingAnswer("");
+            abortRef.current = null;
         }
     }
 
@@ -186,8 +234,13 @@ export default function ChatbotPage() {
                             </p>
                         )}
 
-                        <ol ref={messageListRef} className={styles.messages} aria-live="polite">
-                            {messages.length === 0 && !isSending && (
+                        <ol
+                            ref={messageListRef}
+                            className={styles.messages}
+                            // 글자가 이어서 써지는 동안 읽기 프로그램이 매 글자를 읽지 않게 한다
+                            aria-live={isSending ? "off" : "polite"}
+                        >
+                            {messages.length === 0 && !isSending && !interrupted && (
                                 <li className={styles.empty}>{t("chatbot.empty")}</li>
                             )}
 
@@ -220,11 +273,56 @@ export default function ChatbotPage() {
                                         </span>
                                         <p>{pendingQuestion}</p>
                                     </li>
-                                    <li className={styles.assistant} role="status">
+                                    <li className={styles.assistant} aria-busy="true">
                                         <span className={styles.speaker}>
                                             {t("chatbot.speaker.assistant")}
                                         </span>
-                                        <p className="text-muted">{t("chatbot.answering")}</p>
+                                        {streamingAnswer ? (
+                                            <p>
+                                                <ChatbotMessageText
+                                                    text={streamingAnswer}
+                                                    linkPaths
+                                                />
+                                                <span
+                                                    className={styles.cursor}
+                                                    aria-hidden="true"
+                                                />
+                                            </p>
+                                        ) : (
+                                            <p className="text-muted">{t("chatbot.answering")}</p>
+                                        )}
+                                    </li>
+                                </>
+                            )}
+
+                            {!isSending && interrupted && (
+                                <>
+                                    <li className={styles.user}>
+                                        <span className={styles.speaker}>
+                                            {t("chatbot.speaker.user")}
+                                        </span>
+                                        <p>{interrupted.question}</p>
+                                    </li>
+                                    <li className={`${styles.assistant} ${styles.interrupted}`}>
+                                        <span className={styles.speaker}>
+                                            {t("chatbot.speaker.assistant")}
+                                        </span>
+                                        {interrupted.partial && (
+                                            <p className={styles.partial}>
+                                                <ChatbotMessageText text={interrupted.partial} linkPaths />
+                                            </p>
+                                        )}
+                                        <div className="form-error" role="alert">
+                                            {t("chatbot.error.interrupted")}
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className="button"
+                                            onClick={() => ask(interrupted.question)}
+                                            disabled={!canAsk}
+                                        >
+                                            {t("chatbot.resend")}
+                                        </button>
                                     </li>
                                 </>
                             )}

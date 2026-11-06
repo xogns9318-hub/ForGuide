@@ -628,7 +628,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 ## 문의 챗봇 API
 
 - 주소: `/api/v1/chatbot/messages`, 모두 로그인 필요 (없으면 401 `AUTH_REQUIRED`)
-- 프론트 함수: `src/api/chatbotApi.js` — `getChatbotMessages()`, `sendChatbotQuestion({ question, language })`, `clearChatbotMessages()`
+- 프론트 함수: `src/api/chatbotApi.js` — `getChatbotMessages()`, `streamChatbotQuestion({ question, language, onStart, onDelta, signal })`(화면이 쓰는 이어서 받기), `sendChatbotQuestion({ question, language })`(한 번에 받기, 비상용), `clearChatbotMessages()`
 - 백엔드: `chatbot/` (`ChatbotService`·`ChatbotContext`·`PiiMasker`), 키는 환경변수 `FORGUIDE_OPENAI_API_KEY`, 모델은 `FORGUIDE_OPENAI_MODEL`(기본 `gpt-5.6-luna`)
 
 | 방식   | 요청                     | 성공 data                                                                                       |
@@ -639,6 +639,21 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 
 - `role`은 `USER` / `ASSISTANT`. `messages`는 오래된 순, 최근 10개.
 - 질문 답변은 서버가 최대 30초 기다리고, 프론트 대기 시간은 40초다.
+
+**이어서 받기 (SSE)**: `POST /api/v1/chatbot/messages/stream`, 요청은 위 POST와 같다(`{ question, language }`).
+
+- 화면은 `Accept: text/event-stream, application/json`으로 보낸다. 연결을 열기 전 오류(로그인·빈 질문·500자·하루 횟수·키 없음)는 아래 표의 JSON 오류로 온다.
+- EventSource는 Authorization 헤더를 넣을 수 없어 `fetch` 스트림으로 읽는다(알림과 같은 방식).
+
+| 이벤트  | data (JSON)                                                    | 뜻                         |
+| ------- | -------------------------------------------------------------- | -------------------------- |
+| `start` | `{ question: { role, content }, remainingToday }`              | 가린 질문과 차감 뒤 남은 횟수 |
+| `delta` | `{ text }`                                                     | 답변 글자 조각 (공백 포함 그대로) |
+| `done`  | `{ remainingToday }`                                           | 다 받음, 대화 기록에 저장됨 |
+| `error` | `{ code, message }` (`CHATBOT_FAILED`)                          | 받던 중 실패               |
+
+- 받던 중 OpenAI가 실패하거나, 연결이 `forguide.chatbot.stream-timeout`(기본 90초)을 넘기거나, 사용자가 화면을 떠나 연결을 끊으면 서버는 OpenAI 호출을 멈추고 횟수와 질문을 되돌린다. 받다 만 답변은 기록에 남지 않는다.
+- 화면은 40초 동안 새 글자가 없거나, `done`·`error` 없이 연결이 닫히면 끊긴 것으로 본다(`CHATBOT_INTERRUPTED`, 화면 전용 코드).
 
 | 코드                        | 상태 | 용도                                  |
 | --------------------------- | ---- | ------------------------------------- |

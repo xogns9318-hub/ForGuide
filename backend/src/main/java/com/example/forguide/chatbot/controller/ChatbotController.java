@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**
  * 문의 챗봇 API. 모두 로그인 필요 (SecurityConfig 기본 잠금 정책을 그대로 따른다).
@@ -38,6 +39,16 @@ public class ChatbotController {
             @Valid @RequestBody ChatbotQuestionRequest request
     ) {
         return ApiResponse.ok(chatbotService.ask(memberId, request));
+    }
+
+    // 질문 보내고 답변을 받는 대로 이어서 받기 (SSE: start → delta… → done, 실패 시 error)
+    // 연결을 열기 전 오류(로그인·글자 수·하루 횟수)는 위 질문 보내기와 같은 JSON 오류로 돌려준다
+    @PostMapping("/stream")
+    public SseEmitter askStream(
+            @AuthenticationPrincipal Long memberId,
+            @Valid @RequestBody ChatbotQuestionRequest request
+    ) {
+        return chatbotService.askStream(memberId, request);
     }
 
     // 대화 지우기

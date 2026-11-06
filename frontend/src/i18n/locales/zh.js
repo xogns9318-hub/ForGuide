@@ -1848,6 +1848,7 @@ const zh = {
         send: "发送",
         sending: "等待回答中...",
         answering: "正在准备回答...",
+        resend: "重新发送",
         privacyNotice:
             "居民登录号码、外国人登录号码、护照号码、账号和电话号码会先自动隐藏再发送给 AI。最安全的做法是不要输入个人信息。",
         speaker: {
@@ -1861,6 +1862,7 @@ const zh = {
             timeout: "回答时间较长。请稍后再试。",
             network: "无法连接到服务器。请检查网络。",
             failed: "未能获得回答。请稍后再试。",
+            interrupted: "回答中途中断了。本次提问不计入次数，请重试。",
             clearFailed: "无法清除对话。请稍后再试。",
         },
         handoff: {

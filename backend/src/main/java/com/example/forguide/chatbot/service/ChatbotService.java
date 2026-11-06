@@ -7,11 +7,14 @@ import com.example.forguide.chatbot.dto.ChatbotQuestionRequest;
 import com.example.forguide.chatbot.dto.ChatbotReplyResponse;
 import com.example.forguide.common.exception.ApiException;
 import com.example.forguide.common.exception.ErrorCode;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -19,7 +22,10 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.MessageType;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import reactor.core.Disposable;
 
 /**
  * 문의 챗봇. 화면 → 이 서비스 → OpenAI 순서로만 호출한다 (React는 OpenAI를 직접 부르지 않는다).
@@ -92,6 +98,111 @@ public class ChatbotService {
     }
 
     public ChatbotReplyResponse ask(Long memberId, ChatbotQuestionRequest request) {
+        PreparedQuestion prepared = prepare(memberId, request);
+
+        String answer;
+        try {
+            answer = prompt(memberId, prepared).call().content();
+        } catch (RuntimeException exception) {
+            undo(memberId, prepared);
+            // 질문 내용은 로그에 남기지 않는다
+            log.warn("챗봇 답변 실패 memberId={}: {}", memberId, exception.getClass().getSimpleName());
+            throw new ApiException(ErrorCode.CHATBOT_FAILED);
+        }
+
+        if (answer == null || answer.isBlank()) {
+            undo(memberId, prepared);
+            throw new ApiException(ErrorCode.CHATBOT_FAILED);
+        }
+
+        return new ChatbotReplyResponse(
+                new ChatbotMessageResponse(ChatbotMessageResponse.USER, prepared.maskedQuestion()),
+                new ChatbotMessageResponse(ChatbotMessageResponse.ASSISTANT, answer),
+                prepared.remaining()
+        );
+    }
+
+    /**
+     * 답변을 받는 대로 조금씩 보낸다 (SSE).
+     *
+     * 이벤트 순서: start(가린 질문·남은 횟수) → delta(글자 조각) 여러 번 → done
+     * 중간에 실패하거나 시간이 지나거나 사용자가 연결을 끊으면 error를 보내고(가능하면),
+     * 차감한 횟수와 답 없는 질문을 되돌린다. 받다 만 답변은 대화 기록에 남지 않는다.
+     * 로그인·글자 수·하루 횟수 확인은 연결을 열기 전에 해서, 그 오류는 지금처럼 JSON으로 간다.
+     */
+    public SseEmitter askStream(Long memberId, ChatbotQuestionRequest request) {
+        PreparedQuestion prepared = prepare(memberId, request);
+        SseEmitter emitter = new SseEmitter(properties.streamTimeout().toMillis());
+        StringBuilder answer = new StringBuilder();
+        AtomicBoolean finished = new AtomicBoolean(false);
+        AtomicReference<Disposable> subscription = new AtomicReference<>();
+
+        Runnable fail = () -> {
+            if (!finished.compareAndSet(false, true)) {
+                return;
+            }
+            Disposable running = subscription.get();
+            if (running != null) {
+                running.dispose();
+            }
+            undo(memberId, prepared);
+            send(emitter, "error", Map.of(
+                    "code", ErrorCode.CHATBOT_FAILED.name(),
+                    "message", ErrorCode.CHATBOT_FAILED.getDefaultMessage()
+            ));
+            emitter.complete();
+        };
+
+        emitter.onTimeout(fail);
+        emitter.onError(error -> fail.run());
+        // 사용자가 화면을 떠나 연결이 끊긴 경우도 실패와 같이 되돌린다
+        emitter.onCompletion(fail);
+
+        send(emitter, "start", Map.of(
+                "question", new ChatbotMessageResponse(ChatbotMessageResponse.USER, prepared.maskedQuestion()),
+                "remainingToday", prepared.remaining()
+        ));
+
+        try {
+            Disposable running = prompt(memberId, prepared).stream().content()
+                    .filter(chunk -> chunk != null && !chunk.isEmpty())
+                    .subscribe(
+                            chunk -> {
+                                if (finished.get()) {
+                                    return;
+                                }
+                                answer.append(chunk);
+                                if (!send(emitter, "delta", Map.of("text", chunk))) {
+                                    fail.run();
+                                }
+                            },
+                            error -> {
+                                log.warn("챗봇 답변 실패 memberId={}: {}", memberId, error.getClass().getSimpleName());
+                                fail.run();
+                            },
+                            () -> {
+                                if (answer.toString().isBlank()) {
+                                    fail.run();
+                                } else if (finished.compareAndSet(false, true)) {
+                                    send(emitter, "done", Map.of("remainingToday", prepared.remaining()));
+                                    emitter.complete();
+                                }
+                            }
+                    );
+            subscription.set(running);
+            if (finished.get()) {
+                running.dispose();
+            }
+        } catch (RuntimeException exception) {
+            log.warn("챗봇 답변 실패 memberId={}: {}", memberId, exception.getClass().getSimpleName());
+            fail.run();
+        }
+
+        return emitter;
+    }
+
+    /** 키·글자 수 확인, 하루 횟수 1회 차감, 개인정보 가리기 (일반 답변과 이어서 받기 공통) */
+    private PreparedQuestion prepare(Long memberId, ChatbotQuestionRequest request) {
         requireLogin(memberId);
 
         if (!available) {
@@ -109,36 +220,34 @@ public class ChatbotService {
 
         // 횟수를 먼저 차감해 같은 회원이 동시에 여러 번 보내도 한도를 넘지 않게 한다
         int remaining = useOne(memberId);
-        String maskedQuestion = piiMasker.mask(question);
-        String language = chatbotContext.normalizeLanguage(request.language());
-
-        String answer;
-        try {
-            answer = chatClient.prompt()
-                    .system(chatbotContext.systemPrompt(language))
-                    .user(maskedQuestion)
-                    .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, conversationId(memberId)))
-                    .call()
-                    .content();
-        } catch (RuntimeException exception) {
-            refundOne(memberId);
-            removeUnansweredQuestion(memberId, maskedQuestion);
-            // 질문 내용은 로그에 남기지 않는다
-            log.warn("챗봇 답변 실패 memberId={}: {}", memberId, exception.getClass().getSimpleName());
-            throw new ApiException(ErrorCode.CHATBOT_FAILED);
-        }
-
-        if (answer == null || answer.isBlank()) {
-            refundOne(memberId);
-            removeUnansweredQuestion(memberId, maskedQuestion);
-            throw new ApiException(ErrorCode.CHATBOT_FAILED);
-        }
-
-        return new ChatbotReplyResponse(
-                new ChatbotMessageResponse(ChatbotMessageResponse.USER, maskedQuestion),
-                new ChatbotMessageResponse(ChatbotMessageResponse.ASSISTANT, answer),
+        return new PreparedQuestion(
+                piiMasker.mask(question),
+                chatbotContext.normalizeLanguage(request.language()),
                 remaining
         );
+    }
+
+    private ChatClient.ChatClientRequestSpec prompt(Long memberId, PreparedQuestion prepared) {
+        return chatClient.prompt()
+                .system(chatbotContext.systemPrompt(prepared.language()))
+                .user(prepared.maskedQuestion())
+                .advisors(advisor -> advisor.param(ChatMemory.CONVERSATION_ID, conversationId(memberId)));
+    }
+
+    /** 답을 못 받았을 때: 횟수를 돌려주고 답 없는 질문을 기록에서 뺀다 */
+    private void undo(Long memberId, PreparedQuestion prepared) {
+        refundOne(memberId);
+        removeUnansweredQuestion(memberId, prepared.maskedQuestion());
+    }
+
+    /** 연결이 이미 끊겼으면 false. 끊긴 연결에 보내다 생긴 오류는 밖으로 던지지 않는다 */
+    private boolean send(SseEmitter emitter, String name, Object data) {
+        try {
+            emitter.send(SseEmitter.event().name(name).data(data, MediaType.APPLICATION_JSON));
+            return true;
+        } catch (IOException | IllegalStateException exception) {
+            return false;
+        }
     }
 
     /** 대화 지우기. 오늘 사용 횟수는 되돌리지 않는다 */
@@ -217,5 +326,8 @@ public class ChatbotService {
     }
 
     private record DailyUsage(LocalDate date, int count) {
+    }
+
+    private record PreparedQuestion(String maskedQuestion, String language, int remaining) {
     }
 }
