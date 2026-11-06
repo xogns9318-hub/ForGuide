@@ -1,0 +1,20 @@
+# ForGuide 백엔드 (Spring Boot). 서버 재부팅 때 자동으로 켜진다.
+# 설치: sudo cp forguide.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl enable --now forguide
+[Unit]
+Description=ForGuide backend
+After=network-online.target mysql.service redis-server.service
+Wants=network-online.target
+Requires=mysql.service
+
+[Service]
+User=forguide
+Group=forguide
+WorkingDirectory=/opt/forguide
+EnvironmentFile=/etc/forguide/forguide.env
+ExecStart=/usr/bin/java -Xms256m -Xmx768m -Duser.timezone=Asia/Seoul -jar /opt/forguide/forguide.jar
+SuccessExitStatus=143
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
