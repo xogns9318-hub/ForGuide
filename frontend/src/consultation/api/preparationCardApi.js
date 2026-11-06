@@ -1,5 +1,5 @@
-import { client } from "./client.js";
-import { ApiError } from "./apiError.js";
+import { client } from "../../api/client.js";
+import { ApiError } from "../../api/apiError.js";
 
 // 직접 작성한 상세 내용만 보내며 이름·성·생년월일은 요청에 포함하지 않는다.
 export async function translatePreparationDetails(sourceText) {

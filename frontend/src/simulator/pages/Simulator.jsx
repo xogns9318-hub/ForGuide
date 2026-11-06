@@ -13,9 +13,9 @@ import {
     monthInfo,
     readDate,
     wonParts,
-} from "../../utils/budgetSimulator.js";
+} from "../utils/budgetSimulator.js";
 import { formatKrw } from "../../utils/currencyFormat.js";
-import styles from "../../styles/simulator.module.css";
+import styles from "./Simulator.module.css";
 
 const emptyValues = Object.fromEntries(
     [...MONEY_FIELDS, "start", "end"].map((key) => [key, ""]),

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 // 이 화면에서 사용할 스타일 연결
-import "../../styles/footer.css";
+import "./Footer.css";
 
 // 페이지 하단 정보 표시
 export default function Footer() {

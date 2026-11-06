@@ -18,17 +18,6 @@
     background: rgb(0 0 0 / 8%);
 }
 
-/* 기존 커뮤니티 전용 이미지 배경 유지 */
-.community {
-    background-color: #f5fcf8;
-    background-image:
-        linear-gradient(rgb(255 255 255 / 30%), rgb(255 255 255 / 30%)),
-        url("/community-scene-banner2.png");
-    background-position: center bottom;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
 /* 헤더 내용에만 본문과 같은 최대 너비 적용 */
 .inner {
     width: 100%;

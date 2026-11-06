@@ -7,9 +7,9 @@ import {
     getConsultationInstitution,
     getInstitutionGuide,
     translateInstitutionText,
-} from "../../api/consultationApi.js";
+} from "../api/consultationApi.js";
 import { getConsultationLocationLabel } from "../../i18n/consultationLocationLabels.js";
-import styles from "../../styles/institutionResults.module.css";
+import styles from "./ConsultationResults.module.css";
 
 const unique = (values) => [...new Set(values.filter(Boolean))];
 

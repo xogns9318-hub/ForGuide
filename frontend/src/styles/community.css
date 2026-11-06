@@ -692,9 +692,11 @@
     padding: 22px 18px;
     border: 1px solid #d6ebe3;
     border-radius: var(--panel-radius);
-    background:
-        linear-gradient(180deg, rgb(220 243 233 / 96%), rgb(247 252 250 / 92%)),
-        url("/community-scene-banner2.png") center bottom / cover;
+    background: linear-gradient(
+            180deg,
+            rgb(220 243 233 / 96%),
+            rgb(247 252 250 / 92%)
+    );
 }
 
 .community-sidebar-navigation,

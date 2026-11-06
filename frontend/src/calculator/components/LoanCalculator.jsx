@@ -1,10 +1,10 @@
 import { useEffect, useId, useState } from "react";
 import { useTranslation } from "react-i18next";
-import SelectBox from "../SelectBox/SelectBox.jsx";
+import SelectBox from "../../components/SelectBox/SelectBox.jsx";
 import {
     validateIntegerInput,
     validateRateInput,
-} from "../../utils/calculatorInput.js";
+} from "../utils/calculatorInput.js";
 import {
     formatLoanAmount,
     formatLoanMonths,
@@ -14,9 +14,9 @@ import {
     getGraceError,
     validateLoanInput,
     repaymentMethods,
-} from "../../utils/loanCalculator.js";
+} from "../utils/loanCalculator.js";
 import { LoanResults, LoanChart, LoanSchedule } from "./LoanResults.jsx";
-import "../../styles/monthlyPayment.css";
+import "./LoanCalculator.css";
 
 // 숫자 입력의 이름·단위·상한을 한 곳에서 관리
 const numericFields = [

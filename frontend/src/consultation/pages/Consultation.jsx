@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import SelectBox from "../SelectBox/SelectBox.jsx";
-import { initialConsultationOptions, getConsultationOptions } from "../../api/consultationApi.js";
-import "../../styles/consultation.css";
-import styles from "../../styles/consultationControls.module.css";
+import SelectBox from "../../components/SelectBox/SelectBox.jsx";
+import { initialConsultationOptions, getConsultationOptions } from "../api/consultationApi.js";
+import "./Consultation.css";
+import styles from "./Consultation.module.css";
 import { useTranslation } from "react-i18next";
-import ConsultationResults from "./ConsultationResults.jsx";
+import ConsultationResults from "../components/ConsultationResults.jsx";
 import { getConsultationLocationLabel } from "../../i18n/consultationLocationLabels.js";
 
 // 문자열 목록을 공통 선택창이 사용하는 구조로 변환한다.

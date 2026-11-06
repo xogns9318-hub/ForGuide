@@ -2,8 +2,8 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { categories, contactRoutes } from "../../routes/routeConfig.js";
-import { GreetingDuck } from "../UnderConstruction/UnderConstruction.jsx";
-import styles from "../../styles/home.module.css";
+import { GreetingDuck } from "../../components/GreetingDuck/GreetingDuck.jsx";
+import styles from "./Home.module.css";
 
 function serviceItems(categoryId) {
     const category = categories.find((item) => item.id === categoryId);

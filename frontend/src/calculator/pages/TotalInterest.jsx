@@ -1,4 +1,4 @@
-import LoanCalculator from "../LoanCalculator/LoanCalculator.jsx";
+import LoanCalculator from "../components/LoanCalculator.jsx";
 
 // 총 이자 페이지도 같은 입력·계산 결과·상환표를 사용
 export default function TotalInterest() {

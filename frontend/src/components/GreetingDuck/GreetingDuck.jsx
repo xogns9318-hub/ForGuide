@@ -1,8 +1,7 @@
-import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import styles from "../../styles/underConstruction.module.css";
+import styles from "./GreetingDuck.module.css";
 
-// 같은 오리 그림을 홈과 제작 중 페이지에서 공유한다.
+// 홈 화면에서 사용하는 공용 오리 그림
 export function GreetingDuck({ className = "" }) {
     const { t } = useTranslation();
 
@@ -61,25 +60,5 @@ export function GreetingDuck({ className = "" }) {
                 </g>
             </g>
         </svg>
-    );
-}
-
-export default function UnderConstruction() {
-    const { t } = useTranslation();
-    const titleId = useId();
-
-    return (
-        <section className={styles.page} aria-labelledby={titleId}>
-            <GreetingDuck />
-
-            <div className={styles.message}>
-                <h1 id={titleId} className={styles.title}>
-                    {t("underConstruction.title")}
-                </h1>
-                <p className={styles.description}>
-                    {t("underConstruction.description")}
-                </p>
-            </div>
-        </section>
     );
 }

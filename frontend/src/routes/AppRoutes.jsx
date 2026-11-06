@@ -2,26 +2,25 @@ import { lazy, Suspense } from "react";
 import { Outlet, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { categories, accountRoutes } from "./routeConfig";
 import { useTranslation } from "react-i18next";
-import Home from "../components/Home/Home.jsx";
+import Home from "../home/pages/Home.jsx";
 import Header from "../components/Header/Header.jsx";
 import Footer from "../components/Footer/Footer.jsx";
 import StatusPage from "../components/StatusPage/StatusPage.jsx";
 import { authPaths, authRoutes } from "../auth/authRoutes.jsx";
 import { recommendPaths, recommendRoutes } from "../recommend/recommendRoutes.jsx";
-import UnderConstruction from "../components/UnderConstruction/UnderConstruction.jsx";
 import RequireAuth from "../auth/components/RequireAuth.jsx";
-import PreparationCard from "../components/PreparationCard/PreparationCard.jsx";
+import PreparationCard from "../consultation/pages/PreparationCard.jsx";
 import RequireAdmin from "../auth/components/RequireAdmin.jsx";
 
 // 자주 열지 않는 기능 화면은 해당 경로에 들어갈 때만 내려받아 초기 번들을 줄인다.
 const Community = lazy(() => import("../components/Community/Community.jsx"));
 const CommunityPostDetail = lazy(() => import("../components/Community/CommunityPostDetail.jsx"));
-const MonthlyPayment = lazy(() => import("../components/MonthlyPayment/MonthlyPayment.jsx"));
-const TotalInterest = lazy(() => import("../components/TotalInterest/TotalInterest.jsx"));
-const Consultation = lazy(() => import("../components/Consultation/Consultation.jsx"));
+const MonthlyPayment = lazy(() => import("../calculator/pages/MonthlyPayment.jsx"));
+const TotalInterest = lazy(() => import("../calculator/pages/TotalInterest.jsx"));
+const Consultation = lazy(() => import("../consultation/pages/Consultation.jsx"));
 const EmploymentResume = lazy(() => import("../components/Employment/EmploymentResume.jsx"));
 const JobListings = lazy(() => import("../components/JobListings/JobListings.jsx"));
-const Simulator = lazy(() => import("../components/Simulator/Simulator.jsx"));
+const Simulator = lazy(() => import("../simulator/pages/Simulator.jsx"));
 const AdminDashboard = lazy(() => import("../admin/pages/AdminDashboard.jsx"));
 const InquiryPage = lazy(() => import("../inquiry/pages/InquiryPage.jsx"));
 const ChatbotPage = lazy(() => import("../chatbot/pages/ChatbotPage.jsx"));
@@ -31,8 +30,6 @@ const AdminCommunityPage = lazy(() => import("../admin/pages/AdminCommunityPage.
 const AdminRecommendationUsagePage = lazy(
     () => import("../admin/pages/AdminRecommendationUsagePage.jsx"),
 );
-// 제작 중 화면을 표시할 서비스 주소만 지정
-const constructionPaths = new Set();
 
 // 소개 주소를 제외하고 실제 세부 서비스 주소만 연결한다.
 const serviceRoutes = categories.flatMap((category) =>
@@ -154,28 +151,14 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                                 key={route.path}
                                 path={route.path}
                                 element={
-                                    constructionPaths.has(route.path) ? (
-                                        <UnderConstruction />
-                                    ) : route.path === "/service/monthlyPayment" ? (
-                                        <CalculatorPage
-                                            categoryId={route.categoryId}
-                                            serviceId={route.id}
-                                            title={route.label}
-                                            description={route.description}
-                                        >
+                                    route.path === "/service/monthlyPayment" ? (
+                                        <CalculatorPage>
                                             <MonthlyPayment />
                                         </CalculatorPage>
                                     ) : route.path === "/service/totalInterest" ? (
-                                        <CalculatorPage
-                                            categoryId={route.categoryId}
-                                            serviceId={route.id}
-                                            title={route.label}
-                                            description={route.description}
-                                        >
+                                        <CalculatorPage>
                                             <TotalInterest />
                                         </CalculatorPage>
-                                    ) : route.path === "/service/employment" ? (
-                                        <EmploymentResume />
                                     ) : route.path === "/service/jobListings" ? (
                                         <JobListings />
                                     ) : (
@@ -225,12 +208,6 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                         ))}
                 </Route>
 
-                <Route path="/loading" element={<StatusPage type="loading" />} />
-                <Route path="/empty" element={<StatusPage type="empty" />} />
-                <Route path="/failure" element={<StatusPage type="failure" />} />
-                <Route path="/input-error" element={<StatusPage type="input" />} />
-                <Route path="/example" element={<StatusPage type="example" />} />
-                <Route path="/error" element={<StatusPage type="error" />} />
                 <Route path="*" element={<StatusPage type="error" />} />
             </Routes>
         </Suspense>
