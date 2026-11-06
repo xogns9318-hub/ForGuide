@@ -147,15 +147,36 @@
     left: -12px;
     top: 50%;
     width: 1px;
-    height: 100%;
+    height: 1em;
     transform: translateY(-50%);
     background: var(--line);
     pointer-events: none;
 }
 
-.actions>a:hover,
-.logout:hover {
+/* 회원 글씨는 확대하지 않고 색과 굵기로만 강조한다. */
+.actions > a,
+.actions > a > span,
+.logout > span {
+    font-weight: 400;
+    transition: color 180ms ease;
+}
+
+.actions > a > span,
+.logout > span {
+    display: inline-block;
+}
+
+.actions > a:hover,
+.actions > a:focus-visible,
+.logout:hover,
+.logout:focus-visible {
     color: var(--primary);
+}
+
+.actions > a:is(:hover, :focus-visible),
+.actions > a:is(:hover, :focus-visible) > span,
+.logout:is(:hover, :focus-visible) > span {
+    font-weight: 600;
 }
 
 .logout {
@@ -778,7 +799,7 @@
     display: none;
 }
 
-/* 현재 언어 글씨 아래에 아주 옅은 민트색 목록을 표시한다. */
+/* 현재 언어 글씨 아래에 흰색 목록을 표시한다. */
 .actions :global(.header-language .select-box-options) {
     --language-menu-gap: 12px;
 
@@ -790,7 +811,7 @@
 
     border: 1px solid #d4eae2;
     line-height: 24px;
-    background: #fdfffe;
+    background: #ffffff;
     box-shadow: none;
 
     animation: language-menu-reveal 260ms ease-out both;
@@ -935,6 +956,204 @@
 
 @media (prefers-reduced-motion: reduce) {
     .header {
+        transition: none;
+    }
+}
+
+/* 회원 메뉴는 현재 언어 선택창과 같은 방식으로 펼친다. */
+.accountMenu {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.accountTrigger {
+    display: inline-block;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 400;
+    line-height: inherit;
+    white-space: nowrap;
+    cursor: default;
+    transition: color 180ms ease;
+}
+
+/* 마이페이지 글씨와 펼친 목록 사이에서도 강조를 유지한다. */
+.accountMenu:hover > .accountTrigger,
+.accountMenu:focus-within > .accountTrigger,
+.accountTrigger[aria-expanded="true"] {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.accountOptions {
+    --account-menu-gap: 12px;
+
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + var(--account-menu-gap));
+    left: 50%;
+
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    min-width: 120px;
+    max-width: min(320px, calc(100vw - 32px));
+    padding: 4px;
+
+    border: 1px solid #d4eae2;
+    border-radius: var(--control-radius);
+    background: #ffffff;
+    box-shadow: none;
+
+    animation: language-menu-reveal 260ms ease-out both;
+}
+
+/* 글씨와 선택창 사이에서도 마우스가 끊기지 않게 연결한다. */
+.accountOptions::before {
+    position: absolute;
+    top: calc(-1 * var(--account-menu-gap));
+    right: 0;
+    left: 0;
+    height: var(--account-menu-gap);
+
+    content: "";
+}
+
+.accountOptions > :is(a, button) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 40px;
+    margin: 0;
+    padding: 8px 16px;
+
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    line-height: 24px;
+    text-align: center;
+    text-decoration: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+
+    transition: color 180ms ease;
+}
+
+.accountOptions > :is(a, button) > span {
+    position: relative;
+    display: inline-block;
+    font-weight: 400;
+}
+
+.accountOptions > :is(a, button) > span::after {
+    position: absolute;
+    right: 0;
+    bottom: -2px;
+    left: 0;
+
+    height: 2px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: center;
+
+    content: "";
+    transition: transform 260ms ease;
+    pointer-events: none;
+}
+
+/* 가리킨 항목이 없으면 첫 항목인 마이페이지를 강조한다. */
+.accountOptions > :is(a, button):is(:hover, :focus-visible),
+.accountOptions:not(:has(> :is(a, button):is(:hover, :focus-visible))) > :first-child {
+    color: #145244;
+}
+
+.accountOptions > :is(a, button):is(:hover, :focus-visible) > span,
+.accountOptions:not(:has(> :is(a, button):is(:hover, :focus-visible))) > :first-child > span {
+    font-weight: 600;
+}
+
+/* 기본 항목과 마우스로 가리킨 항목에 같은 밑줄을 적용한다. */
+.accountOptions > :is(a, button):is(:hover, :focus-visible) > span::after,
+.accountOptions:not(:has(> :is(a, button):is(:hover, :focus-visible))) > :first-child > span::after {
+    transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .accountOptions {
+        animation: none;
+    }
+
+    .accountTrigger,
+    .accountOptions > :is(a, button),
+    .accountOptions > :is(a, button) > span,
+    .accountOptions > :is(a, button) > span::after {
+        transition: none;
+    }
+}
+
+/* 현재 언어와 목록 항목은 크기를 유지하고 색과 굵기로 강조한다. */
+.actions :global(.header-language .select-box-trigger),
+.actions :global(.header-language .select-box-option) {
+    font-weight: 400;
+    transition: color 180ms ease;
+}
+
+/* 언어 글씨에 마우스를 올리거나 목록이 열려 있으면 강조한다. */
+.actions :global(.header-language .select-box.is-compact:is(:hover, :focus-within, .is-open) > .select-box-trigger),
+.actions :global(.header-language .select-box-option:hover),
+.actions :global(.header-language .select-box-option.is-active) {
+    color: #145244;
+    font-weight: 600;
+}
+
+/* 알림 버튼의 여백을 없애고 실제 아이콘 크기에 맞춘다. */
+.actions > [data-header-notification] > button {
+    width: 21px;
+    height: 21px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    cursor: default;
+}
+
+/* 열린 상태에서만 아이콘과 알림창 사이의 이동 경로를 연결한다. */
+.actions > [data-header-notification][data-open="true"]::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 100%;
+    height: 12px;
+}
+
+/* 알림 개수 배지가 아이콘 바깥의 마우스 영역을 넓히지 않게 한다. */
+.actions > [data-header-notification] > button > span {
+    pointer-events: none;
+}
+
+.actions > [data-header-notification] > button > svg {
+    transition: stroke-width 180ms ease;
+}
+
+/* 목록이 열려 있을 때만 아이콘의 색과 선 굵기를 강조한다. */
+.actions > [data-header-notification][data-open="true"] > button {
+    color: var(--primary);
+}
+
+.actions > [data-header-notification][data-open="true"] > button > svg {
+    stroke-width: 2.2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .actions > [data-header-notification] > button > svg {
         transition: none;
     }
 }

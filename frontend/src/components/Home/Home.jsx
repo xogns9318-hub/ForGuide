@@ -133,6 +133,7 @@ export default function Home() {
         const root = homeRef.current;
         if (!root) return;
 
+        const header = document.querySelector("header");
         const contents = root.querySelectorAll("[data-home-reveal]");
         const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
         let frame = 0;
@@ -140,22 +141,41 @@ export default function Home() {
         function updateReveal() {
             frame = 0;
 
-            // 화면 아래쪽에서 등장해 소개 제목이 세로 중앙에 도달하면 완전히 표시한다.
-            const revealStart = window.innerHeight - 64;
-            const revealEnd = window.innerHeight * 0.2;
-            const revealDistance = Math.max(1, revealStart - revealEnd);
+            const headerHeight = header?.getBoundingClientRect().height || 88;
+            const availableHeight = Math.max(1, window.innerHeight - headerHeight);
+
+            root.style.setProperty("--home-header-height", `${headerHeight}px`);
+
+            // 설명 묶음이 화면 중앙에 도착하면 등장 효과를 완료한다.
+            // 소수점 단위의 스크롤 오차도 허용한다.
+            const revealEnd = headerHeight + availableHeight / 2 + 2;
+            const revealStart = Math.max(revealEnd + 1, window.innerHeight - 48);
+            const revealDistance = revealStart - revealEnd;
 
             contents.forEach((element) => {
-                const top = element.getBoundingClientRect().top;
+                const section = element.closest("section");
+                if (!section) return;
+
+                const bounds = element.getBoundingClientRect();
+                const paddingTop =
+                    parseFloat(getComputedStyle(section).paddingTop) || 0;
+
+                // 긴 설명은 상단부터 읽을 수 있도록 완료 기준을 제한한다.
+                const anchorOffset = Math.min(
+                    bounds.height / 2,
+                    Math.max(0, availableHeight / 2 - paddingTop),
+                );
+                const anchor = bounds.top + anchorOffset;
+
                 const progress =
                     reducedMotion.matches || element.contains(document.activeElement)
                         ? 1
                         : Math.max(
                             0,
-                            Math.min(1, (revealStart - top) / revealDistance),
+                            Math.min(1, (revealStart - anchor) / revealDistance),
                         );
 
-                // 스크롤을 되돌리면 등장 효과도 같은 경로로 되돌린다.
+                // 위로 돌아가면 기존처럼 자연스럽게 사라진다.
                 element.style.setProperty("--home-reveal-progress", String(progress));
             });
         }
@@ -164,8 +184,16 @@ export default function Home() {
             if (!frame) frame = requestAnimationFrame(updateReveal);
         }
 
+        // 언어 변경이나 헤더 크기 변경에도 배치를 다시 계산한다.
+        const resizeObserver = new ResizeObserver(scheduleReveal);
+        if (header) resizeObserver.observe(header);
+        contents.forEach((element) => resizeObserver.observe(element));
+
         updateReveal();
+
         window.addEventListener("scroll", scheduleReveal, { passive: true });
+        // 원을 눌러 이동한 뒤에도 최종 위치에서 표시 상태를 갱신한다.
+        document.addEventListener("scrollend", scheduleReveal);
         window.addEventListener("resize", scheduleReveal);
         root.addEventListener("focusin", scheduleReveal);
         root.addEventListener("focusout", scheduleReveal);
@@ -173,7 +201,9 @@ export default function Home() {
 
         return () => {
             cancelAnimationFrame(frame);
+            resizeObserver.disconnect();
             window.removeEventListener("scroll", scheduleReveal);
+            document.removeEventListener("scrollend", scheduleReveal);
             window.removeEventListener("resize", scheduleReveal);
             root.removeEventListener("focusin", scheduleReveal);
             root.removeEventListener("focusout", scheduleReveal);
@@ -185,24 +215,22 @@ export default function Home() {
         const element = document.getElementById(id);
         if (!element) return;
 
+        // 화면에 적용된 실제 헤더 높이를 기준으로 이동 위치를 계산한다.
         const headerHeight =
-            parseFloat(
-                getComputedStyle(document.documentElement).getPropertyValue("--header-height"),
-            ) || 88;
+            document.querySelector("header")?.getBoundingClientRect().height || 88;
 
         const maxTop = Math.max(
             0,
             document.documentElement.scrollHeight - window.innerHeight,
         );
 
+        // 소개 구역의 시작을 헤더 바로 아래에 맞춘다.
+        const offset = headerHeight + (id === "main" ? 16 : 0);
         const top = Math.min(
             maxTop,
             Math.max(
                 0,
-                element.getBoundingClientRect().top +
-                window.scrollY -
-                headerHeight -
-                16,
+                element.getBoundingClientRect().top + window.scrollY - offset,
             ),
         );
 
@@ -223,24 +251,32 @@ export default function Home() {
     }, []);
 
     useLayoutEffect(() => {
+        // 다른 서비스로 이동하는 동안 홈의 위치 복원을 실행하지 않는다.
+        if (location.pathname !== "/") return;
         if (location.hash === syncedHash.current) return;
 
         syncedHash.current = location.hash;
         const id = location.hash.slice(1);
 
-        // 직접 해시 접근과 뒤로·앞으로 이동에도 헤더 여백을 적용한다.
+        // 직접 해시 접근과 뒤로·앞으로 이동에 헤더 여백을 적용한다.
         const frame = requestAnimationFrame(() => {
+            // 예약된 작업보다 페이지 이동이 먼저 끝난 경우에도 중단한다.
+            if (window.location.pathname !== "/") return;
+
             scrollToSection(sectionIds.includes(id) ? id : "main", "auto");
         });
 
         return () => cancelAnimationFrame(frame);
-    }, [location.hash, scrollToSection]);
+    }, [location.pathname, location.hash, scrollToSection]);
 
     useEffect(() => {
         let frame = 0;
 
         function updateSection() {
             frame = 0;
+
+            // 다른 페이지로 이동한 뒤에는 홈의 주소 갱신을 중단한다.
+            if (window.location.pathname !== "/") return;
 
             if (movingTo.current) {
                 if (Math.abs(window.scrollY - movingTo.current.top) > 2) return;
@@ -251,7 +287,11 @@ export default function Home() {
                 return;
             }
 
-            const probe = window.innerHeight * 0.35;
+            // 화면의 세로 중앙에 들어온 구역을 현재 소개로 표시한다.
+            const headerHeight =
+                document.querySelector("header")?.getBoundingClientRect().height || 88;
+            const probe =
+                headerHeight + (window.innerHeight - headerHeight) / 2;
             let id = "main";
 
             sectionIds.forEach((candidate) => {
