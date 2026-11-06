@@ -1,4 +1,5 @@
 import { useAuthStore } from "../auth/store/useAuthStore.js";
+import { ApiError } from "./apiError.js";
 import { API_BASE, parseResponse, toNetworkError } from "./client.js";
 
 // 진행 중인 재발급 요청 상태를 저장함. refresh token은 쓸 때마다 바뀐다.
@@ -34,12 +35,19 @@ async function requestRefresh() {
             // 재발급 API는 POST 방식으로 호출한다.
             response = await fetch(`${API_BASE}/auth/refresh`, {
                 method: "POST",
-                credentials: "same-origin", // 현재 페이지와 같은 출처로 요청할 때 쿠키를 함께 보낸다.
-                // 서버로부터 JSON 응답을 받기 위함.
+                credentials: "same-origin",
                 headers: { Accept: "application/json" },
+                signal: AbortSignal.timeout(10000),
             });
-        } catch (error) {
             // 연결에 실패했을 때 에러 처리.
+        } catch (error) {
+            if (error?.name === "TimeoutError") {
+                throw new ApiError(
+                    "TIMEOUT",
+                    "토큰 재발급 요청 시간이 초과되었습니다."
+                );
+            }
+
             throw toNetworkError(error);
         }
 
@@ -72,12 +80,17 @@ async function requestRefresh() {
             member: data.member ?? null, //member가 null이나 undefined이면 null로 한다.
         });
         return data.accessToken;
-    } catch (error) {
         // 네트워크 오류, 응답 처리 오류, 토큰 누락은 여기서 한번에 받는다.
         // 단, 기다리는 사이 새로 로그인했다면 그 로그인 상태는 지우지 않는다.
-        if (!isStale()) {
+    } catch (error) {
+        const isTemporaryFailure =
+            error?.code === "NETWORK_ERROR" ||
+            error?.code === "TIMEOUT";
+
+        if (!isStale() && !isTemporaryFailure) {
             useAuthStore.getState().clearAuth();
         }
+
         throw error;
     }
 }

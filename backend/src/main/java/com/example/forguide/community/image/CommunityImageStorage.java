@@ -9,7 +9,8 @@ public class CommunityImageStorage extends LocalImageStorage {
     // 로그인 없이 조회 가능한 커뮤니티 이미지 URL
     public static final String URL_PREFIX = "/api/v1/community-images/";
 
-    private static final long MAX_BYTES = 20L * 1024 * 1024;
+    // 커뮤니티 사진 한 장당 최대 4MB
+    private static final long MAX_BYTES = 4L * 1024 * 1024;
 
     public CommunityImageStorage(
             CommunityImageProperties properties

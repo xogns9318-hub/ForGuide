@@ -9,7 +9,12 @@ import com.example.forguide.common.response.ApiResponse;
 import com.example.forguide.community.report.CommunityReportImageResponse;
 import com.example.forguide.community.report.CommunityReportService;
 import com.example.forguide.admin.dto.AdminCommunityReportResponse;
+import com.example.forguide.translation.dto.TranslationRequest;
+import com.example.forguide.translation.dto.TranslationResponse;
+import com.example.forguide.translation.dto.TranslationTargetRequest;
+
 import java.nio.file.Path;
+
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -36,6 +41,22 @@ public class AdminCommunityController {
             @Valid @ModelAttribute AdminCommunityContentCursorRequest cursor
     ) {
         return ApiResponse.ok(adminCommunityService.getContents(cursor));
+    }
+
+    // 관리자가 게시글·댓글 원문을 선택한 언어로 번역한다.
+    @PostMapping("/contents/{resourceType}/{resourceId}/translation")
+    public ApiResponse<TranslationResponse> translateContent(
+            @PathVariable AdminCommunityResourceType resourceType,
+            @PathVariable Long resourceId,
+            @Valid @RequestBody TranslationTargetRequest request
+    ) {
+        return ApiResponse.ok(
+                adminCommunityService.translateContent(
+                        resourceType,
+                        resourceId,
+                        request.getTargetLanguage()
+                )
+        );
     }
 
     @GetMapping("/reports")

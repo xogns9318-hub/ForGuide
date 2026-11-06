@@ -97,23 +97,9 @@ export async function deleteResumePhoto(resumeId) {
 
 // 보호된 사진 API를 인증 요청으로 호출해 브라우저 미리보기 주소를 만든다.
 export async function getResumePhotoPreviewUrl(resumeId) {
-    const { accessToken } = useAuthStore.getState();
-
-    const response = await fetch(
-        `${API_BASE}/employment/resumes/${resumeId}/photo`,
-        {
-            headers: accessToken
-                ? { Authorization: `Bearer ${accessToken}` }
-                : {},
-            credentials: "same-origin",
-        },
+    const photoBlob = await client.getBlob(
+        `/employment/resumes/${resumeId}/photo`
     );
-
-    if (!response.ok) {
-        throw new Error("이력서 사진을 불러오지 못했습니다.");
-    }
-
-    const photoBlob = await response.blob();
 
     return URL.createObjectURL(photoBlob);
 }
