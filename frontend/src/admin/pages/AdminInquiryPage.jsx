@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { answerAdminInquiry, getAdminInquiries } from "../../api/adminApi.js";
-import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
+import {
+    answerAdminInquiry,
+    getAdminInquiries,
+    translateAdminInquiryText,
+} from "../../api/adminApi.js";import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import InquiryImageList from "../../inquiry/components/InquiryImageList.jsx";
 import { formatDateTime } from "../../utils/formatDateTime.js";
 import styles from "../../styles/adminInquiry.module.css";
@@ -11,7 +14,12 @@ const PAGE_SIZE = 10;
 export default function AdminInquiryPage() {
     const { t, i18n } = useTranslation();
 
+    const targetLanguage = (
+        i18n.resolvedLanguage || i18n.language || "ko"
+    ).split("-")[0];
+
     const [inquiries, setInquiries] = useState([]);
+    const [translatedInquiries, setTranslatedInquiries] = useState({});
     const [inquiryStatus, setInquiryStatus] = useState("");
     const [answerDrafts, setAnswerDrafts] = useState({});
     const [isLoading, setIsLoading] = useState(true);
@@ -27,6 +35,7 @@ export default function AdminInquiryPage() {
     const cursorInquiryIdRef = useRef(null);
     const isLoadingRef = useRef(false);
     const hasMoreRef = useRef(true);
+    const translationRequestsRef = useRef(new Set());
 
     // 상태 필터와 커서를 함께 서버에 전달해 필요한 문의만 읽는다.
     const loadInquiries = useCallback(
@@ -90,6 +99,98 @@ export default function AdminInquiryPage() {
         void loadInquiries({ reset: true });
     }, [loadInquiries]);
 
+    // 관리자 문의 제목 자동 번역
+    useEffect(() => {
+        if (targetLanguage === "ko") return;
+
+        inquiries.forEach((inquiry) => {
+            const key = `${targetLanguage}:${inquiry.inquiryId}:title`;
+
+            if (translationRequestsRef.current.has(key)) return;
+
+            translationRequestsRef.current.add(key);
+
+            translateAdminInquiryText(inquiry.inquiryId, "title", targetLanguage)
+                .then((response) => {
+                    setTranslatedInquiries((previous) => ({
+                        ...previous,
+                        [targetLanguage]: {
+                            ...previous[targetLanguage],
+                            [inquiry.inquiryId]: {
+                                ...previous[targetLanguage]?.[inquiry.inquiryId],
+                                title: response.translatedText,
+                            },
+                        },
+                    }));
+                })
+                .catch(() => {
+                    translationRequestsRef.current.delete(key);
+                });
+        });
+    }, [inquiries, targetLanguage]);
+
+    // 관리자 문의 내용 자동 번역
+    useEffect(() => {
+        if (targetLanguage === "ko") return;
+
+        inquiries.forEach((inquiry) => {
+            const key = `${targetLanguage}:${inquiry.inquiryId}:content`;
+
+            if (translationRequestsRef.current.has(key)) return;
+
+            translationRequestsRef.current.add(key);
+
+            translateAdminInquiryText(inquiry.inquiryId, "content", targetLanguage)
+                .then((response) => {
+                    setTranslatedInquiries((previous) => ({
+                        ...previous,
+                        [targetLanguage]: {
+                            ...previous[targetLanguage],
+                            [inquiry.inquiryId]: {
+                                ...previous[targetLanguage]?.[inquiry.inquiryId],
+                                content: response.translatedText,
+                            },
+                        },
+                    }));
+                })
+                .catch(() => {
+                    translationRequestsRef.current.delete(key);
+                });
+        });
+    }, [inquiries, targetLanguage]);
+
+    // 관리자 답변 자동 번역
+    useEffect(() => {
+        if (targetLanguage === "ko") return;
+
+        inquiries.forEach((inquiry) => {
+            if (!inquiry.answerContent) return;
+
+            const key = `${targetLanguage}:${inquiry.inquiryId}:answer`;
+
+            if (translationRequestsRef.current.has(key)) return;
+
+            translationRequestsRef.current.add(key);
+
+            translateAdminInquiryText(inquiry.inquiryId, "answer", targetLanguage)
+                .then((response) => {
+                    setTranslatedInquiries((previous) => ({
+                        ...previous,
+                        [targetLanguage]: {
+                            ...previous[targetLanguage],
+                            [inquiry.inquiryId]: {
+                                ...previous[targetLanguage]?.[inquiry.inquiryId],
+                                answer: response.translatedText,
+                            },
+                        },
+                    }));
+                })
+                .catch(() => {
+                    translationRequestsRef.current.delete(key);
+                });
+        });
+    }, [inquiries, targetLanguage]);
+
     const observerTarget = useInfiniteScroll({
         enabled: hasMore && !isLoading && !listError,
         onLoadMore: loadInquiries,
@@ -134,6 +235,31 @@ export default function AdminInquiryPage() {
 
         try {
             await answerAdminInquiry(inquiryId, answerContent);
+
+            // 새 답변의 번역 결과와 기존 요청 기록을 초기화한다.
+            setTranslatedInquiries((previous) => {
+                const next = { ...previous };
+
+                Object.keys(next).forEach((language) => {
+                    if (!next[language]?.[inquiryId]) return;
+
+                    next[language] = {
+                        ...next[language],
+                        [inquiryId]: {
+                            ...next[language][inquiryId],
+                            answer: undefined,
+                        },
+                    };
+                });
+
+                return next;
+            });
+
+            for (const key of translationRequestsRef.current) {
+                if (key.endsWith(`:${inquiryId}:answer`)) {
+                    translationRequestsRef.current.delete(key);
+                }
+            }
 
             setAnswerDrafts((previous) => {
                 const next = { ...previous };
@@ -227,9 +353,15 @@ export default function AdminInquiryPage() {
                                 <p className={styles.category}>
                                     {t(`inquiry.category.${inquiry.inquiryCategory}`)}
                                 </p>
-                                <h2>{inquiry.title}</h2>
+                                <h2>
+                                    {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.title
+                                        || inquiry.title}
+                                </h2>
 
-                                <p className={styles.content}>{inquiry.content}</p>
+                                <p className={styles.content}>
+                                    {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.content
+                                        || inquiry.content}
+                                </p>
                                 <InquiryImageList
                                     inquiryId={inquiry.inquiryId}
                                     images={inquiry.images}
@@ -239,7 +371,10 @@ export default function AdminInquiryPage() {
                                 {isAnswered ? (
                                     <div className={styles.answer}>
                                         <h3>{t("inquiry.answer.title")}</h3>
-                                        <p>{inquiry.answerContent}</p>
+                                        <p>
+                                            {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.answer
+                                                || inquiry.answerContent}
+                                        </p>
                                         <time dateTime={inquiry.answeredAt}>
                                             {formatDateTime(inquiry.answeredAt, i18n.language)}
                                         </time>

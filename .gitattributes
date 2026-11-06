@@ -1,3 +1,6 @@
 /gradlew text eol=lf
 *.bat text eol=crlf
 *.jar binary
+# 서버(리눅스)에서 쓰는 배포 파일은 LF로 고정
+/deploy/** text eol=lf
+/deploy/*.ps1 text eol=crlf

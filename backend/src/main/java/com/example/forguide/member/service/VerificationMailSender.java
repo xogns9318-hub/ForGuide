@@ -21,14 +21,24 @@ public class VerificationMailSender {
 
     private final JavaMailSender mailSender; // 메일 계정이 없으면 null
     private final String from;
+    private final boolean allowDevMailLog;
 
-    public VerificationMailSender(ObjectProvider<JavaMailSender> mailSender,
-                                  @Value("${spring.mail.username:}") String from) {
+    public VerificationMailSender(
+            ObjectProvider<JavaMailSender> mailSender,
+            @Value("${spring.mail.username:}") String from,
+            @Value("${forguide.mail.allow-dev-log:false}")
+            boolean allowDevMailLog
+    ) {
         boolean configured = from != null && !from.isBlank();
-        this.mailSender = configured ? mailSender.getIfAvailable() : null;
+
+        this.mailSender =
+                configured ? mailSender.getIfAvailable() : null;
+
         this.from = from;
+        this.allowDevMailLog = allowDevMailLog;
+
         if (this.mailSender == null) {
-            log.warn("메일 계정(FORGUIDE_MAIL_USERNAME)이 없어 인증 코드를 메일 대신 서버 로그에 남깁니다. 배포 환경에서는 설정하세요.");
+            log.warn("이메일 발송 설정이 없습니다.");
         }
     }
 
@@ -38,9 +48,14 @@ public class VerificationMailSender {
      */
     public void send(String email, String code, VerificationPurpose purpose, long validMinutes) {
         if (mailSender == null) {
-            log.warn("[개발용] 메일 계정이 설정되지 않아 인증 메일을 보내지 않았습니다. to={}, purpose={}, code={}",
-                    email, purpose, code);
-            return;
+            if (allowDevMailLog) {
+                log.warn("[개발용] 인증 코드: {}", code);
+                return;
+            }
+
+            throw new IllegalStateException(
+                    "이메일 발송 설정이 없습니다."
+            );
         }
 
         String what = switch (purpose) {
@@ -57,7 +72,7 @@ public class VerificationMailSender {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(from);
         message.setTo(email);
-        message.setSubject("[ForGuide] 인증 코드 / Verification code: " + code);
+        message.setSubject("[ForGuide] 이메일 인증 / Email Verification");
         message.setText("""
                 ForGuide %s 인증 코드입니다.
                 Your ForGuide %s verification code is:

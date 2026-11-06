@@ -4,6 +4,7 @@ import {
     createInquiry,
     deleteMyReceivedInquiry,
     getMyInquiries,
+    translateMyInquiryText,
 } from "../../api/inquiryApi.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import InquiryImageList from "../components/InquiryImageList.jsx";
@@ -22,9 +23,13 @@ const INITIAL_FORM = {
 
 export default function InquiryPage() {
     const { t, i18n } = useTranslation();
+    const targetLanguage = (
+        i18n.resolvedLanguage || i18n.language || "ko"
+    ).split("-")[0];
 
     const [form, setForm] = useState(INITIAL_FORM);
     const [inquiries, setInquiries] = useState([]);
+    const [translatedInquiries, setTranslatedInquiries] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isListLoading, setIsListLoading] = useState(true);
     const [hasMore, setHasMore] = useState(true);
@@ -38,6 +43,8 @@ export default function InquiryPage() {
     const cursorInquiryIdRef = useRef(null);
     const isLoadingRef = useRef(false);
     const hasMoreRef = useRef(true);
+    const translatedTitleRequestsRef = useRef(new Set());
+
 
     // 첫 조회와 다음 목록 조회가 같은 커서 규칙을 사용한다.
     const loadInquiries = useCallback(
@@ -99,6 +106,97 @@ export default function InquiryPage() {
     useEffect(() => {
         void loadInquiries({ reset: true });
     }, [loadInquiries]);
+
+    useEffect(() => {
+        if (targetLanguage === "ko") return;
+
+        inquiries.forEach((inquiry) => {
+            const key = `${targetLanguage}:${inquiry.inquiryId}:title`;
+
+            if (translatedTitleRequestsRef.current.has(key)) return;
+
+            translatedTitleRequestsRef.current.add(key);
+
+            translateMyInquiryText(inquiry.inquiryId, "title", targetLanguage)
+                .then((response) => {
+                    setTranslatedInquiries((previous) => ({
+                        ...previous,
+                        [targetLanguage]: {
+                            ...previous[targetLanguage],
+                            [inquiry.inquiryId]: {
+                                ...previous[targetLanguage]?.[inquiry.inquiryId],
+                                title: response.translatedText,
+                            },
+                        },
+                    }));
+                })
+                .catch(() => {
+                    translatedTitleRequestsRef.current.delete(key);
+                });
+        });
+    }, [inquiries, targetLanguage]);
+
+    // 문의 내용 자동 번역
+    useEffect(() => {
+        if (targetLanguage === "ko") return;
+
+        inquiries.forEach((inquiry) => {
+            const key = `${targetLanguage}:${inquiry.inquiryId}:content`;
+
+            if (translatedTitleRequestsRef.current.has(key)) return;
+
+            translatedTitleRequestsRef.current.add(key);
+
+            translateMyInquiryText(inquiry.inquiryId, "content", targetLanguage)
+                .then((response) => {
+                    setTranslatedInquiries((previous) => ({
+                        ...previous,
+                        [targetLanguage]: {
+                            ...previous[targetLanguage],
+                            [inquiry.inquiryId]: {
+                                ...previous[targetLanguage]?.[inquiry.inquiryId],
+                                content: response.translatedText,
+                            },
+                        },
+                    }));
+                })
+                .catch(() => {
+                    translatedTitleRequestsRef.current.delete(key);
+                });
+        });
+    }, [inquiries, targetLanguage]);
+
+    // 관리자 답변 자동 번역
+    useEffect(() => {
+        if (targetLanguage === "ko") return;
+
+        inquiries.forEach((inquiry) => {
+            if (!inquiry.answerContent) return;
+
+            const key = `${targetLanguage}:${inquiry.inquiryId}:answer`;
+
+            if (translatedTitleRequestsRef.current.has(key)) return;
+
+            translatedTitleRequestsRef.current.add(key);
+
+            translateMyInquiryText(inquiry.inquiryId, "answer", targetLanguage)
+                .then((response) => {
+                    setTranslatedInquiries((previous) => ({
+                        ...previous,
+                        [targetLanguage]: {
+                            ...previous[targetLanguage],
+                            [inquiry.inquiryId]: {
+                                ...previous[targetLanguage]?.[inquiry.inquiryId],
+                                answer: response.translatedText,
+                            },
+                        },
+                    }));
+                })
+                .catch(() => {
+                    translatedTitleRequestsRef.current.delete(key);
+                });
+        });
+    }, [inquiries, targetLanguage]);
 
     const observerTarget = useInfiniteScroll({
         enabled: hasMore && !isListLoading && !listError,
@@ -331,8 +429,14 @@ export default function InquiryPage() {
                                 <p className={styles.category}>
                                     {t(`inquiry.category.${inquiry.inquiryCategory}`)}
                                 </p>
-                                <h3>{inquiry.title}</h3>
-                                <p className={styles.content}>{inquiry.content}</p>
+                                <h3>
+                                    {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.title
+                                        || inquiry.title}
+                                </h3>
+                                <p className={styles.content}>
+                                    {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.content
+                                        || inquiry.content}
+                                </p>
                                 <InquiryImageList
                                     inquiryId={inquiry.inquiryId}
                                     images={inquiry.images}
@@ -341,7 +445,10 @@ export default function InquiryPage() {
                                 {inquiry.answerContent && (
                                     <div className={styles.answer}>
                                         <h4>{t("inquiry.answer.title")}</h4>
-                                        <p>{inquiry.answerContent}</p>
+                                        <p>
+                                            {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.answer
+                                                || inquiry.answerContent}
+                                        </p>
                                         <time dateTime={inquiry.answeredAt}>
                                             {formatDateTime(inquiry.answeredAt, i18n.language)}
                                         </time>

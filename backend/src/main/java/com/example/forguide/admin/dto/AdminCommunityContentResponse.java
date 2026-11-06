@@ -17,6 +17,8 @@ public class AdminCommunityContentResponse {
     private String authorNickname;
 
     private String content;
+    private String sourceLanguage;
+    private Integer contentVersion;
     private LocalDateTime createdAt;
 
     // 관리 기록이 아직 없으면 SQL에서 VISIBLE로 채운다.

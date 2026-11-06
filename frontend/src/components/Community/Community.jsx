@@ -29,8 +29,9 @@ import CommunityPostEditForm from "./CommunityPostEditForm.jsx";
 import CommunityPostModal from "./CommunityPostModal.jsx";
 import CommunityReportAction from "./CommunityReportAction.jsx";
 
-const MAX_IMAGE_COUNT = 4;
-const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
+// 게시글 사진은 최대 5장, 한 장당 4MB
+const MAX_IMAGE_COUNT = 5;
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
 // 아이콘은 화면 표현 책임이므로 프론트에서 관리한다.
 // 실제 선택 코드·문구 키·표시 순서는 서버 DB에서 받아온다.
@@ -99,10 +100,40 @@ function PostCard({
     const [repostError, setRepostError] = useState("");
     const isOwner = Number(post.memberId) === Number(currentMemberId);
     const relatedServiceLink = RELATED_SERVICE_LINKS[post.relatedService];
-    const targetLanguage = i18n.resolvedLanguage || i18n.language || "ko";
+    const targetLanguage = (i18n.resolvedLanguage || i18n.language || "ko").split("-")[0];
+    const sourceLanguage = (post.language || post.sourceLanguage || "").split("-")[0];
     const formattedDate = post.createdAt
         ? new Date(post.createdAt).toLocaleDateString("ko-KR")
         : "";
+
+    useEffect(() => {
+        let isMounted = true;
+
+        // 게시글이나 언어가 바뀌면 이전 번역 결과를 초기화한다.
+        setTranslatedContent("");
+
+        async function loadTranslation() {
+            if (!post.content?.trim() || (sourceLanguage && sourceLanguage === targetLanguage)) {
+                return;
+            }
+
+            try {
+                const response = await translateCommunityPost(post.postId, targetLanguage);
+
+                if (isMounted && response.translatedText) {
+                    setTranslatedContent(response.translatedText);
+                }
+            } catch {
+                // 번역 실패 시 원문을 그대로 표시한다.
+            }
+        }
+
+        loadTranslation();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [post.postId, post.content, sourceLanguage, targetLanguage]);
 
     useEffect(() => {
         let isMounted = true;
@@ -266,7 +297,9 @@ function PostCard({
                             }
                         }}
                     >
-                        <p className="community-post-content">{post.content}</p>
+                        <p className="community-post-content">
+                            {translatedContent || post.content}
+                        </p>
                         {post.images?.length > 0 && (
                             <div className="community-post-images">
                                 {post.images.map((image, index) => (
@@ -375,7 +408,7 @@ export default function Community() {
     const [popularError, setPopularError] = useState("");
     const [popularSort, setPopularSort] = useState("likes");
     const [popularTranslations, setPopularTranslations] = useState({});
-    const targetLanguage = i18n.resolvedLanguage || i18n.language || "ko";
+    const targetLanguage = (i18n.resolvedLanguage || i18n.language || "ko").split("-")[0];
     const [feedType, setFeedType] = useState("all");
     const [postCategory, setPostCategory] = useState("FREE_TALK");
     const [relatedService, setRelatedService] = useState("");
@@ -532,7 +565,12 @@ export default function Community() {
 
             for (const post of popularPosts) {
                 // 원문 언어와 현재 사이트 언어가 같으면 번역할 필요가 없다.
-                if (!post.content?.trim() || !post.language || post.language === targetLanguage) {
+                const sourceLanguage = (post.language || post.sourceLanguage || "").split("-")[0];
+
+                if (
+                    !post.content?.trim() ||
+                    (sourceLanguage && sourceLanguage === targetLanguage)
+                ) {
                     continue;
                 }
 
@@ -625,7 +663,10 @@ export default function Community() {
     function handleImageChange(event) {
         if (!accessToken || !currentMemberId) {
             event.target.value = "";
-            navigate("/login");
+
+            const next = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+            navigate(`/login?next=${encodeURIComponent(next)}`);
+
             return;
         }
 
@@ -685,7 +726,9 @@ export default function Community() {
         if (accessToken && currentMemberId) return;
 
         event?.preventDefault();
-        navigate("/login");
+
+        const next = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+        navigate(`/login?next=${encodeURIComponent(next)}`);
     }
 
     async function handleSubmit(event) {
@@ -694,7 +737,13 @@ export default function Community() {
 
         if (!accessToken || !currentMemberId) {
             setWriteError(t("community.feedback.writeLoginRequired"));
-            window.setTimeout(() => navigate("/login"), 900);
+
+            const next = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+            window.setTimeout(() => {
+                navigate(`/login?next=${encodeURIComponent(next)}`);
+            }, 900);
+
             return;
         }
         // 서버 옵션을 확인할 수 없으면 잘못된 카테고리로 게시글을 저장하지 않는다.
@@ -1083,16 +1132,11 @@ export default function Community() {
                                 </button>
                             </div>
                         )}
-                        {!isLoading && !error && posts.length === 0 && (
-                            <p className="community-state-message">{t("community.feed.empty")}</p>
-                        )}
+
                         {deleteError && (
                             <p className="community-write-error" role="alert">
                                 {deleteError}
                             </p>
-                        )}
-                        {!hasMore && posts.length > 0 && (
-                            <p className="community-end-message">{t("community.feed.end")}</p>
                         )}
                         <div ref={observerTarget} aria-hidden="true" />
                     </div>

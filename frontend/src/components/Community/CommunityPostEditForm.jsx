@@ -2,8 +2,8 @@ import { useState } from "react";
 import { updateCommunityPost } from "../../api/communityApi.js";
 import { useTranslation } from "react-i18next";
 
-const MAX_IMAGE_COUNT = 4;
-const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
+const MAX_IMAGE_COUNT = 5;
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
 // 게시글 본문과 기존·새 사진을 한 번에 수정하는 폼
 export default function CommunityPostEditForm({ post, onCancel, onUpdated }) {

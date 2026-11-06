@@ -72,7 +72,11 @@ export async function getCommunityPost(postId) {
 // 공개 게시글을 현재 선택 언어로 번역한다.
 // 원문은 postId를 통해 서버가 직접 조회한다.
 export async function translateCommunityPost(postId, targetLanguage) {
-    return client.post(`/community/posts/${postId}/translation`, { targetLanguage });
+    return client.post(
+        `/community/posts/${postId}/translation`,
+        { targetLanguage },
+        { timeoutMs: 30_000 }
+    );
 }
 
 // 무한 스크롤에 사용할 게시글 목록을 가져온다.
@@ -157,10 +161,16 @@ export async function getCommunityComments(
 
 // 공개 댓글을 현재 선택 언어로 번역한다.
 // 댓글 원문은 postID,commentId를 이용해 서버가 직접 조회한다.
-export async function translateCommunityComment(postId, commentId, targetLanguage) {
-    return client.post(`/community/posts/${postId}/comments/${commentId}/translation`, {
-        targetLanguage,
-    });
+export async function translateCommunityComment(
+    postId,
+    commentId,
+    targetLanguage
+) {
+    return client.post(
+        `/community/posts/${postId}/comments/${commentId}/translation`,
+        { targetLanguage },
+        { timeoutMs: 30_000 }
+    );
 }
 
 // 로그인한 사용자의 댓글·답글 작성. parentCommentId가 없으면 일반 댓글이다.

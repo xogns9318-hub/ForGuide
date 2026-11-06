@@ -1,7 +1,6 @@
 import { client } from "../../api/client.js";
 import { refreshAccessToken } from "../../api/tokenRefresh.js";
 import { useAuthStore } from "../store/useAuthStore.js";
-import { clearResumeTemporaryDraft } from "../../utils/resumeDraftStorage.js";
 
 // ── 회원가입·로그인·로그아웃 API (화면은 이 함수들만 쓴다) ──
 
@@ -79,14 +78,9 @@ export async function restoreSession() {
 // 로그아웃
 // 서버에서 refresh token을 지우고(쿠키 포함), 실패하더라도 이 화면의 로그인 상태는 반드시 지운다
 export async function logout() {
-    const memberId = useAuthStore.getState().member?.memberId;
-
     try {
         await client.post("/auth/logout");
     } finally {
-        if (memberId) {
-            clearResumeTemporaryDraft(memberId);
-        }
         useAuthStore.getState().clearAuth();
     }
 }

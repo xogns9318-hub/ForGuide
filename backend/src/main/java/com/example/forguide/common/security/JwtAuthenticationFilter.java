@@ -61,8 +61,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 인증 정보 = (누구인지, 비밀번호, 권한 목록). principal 자리에 회원 번호를 넣는다
                 // 컨트롤러에서는 @AuthenticationPrincipal Long memberId 로 꺼낸다
                 // 권한은 "ROLE_USER" / "ROLE_ADMIN" → SecurityConfig의 hasRole("ADMIN")이 이 값을 본다
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        claims.memberId(), null, List.of(new SimpleGrantedAuthority("ROLE_" + claims.role())));
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                member.getMemberId(),
+                                null,
+                                List.of(
+                                        new SimpleGrantedAuthority(
+                                                "ROLE_" + member.getRole()
+                                        )
+                                )
+                        );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (ApiException e) {
                 // 필터의 예외는 컨트롤러 예외 처리기가 받지 못한다. 이유(TOKEN_EXPIRED 등)만 남기고 응답은 EntryPoint가 만든다

@@ -71,7 +71,7 @@ function Field({ label, children }) {
 }
 
 // 기관 안내의 긴 원문만 번역한다. 기관명·주소·전화번호 같은 사실값은 이 컴포넌트를 사용하지 않는다.
-function InstitutionTranslation({ institutionId, field, language }) {
+function InstitutionTranslation({ institutionId, field, language, fallback }) {
     const [translation, setTranslation] = useState("");
 
     useEffect(() => {
@@ -107,7 +107,7 @@ function InstitutionTranslation({ institutionId, field, language }) {
         };
     }, [field, institutionId, language]);
 
-    return translation ? <p className={styles.translationResult}>{translation}</p> : null;
+    return translation ? <p className={styles.translationResult}>{translation}</p> : fallback;
 }
 
 // 카드에서는 언어를 요약하고, 상세에서는 원문과 이용 조건을 모두 보여준다.
@@ -335,13 +335,15 @@ function InstitutionDialog({ id, filters, language, onClose, t }) {
 
             {item && (
                 <div className={styles.detailBody}>
-                    <p>{item.description || t("unknown")}</p>
-                    {item.description && (
+                    {item.description ? (
                         <InstitutionTranslation
                             institutionId={item.id}
                             field="description"
                             language={language}
+                            fallback={<p>{item.description}</p>}
                         />
+                    ) : (
+                        <p>{t("unknown")}</p>
                     )}
 
                     {item.verificationStatus !== "verified" && (
@@ -350,13 +352,15 @@ function InstitutionDialog({ id, filters, language, onClose, t }) {
 
                     <dl className={styles.fields}>
                         <Field label={t("fields.target")}>
-                            <p>{item.targetDescription || t("unknown")}</p>
-                            {item.targetDescription && (
+                            {item.targetDescription ? (
                                 <InstitutionTranslation
                                     institutionId={item.id}
                                     field="target"
                                     language={language}
+                                    fallback={<p>{item.targetDescription}</p>}
                                 />
+                            ) : (
+                                <p>{t("unknown")}</p>
                             )}
                         </Field>
 
@@ -385,11 +389,11 @@ function InstitutionDialog({ id, filters, language, onClose, t }) {
 
                     {item.additionalNotes && (
                         <div>
-                            <p className={styles.notice}>{item.additionalNotes}</p>
                             <InstitutionTranslation
                                 institutionId={item.id}
                                 field="notes"
                                 language={language}
+                                fallback={<p className={styles.notice}>{item.additionalNotes}</p>}
                             />
                         </div>
                     )}
@@ -407,21 +411,21 @@ function InstitutionDialog({ id, filters, language, onClose, t }) {
                     </dl>
 
                     {guide.scopeNotes.length > 0 && (
-                        <>
-                            <details>
-                                <summary>{t("scopeNotesTitle")}</summary>
-                                <ul>
-                                    {guide.scopeNotes.map((note) => (
-                                        <li key={note}>{note}</li>
-                                    ))}
-                                </ul>
-                            </details>
-                            <InstitutionTranslation
-                                institutionId={item.id}
-                                field="scope-notes"
-                                language={language}
-                            />
-                        </>
+                        <InstitutionTranslation
+                            institutionId={item.id}
+                            field="scope-notes"
+                            language={language}
+                            fallback={
+                                <details>
+                                    <summary>{t("scopeNotesTitle")}</summary>
+                                    <ul>
+                                        {guide.scopeNotes.map((note) => (
+                                            <li key={note}>{note}</li>
+                                        ))}
+                                    </ul>
+                                </details>
+                            }
+                        />
                     )}
 
                     <h3>{t("usageInfoTitle")}</h3>
@@ -434,16 +438,18 @@ function InstitutionDialog({ id, filters, language, onClose, t }) {
                                     <p>{group.labels.join(" / ")}</p>
                                 </>
                             )}
-                            <ServiceInformation
-                                service={group.service}
-                                guidance={item.guidance}
-                                t={t}
-                                language={language}
-                            />
                             <InstitutionTranslation
                                 institutionId={item.id}
                                 field={`service-guide-${group.service.id}`}
                                 language={language}
+                                fallback={
+                                    <ServiceInformation
+                                        service={group.service}
+                                        guidance={item.guidance}
+                                        t={t}
+                                        language={language}
+                                    />
+                                }
                             />
                         </div>
                     ))}
@@ -647,17 +653,19 @@ export default function ConsultationResults({ filters, visible, reloadKey }) {
                                 )}
 
                                 <div>
-                                    <ServiceInformation
-                                        service={item.preview}
-                                        guidance={item.guidance}
-                                        t={t}
-                                        language={i18n.language}
-                                        compact
-                                    />
                                     <InstitutionTranslation
                                         institutionId={item.id}
                                         field="guidance"
                                         language={i18n.language}
+                                        fallback={
+                                            <ServiceInformation
+                                                service={item.preview}
+                                                guidance={item.guidance}
+                                                t={t}
+                                                language={i18n.language}
+                                                compact
+                                            />
+                                        }
                                     />
 
                                     <dl className={styles.fields}>
