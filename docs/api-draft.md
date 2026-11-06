@@ -540,16 +540,16 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - 프론트 함수: `getConsultationOptions()`
 - 상담 분야 6개와 분야별 대표 키워드 3개씩 총 18개를 반환한다.
 - 지역·언어·상담 방식 목록은 기존 값을 유지한다.
-- 로컬 선택 목록을 읽으며 기존 500ms 지연을 유지한다. 실제 기관 데이터는 DB API에서 조회한다.
+  - 로컬 선택 목록을 읽으며 기존 500ms 지연을 유지한다. 기관 검색과 상세 조회에는 실제 서버 API를 사용한다.
 - 반환 구조: `{ topics, regions, languages, methods }`
 - topics 항목: `{ code, name, keywords, rules }`
 - rules는 대표 키워드를 기존 DB 업무의 분야 코드와 세부 키워드에 연결한다.
 - `initialConsultationOptions`는 첫 화면에 바로 표시할 선택 목록이다.
-- 안내받기는 확정 조건으로 실제 기관 API를 조회한 뒤 프론트에서 검색·정렬한다.
+  - 안내받기는 확정 조건으로 Elasticsearch 검색 API를 호출한다.
 
 ## 도움 기관 안내 — DB 기관 조회
 
-선택 항목은 로컬 목록을 사용하고, 실제 기관 자료는 백엔드 API에서 조회한다.
+	선택 항목은 로컬 목록을 사용하고, 기관 검색은 Elasticsearch API, 기관 상세는 기존 DB API에서 조회한다.
 
 | HTTP | 주소                                     | 역할                              |
 | ---- | ---------------------------------------- | --------------------------------- |
@@ -561,11 +561,11 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 
 | 프론트 함수                            | 역할                                            |
 | -------------------------------------- | ----------------------------------------------- |
-| `getConsultationInstitutions(filters)` | 서버 목록을 가져온 뒤 프론트에서 조건 검색·정렬 |
+| `getConsultationInstitutions(filters)` | Elasticsearch 검색 API 호출 및 화면 표시 형식 변환 |
 | `getConsultationInstitution(id)`       | 기관 상세 조회                                  |
 
 - 검색 조건: 분야, 키워드, 검색어, 시·도, 시·군·구, 언어, 상담 방식.
-- 목록 API에 검색 조건을 쿼리 파라미터로 보내지는 않는다.
+  - 검색 조건은 새 검색 API에 쿼리 파라미터로 전달하며, 기존 DB 목록·상세 API는 유지한다.
 - 최초 진입은 조건 없는 조회이며, 입력 조건이 바뀌면 이전 결과를 숨긴다.
 - 안내받기를 누르면 확정 조건으로 다시 조회한다.
 - 서버 연결 실패를 가짜 기관이나 빈 목록으로 대체하지 않는다.
@@ -679,3 +679,25 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
   - 관리자만 신고 증빙 이미지 목록을 조회한다.
 - `GET /api/v1/admin/community/reports/{reportId}/images/{reportImageId}`
   - 관리자만 신고 증빙 이미지 파일을 조회한다.
+
+## 도움 기관 안내 — Elasticsearch 검색
+
+- 메서드: GET
+- 주소: `/api/v1/consultation/institutions/search`
+- 인증: 로그인 없이 요청 가능
+- 선택 조건: query, topic, keywords, province, district, language, method.
+- keywords는 같은 이름의 쿼리 파라미터를 반복해서 전달한다.
+- 검색어는 최대 100자, 선택 키워드는 중복 제거 후 최대 50개다.
+- 성공 시 공통 응답의 data에 `{ items, filters }`를 반환한다.
+- items 항목은 `{ institution, preview, match }` 구조다.
+- institution은 기관 원문, preview는 조건에 맞는 대표 상담 업무다.
+- match는 role, keywords, selectedCount, percent, unknown을 포함한다.
+- percent는 선택 키워드 일치율이며 지원 자격이나 승인 확률이 아니다.
+- 검색어·분야·키워드·이용 조건은 같은 상담 업무를 기준으로 확인한다.
+- 전화·방문 등 상담 방식별 언어와 지역 정보를 혼합하지 않는다.
+- 직접 상담 → 키워드 일치 개수 → 미확인 조건 수 → 기관 ID 순으로 정렬한다.
+- 정상적인 검색 결과 0건은 성공 응답의 빈 items로 반환한다.
+- 검색 기능 비활성화 또는 검색 서비스 장애는 503 INSTITUTION_SEARCH_UNAVAILABLE로 반환한다.
+- 잘못된 입력은 400 INVALID_INPUT으로 반환한다.
+- 기존 DB 기관 목록·상세 API는 유지한다.
+  - 프론트 getConsultationInstitutions(filters)는 새 검색 API를 호출하고 기관·대표 업무를 화면 표시 형식으로 변환한다.

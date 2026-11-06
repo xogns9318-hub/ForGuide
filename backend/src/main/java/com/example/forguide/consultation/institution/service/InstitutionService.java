@@ -34,8 +34,8 @@ public class InstitutionService {
         this.translationService = translationService;
     }
 
-    // 초기 15개 기관의 실제 DB 자료를 반환한다.
-    // 검색·정렬은 프론트 API 모듈에서 처리한다.
+    // 기존 DB 기관 목록 조회 기능을 유지한다.
+    // 조건 검색과 정렬은 InstitutionSearchService에서 처리한다.
     // 서버 오류를 가짜 기관이나 빈 결과로 대체하지 않는다.
 
     /**

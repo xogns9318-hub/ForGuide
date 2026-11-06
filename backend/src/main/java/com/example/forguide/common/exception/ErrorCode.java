@@ -16,6 +16,13 @@ public enum ErrorCode {
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "요청을 처리하지 못했습니다. 잠시 후 다시 시도해주세요."),
     SSE_CONNECTION_LIMIT(HttpStatus.TOO_MANY_REQUESTS, "알림 연결 수가 많습니다. 사용하지 않는 탭을 닫은 뒤 다시 시도해주세요."),
 
+
+    // 기관 검색 실패와 정상적인 검색 결과 0건을 구분한다.
+    INSTITUTION_SEARCH_UNAVAILABLE(
+            HttpStatus.SERVICE_UNAVAILABLE,
+            "기관 검색 서비스를 일시적으로 이용할 수 없습니다. 잠시 후 다시 시도해주세요."
+    ),
+
     // 상담 준비 카드 번역: 화면에서 실패 원인을 구분한다.
     TRANSLATION_TIMEOUT(HttpStatus.GATEWAY_TIMEOUT, "한국어 번역 시간이 초과되었습니다."),
     TRANSLATION_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "번역 서비스를 일시적으로 이용할 수 없습니다."),
