@@ -621,6 +621,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | POST | `/api/v1/inquiries` | 로그인 | 문의와 JPG/PNG 첨부 이미지를 등록 |
 | DELETE | `/api/v1/inquiries/{inquiryId}` | 해당 문의 작성자 | `RECEIVED` 상태인 답변 전 문의만 삭제. 첨부 이미지 DB 행은 함께 삭제되고, 서버 파일은 DB 커밋 후 정리 |
 | POST | `/api/v1/inquiries/{inquiryId}/translation/{field}` | 해당 문의 작성자 | 제목·본문·답변(`title`, `content`, `answer`)을 화면에서만 번역 |
+| POST | `/api/v1/admin/inquiries/{inquiryId}/translation/{field}` | 관리자 | 제목·본문·답변(`title`, `content`, `answer`)을 화면에서만 번역 |
 
 답변 완료(`ANSWERED`) 문의는 문의 기록 보존을 위해 작성자 삭제를 허용하지 않는다. 문의 번역은 개인정보가 포함될 수 있어 DB·Redis에 저장하지 않는다.
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { client } from "../../api/client.js";
-import styles from "../../styles/inquiry.module.css";
+import styles from "../pages/InquiryPage.module.css";
 
 // 보호된 문의 이미지는 인증 API로 받아 브라우저 임시 주소로만 표시한다.
 export default function InquiryImageList({ inquiryId, images, isAdmin = false }) {

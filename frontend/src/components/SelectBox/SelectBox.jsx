@@ -1,7 +1,7 @@
 // 화면 상태와 생명주기를 관리하는 React 기능 사용
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 // 이 화면에서 사용할 스타일 연결
-import "../../styles/selectBox.css";
+import "./SelectBox.css";
 
 // 펼침 상태와 키보드 선택을 직접 관리하는 공통 선택창
 export default function SelectBox({

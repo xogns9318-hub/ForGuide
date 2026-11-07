@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { getAdminDashboard } from "../../api/adminApi.js";
-import styles from "../../styles/adminDashboard.module.css";
+import { getAdminDashboard } from "../api/adminApi.js";
+import styles from "./AdminDashboard.module.css";
 
 export default function AdminDashboard() {
     const { t } = useTranslation();

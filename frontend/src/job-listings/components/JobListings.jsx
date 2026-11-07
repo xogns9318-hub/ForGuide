@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import JobListingDetailModal from "./JobListingDetailModal.jsx";
-import { getJobListingSections } from "../../api/jobListingsApi.js";
+import { getJobListingSections } from "../api/jobListingsApi.js";
 import { useTranslation } from "react-i18next";
-import "../../styles/job-listings.css";
+import "./JobListings.css";
 const iconPaths = {
     building: "M3 21h18 M5 21V9l7-5 7 5v12 M9 21v-5h6v5 M9 12h.01 M15 12h.01",
     people: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M22 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75",

@@ -4,10 +4,11 @@ import {
     answerAdminInquiry,
     getAdminInquiries,
     translateAdminInquiryText,
-} from "../../api/adminApi.js";import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
+} from "../api/adminApi.js";
+import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import InquiryImageList from "../../inquiry/components/InquiryImageList.jsx";
 import { formatDateTime } from "../../utils/formatDateTime.js";
-import styles from "../../styles/adminInquiry.module.css";
+import styles from "./AdminInquiryPage.module.css";
 
 const PAGE_SIZE = 10;
 
@@ -20,6 +21,7 @@ export default function AdminInquiryPage() {
 
     const [inquiries, setInquiries] = useState([]);
     const [translatedInquiries, setTranslatedInquiries] = useState({});
+    const [translationErrors, setTranslationErrors] = useState({});
     const [inquiryStatus, setInquiryStatus] = useState("");
     const [answerDrafts, setAnswerDrafts] = useState({});
     const [isLoading, setIsLoading] = useState(true);
@@ -99,97 +101,57 @@ export default function AdminInquiryPage() {
         void loadInquiries({ reset: true });
     }, [loadInquiries]);
 
-    // 관리자 문의 제목 자동 번역
-    useEffect(() => {
-        if (targetLanguage === "ko") return;
+    // 원문은 유지한 채, 관리자 화면에서 필요한 자유 문장만 자동 번역한다.
+    const translateInquiryField = useCallback(
+        async (inquiry, field) => {
+            if (targetLanguage === "ko" || (field === "answer" && !inquiry.answerContent)) {
+                return;
+            }
 
-        inquiries.forEach((inquiry) => {
-            const key = `${targetLanguage}:${inquiry.inquiryId}:title`;
+            const key = `${targetLanguage}:${inquiry.inquiryId}:${field}`;
 
-            if (translationRequestsRef.current.has(key)) return;
-
-            translationRequestsRef.current.add(key);
-
-            translateAdminInquiryText(inquiry.inquiryId, "title", targetLanguage)
-                .then((response) => {
-                    setTranslatedInquiries((previous) => ({
-                        ...previous,
-                        [targetLanguage]: {
-                            ...previous[targetLanguage],
-                            [inquiry.inquiryId]: {
-                                ...previous[targetLanguage]?.[inquiry.inquiryId],
-                                title: response.translatedText,
-                            },
-                        },
-                    }));
-                })
-                .catch(() => {
-                    translationRequestsRef.current.delete(key);
-                });
-        });
-    }, [inquiries, targetLanguage]);
-
-    // 관리자 문의 내용 자동 번역
-    useEffect(() => {
-        if (targetLanguage === "ko") return;
-
-        inquiries.forEach((inquiry) => {
-            const key = `${targetLanguage}:${inquiry.inquiryId}:content`;
-
-            if (translationRequestsRef.current.has(key)) return;
+            if (translationRequestsRef.current.has(key)) {
+                return;
+            }
 
             translationRequestsRef.current.add(key);
+            setTranslationErrors((previous) => ({ ...previous, [key]: "" }));
 
-            translateAdminInquiryText(inquiry.inquiryId, "content", targetLanguage)
-                .then((response) => {
-                    setTranslatedInquiries((previous) => ({
-                        ...previous,
-                        [targetLanguage]: {
-                            ...previous[targetLanguage],
-                            [inquiry.inquiryId]: {
-                                ...previous[targetLanguage]?.[inquiry.inquiryId],
-                                content: response.translatedText,
-                            },
+            try {
+                const response = await translateAdminInquiryText(
+                    inquiry.inquiryId,
+                    field,
+                    targetLanguage,
+                );
+
+                setTranslatedInquiries((previous) => ({
+                    ...previous,
+                    [targetLanguage]: {
+                        ...previous[targetLanguage],
+                        [inquiry.inquiryId]: {
+                            ...previous[targetLanguage]?.[inquiry.inquiryId],
+                            [field]: response.translatedText,
                         },
-                    }));
-                })
-                .catch(() => {
-                    translationRequestsRef.current.delete(key);
-                });
-        });
-    }, [inquiries, targetLanguage]);
+                    },
+                }));
+            } catch (requestError) {
+                setTranslationErrors((previous) => ({
+                    ...previous,
+                    [key]: requestError?.message || t("inquiry.translation.error"),
+                }));
+                translationRequestsRef.current.delete(key);
+            }
+        },
+        [t, targetLanguage],
+    );
 
-    // 관리자 답변 자동 번역
     useEffect(() => {
-        if (targetLanguage === "ko") return;
-
         inquiries.forEach((inquiry) => {
-            if (!inquiry.answerContent) return;
-
-            const key = `${targetLanguage}:${inquiry.inquiryId}:answer`;
-
-            if (translationRequestsRef.current.has(key)) return;
-
-            translationRequestsRef.current.add(key);
-
-            translateAdminInquiryText(inquiry.inquiryId, "answer", targetLanguage)
-                .then((response) => {
-                    setTranslatedInquiries((previous) => ({
-                        ...previous,
-                        [targetLanguage]: {
-                            ...previous[targetLanguage],
-                            [inquiry.inquiryId]: {
-                                ...previous[targetLanguage]?.[inquiry.inquiryId],
-                                answer: response.translatedText,
-                            },
-                        },
-                    }));
-                })
-                .catch(() => {
-                    translationRequestsRef.current.delete(key);
-                });
+            void translateInquiryField(inquiry, "title");
+            void translateInquiryField(inquiry, "content");
+            void translateInquiryField(inquiry, "answer");
         });
-    }, [inquiries, targetLanguage]);
+    }, [inquiries, translateInquiryField]);
 
     const observerTarget = useInfiniteScroll({
         enabled: hasMore && !isLoading && !listError,
@@ -210,6 +172,28 @@ export default function AdminInquiryPage() {
             ...previous,
             [inquiryId]: value,
         }));
+    }
+
+    function renderTranslationRetry(inquiry, field) {
+        const key = `${targetLanguage}:${inquiry.inquiryId}:${field}`;
+        const error = translationErrors[key];
+
+        if (!error) {
+            return null;
+        }
+
+        return (
+            <div className={styles.translationError} role="alert">
+                <p>{error}</p>
+                <button
+                    type="button"
+                    className="button"
+                    onClick={() => void translateInquiryField(inquiry, field)}
+                >
+                    {t("inquiry.myList.retry")}
+                </button>
+            </div>
+        );
     }
 
     async function handleAnswerSubmit(event, inquiryId) {
@@ -357,11 +341,13 @@ export default function AdminInquiryPage() {
                                     {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.title
                                         || inquiry.title}
                                 </h2>
+                                {renderTranslationRetry(inquiry, "title")}
 
                                 <p className={styles.content}>
                                     {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.content
                                         || inquiry.content}
                                 </p>
+                                {renderTranslationRetry(inquiry, "content")}
                                 <InquiryImageList
                                     inquiryId={inquiry.inquiryId}
                                     images={inquiry.images}
@@ -375,6 +361,7 @@ export default function AdminInquiryPage() {
                                             {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.answer
                                                 || inquiry.answerContent}
                                         </p>
+                                        {renderTranslationRetry(inquiry, "answer")}
                                         <time dateTime={inquiry.answeredAt}>
                                             {formatDateTime(inquiry.answeredAt, i18n.language)}
                                         </time>

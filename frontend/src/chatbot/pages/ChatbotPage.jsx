@@ -5,7 +5,7 @@ import {
     clearChatbotMessages,
     getChatbotMessages,
     streamChatbotQuestion,
-} from "../../api/chatbotApi.js";
+} from "../api/chatbotApi.js";
 import ChatbotMessageText from "../components/ChatbotMessageText.jsx";
 import styles from "./ChatbotPage.module.css";
 

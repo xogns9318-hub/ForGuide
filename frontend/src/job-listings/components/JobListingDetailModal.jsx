@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
-import styles from "../Modal/Modal.module.css";
+import styles from "../../components/Modal/Modal.module.css";
 
 
 export default function JobListingDetailModal({ listing, onClose }) {

@@ -1,6 +1,7 @@
 package com.example.forguide.translation.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -15,6 +16,8 @@ import com.example.forguide.translation.cache.TranslationCacheResource;
 import com.example.forguide.translation.dto.TranslationRequest;
 import com.example.forguide.translation.dto.TranslationResponse;
 import com.example.forguide.translation.mapper.TranslationMapper;
+import com.example.forguide.common.exception.ApiException;
+import com.example.forguide.common.exception.ErrorCode;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -103,6 +106,31 @@ class TranslationServiceTest {
         assertEquals("경력 사항", response.translatedText());
         assertEquals(false, response.cached());
         verifyNoInteractions(translationCache, translationMapper, publicTranslationCoordinator);
+    }
+
+    @Test
+    void Gemini_실패_뒤에는_공개_번역_잠금을_해제해_재시도할_수_있다() {
+        TranslationCacheResource resource = publicPostResource();
+        TranslationRequest request = request("ko", "en", "안녕하세요");
+
+        when(translationCache.createKey(resource, "ko", "en"))
+                .thenReturn("translation:test");
+        when(translationCache.get("translation:test"))
+                .thenReturn(Optional.empty());
+        when(translationMapper.findContentTranslation(
+                "community-post", 7L, 1, "en"
+        )).thenReturn(null);
+        when(publicTranslationCoordinator.newLockToken()).thenReturn("lock-token");
+        when(publicTranslationCoordinator.tryAcquire(resource, "en", "lock-token"))
+                .thenReturn(true);
+        when(geminiTranslationClient.translate("ko", "en", "안녕하세요"))
+                .thenThrow(new ApiException(ErrorCode.INTERNAL_ERROR, "번역 실패"));
+
+        assertThrows(ApiException.class, () ->
+                translationService.translatePublicText(request, resource)
+        );
+
+        verify(publicTranslationCoordinator).release(resource, "en", "lock-token");
     }
 
     private TranslationCacheResource publicPostResource() {

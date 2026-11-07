@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { getCommunityMemberPreview } from "../../api/communityApi.js";
+import { getCommunityMemberPreview } from "../api/communityApi.js";
 import ProfileAvatar from "../../auth/components/ProfileAvatar.jsx";
 import { useTranslation } from "react-i18next";
 import CommunityMemberPostsModal from "./CommunityMemberPostsModal.jsx";
