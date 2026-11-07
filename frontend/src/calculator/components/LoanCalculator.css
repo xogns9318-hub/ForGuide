@@ -20,6 +20,9 @@
 
 /* 계산 전에는 입력창 크기의 패널을 가운데에 표시한다. */
 .panel.monthly-payment {
+    --ink: #527b73;
+    --muted: var(--ink);
+    color: var(--ink);
     /* 열 사이 간격과 위아래 구분선 간격을 한 곳에서 관리한다. */
     --loan-column-gap: clamp(40px, 3vw, 56px);
     --loan-row-gap: 40px;
@@ -184,8 +187,28 @@
 }
 
 /* 계산 버튼 위치 */
-.monthly-payment-button {
+.monthly-payment .monthly-payment-button {
     align-self: flex-start;
+    color: var(--primary);
+    background: var(--surface);
+    border-color: var(--primary);
+    transition:
+            color 180ms,
+            background-color 180ms,
+            border-color 180ms;
+}
+
+.monthly-payment .monthly-payment-button:enabled:hover,
+.monthly-payment .monthly-payment-button:enabled:active {
+    color: var(--surface);
+    background: var(--primary);
+}
+
+.monthly-payment .monthly-payment-button:disabled {
+    color: var(--line);
+    background: var(--surface);
+    border-color: var(--line);
+    opacity: 1;
 }
 
 /* 오른쪽 빈 영역과 결과 영역 */

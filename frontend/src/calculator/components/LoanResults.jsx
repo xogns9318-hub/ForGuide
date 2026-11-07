@@ -223,6 +223,7 @@ export function LoanChart({
                             active={tooltipReady ? undefined : false}
                             content={<PaymentTooltip />}
                             cursor={false}
+                            isAnimationActive={false}
                         />
 
                         {/* 막대는 0에서 목표 금액까지 아래에서 위로 올라온다. */}
@@ -231,7 +232,6 @@ export function LoanChart({
                             dataKey="chartValue"
                             name={t("loanChart.amount")}
                             fill="var(--primary)"
-                            // 비활성화된 계산하기 버튼과 같은 농도로 표시
                             fillOpacity={0.5}
                             maxBarSize={56}
                             radius={[6, 6, 0, 0]}

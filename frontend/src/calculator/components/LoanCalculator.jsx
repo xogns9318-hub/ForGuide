@@ -320,7 +320,7 @@ export default function LoanCalculator({ mode = "monthly" }) {
                         {/* 필수값과 기간 관계가 올바를 때만 계산 가능 */}
                         <button
                             type="submit"
-                            className="button button-primary monthly-payment-button"
+                            className="button monthly-payment-button"
                             disabled={!canCalculate}
                         >
                             {t("loanCalculator.calculate")}
