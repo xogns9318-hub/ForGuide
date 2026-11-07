@@ -1,4 +1,4 @@
-import { client } from "./client.js";
+import { client } from "../../api/client.js";
 
 // 로그인한 사용자가 문의와 선택한 이미지를 함께 등록한다.
 export function createInquiry({ inquiryCategory, title, content, images = [] }) {

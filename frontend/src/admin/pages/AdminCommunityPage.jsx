@@ -14,10 +14,10 @@ import {
     getAdminCommunityReportImageBlob,
     dismissAdminCommunityReport,
     translateAdminCommunityContent,
-} from "../../api/adminApi.js";
+} from "../api/adminApi.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import { formatDateTime } from "../../utils/formatDateTime.js";
-import styles from "../../styles/adminCommunity.module.css";
+import styles from "./AdminCommunityPage.module.css";
 
 const PAGE_SIZE = 20;
 

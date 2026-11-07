@@ -5,7 +5,7 @@ import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import {
     reportCommunityComment,
     reportCommunityPost,
-} from "../../api/communityApi.js";
+} from "../api/communityApi.js";
 
 const REPORT_REASONS = [
     "SPAM_AD",

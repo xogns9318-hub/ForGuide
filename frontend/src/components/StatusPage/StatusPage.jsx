@@ -4,7 +4,7 @@ import ExampleBadge from "../ExampleBadge/ExampleBadge.jsx";
 import FieldError from "../FieldError/FieldError.jsx";
 import { validateText } from "../../utils/validation.js";
 import { maskName, maskAccount } from "../../utils/masking.js";
-import "../../styles/statusPage.css";
+import "./StatusPage.css";
 import { useTranslation } from "react-i18next";
 
 // 상태별 아이콘 표시

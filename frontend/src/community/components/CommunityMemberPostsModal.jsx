@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import { useTranslation } from "react-i18next";
-import { getCommunityMemberPosts } from "../../api/communityApi.js";
+import { getCommunityMemberPosts } from "../api/communityApi.js";
 import ProfileAvatar from "../../auth/components/ProfileAvatar.jsx";
 import CommunityPostModal from "./CommunityPostModal.jsx";
 

@@ -10,8 +10,8 @@ import {
     translateCommunityPost,
     unlikeCommunityPost,
     unrepostCommunityPost,
-} from "../../api/communityApi.js";
-import { confirm } from "../Modal/modal.js";
+} from "../api/communityApi.js";
+import { confirm } from "../../components/Modal/modal.js";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import CommunityCommentSection from "./CommunityCommentSection.jsx";
 import CommunityPostEditForm from "./CommunityPostEditForm.jsx";

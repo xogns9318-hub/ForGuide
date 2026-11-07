@@ -1,7 +1,7 @@
-import { useAuthStore } from "../auth/store/useAuthStore.js";
-import { ApiError } from "./apiError.js";
-import { API_BASE, client, parseResponse, toNetworkError } from "./client.js";
-import { refreshAccessToken } from "./tokenRefresh.js";
+import { useAuthStore } from "../../auth/store/useAuthStore.js";
+import { ApiError } from "../../api/apiError.js";
+import { API_BASE, client, parseResponse, toNetworkError } from "../../api/client.js";
+import { refreshAccessToken } from "../../api/tokenRefresh.js";
 
 const CHATBOT_PATH = "/chatbot/messages";
 

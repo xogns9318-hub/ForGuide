@@ -5,10 +5,10 @@ import {
     deleteMyReceivedInquiry,
     getMyInquiries,
     translateMyInquiryText,
-} from "../../api/inquiryApi.js";
+} from "../api/inquiryApi.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import InquiryImageList from "../components/InquiryImageList.jsx";
-import styles from "../../styles/inquiry.module.css";
+import styles from "./InquiryPage.module.css";
 import { formatDateTime } from "../../utils/formatDateTime.js";
 
 const PAGE_SIZE = 10;

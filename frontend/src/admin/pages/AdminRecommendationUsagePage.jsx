@@ -10,9 +10,9 @@ import {
     XAxis,
     YAxis,
 } from "recharts";
-import { getAdminRecommendationUsage } from "../../api/adminApi.js";
+import { getAdminRecommendationUsage } from "../api/adminApi.js";
 import { formatDateTime } from "../../utils/formatDateTime.js";
-import styles from "../../styles/adminRecommendationUsage.module.css";
+import styles from "./AdminRecommendationUsagePage.module.css";
 
 const PERIOD_OPTIONS = [7, 30, 90];
 

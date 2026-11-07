@@ -15,22 +15,22 @@ import {
     translateCommunityPost,
     unlikeCommunityPost,
     unrepostCommunityPost,
-} from "../../api/communityApi.js";
-import { confirm } from "../Modal/modal.js";
+} from "../api/communityApi.js";
+import { confirm } from "../../components/Modal/modal.js";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
 import ProfileAvatar from "../../auth/components/ProfileAvatar.jsx";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
-import "../../styles/community.css";
+import "./Community.css";
 import CommunityCommentSection from "./CommunityCommentSection.jsx";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 import CommunityPostEditForm from "./CommunityPostEditForm.jsx";
 import CommunityPostModal from "./CommunityPostModal.jsx";
 import CommunityReportAction from "./CommunityReportAction.jsx";
 
-// 게시글 사진은 최대 5장, 한 장당 4MB
-const MAX_IMAGE_COUNT = 5;
+// 게시글 사진은 최대 4장, 한 장당 4MB
+const MAX_IMAGE_COUNT = 4;
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
 // 아이콘은 화면 표현 책임이므로 프론트에서 관리한다.

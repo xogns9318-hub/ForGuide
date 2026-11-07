@@ -1,5 +1,5 @@
-import { API_BASE, client } from "./client.js";
-import { useAuthStore } from "../auth/store/useAuthStore.js";
+import { API_BASE, client } from "../../api/client.js";
+import { useAuthStore } from "../../auth/store/useAuthStore.js";
 
 // 화면에서 쓰는 소문자 양식값을 서버 저장값으로 변환한다.
 function toServerResumeType(resumeType) {

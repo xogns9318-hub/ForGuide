@@ -138,7 +138,8 @@ public class NotificationSseService {
         return isSubscribed[0];
     }
 
-    private void removeEmitter(Long memberId, SseEmitter emitter) {
+    // 종료·오류 콜백과 같은 패키지의 단위 테스트가 함께 사용하는 연결 정리 지점이다.
+    void removeEmitter(Long memberId, SseEmitter emitter) {
         Set<SseEmitter> emitters = emittersByMemberId.get(memberId);
 
         if (emitters == null) {
@@ -150,6 +151,12 @@ public class NotificationSseService {
         if (emitters.isEmpty()) {
             emittersByMemberId.remove(memberId, emitters);
         }
+    }
+
+    // 연결 제한과 종료 정리 동작을 검증할 때만 같은 패키지의 테스트에서 사용한다.
+    int activeConnectionCount(Long memberId) {
+        Set<SseEmitter> emitters = emittersByMemberId.get(memberId);
+        return emitters == null ? 0 : emitters.size();
     }
 }
 

@@ -1,4 +1,4 @@
-import { client } from "./client.js";
+import { client } from "../../api/client.js";
 
 // 커서 기반 목록 API들이 공통으로 쓰는 기본 쿼리 파라미터를 만든다.
 function createCursorParams({

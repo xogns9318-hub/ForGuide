@@ -6,12 +6,12 @@ import {
     getResumePhotoPreviewUrl,
     saveResumeDraft,
     translateResumeText,
-} from "../../api/resumeApi.js";
+} from "../api/resumeApi.js";
 import { useTranslation } from "react-i18next";
 import ResumeLoadModal from "./ResumeLoadModal.jsx";
 import ResumeTranslationModal from "./ResumeTranslationModal.jsx";
 import { useAuthStore } from "../../auth/store/useAuthStore.js";
-import "../../styles/employment-resume.css";
+import "./EmploymentResume.css";
 
 const EMPTY_ROWS = Array.from({ length: 4 });
 

@@ -13,13 +13,13 @@ import PreparationCard from "../consultation/pages/PreparationCard.jsx";
 import RequireAdmin from "../auth/components/RequireAdmin.jsx";
 
 // 자주 열지 않는 기능 화면은 해당 경로에 들어갈 때만 내려받아 초기 번들을 줄인다.
-const Community = lazy(() => import("../components/Community/Community.jsx"));
-const CommunityPostDetail = lazy(() => import("../components/Community/CommunityPostDetail.jsx"));
+const Community = lazy(() => import("../community/components/Community.jsx"));
+const CommunityPostDetail = lazy(() => import("../community/components/CommunityPostDetail.jsx"));
 const MonthlyPayment = lazy(() => import("../calculator/pages/MonthlyPayment.jsx"));
 const TotalInterest = lazy(() => import("../calculator/pages/TotalInterest.jsx"));
 const Consultation = lazy(() => import("../consultation/pages/Consultation.jsx"));
-const EmploymentResume = lazy(() => import("../components/Employment/EmploymentResume.jsx"));
-const JobListings = lazy(() => import("../components/JobListings/JobListings.jsx"));
+const EmploymentResume = lazy(() => import("../employment/components/EmploymentResume.jsx"));
+const JobListings = lazy(() => import("../job-listings/components/JobListings.jsx"));
 const Simulator = lazy(() => import("../simulator/pages/Simulator.jsx"));
 const AdminDashboard = lazy(() => import("../admin/pages/AdminDashboard.jsx"));
 const InquiryPage = lazy(() => import("../inquiry/pages/InquiryPage.jsx"));

@@ -9,10 +9,10 @@ import { useSearchParams } from "react-router-dom";
 import {
     getAdminMembers,
     updateAdminMemberStatus,
-} from "../../api/adminApi.js";
+} from "../api/adminApi.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import { formatDateTime } from "../../utils/formatDateTime.js";
-import styles from "../../styles/adminMember.module.css";
+import styles from "./AdminMemberPage.module.css";
 
 const PAGE_SIZE = 20;
 

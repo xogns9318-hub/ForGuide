@@ -1,4 +1,4 @@
-import { client } from "./client.js";
+import { client } from "../../api/client.js";
 
 // 관리자 대시보드의 운영 현황 수치를 조회한다.
 export function getAdminDashboard() {
