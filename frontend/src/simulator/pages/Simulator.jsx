@@ -15,25 +15,91 @@ import {
     wonParts,
 } from "../utils/budgetSimulator.js";
 import { formatKrw } from "../../utils/currencyFormat.js";
+import SelectBox from "../../components/SelectBox/SelectBox.jsx";
 import styles from "./Simulator.module.css";
 
 const emptyValues = Object.fromEntries(
     [...MONEY_FIELDS, "start", "end"].map((key) => [key, ""]),
 );
 
-// 날짜 숫자를 YYYY-MM-DD 형식으로 정리한다.
-function formatDateInput(value) {
-    const digits = value.replace(/\D/g, "").slice(0, 8);
+function dateDayCount(year, month) {
+    if (!month) return 31;
 
-    if (digits.length <= 4) {
-        return digits;
+    // 연도가 완성되기 전에도 2월 29일을 선택할 수 있게 한다.
+    const calendarYear = year.length === 4 && Number(year) > 0 ? Number(year) : 2000;
+    return daysInMonth(calendarYear, Number(month));
+}
+
+function DateField({ id, label, value, onChange, t }) {
+    const [year, month = "", day = ""] = value.split("-");
+    const monthLabel = t("preparationCard.birthMonth");
+    const dayLabel = t("preparationCard.birthDay");
+
+    function changePart(part, nextValue) {
+        const next = { year, month, day, [part]: nextValue };
+
+        // 연도나 월이 바뀌어 선택한 일이 유효하지 않으면 일을 다시 고르게 한다.
+        if (Number(next.day) > dateDayCount(next.year, next.month)) {
+            next.day = "";
+        }
+
+        // 기존 계산기에 전달하는 날짜 형식을 유지한다.
+        onChange([next.year, next.month, next.day].join("-"));
     }
 
-    if (digits.length <= 6) {
-        return `${digits.slice(0, 4)}-${digits.slice(4)}`;
-    }
+    return (
+        <div className={styles.dateField} role="group" aria-labelledby={`${id}-label`}>
+            <span id={`${id}-label`} className={styles.dateLabel}>
+                {label}
+            </span>
 
-    return `${digits.slice(0, 4)}-${digits.slice(4, 6)}-${digits.slice(6)}`;
+            <div className={styles.dateParts}>
+                <input
+                    id={`${id}-year`}
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    maxLength={4}
+                    aria-label={`${label} ${t("preparationCard.birthYear")}`}
+                    placeholder={t("preparationCard.birthYearPlaceholder")}
+                    value={year}
+                    onChange={(event) => changePart("year", event.target.value.replace(/\D/g, ""))}
+                />
+
+                <span id={`${id}-month-label`} hidden>{monthLabel}</span>
+                <SelectBox
+                    id={`${id}-month`}
+                    labelledBy={`${id}-label ${id}-month-label`}
+                    value={month}
+                    options={[
+                        { value: "", label: monthLabel },
+                        ...Array.from({ length: 12 }, (_, index) => ({
+                            value: String(index + 1).padStart(2, "0"),
+                            label: t("preparationCard.birthMonthValue", { value: index + 1 }),
+                        })),
+                    ]}
+                    onChange={(value) => changePart("month", value)}
+                    maxVisibleOptions={6}
+                />
+
+                <span id={`${id}-day-label`} hidden>{dayLabel}</span>
+                <SelectBox
+                    id={`${id}-day`}
+                    labelledBy={`${id}-label ${id}-day-label`}
+                    value={day}
+                    options={[
+                        { value: "", label: dayLabel },
+                        ...Array.from({ length: dateDayCount(year, month) }, (_, index) => ({
+                            value: String(index + 1).padStart(2, "0"),
+                            label: t("preparationCard.birthDayValue", { value: index + 1 }),
+                        })),
+                    ]}
+                    onChange={(value) => changePart("day", value)}
+                    maxVisibleOptions={6}
+                />
+            </div>
+        </div>
+    );
 }
 
 function MoneyField({ id, label, value, hint, onChange, won }) {
@@ -312,25 +378,14 @@ export default function Simulator() {
 
                             <div className={styles.dateRow}>
                                 {["start", "end"].map((field) => (
-                                    <div className={styles.field} key={field}>
-                                        <label htmlFor={id + "-" + field}>
-                                            {text("fields." + field)}
-                                        </label>
-
-                                        <input
-                                            id={id + "-" + field}
-                                            type="text"
-                                            inputMode="numeric"
-                                            autoComplete="off"
-                                            maxLength={10}
-                                            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
-                                            placeholder={text("dateFormat")}
-                                            value={values[field]}
-                                            onChange={(event) =>
-                                                changeValue(field, formatDateInput(event.target.value))
-                                            }
-                                        />
-                                    </div>
+                                    <DateField
+                                        key={field}
+                                        id={`${id}-${field}`}
+                                        label={text(`fields.${field}`)}
+                                        value={values[field]}
+                                        onChange={(value) => changeValue(field, value)}
+                                        t={t}
+                                    />
                                 ))}
                             </div>
 
@@ -353,7 +408,7 @@ export default function Simulator() {
 
                         <button
                             type="submit"
-                            className={`button button-primary ${styles.calculate}`}
+                            className={`button ${styles.calculate}`}
                             disabled={!canCalculate}
                         >
                             {text("calculate")}

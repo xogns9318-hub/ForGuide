@@ -109,17 +109,31 @@
 
 .dateRow {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr));
     gap: 12px;
 }
 
-.dateRow label {
+.dateField {
+    min-width: 0;
+}
+
+.dateLabel {
+    display: block;
+    margin-bottom: 2px;
     font-size: 12px;
 }
 
-.dateRow input {
+.dateParts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.dateParts > input,
+.dateParts :global(.select-box-trigger) {
     width: 100%;
     min-width: 0;
+    min-height: 32px;
     height: 32px;
     padding: 3px 0;
     border: 0;
@@ -131,14 +145,57 @@
     font-size: 13px;
 }
 
-.dateRow input:focus-visible {
+.dateParts > input:focus-visible,
+.dateParts :global(.select-box-trigger:focus-visible),
+.dateParts :global(.select-box.is-open .select-box-trigger) {
     outline: none;
-    border-color: var(--primary);
+    box-shadow: none;
+    border-color: var(--ink);
 }
 
-.calculate {
+.dateParts :global(.select-box-trigger) {
+    gap: 3px;
+}
+
+.dateParts :global(.select-box-trigger) > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.dateParts :global(.select-box-trigger) svg {
+    width: 12px;
+    height: 12px;
+}
+
+.dateParts :global(.select-box-options) {
+    right: 0;
+    left: auto;
+    width: max-content;
+    min-width: 100%;
+}
+
+.form .calculate {
     align-self: flex-start;
     margin-top: 4px;
+    color: var(--primary);
+    border-color: var(--primary);
+    background: var(--surface);
+    transition: color 180ms, background-color 180ms, border-color 180ms;
+}
+
+.form .calculate:disabled {
+    opacity: 1;
+    color: var(--line);
+    border-color: var(--line);
+    background: var(--surface);
+}
+
+.form .calculate:enabled:is(:hover, :active) {
+    color: var(--surface);
+    border-color: var(--primary);
+    background: var(--primary);
 }
 
 .error {
