@@ -1747,8 +1747,8 @@ const ko = {
         },
     },
     footer: {
-        description: "빠른 시일 내에 변경될 예정인 Footer 입니다.",
-        copyright: "© ForGuide",
+        description: "KH Academy(Q Class) - Final Project",
+        copyright: "ForGuide",
     },
 };
 

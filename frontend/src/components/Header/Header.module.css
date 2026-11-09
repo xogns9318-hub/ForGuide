@@ -99,16 +99,6 @@
     width: 100%;
 }
 
-/* 커뮤니티에서 로고 옆에 표시하던 제목 유지 */
-.communityTitle {
-    padding-left: 18px;
-    border-left: 1px solid var(--line);
-    color: var(--primary);
-    font-size: 24px;
-    font-weight: 800;
-    white-space: nowrap;
-}
-
 /* 회원 메뉴는 글씨 너비와 한 줄 높이에 맞춰 배치한다. */
 .actions {
     display: flex;
@@ -401,11 +391,6 @@
         width: 160px;
     }
 
-    .communityTitle {
-        padding-left: 12px;
-        font-size: 20px;
-    }
-
     /* 모바일에서는 회원 메뉴와 가로 제목을 펼친 목록으로 이동 */
     .desktopActions,
     .navigation {
@@ -495,11 +480,6 @@
 
     .logo {
         width: 128px;
-    }
-
-    .communityTitle {
-        padding-left: 10px;
-        font-size: 18px;
     }
 
     /* 휴대폰의 좁은 화면에서는 한 열로 표시 */

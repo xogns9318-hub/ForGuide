@@ -41,11 +41,11 @@
     margin-top: 24px;
 }
 
-/* 상담 준비 카드에서 여는 알림에만 적용한다. */
-.preparation {
-    background: rgb(212 234 226 / 45%);
+/* 상담 준비 카드 안내창과 일자리 상세창의 배경을 통일한다. */
+.preparation,
+.backdrop:has(> :global(.job-listing-detail-dialog)) {
+    background: rgb(255 255 255 / 20%);
     backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
 }
 
 .preparation .dialog {

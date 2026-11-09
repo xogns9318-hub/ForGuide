@@ -254,35 +254,37 @@
         width: 190px;
     }
 }
+
 .job-listing-detail-dialog {
     position: relative;
-    width: min(900px, 100%);
-    max-height: min(820px, calc(100vh - 32px));
-    padding: 42px 46px 32px;
+    width: min(760px, 100%);
+    max-height: calc(100dvh - 32px);
+    padding: clamp(20px, 3vw, 34px);
     overflow-y: auto;
-    border-radius: 22px;
+    border-radius: var(--panel-radius);
+    box-shadow: 0 12px 28px rgb(32 59 51 / 14%);
 }
 
-.job-listing-detail-dialog .title {
+.job-listing-detail-dialog #job-listing-detail-title {
     margin: 0;
-    padding: 2px 56px 4px 0;
-    color: var(--ink);
-    font-size: clamp(26px, 3vw, 38px);
-    letter-spacing: -1.2px;
+    padding-inline-end: 38px;
+    font-size: clamp(22px, 2.1vw, 26px);
+    line-height: 1.4;
+    letter-spacing: -0.35px;
 }
 
 .job-listing-detail-close {
     position: absolute;
-    top: 22px;
-    right: 26px;
-    width: 42px;
-    height: 42px;
+    top: 17px;
+    right: 18px;
+    width: 38px;
+    height: 38px;
     padding: 0;
     border: 0;
     border-radius: 10px;
     background: transparent;
     color: var(--muted);
-    font-size: 38px;
+    font-size: 29px;
     font-weight: 300;
     line-height: 1;
 }
@@ -293,120 +295,115 @@
 }
 
 .job-listing-detail-section {
-    margin-top: 30px;
+    margin-top: 23px;
 }
 
 .job-listing-detail-section h3 {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 0 0 12px;
-    color: var(--ink);
-    font-size: 23px;
-    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+    color: var(--primary);
+    font-size: 17px;
 }
 
-.job-listing-detail-section h3::before {
-    width: 6px;
-    height: 26px;
-    border-radius: 999px;
-    background: var(--brand);
-    content: "";
+.job-listing-detail-section > p,
+.job-listing-detail-recommendations li {
+    font-size: 15px;
+    line-height: 1.7;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
 }
 
 .job-listing-detail-section > p {
-    margin: 0;
     color: var(--muted);
-    font-size: 17px;
-    line-height: 1.75;
-    word-break: keep-all;
 }
 
 .job-listing-detail-recommendations {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
     margin: 0;
-    padding: 0;
-    list-style: none;
+    padding: 0 0 0 19px;
+    list-style: disc;
 }
 
-.job-listing-detail-recommendations li {
-    display: flex;
-    align-items: center;
-    min-height: 82px;
-    padding: 16px 18px;
-    border: 1px solid #d7ebe4;
-    border-radius: 14px;
-    background: #f6fbf9;
-    color: var(--ink);
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 1.55;
-    word-break: keep-all;
-}
-
-.job-listing-detail-caution {
-    padding: 18px 20px;
-    border: 1px solid #f1d38b;
-    border-radius: 14px;
-    background: #fff9e9;
-    color: #76511a !important;
+.job-listing-detail-recommendations li + li {
+    margin-top: 4px;
 }
 
 .job-listing-detail-source {
-    margin: 30px 0 0;
-    padding-top: 20px;
+    margin: 24px 0 0;
+    padding-top: 14px;
     border-top: 1px solid var(--line);
     color: var(--muted);
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .job-listing-detail-actions {
     align-items: center;
-    justify-content: flex-end;
-    margin-top: 18px;
+    margin-top: 14px;
 }
 
 .job-listing-detail-actions .button {
-    min-height: 52px;
-    padding: 0 24px;
+    min-height: 44px;
+    padding: 6px 16px;
+    font-size: 14px;
 }
 
 @media (max-width: 768px) {
-    .job-listing-detail-dialog {
-        width: min(560px, 100%);
-        padding: 30px 24px 24px;
-        border-radius: 18px;
-    }
-
-    .job-listing-detail-dialog .title {
-        font-size: 26px;
-    }
-
-    .job-listing-detail-close {
-        top: 16px;
-        right: 16px;
-    }
-
-    .job-listing-detail-recommendations {
-        grid-template-columns: 1fr;
-    }
-
-    .job-listing-detail-section h3 {
-        font-size: 20px;
-    }
-
-    .job-listing-detail-section > p {
-        font-size: 16px;
-    }
-
-    .job-listing-detail-actions {
-        justify-content: stretch;
-    }
-
     .job-listing-detail-actions .button {
         flex: 1;
-        padding: 0 14px;
     }
+}
+
+.job-listings-page,
+.job-listing-detail-dialog {
+    --ink: #527b73;
+    --muted: var(--ink);
+    color: var(--ink);
+}
+
+.job-listings-page .job-listing-meta-item {
+    border-color: transparent;
+    background: transparent;
+    align-items: baseline;
+    min-height: 0;
+    padding-block: 2px;
+}
+
+.job-listings-page .job-listing-meta-label {
+    background: transparent;
+    color: var(--ink);
+    padding-block: 0;
+}
+
+.job-listings-page .job-listing-action-button,
+.job-listing-detail-actions .button {
+    border: 1px solid var(--primary);
+    background: var(--surface);
+    color: var(--primary);
+}
+
+.job-listings-page .job-listing-action-button:is(:hover, :active),
+.job-listing-detail-actions .button:is(:hover, :active) {
+    background: var(--primary);
+    color: var(--surface);
+}
+
+/* 일자리 목록의 제목 장식과 아이콘 배경을 제거한다. */
+.job-listings-page .job-listings-section-heading h2::before {
+    content: none;
+}
+
+.job-listings-page .job-listing-icon {
+    background: transparent;
+}
+
+/* 대상과 언어를 위아래로 배치한다. */
+.job-listings-page .job-listing-meta {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+}
+
+/* 긴 문구는 카드 너비에 맞춰 줄바꿈한다. */
+.job-listings-page .job-listing-meta-value {
+    overflow: visible;
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
 }

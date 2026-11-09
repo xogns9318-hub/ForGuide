@@ -319,3 +319,112 @@
     margin: 0;
     color: #b54a42;
 }
+
+.page {
+    --ink: #527b73;
+    --muted: var(--ink);
+    width: min(100%, 900px);
+    padding: 0;
+    color: var(--ink);
+}
+
+.heading {
+    margin-bottom: 20px;
+}
+
+.heading h1 {
+    color: var(--ink);
+    font-size: 28px;
+    line-height: 1.4;
+}
+
+.heading p {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.form,
+.listSection {
+    padding: 22px 24px;
+    border-color: var(--line);
+    border-radius: var(--panel-radius);
+    box-shadow: none;
+}
+
+.form {
+    gap: 16px;
+}
+
+.form label > span,
+.listSection :is(h2, h3, h4) {
+    color: var(--ink);
+}
+
+.form :is(input:not([type="file"]), select, textarea) {
+    padding-inline: 0 4px;
+    border: 0;
+    border-bottom: 2px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+
+
+    color: var(--ink);
+}
+
+.form textarea {
+    min-height: 110px;
+}
+
+.form :is(input:not([type="file"]), select, textarea):focus {
+    border-bottom-color: var(--primary);
+    outline: none;
+}
+
+.imageUploadButton {
+    padding: 6px 12px;
+    border-radius: var(--control-radius);
+}
+
+.form :global(.button-primary) {
+    justify-self: start;
+    border-color: var(--primary);
+    background: var(--surface);
+    color: var(--primary);
+}
+
+.form :global(.button-primary:not(:disabled):is(:hover, :active)) {
+    background: var(--primary);
+    color: var(--surface);
+}
+
+.page :global(.button:disabled) {
+    border-color: var(--line);
+    background: var(--surface);
+    color: #65867d;
+    opacity: 1;
+}
+
+.inquiryItem {
+    padding: 16px 0 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    background: var(--surface);
+}
+
+.itemHeader {
+    justify-content: flex-start;
+}
+
+.itemHeader :global(.button) {
+    min-height: 34px;
+    margin-left: auto;
+    padding: 4px 12px;
+}
+
+.received {
+    padding: 2px 10px;
+    background: #f0f8f5;
+    color: var(--primary);
+}

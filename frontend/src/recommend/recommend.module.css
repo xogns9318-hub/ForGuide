@@ -327,3 +327,45 @@
         padding: 18px;
     }
 }
+
+:global(.panel[aria-labelledby$="-recommend-title"]),
+.results,
+.dialog {
+    --ink: #527b73;
+    --muted: var(--ink);
+    color: var(--ink);
+}
+
+.choice span {
+    font-weight: 400;
+}
+
+.choice:hover span,
+.choice input:checked + span {
+    border-color: var(--ink);
+    background: var(--surface);
+    color: var(--ink);
+}
+
+.choice input:checked + span {
+    font-weight: 700;
+}
+
+.form :global(.button-primary) {
+    border-color: var(--primary);
+    background: var(--surface);
+    color: var(--primary);
+}
+
+.form :global(.button-primary:not(:disabled):hover),
+.form :global(.button-primary:not(:disabled):active) {
+    background: var(--primary);
+    color: var(--surface);
+}
+
+.form :global(.button-primary:disabled) {
+    border-color: var(--line);
+    background: var(--surface);
+    color: var(--line);
+    opacity: 1;
+}

@@ -148,3 +148,170 @@
         padding: 24px 18px;
     }
 }
+
+/* 시안을 확인한 여섯 회원 화면에 적용한다. */
+.card:is(
+    [aria-labelledby="login-title"],
+    [aria-labelledby="signup-title"],
+    [aria-labelledby="find-id-title"],
+    [aria-labelledby="password-reset-title"],
+    [aria-labelledby="mypage-title"],
+    [aria-labelledby="my-finance-title"]
+) {
+    --ink: #527b73;
+    --muted: var(--ink);
+    max-width: 480px;
+    padding: clamp(22px, 4vw, 34px);
+    color: var(--ink);
+
+    & .head {
+        margin-bottom: 22px;
+    }
+
+    & .title {
+        font-size: 26px;
+        line-height: 1.35;
+        letter-spacing: -0.35px;
+    }
+
+    & .description {
+        line-height: 1.6;
+    }
+
+    & :global(.form-field) :is(input:not([type="hidden"]), select, textarea) {
+        padding-inline: 0 4px;
+        border: 0;
+        border-bottom: 2px solid var(--line);
+        border-radius: 0;
+        background: transparent;
+    }
+
+    & :global(.form-field) .password input {
+        padding-inline-end: 72px;
+    }
+
+    & :global(.form-field) :is(input, select, textarea):focus {
+        border-bottom-color: var(--primary);
+        outline: none;
+    }
+
+    & :global(.form-field) :is(input, select, textarea)[aria-invalid="true"] {
+        border-bottom-color: var(--error);
+    }
+
+    & :is(label, .inputWithButton > button) {
+        font-weight: 600;
+    }
+
+    & .actions {
+        margin-top: 22px;
+    }
+
+    & .switch {
+        margin-top: 14px;
+    }
+
+    & :global(.button-primary) {
+        border-color: var(--primary);
+        background: var(--surface);
+        color: var(--primary);
+    }
+
+    & :global(.button-primary:not(:disabled):is(:hover, :active)) {
+        background: var(--primary);
+        color: var(--surface);
+    }
+
+    & :global(.button:disabled) {
+        border-color: var(--line);
+        background: var(--surface);
+        color: #65867d;
+        opacity: 1;
+    }
+}
+
+.card[aria-labelledby="signup-title"] {
+    max-width: 540px;
+}
+
+.card:is([aria-labelledby="mypage-title"], [aria-labelledby="my-finance-title"]) {
+    max-width: 720px;
+}
+
+.card[aria-labelledby="mypage-title"] .imageArea {
+    gap: 18px 22px;
+}
+
+.card[aria-labelledby="mypage-title"] input[type="file"]::file-selector-button {
+    margin-inline-end: 10px;
+    padding: 3px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--primary);
+    font: inherit;
+    cursor: pointer;
+}
+
+.card[aria-labelledby="my-finance-title"] .needCheck {
+    margin-left: 8px;
+    padding: 0;
+    background: transparent;
+    font-weight: 400;
+}
+
+@media (min-width: 640px) {
+    .card[aria-labelledby="mypage-title"] .imageArea {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .card[aria-labelledby="mypage-title"] .actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+    }
+
+    .card[aria-labelledby="my-finance-title"] .fields {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px 24px;
+    }
+
+    .card[aria-labelledby="my-finance-title"] .actions {
+        flex-direction: row;
+    }
+
+    .card[aria-labelledby="my-finance-title"] .actions > * {
+        width: auto;
+    }
+}
+
+/* 로그인·가입·계정 찾기 화면의 입력 간격과 버튼 스타일을 맞춘다. */
+.card:is(
+    [aria-labelledby="login-title"],
+    [aria-labelledby="signup-title"],
+    [aria-labelledby="find-id-title"],
+    [aria-labelledby="password-reset-title"]
+) {
+    --control-height: 44px;
+
+    & :global(.form-field) {
+        gap: 4px;
+    }
+
+    & :global(.button) {
+        padding-block: 7px;
+    }
+
+    & :global(.button-primary) {
+        border-color: var(--line);
+        color: var(--ink);
+    }
+
+    & :global(.button-primary:not(:disabled):is(:hover, :active)) {
+        background: var(--mint-soft);
+        color: var(--ink);
+    }
+}
