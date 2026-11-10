@@ -1,0 +1,12 @@
+# 배포 서버(EC2 t3.medium, 4GB)에서 compose.yml의 elasticsearch에 덮어쓰는 값만 둔다.
+# 이미지·Nori·포트(127.0.0.1:9200)·데이터 볼륨은 팀 compose.yml을 그대로 쓴다.
+# 실행 (서버의 ~/forguide 폴더에서, ES만 띄운다. Redis는 서버에 직접 설치돼 있어 띄우지 않는다):
+#   sudo docker compose -f compose.yml -f deploy/compose.server.yml --profile search up -d --build --wait --wait-timeout 300 elasticsearch
+services:
+  elasticsearch:
+    environment:
+      # 같은 서버의 Spring(최대 768MB)·MySQL과 메모리를 나눠 쓰도록 힙을 줄인다
+      ES_JAVA_OPTS: "-Xms768m -Xmx768m"
+    mem_limit: 1536m
+    # 서버를 재부팅하면 Docker가 검색 서버를 다시 켠다
+    restart: unless-stopped
