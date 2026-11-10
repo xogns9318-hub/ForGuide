@@ -13,6 +13,7 @@ export default function SelectBox({
     options,
     onChange,
     compact = false,
+                                      triggerIcon,
     // 언어 선택에만 마우스 올림으로 여는 동작을 사용한다.
     openOnHover = false,
     // 지정한 화면에서만 목록 개수와 화면 경계를 제한한다.
@@ -272,7 +273,7 @@ export default function SelectBox({
                     }
                 }}
             >
-                <span>{selectedOption.label}</span>
+                <span>{triggerIcon ?? selectedOption.label}</span>
 
                 {/* 이미지 파일 대신 SVG 선으로 아이콘 표시 */}
                 <svg

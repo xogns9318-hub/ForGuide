@@ -1,5 +1,5 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { categories, contactRoutes } from "../../routes/routeConfig.js";
 import LanguageSelector from "../LanguageSelector/LanguageSelector.jsx";
@@ -349,19 +349,35 @@ export default function Header({ isLoggedIn = false, onLogout }) {
             >
                 {/* 기존 회원 메뉴와 로그아웃 동작 유지 */}
                 {isLoggedIn ? (
-                    <AccountMenu label={t("header.myPage")} inline={isMobile}>
-                        <Link to="/mypage" onClick={closeMenus}>
+                    <AccountMenu
+                        label={
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.8"
+                                strokeLinecap="round"
+                                role="img"
+                                aria-label={t("header.myPage")}
+                            >
+                                <circle cx="12" cy="8" r="3.25" />
+                                <path d="M5 20v-1a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v1" />
+                            </svg>
+                        }
+                        inline={isMobile}
+                    >
+                        <NavLink to="/mypage" onClick={closeMenus}>
                             <span>{t("header.myPage")}</span>
-                        </Link>
+                        </NavLink>
 
-                        <Link to="/my-finance" onClick={closeMenus}>
+                        <NavLink to="/my-finance" onClick={closeMenus}>
                             <span>{t("header.myFinance")}</span>
-                        </Link>
+                        </NavLink>
 
                         {isAdmin && (
-                            <Link to="/admin" onClick={closeMenus}>
+                            <NavLink to="/admin" onClick={closeMenus}>
                                 <span>{t("header.adminPage")}</span>
-                            </Link>
+                            </NavLink>
                         )}
 
                         <button

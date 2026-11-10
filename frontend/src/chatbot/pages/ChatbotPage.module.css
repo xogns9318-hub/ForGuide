@@ -267,39 +267,27 @@
     border-top: 1px solid var(--line);
 }
 
-.form textarea {
-    padding-inline: 0 4px;
-    border: 0;
-    border-bottom: 2px solid var(--line);
-    border-radius: 0;
-    background: transparent;
-}
-
 .form textarea:focus {
-    border-bottom-color: var(--primary);
-    outline: none;
+    border-color: var(--primary);
 }
 
 .form textarea[aria-invalid="true"] {
-    border-bottom-color: var(--error);
+    border-color: var(--error);
 }
 
 .handoff {
-    padding: 18px 0 0;
+    padding: 0;
     border: 0;
-    border-top: 1px solid var(--line);
-    border-radius: 0;
 }
 
 .page :global(.button-primary) {
-    border-color: var(--primary);
+    border-color: var(--line);
     background: var(--surface);
-    color: var(--primary);
+    color: var(--ink);
 }
 
 .page :global(.button-primary:not(:disabled):is(:hover, :active)) {
-    background: var(--primary);
-    color: var(--surface);
+    background: var(--mint-soft);
 }
 
 .page :global(.button:disabled) {

@@ -35,19 +35,32 @@ const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
 
 // 아이콘은 화면 표현 책임이므로 프론트에서 관리한다.
 // 실제 선택 코드·문구 키·표시 순서는 서버 DB에서 받아온다.
-const CATEGORY_ICONS = {
-    QUESTION_ANSWER: "◌",
-    REVIEW_RECOMMEND: "☆",
-    FREE_TALK: "◫",
+const MENU_ICON_PATHS = {
+    ALL: "M5 4h14v16H5z M8 8h8 M8 12h8 M8 16h5",
+    QUESTION_ANSWER: "M4 5h16v11h-8l-4 4v-4H4z M10 9a2 2 0 1 1 3 1.7c-.7.4-1 1-1 1.5 M12 14h.01",
+    REVIEW_RECOMMEND: "m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z",
+    FREE_TALK: "M4 5h16v11h-8l-4 4v-4H4z M8 10.5h.01 M12 10.5h.01 M16 10.5h.01",
+    ACCOUNT: "M3 6h18v12H3z M3 10h18 M7 15h4",
+    LOAN: "M3 6h18v12H3z M6 9h.01 M18 15h.01 M14.5 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z",
+    INSURANCE: "m12 3 7 3v5c0 4-2.5 7-7 10-4.5-3-7-6-7-10V6z M9 12l2 2 4-4",
+    VISA_STAY: "M6 3h12v18H6z M9 16h6 M15.5 10a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z M9 10h6 M12 6.5v7",
+    LIFE_TIP: "M9 17v-1.5a6 6 0 1 1 6 0V17 M9 17h6 M10 20h4",
 };
 
-const TOPIC_ICONS = {
-    ACCOUNT: "⌂",
-    LOAN: "◉",
-    INSURANCE: "◇",
-    VISA_STAY: "▣",
-    LIFE_TIP: "◌",
-};
+function CommunityMenuIcon({ code }) {
+    return (
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        >
+            <path d={MENU_ICON_PATHS[code] ?? MENU_ICON_PATHS.ALL} />
+        </svg>
+    );
+}
 
 const RELATED_SERVICE_LINKS = {
     ACCOUNT_RECOMMEND: {
@@ -845,12 +858,12 @@ export default function Community() {
                     >
                         {[
                             {
-                                icon: "▤",
+                                icon: "ALL",
                                 labelKey: "community.navigation.allPosts",
                                 value: "",
                             },
                             ...categoryOptions.map((option) => ({
-                                icon: CATEGORY_ICONS[option.code] ?? "•",
+                                icon: option.code,
                                 labelKey: option.labelKey,
                                 value: option.code,
                             })),
@@ -861,6 +874,7 @@ export default function Community() {
                                 className={`community-sidebar-item${
                                     selectedCategory === item.value ? " is-active" : ""
                                 }`}
+                                aria-pressed={selectedCategory === item.value}
                                 onClick={() => {
                                     setSelectedCategory(item.value);
 
@@ -870,9 +884,9 @@ export default function Community() {
                                 }}
                             >
                                 <span className="community-sidebar-icon" aria-hidden="true">
-                                    {item.icon}
+                                    <CommunityMenuIcon code={item.icon} />
                                 </span>
-                                {t(item.labelKey)}
+                                <span className="community-menu-label">{t(item.labelKey)}</span>
                             </button>
                         ))}
                     </nav>
@@ -900,9 +914,9 @@ export default function Community() {
                                         aria-pressed={selectedTopic === topic.code}
                                     >
                                         <span className="community-topic-icon" aria-hidden="true">
-                                            {TOPIC_ICONS[topic.code] ?? "•"}
+                                            <CommunityMenuIcon code={topic.code} />
                                         </span>
-                                        {t(topic.labelKey)}
+                                        <span className="community-menu-label">{t(topic.labelKey)}</span>
                                     </button>
                                 ))}
                             </div>

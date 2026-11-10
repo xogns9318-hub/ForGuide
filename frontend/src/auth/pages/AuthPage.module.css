@@ -315,3 +315,13 @@
         color: var(--ink);
     }
 }
+
+.card[aria-labelledby="my-finance-title"] .actions :global(.button-primary:not(:disabled)) {
+    border-color: var(--line);
+    color: var(--ink);
+}
+
+.card[aria-labelledby="my-finance-title"] .actions :global(.button-primary:not(:disabled):is(:hover, :active)) {
+    background: var(--mint-soft);
+    color: var(--ink);
+}
