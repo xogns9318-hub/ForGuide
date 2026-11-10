@@ -252,7 +252,7 @@ export default function AdminRecommendationUsagePage() {
                                         name={t(
                                             "admin.recommendationUsage.chartLoan",
                                         )}
-                                        stroke="var(--primary)"
+                                        stroke="#3f7968"
                                         strokeWidth={2}
                                     />
                                     <Line
@@ -261,7 +261,7 @@ export default function AdminRecommendationUsagePage() {
                                         name={t(
                                             "admin.recommendationUsage.chartInsurance",
                                         )}
-                                        stroke="#3c817d"
+                                        stroke="#6d8fa8"
                                         strokeWidth={2}
                                     />
                                     <Line
@@ -270,7 +270,7 @@ export default function AdminRecommendationUsagePage() {
                                         name={t(
                                             "admin.recommendationUsage.chartAccount",
                                         )}
-                                        stroke="#62835d"
+                                        stroke="#b48a55"
                                         strokeWidth={2}
                                     />
                                 </LineChart>
