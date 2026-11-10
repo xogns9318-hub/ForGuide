@@ -514,25 +514,56 @@
     }
 }
 
-/* 홈 소개를 배치된 방향에서 화면 안으로 이동시킨다. */
+/* 설명과 그림을 같은 행에 두고 서로 반대편에서 등장시킨다. */
 .content {
+    grid-row: 1;
     --home-reveal-offset: -56px;
-    --home-reveal-progress: 1;
+}
 
-    opacity: var(--home-reveal-progress);
-    transform: translate3d(
-        calc(var(--home-reveal-offset) * (1 - var(--home-reveal-progress))),
-        0,
-        0
-    );
+.illustration {
+    display: block;
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: center;
+    width: 100%;
+    max-width: 558px;
+    height: auto;
+    --home-reveal-offset: 56px;
 }
 
 .right .content {
     --home-reveal-offset: 56px;
 }
 
+.right .illustration {
+    grid-column: 1;
+    --home-reveal-offset: -56px;
+}
+
+.content,
+.illustration {
+    opacity: var(--home-reveal-progress, 1);
+    transform: translate3d(
+            calc(var(--home-reveal-offset) * (1 - var(--home-reveal-progress, 1))),
+            0,
+            0
+    );
+}
+
+@media (max-width: 768px) {
+    .section {
+        row-gap: 20px;
+    }
+
+    .section .illustration {
+        grid-column: 1;
+        grid-row: 2;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
-    .content {
+    .content,
+    .illustration {
         opacity: 1;
         transform: none;
     }

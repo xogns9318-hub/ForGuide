@@ -121,7 +121,9 @@ function WalkingDuck() {
 const sectionIds = ["main", ...sections.map((section) => section.id)];
 
 export default function Home() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
+    const language = i18n.resolvedLanguage || i18n.language || "ko";
+    const illustrationFolder = language.split("-")[0] === "ko" ? "" : "neutral/";
     const location = useLocation();
     const navigate = useNavigate();
     const [activeId, setActiveId] = useState("main");
@@ -146,37 +148,38 @@ export default function Home() {
 
             root.style.setProperty("--home-header-height", `${headerHeight}px`);
 
-            // 설명 묶음이 화면 중앙에 도착하면 등장 효과를 완료한다.
-            // 소수점 단위의 스크롤 오차도 허용한다.
+            // 설명과 그림은 같은 진행률을 쓰고, 등장 방향은 CSS에서 나눈다.
             const revealEnd = headerHeight + availableHeight / 2 + 2;
             const revealStart = Math.max(revealEnd + 1, window.innerHeight - 48);
             const revealDistance = revealStart - revealEnd;
+            const atPageEnd =
+                window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
 
             contents.forEach((element) => {
                 const section = element.closest("section");
                 if (!section) return;
 
                 const bounds = element.getBoundingClientRect();
-                const paddingTop =
-                    parseFloat(getComputedStyle(section).paddingTop) || 0;
-
-                // 긴 설명은 상단부터 읽을 수 있도록 완료 기준을 제한한다.
+                const paddingTop = parseFloat(getComputedStyle(section).paddingTop) || 0;
                 const anchorOffset = Math.min(
                     bounds.height / 2,
                     Math.max(0, availableHeight / 2 - paddingTop),
                 );
                 const anchor = bounds.top + anchorOffset;
 
-                const progress =
-                    reducedMotion.matches || element.contains(document.activeElement)
-                        ? 1
-                        : Math.max(
-                            0,
-                            Math.min(1, (revealStart - anchor) / revealDistance),
-                        );
+                // 왼쪽 버튼으로 이동하면 구역 시작점에서 설명과 그림을 모두 표시한다.
+                const reachedStart = section.getBoundingClientRect().top <= headerHeight + 2;
+                const fullyVisible =
+                    reducedMotion.matches ||
+                    reachedStart ||
+                    atPageEnd ||
+                    element.contains(document.activeElement);
 
-                // 위로 돌아가면 기존처럼 자연스럽게 사라진다.
-                element.style.setProperty("--home-reveal-progress", String(progress));
+                const progress = fullyVisible
+                    ? 1
+                    : Math.max(0, Math.min(1, (revealStart - anchor) / revealDistance));
+
+                section.style.setProperty("--home-reveal-progress", String(progress));
             });
         }
 
@@ -478,6 +481,14 @@ export default function Home() {
                                 })}
                             </div>
                         </div>
+                        <img
+                            className={styles.illustration}
+                            src={`${import.meta.env.BASE_URL}home-illustrations/${illustrationFolder}${section.id}.png`}
+                            width={528}
+                            height={400}
+                            alt=""
+                            decoding="async"
+                        />
                     </section>
                 ))}
             </div>
