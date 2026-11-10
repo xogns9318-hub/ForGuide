@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SelectBox from "../../components/SelectBox/SelectBox.jsx";
 import ChoiceGroup from "../components/ChoiceGroup.jsx";
@@ -27,7 +27,6 @@ export default function LoanRecommend() {
     const [choices, setChoices] = useState(null);
     const [choicesError, setChoicesError] = useState(null);
     const [choicesRetry, setChoicesRetry] = useState(0);
-    const resultsRef = useRef(null);
 
     const complete = Object.values(form).every(Boolean);
 
@@ -68,10 +67,6 @@ export default function LoanRecommend() {
             active = false;
         };
     }, [submitted, retry]);
-
-    useEffect(() => {
-        if (submitted) resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, [submitted]);
 
     function update(field, value) {
         setForm((previous) => ({ ...previous, [field]: value }));
@@ -159,7 +154,8 @@ export default function LoanRecommend() {
 
     return (
         <div className="page-stack">
-            <section className="panel" aria-labelledby="loan-recommend-title">
+            <div className={`panel ${styles.layout}`}>
+            <section className={styles.inputColumn} aria-labelledby="loan-recommend-title">
                 <h2 id="loan-recommend-title">{t("recommendLoan.title")}</h2>
                 <p className="form-help">{t("recommendLoan.description")}</p>
 
@@ -228,7 +224,6 @@ export default function LoanRecommend() {
 
             {submitted && (
                 <section
-                    ref={resultsRef}
                     className={styles.results}
                     aria-labelledby="loan-results-title"
                     aria-busy={loading}
@@ -266,17 +261,20 @@ export default function LoanRecommend() {
 
                             <RateChart items={shownItems} />
 
-                            <ResultGroups
-                                groups={result.groups}
-                                mismatch={result.mismatch}
-                                renderFacts={renderFacts}
-                                onDetail={(item, group) =>
-                                    setSelected({ item, guide: group.guide })
-                                }
-                            />
                         </>
                     )}
                 </section>
+            )}
+        </div>
+            {submitted && result && (
+                <div className={styles.resultCards}>
+                    <ResultGroups
+                        groups={result.groups}
+                        mismatch={result.mismatch}
+                        renderFacts={renderFacts}
+                        onDetail={(item, group) => setSelected({ item, guide: group.guide })}
+                    />
+                </div>
             )}
 
             {selected && (

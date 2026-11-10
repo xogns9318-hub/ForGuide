@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import SelectBox from "../../components/SelectBox/SelectBox.jsx";
@@ -29,7 +29,6 @@ export default function InsuranceRecommend() {
     const [choices, setChoices] = useState(null);
     const [choicesError, setChoicesError] = useState(null);
     const [choicesRetry, setChoicesRetry] = useState(0);
-    const resultsRef = useRef(null);
 
     const gateOpen = form.health_insurance === "예";
     const gateClosed = form.health_insurance !== "" && !gateOpen;
@@ -75,10 +74,6 @@ export default function InsuranceRecommend() {
             active = false;
         };
     }, [submitted, retry]);
-
-    useEffect(() => {
-        if (submitted) resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, [submitted]);
 
     function update(field, value) {
         setForm((previous) => ({ ...previous, [field]: value }));
@@ -156,7 +151,8 @@ export default function InsuranceRecommend() {
 
     return (
         <div className="page-stack">
-            <section className="panel" aria-labelledby="insurance-recommend-title">
+            <div className={`panel ${styles.layout}`}>
+            <section className={styles.inputColumn} aria-labelledby="insurance-recommend-title">
                 <h2 id="insurance-recommend-title">{t("recommendInsurance.title")}</h2>
                 <p className="form-help">{t("recommendInsurance.description")}</p>
 
@@ -272,7 +268,6 @@ export default function InsuranceRecommend() {
 
             {submitted && (
                 <section
-                    ref={resultsRef}
                     className={styles.results}
                     aria-labelledby="insurance-results-title"
                     aria-busy={loading}
@@ -314,17 +309,22 @@ export default function InsuranceRecommend() {
                                 age={result.input.age}
                             />
 
-                            <ResultGroups
-                                groups={result.groups}
-                                separate={result.separate}
-                                renderFacts={renderFacts}
-                                onDetail={(item, group) =>
-                                    setSelected({ item, guide: group.guide ?? fallbackGuide })
-                                }
-                            />
                         </>
                     )}
                 </section>
+            )}
+        </div>
+            {submitted && result?.groups && (
+                <div className={styles.resultCards}>
+                    <ResultGroups
+                        groups={result.groups}
+                        separate={result.separate}
+                        renderFacts={renderFacts}
+                        onDetail={(item, group) =>
+                            setSelected({ item, guide: group.guide ?? fallbackGuide })
+                        }
+                    />
+                </div>
             )}
 
             {selected && (
