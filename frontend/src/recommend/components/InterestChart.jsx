@@ -30,7 +30,7 @@ export default function InterestChart({ items, purpose, term }) {
                         : t("recommendAccount.chartSaving", { term })}
                 </span>
             </figcaption>
-            <ResponsiveContainer width="100%" height={data.length * ROW_HEIGHT}>
+            <ResponsiveContainer width="100%" minWidth={330} height={data.length * ROW_HEIGHT}>
                 <BarChart
                     data={data}
                     layout="vertical"
@@ -50,7 +50,10 @@ export default function InterestChart({ items, purpose, term }) {
                         dataKey="interest"
                         radius={[0, 8, 8, 0]}
                         background={{ fill: "var(--mint-soft)", radius: 8 }}
-                        isAnimationActive={false}
+                        isAnimationActive="auto"
+                        animationBegin={840}
+                        animationDuration={480}
+                        animationEasing="ease-out"
                     >
                         {data.map((row) => (
                             <Cell

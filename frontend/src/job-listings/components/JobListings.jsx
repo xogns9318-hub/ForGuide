@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import JobListingDetailModal from "./JobListingDetailModal.jsx";
 import { getJobListingSections } from "../api/jobListingsApi.js";
 import { useTranslation } from "react-i18next";
@@ -201,6 +201,7 @@ export default function JobListings() {
     const [isRegionMenuOpen, setIsRegionMenuOpen] = useState(false);
     const [selectedListing, setSelectedListing] = useState(null);
     const regionMenuRef = useRef(null);
+    const pageRef = useRef(null);
 
     useEffect(() => {
         async function loadJobListings() {
@@ -234,6 +235,40 @@ export default function JobListings() {
         };
     }, []);
 
+    useLayoutEffect(() => {
+        const page = pageRef.current;
+        if (!page || isLoading || loadError) return;
+
+        const cards = [...page.querySelectorAll(".job-listing-card")];
+        if (!cards.length) return;
+
+        function matchCardHeights() {
+            // 이전 높이를 빼고 현재 내용에 필요한 높이를 다시 잰다.
+            page.style.removeProperty("--job-listing-card-height");
+            const tallest = Math.max(...cards.map((card) => card.getBoundingClientRect().height));
+            page.style.setProperty("--job-listing-card-height", `${Math.ceil(tallest)}px`);
+        }
+
+        let previousWidth = page.getBoundingClientRect().width;
+        const observer = new ResizeObserver(() => {
+            const width = page.getBoundingClientRect().width;
+            if (width === previousWidth) return;
+
+            previousWidth = width;
+            matchCardHeights();
+        });
+
+        matchCardHeights();
+        observer.observe(page);
+        document.fonts.addEventListener("loadingdone", matchCardHeights);
+
+        return () => {
+            observer.disconnect();
+            document.fonts.removeEventListener("loadingdone", matchCardHeights);
+            page.style.removeProperty("--job-listing-card-height");
+        };
+    }, [sections, selectedRegion, t, isLoading, loadError]);
+
     const regionalSection = sections.find((section) => section.id === "regional");
     const generalSections = sections.filter((section) => section.id !== "regional");
     const regionalListings = regionalSection?.listingsByRegion?.[selectedRegion]
@@ -241,7 +276,7 @@ export default function JobListings() {
         ?? [];
 
     return (
-        <div className="page-stack job-listings-page">
+        <div ref={pageRef} className="page-stack job-listings-page">
 
             {isLoading &&
                 <p className="job-listings-state">

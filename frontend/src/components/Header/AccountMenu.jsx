@@ -42,6 +42,9 @@ export default function AccountMenu({ label, inline, children }) {
                 className={styles.accountTrigger}
                 aria-expanded={open}
                 aria-controls={open ? panelId : undefined}
+                onPointerDown={(event) => {
+                    if (event.pointerType === "mouse") event.preventDefault();
+                }}
                 onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
                         event.preventDefault();

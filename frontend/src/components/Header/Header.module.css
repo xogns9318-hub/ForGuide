@@ -982,13 +982,12 @@
 
 /* 글씨와 선택창 사이에서도 마우스가 끊기지 않게 연결한다. */
 .accountOptions::before {
-    position: absolute;
-    top: calc(-1 * var(--account-menu-gap));
-    right: 0;
-    left: 0;
-    height: var(--account-menu-gap);
-
     content: "";
+    position: absolute;
+    bottom: 100%;
+    left: -1px;
+    right: -1px;
+    height: calc(var(--account-menu-gap) + 2px);
 }
 
 .accountOptions > :is(a, button) {
@@ -1131,7 +1130,6 @@
 /* 프로필과 언어 아이콘의 크기를 알림 아이콘에 맞춘다. */
 .accountTrigger {
     display: flex;
-    cursor: pointer;
 }
 
 .accountTrigger > svg,
@@ -1141,12 +1139,31 @@
     height: 22px;
 }
 
-.actions :global(.header-language .select-box.is-compact .select-box-trigger) {
-    cursor: pointer;
-}
-
 .actions :global(.header-language .select-box.is-compact .select-box-trigger:focus-visible) {
     outline: 2px solid var(--primary);
     outline-offset: 4px;
     text-decoration: none;
+}
+
+@media (min-width: 1025px) {
+    .desktopActions > a {
+        font-size: 14px;
+        line-height: 24px;
+    }
+
+    .desktopActions > a:is(:hover, :focus-visible) {
+        font-weight: 400;
+    }
+
+    .desktopActions > * + *::before {
+        height: 18px;
+    }
+
+    .desktopActions .accountTrigger > svg,
+    .desktopActions :global(.header-language .select-box-trigger > span > svg),
+    .desktopActions > [data-header-notification] > button,
+    .desktopActions > [data-header-notification] > button > svg {
+        width: 26px;
+        height: 26px;
+    }
 }

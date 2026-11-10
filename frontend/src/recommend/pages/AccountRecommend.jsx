@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import SelectBox from "../../components/SelectBox/SelectBox.jsx";
@@ -32,7 +32,6 @@ export default function AccountRecommend() {
     const [choices, setChoices] = useState(null);
     const [choicesError, setChoicesError] = useState(null);
     const [choicesRetry, setChoicesRetry] = useState(0);
-    const resultsRef = useRef(null);
 
     const noAccount = form.own_account === "아니오";
     const complete = Object.values(form).every(Boolean);
@@ -74,10 +73,6 @@ export default function AccountRecommend() {
             active = false;
         };
     }, [submitted, retry]);
-
-    useEffect(() => {
-        if (submitted) resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, [submitted]);
 
     function update(field, value) {
         setForm((previous) => ({ ...previous, [field]: value }));
@@ -155,7 +150,8 @@ export default function AccountRecommend() {
 
     return (
         <div className="page-stack">
-            <section className="panel" aria-labelledby="account-recommend-title">
+            <div className={`panel ${styles.layout}`}>
+            <section className={styles.inputColumn} aria-labelledby="account-recommend-title">
                 <h2 id="account-recommend-title">{t("recommendAccount.title")}</h2>
                 <p className="form-help">{t("recommendAccount.description")}</p>
 
@@ -263,7 +259,6 @@ export default function AccountRecommend() {
 
             {submitted && (
                 <section
-                    ref={resultsRef}
                     className={styles.results}
                     aria-labelledby="account-results-title"
                     aria-busy={loading}
@@ -305,17 +300,21 @@ export default function AccountRecommend() {
                                 term={result.input.term}
                             />
 
-                            <ResultGroups
-                                groups={result.groups}
-                                mismatch={result.mismatch}
-                                renderFacts={renderFacts}
-                                onDetail={(item, group) =>
-                                    setSelected({ item, guide: group.guide })
-                                }
-                            />
                         </>
                     )}
                 </section>
+            )}
+        </div>
+
+            {submitted && result && (
+                <div className={styles.resultCards}>
+                    <ResultGroups
+                        groups={result.groups}
+                        mismatch={result.mismatch}
+                        renderFacts={renderFacts}
+                        onDetail={(item, group) => setSelected({ item, guide: group.guide })}
+                    />
+                </div>
             )}
 
             {selected && (

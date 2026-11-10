@@ -40,6 +40,7 @@ export default function PremiumChart({ items, sex, age }) {
             </figcaption>
             <ResponsiveContainer
                 width="100%"
+                minWidth={330}
                 height={data.length * ROW_HEIGHT + (stacked ? 36 : 0)}
             >
                 <BarChart
@@ -76,7 +77,10 @@ export default function PremiumChart({ items, sex, age }) {
                             stackId="premium"
                             fill={part.color}
                             radius={part.key === last ? [0, 8, 8, 0] : 0}
-                            isAnimationActive={false}
+                            isAnimationActive="auto"
+                            animationBegin={840}
+                            animationDuration={480}
+                            animationEasing="ease-out"
                         >
                             {part.key === last && (
                                 <LabelList
