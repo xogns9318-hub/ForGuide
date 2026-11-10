@@ -21,7 +21,7 @@ export default function LanguageSelector() {
     return (
         <div className="header-language">
             <span id={`${selectorId}-label`} className="header-language-label">
-                {t("header.language")}
+                {t("header.language")} · {languages.find(({ value }) => value === language)?.label ?? language}
             </span>
 
             {/* 선택값·목록·변경 함수를 공통 선택창에 전달 */}
@@ -31,6 +31,20 @@ export default function LanguageSelector() {
                 value={language}
                 options={languages}
                 onChange={handleLanguageChange}
+                triggerIcon={
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M3 5h12M9 2.5V5M12.5 5c-1.1 5.2-4.3 8.7-9 11M6 8c1.3 2.9 3.2 5 5.7 6.4" />
+                        <path d="m13 21 4.2-9 4.3 9m-7.1-2.9H20" opacity=".6" />
+                    </svg>
+                }
                 compact
                 openOnHover
             />

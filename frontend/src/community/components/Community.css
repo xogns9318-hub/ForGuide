@@ -2942,17 +2942,74 @@
     border-color: var(--ink);
 }
 
-.community-page :is(.community-sidebar-item, .community-feed-tabs button) {
+.community-page .community-feed-tabs button {
     background: transparent;
     box-shadow: none;
     color: var(--ink);
 }
 
-.community-page :is(.community-sidebar-item, .community-feed-tabs button):hover,
-.community-page .community-sidebar-item.is-active,
-.community-page .community-feed-tabs button.is-selected {
+.community-page .community-feed-tabs button:is(:hover, .is-selected) {
     color: var(--primary);
     text-decoration: underline;
     text-decoration-thickness: 1px;
     text-underline-offset: 5px;
+}
+
+/* 아이콘과 글자 중심을 맞추고, 선택 시에도 버튼 크기를 유지한다. */
+.community-page :is(.community-sidebar-item, .community-topic-item) {
+    align-items: center;
+    gap: 10px;
+    padding-inline: 10px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink);
+    box-shadow: none;
+}
+
+.community-page :is(.community-sidebar-icon, .community-topic-icon) {
+    width: 20px;
+    height: 20px;
+}
+
+.community-page :is(.community-sidebar-icon, .community-topic-icon) > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.community-menu-label {
+    position: relative;
+    line-height: 1.45;
+}
+
+.community-menu-label::after {
+    position: absolute;
+    inset-inline: 0;
+    bottom: -3px;
+    height: 1px;
+    background: currentColor;
+    content: "";
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 220ms ease;
+}
+
+.community-page :is(.community-sidebar-item, .community-topic-item):is(:hover, :focus-visible, .is-active) {
+    background: transparent;
+    color: var(--primary);
+}
+
+.community-page :is(.community-sidebar-item, .community-topic-item):not(.is-active):is(:hover, :focus-visible) > .community-menu-label::after {
+    transform: scaleX(1);
+}
+
+.community-page :is(.community-sidebar-item, .community-topic-item).is-active {
+    border-color: var(--primary);
+    box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .community-menu-label::after {
+        transition: none;
+    }
 }

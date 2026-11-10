@@ -8,6 +8,7 @@ import {
 } from "../api/inquiryApi.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import InquiryImageList from "../components/InquiryImageList.jsx";
+import SelectBox from "../../components/SelectBox/SelectBox.jsx";
 import styles from "./InquiryPage.module.css";
 import { formatDateTime } from "../../utils/formatDateTime.js";
 
@@ -276,20 +277,21 @@ export default function InquiryPage() {
             </header>
 
             <form className={styles.form} onSubmit={handleSubmit} noValidate>
-                <label>
-                    <span>{t("inquiry.form.category")}</span>
-                    <select
-                        name="inquiryCategory"
+                <div className={styles.categoryField}>
+                    <span id="inquiry-category-label">{t("inquiry.form.category")}</span>
+                    <SelectBox
+                        id="inquiry-category"
+                        labelledBy="inquiry-category-label"
                         value={form.inquiryCategory}
-                        onChange={handleChange}
-                    >
-                        {CATEGORY_CODES.map((category) => (
-                            <option key={category} value={category}>
-                                {t(`inquiry.category.${category}`)}
-                            </option>
-                        ))}
-                    </select>
-                </label>
+                        options={CATEGORY_CODES.map((value) => ({
+                            value,
+                            label: t(`inquiry.category.${value}`),
+                        }))}
+                        onChange={(inquiryCategory) =>
+                            setForm((previous) => ({ ...previous, inquiryCategory }))
+                        }
+                    />
+                </div>
 
                 <label>
                     <span>{t("inquiry.form.title")}</span>

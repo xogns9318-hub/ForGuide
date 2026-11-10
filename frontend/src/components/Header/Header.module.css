@@ -1037,20 +1037,21 @@
     pointer-events: none;
 }
 
-/* 가리킨 항목이 없으면 첫 항목인 마이페이지를 강조한다. */
+/* 다른 항목에 마우스나 키보드 포커스가 없으면 현재 페이지를 강조한다. */
 .accountOptions > :is(a, button):is(:hover, :focus-visible),
-.accountOptions:not(:has(> :is(a, button):is(:hover, :focus-visible))) > :first-child {
+.accountOptions:not(:has(> :is(a, button):is(:hover, :focus-visible))) > a[aria-current="page"],
+.mobileActions > a[aria-current="page"] {
     color: #145244;
 }
 
 .accountOptions > :is(a, button):is(:hover, :focus-visible) > span,
-.accountOptions:not(:has(> :is(a, button):is(:hover, :focus-visible))) > :first-child > span {
+.accountOptions:not(:has(> :is(a, button):is(:hover, :focus-visible))) > a[aria-current="page"] > span,
+.mobileActions > a[aria-current="page"] > span {
     font-weight: 600;
 }
 
-/* 기본 항목과 마우스로 가리킨 항목에 같은 밑줄을 적용한다. */
 .accountOptions > :is(a, button):is(:hover, :focus-visible) > span::after,
-.accountOptions:not(:has(> :is(a, button):is(:hover, :focus-visible))) > :first-child > span::after {
+.accountOptions:not(:has(> :is(a, button):is(:hover, :focus-visible))) > a[aria-current="page"] > span::after {
     transform: scaleX(1);
 }
 
@@ -1125,4 +1126,27 @@
     .actions > [data-header-notification] > button > svg {
         transition: none;
     }
+}
+
+/* 프로필과 언어 아이콘의 크기를 알림 아이콘에 맞춘다. */
+.accountTrigger {
+    display: flex;
+    cursor: pointer;
+}
+
+.accountTrigger > svg,
+.actions :global(.header-language .select-box-trigger > span > svg) {
+    display: block;
+    width: 22px;
+    height: 22px;
+}
+
+.actions :global(.header-language .select-box.is-compact .select-box-trigger) {
+    cursor: pointer;
+}
+
+.actions :global(.header-language .select-box.is-compact .select-box-trigger:focus-visible) {
+    outline: 2px solid var(--primary);
+    outline-offset: 4px;
+    text-decoration: none;
 }
