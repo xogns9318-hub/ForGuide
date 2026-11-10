@@ -28,7 +28,7 @@ export default function SelectBox({
     // 선택 후 강조를 해제할 버튼 참조
     const triggerRef = useRef(null);
     // 마우스 올림과 모바일 터치를 구분한다.
-    const hoverRef = useRef(false);
+    const pointerTypeRef = useRef(null);
     // 공통 선택창의 목록 열림 상태 관리
     const [isOpen, setIsOpen] = useState(false);
     // 방향키와 마우스로 가리킨 항목 위치 관리
@@ -220,16 +220,12 @@ export default function SelectBox({
             onPointerEnter={(event) => {
                 // 언어 선택창에서 실제 마우스를 올렸을 때만 목록을 연다.
                 if (!openOnHover || event.pointerType !== "mouse") return;
-
-                hoverRef.current = true;
                 setActiveIndex(selectedIndex);
                 setIsOpen(true);
             }}
             onPointerLeave={(event) => {
                 // 버튼과 목록을 모두 벗어나면 닫는다.
                 if (!openOnHover || event.pointerType !== "mouse") return;
-
-                hoverRef.current = false;
                 setIsOpen(false);
             }}
             onBlur={(event) => {
@@ -253,22 +249,26 @@ export default function SelectBox({
                 aria-controls={`${id}-options`}
                 aria-activedescendant={isOpen ? `${id}-option-${activeIndex}` : undefined}
                 onKeyDown={handleKeyDown}
+                onPointerDown={(event) => {
+                    if (!openOnHover) return;
+
+                    pointerTypeRef.current = event.pointerType;
+                    if (event.pointerType === "mouse") event.preventDefault();
+                }}
                 onClick={(event) => {
-                    // 마우스로 연 언어 목록은 버튼 클릭으로 다시 닫지 않는다.
-                    if (openOnHover && hoverRef.current) return;
-                    // 목록이 이미 열려 있는지 확인
+                    // 언어 아이콘의 마우스 클릭만 무시하고 터치 선택은 유지한다.
+                    if (openOnHover && event.detail > 0 && pointerTypeRef.current === "mouse") {
+                        return;
+                    }
+
                     if (isOpen) {
-                        // 선택창의 펼친 목록 닫기
                         setIsOpen(false);
 
-                        // 같은 선택창을 다시 클릭하면 강조도 해제
                         if (event.detail > 0) {
                             event.currentTarget.blur();
                         }
                     } else {
-                        // 목록을 열 때 현재 선택 항목부터 이동 시작
                         setActiveIndex(selectedIndex);
-                        // 선택창의 목록 표시
                         setIsOpen(true);
                     }
                 }}

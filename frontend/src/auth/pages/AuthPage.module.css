@@ -298,7 +298,13 @@
     --control-height: 44px;
 
     & :global(.form-field) {
-        gap: 4px;
+        --control-height: 38px;
+        gap: 2px;
+    }
+
+    & :global(.form-field) input:not([type="hidden"]),
+    & .inputWithButton > :global(.button) {
+        padding-block: 4px;
     }
 
     & :global(.button) {
