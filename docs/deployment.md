@@ -5,7 +5,7 @@
 
 | 구성 | 내용 |
 | --- | --- |
-| 서버 | EC2 t3.medium(4GB) + 스왑 2GB, Ubuntu 24.04, 디스크 20GB(gp3) |
+| 서버 | EC2 c7i-flex.large(x86, 2 vCPU·4GB) + 스왑 2GB, Ubuntu 24.04, 디스크 20GB(gp3) |
 | 백엔드 | Java 17, `bootJar` → `/opt/forguide/forguide.jar`, systemd `forguide` (재부팅 시 자동 시작) |
 | 화면 | `vite build` 결과 → `/var/www/forguide`, Nginx가 제공하고 `/api`는 백엔드(8080)로 넘김 (SSE 버퍼링 끔) |
 | DB | 같은 서버의 MySQL, DB `forguide`. 테이블은 서버 시작 때 Flyway가 V1부터 만든다 |
@@ -14,7 +14,7 @@
 | 비밀값 | `/etc/forguide/forguide.env` (권한 600, root만 읽음) |
 
 ## 1. AWS 콘솔 (처음 한 번)
-1. EC2 인스턴스: Ubuntu 24.04, t3.medium(검색 서버까지 쓰려면 4GB 필요. t3.small에서 바꿀 때는 중지 → 인스턴스 유형 변경 → 시작), 디스크 20GB, 키 페어(.pem)는 저장소 밖에 보관
+1. EC2 인스턴스: Ubuntu 24.04, c7i-flex.large(검색 서버까지 쓰려면 x86·4GB 필요, t3.medium도 가능. 바꿀 때는 중지 → 스냅샷 → 인스턴스 유형 변경 → 시작), 디스크 20GB, 키 페어(.pem)는 저장소 밖에 보관
 2. 보안 그룹 인바운드: 22(내 IP만), 80, 443만 연다. 3306·6379·8080은 열지 않는다
 3. (선택) 탄력적 IP를 붙이면 재시작해도 주소가 바뀌지 않는다
 

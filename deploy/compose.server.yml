@@ -1,4 +1,4 @@
-# 배포 서버(EC2 t3.medium, 4GB)에서 compose.yml의 elasticsearch에 덮어쓰는 값만 둔다.
+# 배포 서버(EC2 c7i-flex.large, 4GB)에서 compose.yml의 elasticsearch에 덮어쓰는 값만 둔다.
 # 이미지·Nori·포트(127.0.0.1:9200)·데이터 볼륨은 팀 compose.yml을 그대로 쓴다.
 # 실행 (서버의 ~/forguide 폴더에서, ES만 띄운다. Redis는 서버에 직접 설치돼 있어 띄우지 않는다):
 #   sudo docker compose -f compose.yml -f deploy/compose.server.yml --profile search up -d --build --wait --wait-timeout 300 elasticsearch
