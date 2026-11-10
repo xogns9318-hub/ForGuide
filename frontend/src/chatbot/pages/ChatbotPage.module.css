@@ -215,3 +215,96 @@
         align-items: stretch;
     }
 }
+
+.page {
+    --ink: #527b73;
+    --muted: var(--ink);
+    width: min(100%, 900px);
+    padding: 0;
+    color: var(--ink);
+}
+
+.heading h1 {
+    font-size: 28px;
+    line-height: 1.4;
+}
+
+.heading p {
+    margin-top: 6px;
+    font-size: 15px;
+}
+
+.chat {
+    padding: 22px 24px;
+}
+
+.toolbar {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+}
+
+.toolbar :global(.button) {
+    min-height: 36px;
+    padding: 5px 12px;
+    font-size: 14px;
+}
+
+.messages {
+    height: min(40vh, 380px);
+    min-height: 260px;
+    padding: 12px 0;
+    border: 0;
+    background: var(--surface);
+}
+
+.user p {
+    background: #f0f8f5;
+    color: var(--primary);
+}
+
+.form {
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+}
+
+.form textarea {
+    padding-inline: 0 4px;
+    border: 0;
+    border-bottom: 2px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+}
+
+.form textarea:focus {
+    border-bottom-color: var(--primary);
+    outline: none;
+}
+
+.form textarea[aria-invalid="true"] {
+    border-bottom-color: var(--error);
+}
+
+.handoff {
+    padding: 18px 0 0;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+}
+
+.page :global(.button-primary) {
+    border-color: var(--primary);
+    background: var(--surface);
+    color: var(--primary);
+}
+
+.page :global(.button-primary:not(:disabled):is(:hover, :active)) {
+    background: var(--primary);
+    color: var(--surface);
+}
+
+.page :global(.button:disabled) {
+    border-color: var(--line);
+    background: var(--surface);
+    color: #65867d;
+    opacity: 1;
+}
