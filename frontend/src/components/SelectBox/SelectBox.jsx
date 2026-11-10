@@ -1,5 +1,5 @@
 // 화면 상태와 생명주기를 관리하는 React 기능 사용
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 // 이 화면에서 사용할 스타일 연결
 import "./SelectBox.css";
 
@@ -18,6 +18,10 @@ export default function SelectBox({
     openOnHover = false,
     // 지정한 화면에서만 목록 개수와 화면 경계를 제한한다.
     maxVisibleOptions = 0,
+                                      ref,
+                                      disabled = false,
+                                      "aria-invalid": ariaInvalid,
+                                      "aria-describedby": ariaDescribedBy,
 }) {
     // 선택창 바깥 클릭을 판별할 전체 영역 참조
     const rootRef = useRef(null);
@@ -27,10 +31,16 @@ export default function SelectBox({
     const [listStyle, setListStyle] = useState({});
     // 선택 후 강조를 해제할 버튼 참조
     const triggerRef = useRef(null);
+    useImperativeHandle(ref, () => triggerRef.current, []);
     // 마우스 올림과 모바일 터치를 구분한다.
     const pointerTypeRef = useRef(null);
     // 공통 선택창의 목록 열림 상태 관리
-    const [isOpen, setIsOpen] = useState(false);
+    const [open, setIsOpen] = useState(false);
+    const isOpen = open && !disabled;
+
+    useEffect(() => {
+        if (disabled) setIsOpen(false);
+    }, [disabled]);
     // 방향키와 마우스로 가리킨 항목 위치 관리
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -219,7 +229,7 @@ export default function SelectBox({
             className={`select-box ${compact ? "is-compact" : ""} ${isOpen ? "is-open" : ""}`}
             onPointerEnter={(event) => {
                 // 언어 선택창에서 실제 마우스를 올렸을 때만 목록을 연다.
-                if (!openOnHover || event.pointerType !== "mouse") return;
+                if (disabled || !openOnHover || event.pointerType !== "mouse") return;
                 setActiveIndex(selectedIndex);
                 setIsOpen(true);
             }}
@@ -243,6 +253,9 @@ export default function SelectBox({
                 type="button"
                 role="combobox"
                 className="select-box-trigger"
+                disabled={disabled}
+                aria-invalid={ariaInvalid}
+                aria-describedby={ariaDescribedBy}
                 aria-labelledby={labelledBy}
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}

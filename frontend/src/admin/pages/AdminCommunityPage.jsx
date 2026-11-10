@@ -17,6 +17,7 @@ import {
 } from "../api/adminApi.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import { formatDateTime } from "../../utils/formatDateTime.js";
+import AdminFilter from "../components/AdminFilter.jsx";
 import styles from "./AdminCommunityPage.module.css";
 
 const PAGE_SIZE = 20;
@@ -402,8 +403,8 @@ export default function AdminCommunityPage() {
     }
 
     function handleFilterChange(setter) {
-        return (event) => {
-            setter(event.target.value);
+        return (value) => {
+            setter(value);
             setUpdateResult({
                 contentKey: null,
                 error: "",
@@ -493,43 +494,31 @@ export default function AdminCommunityPage() {
                 className={styles.filters}
                 onSubmit={handleSearchSubmit}
             >
-                <label className={styles.filterField}>
-                    <span>{t("admin.community.resourceTypeLabel")}</span>
-                    <select
-                        value={resourceType}
-                        onChange={handleFilterChange(setResourceType)}
-                    >
-                        <option value="">
-                            {t("admin.community.resourceTypeAll")}
-                        </option>
-                        <option value="POST">
-                            {t("admin.community.resourceTypePost")}
-                        </option>
-                        <option value="COMMENT">
-                            {t("admin.community.resourceTypeComment")}
-                        </option>
-                    </select>
-                </label>
+                <AdminFilter
+                    className={styles.filterField}
+                    id="admin-community-resource"
+                    label={t("admin.community.resourceTypeLabel")}
+                    value={resourceType}
+                    onChange={handleFilterChange(setResourceType)}
+                    options={[
+                        ["", t("admin.community.resourceTypeAll")],
+                        ["POST", t("admin.community.resourceTypePost")],
+                        ["COMMENT", t("admin.community.resourceTypeComment")],
+                    ]}
+                />
 
-                <label className={styles.filterField}>
-                    <span>{t("admin.community.statusLabel")}</span>
-                    <select
-                        value={moderationStatus}
-                        onChange={handleFilterChange(
-                            setModerationStatus,
-                        )}
-                    >
-                        <option value="">
-                            {t("admin.community.statusAll")}
-                        </option>
-                        <option value="VISIBLE">
-                            {t("admin.community.statusVisible")}
-                        </option>
-                        <option value="HIDDEN">
-                            {t("admin.community.statusHidden")}
-                        </option>
-                    </select>
-                </label>
+                <AdminFilter
+                    className={styles.filterField}
+                    id="admin-community-status"
+                    label={t("admin.community.statusLabel")}
+                    value={moderationStatus}
+                    onChange={handleFilterChange(setModerationStatus)}
+                    options={[
+                        ["", t("admin.community.statusAll")],
+                        ["VISIBLE", t("admin.community.statusVisible")],
+                        ["HIDDEN", t("admin.community.statusHidden")],
+                    ]}
+                />
 
                 <label className={styles.searchField}>
                     <span>{t("admin.community.searchLabel")}</span>

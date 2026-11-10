@@ -122,11 +122,8 @@ export default function AdminRecommendationUsagePage() {
                         <button
                             key={days}
                             type="button"
-                            className={
-                                days === periodDays
-                                    ? "button button-primary"
-                                    : "button"
-                            }
+                            className="button"
+                            aria-pressed={days === periodDays}
                             onClick={() => setPeriodDays(days)}
                             disabled={isLoading}
                         >
@@ -239,9 +236,9 @@ export default function AdminRecommendationUsagePage() {
                         <div className={styles.chartWrap}>
                             <ResponsiveContainer width="100%" height={300}>
                                 <LineChart data={chartData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="label" />
-                                    <YAxis allowDecimals={false} />
+                                    <CartesianGrid stroke="var(--line)" strokeDasharray="3 3" />
+                                    <XAxis dataKey="label" tick={{ fill: "var(--ink)" }} />
+                                    <YAxis allowDecimals={false} tick={{ fill: "var(--ink)" }} />
                                     <Tooltip
                                         formatter={(value, name) => [
                                             Number(value).toLocaleString(),
