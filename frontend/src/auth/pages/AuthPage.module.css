@@ -331,3 +331,63 @@
     background: var(--mint-soft);
     color: var(--ink);
 }
+
+.card[aria-labelledby="mypage-title"] .actions :global(.button-primary:disabled) {
+    color: #a0b6b2;
+}
+
+.card[aria-labelledby="my-finance-title"] {
+    & :global(.select-box-trigger) {
+        padding-inline: 0 4px;
+        border: 0;
+        border-bottom: 2px solid var(--line);
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    & :global(.select-box.is-open .select-box-trigger),
+    & :global(.select-box-trigger:focus-visible) {
+        border-bottom-color: var(--primary);
+        outline: none;
+        box-shadow: none;
+    }
+
+    & :global(.select-box-trigger[aria-invalid="true"]) {
+        border-bottom-color: var(--error);
+    }
+
+    & :global(.select-box-option > span) {
+        position: relative;
+        display: inline-block;
+        padding-bottom: 2px;
+    }
+
+    & :global(.select-box-option > span)::after {
+        position: absolute;
+        inset-inline: 0;
+        bottom: 0;
+        height: 2px;
+        background: currentColor;
+        content: "";
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 220ms ease;
+    }
+
+    & :global(.select-box-option:is(.is-active, [aria-selected="true"])) {
+        color: var(--primary);
+        background: transparent;
+        box-shadow: none;
+    }
+
+    & :global(.select-box-option:is(.is-active, [aria-selected="true"]) > span)::after {
+        transform: scaleX(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card[aria-labelledby="my-finance-title"] :global(.select-box-option > span)::after {
+        transition: none;
+    }
+}

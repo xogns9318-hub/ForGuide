@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import FieldError from "../../components/FieldError/FieldError.jsx";
+import SelectBox from "../../components/SelectBox/SelectBox.jsx";
 import { getFinance, updateFinance } from "../api/memberApi.js";
 import { msg, messageText, apiErrorMessage, apiFieldErrors } from "../utils/authMessages.js";
 import styles from "./AuthPage.module.css";
@@ -84,8 +85,7 @@ export default function MyFinance() {
         };
     }, []);
 
-    function handleChange(event) {
-        const { name, value } = event.target;
+    function updateField(name, value) {
         setForm((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: "" }));
         setFormError("");
@@ -146,7 +146,7 @@ export default function MyFinance() {
             id: `finance-${name}`,
             name,
             value: form?.[name] ?? "",
-            onChange: handleChange,
+            onChange: (event) => updateField(name, event.target.value),
             ref: (element) => {
                 inputRefs.current[name] = element;
             },
@@ -160,7 +160,7 @@ export default function MyFinance() {
     function label(name, text) {
         const unknown = finance && finance[name] == null;
         return (
-            <label htmlFor={`finance-${name}`}>
+            <label id={`finance-${name}-label`} htmlFor={`finance-${name}`}>
                 {text}
                 {unknown && (
                     <span className={styles.needCheck}>{t("auth.myFinance.needCheck")}</span>
@@ -168,7 +168,19 @@ export default function MyFinance() {
             </label>
         );
     }
+    function renderSelect(name, options, emptyLabel = t("auth.profileEdit.notSelected")) {
+        const { name: fieldName, ...props } = fieldProps(name);
 
+        return (
+            <SelectBox
+                {...props}
+                labelledBy={`finance-${fieldName}-label`}
+                options={[{ value: "", label: emptyLabel }, ...options]}
+                onChange={(value) => updateField(fieldName, value)}
+                maxVisibleOptions={6}
+            />
+        );
+    }
     const choices = finance?.choices;
 
     return (
@@ -214,14 +226,10 @@ export default function MyFinance() {
                     {/* 고용 형태 */}
                     <div className="form-field">
                         {label("employmentTypeCode", t("auth.myFinance.employmentType"))}
-                        <select {...fieldProps("employmentTypeCode")}>
-                            <option value="">{t("auth.profileEdit.notSelected")}</option>
-                            {(choices?.employmentTypes ?? []).map((code) => (
-                                <option key={code} value={code}>
-                                    {t(`auth.myFinance.employment.${code}`)}
-                                </option>
-                            ))}
-                        </select>
+                        {renderSelect("employmentTypeCode", (choices?.employmentTypes ?? []).map((code) => ({
+                            value: code,
+                            label: t(`auth.myFinance.employment.${code}`),
+                        })))}
                         <FieldError
                             id="finance-employmentTypeCode-error"
                             message={messageText(t, errors.employmentTypeCode)}
@@ -248,14 +256,14 @@ export default function MyFinance() {
                     {/* 신용점수 구간 (선택, 상세 추천과 같은 구간) */}
                     <div className="form-field">
                         {label("creditScoreBand", t("auth.myFinance.creditScoreBand"))}
-                        <select {...fieldProps("creditScoreBand")}>
-                            <option value="">{t("auth.myFinance.unknown")}</option>
-                            {(choices?.creditScoreBands ?? []).map((code) => (
-                                <option key={code} value={code}>
-                                    {t(`auth.myFinance.creditBand.${code}`)}
-                                </option>
-                            ))}
-                        </select>
+                        {renderSelect(
+                            "creditScoreBand",
+                            (choices?.creditScoreBands ?? []).map((code) => ({
+                                value: code,
+                                label: t(`auth.myFinance.creditBand.${code}`),
+                            })),
+                            t("auth.myFinance.unknown"),
+                        )}
                         <FieldError
                             id="finance-creditScoreBand-error"
                             message={messageText(t, errors.creditScoreBand)}
@@ -265,16 +273,12 @@ export default function MyFinance() {
                     {/* 주거래은행 (추천 데이터의 은행 + 기타·없음) */}
                     <div className="form-field">
                         {label("mainBank", t("auth.myFinance.mainBank"))}
-                        <select {...fieldProps("mainBank")}>
-                            <option value="">{t("auth.profileEdit.notSelected")}</option>
-                            {(choices?.banks ?? []).map((bank) => (
-                                <option key={bank.code} value={bank.code}>
-                                    {bank.code === "OTHER" || bank.code === "NONE"
-                                        ? t(`auth.myFinance.bank.${bank.code}`)
-                                        : bank.name}
-                                </option>
-                            ))}
-                        </select>
+                        {renderSelect("mainBank", (choices?.banks ?? []).map((bank) => ({
+                            value: bank.code,
+                            label: bank.code === "OTHER" || bank.code === "NONE"
+                                ? t(`auth.myFinance.bank.${bank.code}`)
+                                : bank.name,
+                        })))}
                         <FieldError
                             id="finance-mainBank-error"
                             message={messageText(t, errors.mainBank)}
@@ -285,14 +289,10 @@ export default function MyFinance() {
                     {finance?.visaApplicable && (
                         <div className="form-field">
                             {label("visaTypeCode", t("auth.common.visaType"))}
-                            <select {...fieldProps("visaTypeCode")}>
-                                <option value="">{t("auth.profileEdit.notSelected")}</option>
-                                {(choices?.visaTypes ?? []).map((item) => (
-                                    <option key={item.code} value={item.code}>
-                                        {item.name}
-                                    </option>
-                                ))}
-                            </select>
+                            {renderSelect("visaTypeCode", (choices?.visaTypes ?? []).map((item) => ({
+                                value: item.code,
+                                label: item.name,
+                            })))}
                             <p className="form-help">{t("auth.myFinance.visaHelp")}</p>
                             <FieldError
                                 id="finance-visaTypeCode-error"

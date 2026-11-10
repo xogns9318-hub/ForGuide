@@ -12,6 +12,7 @@ import {
 } from "../api/adminApi.js";
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import { formatDateTime } from "../../utils/formatDateTime.js";
+import AdminFilter from "../components/AdminFilter.jsx";
 import styles from "./AdminMemberPage.module.css";
 
 const PAGE_SIZE = 20;
@@ -135,8 +136,8 @@ export default function AdminMemberPage() {
         setKeyword(nextKeyword);
     }
 
-    function handleStatusFilterChange(event) {
-        setMemberStatus(event.target.value);
+    function handleStatusFilterChange(value) {
+        setMemberStatus(value);
         setUpdateResult({
             memberId: null,
             error: "",
@@ -213,23 +214,18 @@ export default function AdminMemberPage() {
                 className={styles.filters}
                 onSubmit={handleSearchSubmit}
             >
-                <label className={styles.filterField}>
-                    <span>{t("admin.members.statusLabel")}</span>
-                    <select
-                        value={memberStatus}
-                        onChange={handleStatusFilterChange}
-                    >
-                        <option value="">
-                            {t("admin.members.statusAll")}
-                        </option>
-                        <option value="ACTIVE">
-                            {t("admin.members.statusActive")}
-                        </option>
-                        <option value="SUSPENDED">
-                            {t("admin.members.statusSuspended")}
-                        </option>
-                    </select>
-                </label>
+                <AdminFilter
+                    className={styles.filterField}
+                    id="admin-member-status"
+                    label={t("admin.members.statusLabel")}
+                    value={memberStatus}
+                    onChange={handleStatusFilterChange}
+                    options={[
+                        ["", t("admin.members.statusAll")],
+                        ["ACTIVE", t("admin.members.statusActive")],
+                        ["SUSPENDED", t("admin.members.statusSuspended")],
+                    ]}
+                />
 
                 <label className={styles.searchField}>
                     <span>{t("admin.members.searchLabel")}</span>

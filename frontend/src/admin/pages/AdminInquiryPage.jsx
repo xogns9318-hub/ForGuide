@@ -8,6 +8,7 @@ import {
 import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import InquiryImageList from "../../inquiry/components/InquiryImageList.jsx";
 import { formatDateTime } from "../../utils/formatDateTime.js";
+import AdminFilter from "../components/AdminFilter.jsx";
 import styles from "./AdminInquiryPage.module.css";
 
 const PAGE_SIZE = 10;
@@ -158,8 +159,8 @@ export default function AdminInquiryPage() {
         onLoadMore: loadInquiries,
     });
 
-    function handleFilterChange(event) {
-        setInquiryStatus(event.target.value);
+    function handleFilterChange(value) {
+        setInquiryStatus(value);
         setAnswerResult({
             inquiryId: null,
             error: "",
@@ -278,14 +279,18 @@ export default function AdminInquiryPage() {
                 <p>{t("admin.inquiries.description")}</p>
             </header>
 
-            <label className={styles.filter}>
-                <span>{t("inquiry.form.category")}</span>
-                <select value={inquiryStatus} onChange={handleFilterChange}>
-                    <option value="">{t("admin.inquiries.filter.all")}</option>
-                    <option value="RECEIVED">{t("admin.inquiries.filter.received")}</option>
-                    <option value="ANSWERED">{t("admin.inquiries.filter.answered")}</option>
-                </select>
-            </label>
+            <AdminFilter
+                className={styles.filter}
+                id="admin-inquiry-status"
+                label={t("inquiry.form.category")}
+                value={inquiryStatus}
+                onChange={handleFilterChange}
+                options={[
+                    ["", t("admin.inquiries.filter.all")],
+                    ["RECEIVED", t("admin.inquiries.filter.received")],
+                    ["ANSWERED", t("admin.inquiries.filter.answered")],
+                ]}
+            />
 
             {isLoading && inquiries.length === 0 && (
                 <p className={styles.stateMessage}>{t("admin.inquiries.loading")}</p>

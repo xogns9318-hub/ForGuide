@@ -122,11 +122,8 @@ export default function AdminRecommendationUsagePage() {
                         <button
                             key={days}
                             type="button"
-                            className={
-                                days === periodDays
-                                    ? "button button-primary"
-                                    : "button"
-                            }
+                            className="button"
+                            aria-pressed={days === periodDays}
                             onClick={() => setPeriodDays(days)}
                             disabled={isLoading}
                         >
@@ -239,9 +236,9 @@ export default function AdminRecommendationUsagePage() {
                         <div className={styles.chartWrap}>
                             <ResponsiveContainer width="100%" height={300}>
                                 <LineChart data={chartData}>
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="label" />
-                                    <YAxis allowDecimals={false} />
+                                    <CartesianGrid stroke="var(--line)" strokeDasharray="3 3" />
+                                    <XAxis dataKey="label" tick={{ fill: "var(--ink)" }} />
+                                    <YAxis allowDecimals={false} tick={{ fill: "var(--ink)" }} />
                                     <Tooltip
                                         formatter={(value, name) => [
                                             Number(value).toLocaleString(),
@@ -255,7 +252,7 @@ export default function AdminRecommendationUsagePage() {
                                         name={t(
                                             "admin.recommendationUsage.chartLoan",
                                         )}
-                                        stroke="#3f7968"
+                                        stroke="var(--primary)"
                                         strokeWidth={2}
                                     />
                                     <Line
@@ -264,7 +261,7 @@ export default function AdminRecommendationUsagePage() {
                                         name={t(
                                             "admin.recommendationUsage.chartInsurance",
                                         )}
-                                        stroke="#6d8fa8"
+                                        stroke="#3c817d"
                                         strokeWidth={2}
                                     />
                                     <Line
@@ -273,7 +270,7 @@ export default function AdminRecommendationUsagePage() {
                                         name={t(
                                             "admin.recommendationUsage.chartAccount",
                                         )}
-                                        stroke="#b48a55"
+                                        stroke="#62835d"
                                         strokeWidth={2}
                                     />
                                 </LineChart>
