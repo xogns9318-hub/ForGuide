@@ -1,9 +1,4 @@
-import {
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
@@ -19,6 +14,7 @@ import { useInfiniteScroll } from "../../hooks/useInfiniteScroll.js";
 import { formatDateTime } from "../../utils/formatDateTime.js";
 import AdminFilter from "../components/AdminFilter.jsx";
 import styles from "./AdminCommunityPage.module.css";
+import { queueTranslation } from "../../utils/translationQueue.js";
 
 const PAGE_SIZE = 20;
 
@@ -32,9 +28,7 @@ export default function AdminCommunityPage() {
 
     const [contents, setContents] = useState([]);
     const [translatedContents, setTranslatedContents] = useState({});
-    const targetLanguage = (
-        i18n.resolvedLanguage || i18n.language || "ko"
-    ).split("-")[0];
+    const targetLanguage = (i18n.resolvedLanguage || i18n.language || "ko").split("-")[0];
     const translationRequestsRef = useRef(new Set());
     const [reports, setReports] = useState([]);
     const [isReportsLoading, setIsReportsLoading] = useState(true);
@@ -77,10 +71,7 @@ export default function AdminCommunityPage() {
 
     const loadContents = useCallback(
         async ({ reset = false } = {}) => {
-            if (
-                isLoadingRef.current ||
-                (!reset && !hasMoreRef.current)
-            ) {
+            if (isLoadingRef.current || (!reset && !hasMoreRef.current)) {
                 return;
             }
 
@@ -114,30 +105,20 @@ export default function AdminCommunityPage() {
                         return received;
                     }
 
-                    const existingKeys = new Set(
-                        previous.map(getContentKey),
-                    );
+                    const existingKeys = new Set(previous.map(getContentKey));
 
                     return [
                         ...previous,
-                        ...received.filter(
-                            (content) =>
-                                !existingKeys.has(
-                                    getContentKey(content),
-                                ),
-                        ),
+                        ...received.filter((content) => !existingKeys.has(getContentKey(content))),
                     ];
                 });
 
                 const lastContent = received.at(-1);
 
                 if (lastContent) {
-                    cursorCreatedAtRef.current =
-                        lastContent.createdAt;
-                    cursorResourceTypeRef.current =
-                        lastContent.resourceType;
-                    cursorResourceIdRef.current =
-                        lastContent.resourceId;
+                    cursorCreatedAtRef.current = lastContent.createdAt;
+                    cursorResourceTypeRef.current = lastContent.resourceType;
+                    cursorResourceIdRef.current = lastContent.resourceId;
                 }
 
                 const nextHasMore = received.length === PAGE_SIZE;
@@ -145,10 +126,7 @@ export default function AdminCommunityPage() {
                 hasMoreRef.current = nextHasMore;
                 setHasMore(nextHasMore);
             } catch (requestError) {
-                setListError(
-                    requestError?.message ||
-                    t("admin.community.loadError"),
-                );
+                setListError(requestError?.message || t("admin.community.loadError"));
             } finally {
                 isLoadingRef.current = false;
                 setIsLoading(false);
@@ -168,8 +146,7 @@ export default function AdminCommunityPage() {
 
         contents.forEach((content) => {
             const contentKey = getContentKey(content);
-            const requestKey =
-                `${targetLanguage}:${contentKey}:${content.contentVersion}`;
+            const requestKey = `${targetLanguage}:${contentKey}:${content.contentVersion}`;
 
             if (
                 translatedContents[targetLanguage]?.[contentKey] ||
@@ -180,16 +157,19 @@ export default function AdminCommunityPage() {
 
             translationRequestsRef.current.add(requestKey);
 
-            translateAdminCommunityContent(
-                content.resourceType,
-                content.resourceId,
-                targetLanguage
+            queueTranslation(
+                `admin-community:${content.resourceType}:${content.resourceId}:${content.contentVersion}:${targetLanguage}`,
+                () =>
+                    translateAdminCommunityContent(
+                        content.resourceType,
+                        content.resourceId,
+                        targetLanguage,
+                    ),
             )
                 .then((response) => {
                     // API 응답에서 실제 번역 결과 추출
                     const translatedText =
-                        response?.translatedText ??
-                        response?.data?.translatedText;
+                        response?.translatedText ?? response?.data?.translatedText;
 
                     if (!translatedText) {
                         console.warn("번역 결과가 없습니다:", response);
@@ -205,11 +185,7 @@ export default function AdminCommunityPage() {
                     }));
                 })
                 .catch((error) => {
-                    console.error(
-                        "관리자 커뮤니티 번역 실패:",
-                        contentKey,
-                        error
-                    );
+                    console.error("관리자 커뮤니티 번역 실패:", contentKey, error);
                 })
                 .finally(() => {
                     translationRequestsRef.current.delete(requestKey);
@@ -225,10 +201,7 @@ export default function AdminCommunityPage() {
             const response = await getAdminCommunityReports();
             setReports(Array.isArray(response) ? response : []);
         } catch (requestError) {
-            setReportsError(
-                requestError?.message ||
-                t("admin.community.reportsLoadError"),
-            );
+            setReportsError(requestError?.message || t("admin.community.reportsLoadError"));
         } finally {
             setIsReportsLoading(false);
         }
@@ -240,8 +213,7 @@ export default function AdminCommunityPage() {
 
     // 관리자 모달을 닫거나 다시 열 때 Blob 미리보기 주소를 해제한다.
     function clearReportImagePreviews() {
-        reportImageUrlsRef.current.forEach((url) =>
-            URL.revokeObjectURL(url),);
+        reportImageUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
         reportImageUrlsRef.current.clear();
     }
 
@@ -252,9 +224,7 @@ export default function AdminCommunityPage() {
         setIsImagesLoading(true);
 
         try {
-            const response = await getAdminCommunityReportImages(
-                report.reportId,
-            );
+            const response = await getAdminCommunityReportImages(report.reportId);
 
             clearReportImagePreviews();
 
@@ -278,12 +248,8 @@ export default function AdminCommunityPage() {
             );
 
             setReportImages(imagesWithPreviewUrl);
-
         } catch (requestError) {
-            setImagesError(
-                requestError?.message ||
-                t("admin.community.reportImagesLoadError"),
-            );
+            setImagesError(requestError?.message || t("admin.community.reportImagesLoadError"));
         } finally {
             setIsImagesLoading(false);
         }
@@ -313,10 +279,7 @@ export default function AdminCommunityPage() {
                 null,
             );
 
-            await Promise.all([
-                loadReports(),
-                loadContents({ reset: true }),
-            ]);
+            await Promise.all([loadReports(), loadContents({ reset: true })]);
 
             setReportActionResult({
                 reportId: report.reportId,
@@ -326,9 +289,7 @@ export default function AdminCommunityPage() {
         } catch (requestError) {
             setReportActionResult({
                 reportId: report.reportId,
-                error:
-                    requestError?.message ||
-                    t("admin.community.reportActionError"),
+                error: requestError?.message || t("admin.community.reportActionError"),
                 success: "",
             });
         } finally {
@@ -357,9 +318,7 @@ export default function AdminCommunityPage() {
         } catch (requestError) {
             setReportActionResult({
                 reportId: report.reportId,
-                error:
-                    requestError?.message ||
-                    t("admin.community.reportActionError"),
+                error: requestError?.message || t("admin.community.reportActionError"),
                 success: "",
             });
         } finally {
@@ -372,9 +331,7 @@ export default function AdminCommunityPage() {
         const keyword = report.targetLoginId || report.targetNickname;
 
         navigate(
-            keyword
-                ? `/admin/members?keyword=${encodeURIComponent(keyword)}`
-                : "/admin/members",
+            keyword ? `/admin/members?keyword=${encodeURIComponent(keyword)}` : "/admin/members",
         );
     }
 
@@ -413,11 +370,7 @@ export default function AdminCommunityPage() {
         };
     }
 
-    async function handleModerationChange(
-        content,
-        nextStatus,
-        reason = null,
-    ) {
+    async function handleModerationChange(content, nextStatus, reason = null) {
         const contentKey = getContentKey(content);
 
         setUpdatingContentKey(contentKey);
@@ -428,26 +381,18 @@ export default function AdminCommunityPage() {
         });
 
         try {
-            const updatedContent =
-                await updateAdminCommunityModeration(
-                    content.resourceType,
-                    content.resourceId,
-                    nextStatus,
-                    reason,
-                );
+            const updatedContent = await updateAdminCommunityModeration(
+                content.resourceType,
+                content.resourceId,
+                nextStatus,
+                reason,
+            );
 
             setContents((previous) =>
                 previous
-                    .map((item) =>
-                        getContentKey(item) === contentKey
-                            ? updatedContent
-                            : item,
-                    )
+                    .map((item) => (getContentKey(item) === contentKey ? updatedContent : item))
                     .filter(
-                        (item) =>
-                            !moderationStatus ||
-                            item.moderationStatus ===
-                            moderationStatus,
+                        (item) => !moderationStatus || item.moderationStatus === moderationStatus,
                     ),
             );
 
@@ -465,9 +410,7 @@ export default function AdminCommunityPage() {
         } catch (requestError) {
             setUpdateResult({
                 contentKey,
-                error:
-                    requestError?.message ||
-                    t("admin.community.updateError"),
+                error: requestError?.message || t("admin.community.updateError"),
                 success: "",
             });
         } finally {
@@ -476,24 +419,14 @@ export default function AdminCommunityPage() {
     }
 
     return (
-        <section
-            className={styles.page}
-            aria-labelledby="admin-community-title"
-        >
+        <section className={styles.page} aria-labelledby="admin-community-title">
             <header className={styles.heading}>
-                <p className={styles.eyebrow}>
-                    {t("admin.community.eyebrow")}
-                </p>
-                <h1 id="admin-community-title">
-                    {t("admin.community.title")}
-                </h1>
+                <p className={styles.eyebrow}>{t("admin.community.eyebrow")}</p>
+                <h1 id="admin-community-title">{t("admin.community.title")}</h1>
                 <p>{t("admin.community.description")}</p>
             </header>
 
-            <form
-                className={styles.filters}
-                onSubmit={handleSearchSubmit}
-            >
+            <form className={styles.filters} onSubmit={handleSearchSubmit}>
                 <AdminFilter
                     className={styles.filterField}
                     id="admin-community-resource"
@@ -524,12 +457,8 @@ export default function AdminCommunityPage() {
                     <span>{t("admin.community.searchLabel")}</span>
                     <input
                         value={keywordInput}
-                        onChange={(event) =>
-                            setKeywordInput(event.target.value)
-                        }
-                        placeholder={t(
-                            "admin.community.searchPlaceholder",
-                        )}
+                        onChange={(event) => setKeywordInput(event.target.value)}
+                        placeholder={t("admin.community.searchPlaceholder")}
                     />
                 </label>
 
@@ -543,9 +472,14 @@ export default function AdminCommunityPage() {
                 aria-labelledby="admin-community-reports-title"
             >
                 <div className={styles.reportSectionHeading}>
-                    <h2 id="admin-community-reports-title">
-                        {t("admin.community.reportsTitle")}
-                    </h2>
+                    <div>
+                        <h2 id="admin-community-reports-title">
+                            {t("admin.community.reportsTitle")}
+                        </h2>
+                        <p className={styles.sectionDescription}>
+                            {t("admin.community.reportsDescription")}
+                        </p>
+                    </div>
 
                     <button
                         type="button"
@@ -558,9 +492,7 @@ export default function AdminCommunityPage() {
                 </div>
 
                 {isReportsLoading && (
-                    <p className={styles.stateMessage}>
-                        {t("admin.community.reportsLoading")}
-                    </p>
+                    <p className={styles.stateMessage}>{t("admin.community.reportsLoading")}</p>
                 )}
 
                 {!isReportsLoading && reportsError && (
@@ -569,136 +501,110 @@ export default function AdminCommunityPage() {
                     </p>
                 )}
 
-                {!isReportsLoading &&
-                    !reportsError &&
-                    reports.length === 0 && (
-                        <p className={styles.stateMessage}>
-                            {t("admin.community.reportsEmpty")}
-                        </p>
-                    )}
+                {!isReportsLoading && !reportsError && reports.length === 0 && (
+                    <p className={styles.stateMessage}>{t("admin.community.reportsEmpty")}</p>
+                )}
 
-                {!isReportsLoading &&
-                    !reportsError &&
-                    reports.length > 0 && (
-                        <ul className={styles.reportList}>
-                            {reports.map((report) => (
-                                <li
-                                    key={report.reportId}
-                                    className={styles.reportItem}
-                                >
-                                    <div>
-                                        <strong>
-                                            {report.resourceType === "POST"
-                                                ? t(
-                                                    "admin.community.resourceTypePost",
-                                                )
-                                                : t(
-                                                    "admin.community.resourceTypeComment",
-                                                )}
-                                        </strong>
+                {!isReportsLoading && !reportsError && reports.length > 0 && (
+                    <ul className={styles.reportList}>
+                        {reports.map((report) => (
+                            <li key={report.reportId} className={styles.reportItem}>
+                                <div>
+                                    <strong>
+                                        {report.resourceType === "POST"
+                                            ? t("admin.community.resourceTypePost")
+                                            : t("admin.community.resourceTypeComment")}
+                                    </strong>
 
+                                    <p>
+                                        {t("admin.community.reportReasonLabel")}:{" "}
+                                        {t(`community.report.reasons.${report.reportReason}`)}
+                                    </p>
+
+                                    <p>
+                                        {t("admin.community.reporterLabel")}:{" "}
+                                        {report.reporterNickname || report.reporterLoginId}
+                                    </p>
+
+                                    <p>
+                                        {t("admin.community.targetLabel")}:{" "}
+                                        {report.targetNickname || report.targetLoginId || "-"}
+                                    </p>
+
+                                    <p>
+                                        {t("admin.community.reportStatusLabel")}:{" "}
+                                        {t(`admin.community.reportStatus.${report.reportStatus}`)}
+                                    </p>
+
+                                    {report.handledAt && (
                                         <p>
-                                            {t(
-                                                "admin.community.reportReasonLabel",
-                                            )}
-                                            :{" "}
-                                            {t(
-                                                `community.report.reasons.${report.reportReason}`,
-                                            )}
+                                            {t("admin.community.handledAtLabel")}:{" "}
+                                            {formatDateTime(report.handledAt, i18n.language)}
                                         </p>
+                                    )}
+                                </div>
 
-                                        <p>
-                                            {t(
-                                                "admin.community.reporterLabel",
-                                            )}
-                                            :{" "}
-                                            {report.reporterNickname ||
-                                                report.reporterLoginId}
+                                <div className={styles.reportActions}>
+                                    <button
+                                        type="button"
+                                        className="button"
+                                        onClick={() => openReportImages(report)}
+                                    >
+                                        {t("admin.community.viewEvidence")}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        className="button"
+                                        onClick={() => openTargetMemberManagement(report)}
+                                    >
+                                        {t("admin.community.openMemberManagement")}
+                                    </button>
+
+                                    {report.reportStatus === "PENDING" && (
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="button"
+                                                onClick={() => hideReportedContent(report)}
+                                                disabled={processingReportId === report.reportId}
+                                            >
+                                                {processingReportId === report.reportId
+                                                    ? t("admin.community.updating")
+                                                    : t("admin.community.hideReportedContent")}
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                className="button"
+                                                onClick={() => dismissReport(report)}
+                                                disabled={processingReportId === report.reportId}
+                                            >
+                                                {processingReportId === report.reportId
+                                                    ? t("admin.community.updating")
+                                                    : t("admin.community.dismissReport")}
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
+
+                                {reportActionResult.reportId === report.reportId &&
+                                    reportActionResult.error && (
+                                        <p className={styles.itemError} role="alert">
+                                            {reportActionResult.error}
                                         </p>
+                                    )}
 
-                                        <p>
-                                            {t("admin.community.targetLabel")}:{" "}
-                                            {report.targetNickname || report.targetLoginId || "-"}
+                                {reportActionResult.reportId === report.reportId &&
+                                    reportActionResult.success && (
+                                        <p className={styles.itemSuccess} role="status">
+                                            {reportActionResult.success}
                                         </p>
-
-                                        <p>
-                                            {t("admin.community.reportStatusLabel")}:{" "}
-                                            {t(`admin.community.reportStatus.${report.reportStatus}`)}
-                                        </p>
-
-                                        {report.handledAt && (
-                                            <p>
-                                                {t("admin.community.handledAtLabel")}:{" "}
-                                                {formatDateTime(report.handledAt, i18n.language)}
-                                            </p>
-                                        )}
-                                    </div>
-
-                                    <div className={styles.reportActions}>
-                                        <button
-                                            type="button"
-                                            className="button"
-                                            onClick={() => openReportImages(report)}
-                                        >
-                                            {t("admin.community.viewEvidence")}
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            className="button"
-                                            onClick={() =>
-                                                openTargetMemberManagement(report)
-                                            }
-                                        >
-                                            {t(
-                                                "admin.community.openMemberManagement",
-                                            )}
-                                        </button>
-
-                                        {report.reportStatus === "PENDING" && (
-                                            <>
-                                                <button
-                                                    type="button"
-                                                    className="button"
-                                                    onClick={() => hideReportedContent(report)}
-                                                    disabled={processingReportId === report.reportId}
-                                                >
-                                                    {processingReportId === report.reportId
-                                                        ? t("admin.community.updating")
-                                                        : t("admin.community.hideReportedContent")}
-                                                </button>
-
-                                                <button
-                                                    type="button"
-                                                    className="button"
-                                                    onClick={() => dismissReport(report)}
-                                                    disabled={processingReportId === report.reportId}
-                                                >
-                                                    {processingReportId === report.reportId
-                                                        ? t("admin.community.updating")
-                                                        : t("admin.community.dismissReport")}
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
-
-                                    {reportActionResult.reportId === report.reportId &&
-                                        reportActionResult.error && (
-                                            <p className={styles.itemError} role="alert">
-                                                {reportActionResult.error}
-                                            </p>
-                                        )}
-
-                                    {reportActionResult.reportId === report.reportId &&
-                                        reportActionResult.success && (
-                                            <p className={styles.itemSuccess} role="status">
-                                                {reportActionResult.success}
-                                            </p>
-                                        )}
-                                </li>
-                            ))}
-                        </ul>
-                    )}
+                                    )}
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </section>
 
             {openedReport && (
@@ -715,15 +621,9 @@ export default function AdminCommunityPage() {
                         onMouseDown={(event) => event.stopPropagation()}
                     >
                         <div className={styles.imageModalHeading}>
-                            <h2 id="report-evidence-title">
-                                {t("admin.community.evidenceTitle")}
-                            </h2>
+                            <h2 id="report-evidence-title">{t("admin.community.evidenceTitle")}</h2>
 
-                            <button
-                                type="button"
-                                className="button"
-                                onClick={closeReportImages}
-                            >
+                            <button type="button" className="button" onClick={closeReportImages}>
                                 {t("admin.community.close")}
                             </button>
                         </div>
@@ -740,273 +640,226 @@ export default function AdminCommunityPage() {
                             </p>
                         )}
 
-                        {!isImagesLoading &&
-                            !imagesError &&
-                            reportImages.length === 0 && (
-                                <p className={styles.stateMessage}>
-                                    {t("admin.community.evidenceEmpty")}
-                                </p>
-                            )}
+                        {!isImagesLoading && !imagesError && reportImages.length === 0 && (
+                            <p className={styles.stateMessage}>
+                                {t("admin.community.evidenceEmpty")}
+                            </p>
+                        )}
 
-                        {!isImagesLoading &&
-                            !imagesError &&
-                            reportImages.length > 0 && (
-                                <ul className={styles.evidenceImageList}>
-                                    {reportImages.map((image) => (
-                                        <li key={image.reportImageId}>
-                                            <img
-                                                src={image.previewUrl}
-                                                alt={t(
-                                                    "admin.community.evidenceImageAlt",
-                                                    {
-                                                        index: image.displayOrder + 1,
-                                                    },
-                                                )}
-                                            />
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
+                        {!isImagesLoading && !imagesError && reportImages.length > 0 && (
+                            <ul className={styles.evidenceImageList}>
+                                {reportImages.map((image) => (
+                                    <li key={image.reportImageId}>
+                                        <img
+                                            src={image.previewUrl}
+                                            alt={t("admin.community.evidenceImageAlt", {
+                                                index: image.displayOrder + 1,
+                                            })}
+                                        />
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
                     </section>
                 </div>
             )}
 
-            {isLoading && contents.length === 0 && (
-                <p className={styles.stateMessage}>
-                    {t("admin.community.loading")}
-                </p>
-            )}
-
-            {!isLoading && listError && (
-                <div className={styles.stateMessage} role="alert">
-                    <p>{listError}</p>
-                    <button
-                        type="button"
-                        className="button"
-                        onClick={() =>
-                            loadContents({
-                                reset: contents.length === 0,
-                            })
-                        }
-                    >
-                        {t("admin.community.retry")}
-                    </button>
+            <section
+                className={styles.contentSection}
+                aria-labelledby="admin-community-contents-title"
+            >
+                <div className={styles.contentSectionHeading}>
+                    <h2 id="admin-community-contents-title">
+                        {t("admin.community.contentsTitle")}
+                    </h2>
+                    <p className={styles.sectionDescription}>
+                        {t("admin.community.contentsDescription")}
+                    </p>
                 </div>
-            )}
 
-            {!isLoading && !listError && contents.length === 0 && (
-                <p className={styles.stateMessage}>
-                    {t("admin.community.empty")}
-                </p>
-            )}
+                {isLoading && contents.length === 0 && (
+                    <p className={styles.stateMessage}>{t("admin.community.loading")}</p>
+                )}
 
-            {contents.length > 0 && (
-                <ul className={styles.contentList}>
-                    {contents.map((content) => {
-                        const contentKey = getContentKey(content);
-                        const isHidden =
-                            content.moderationStatus === "HIDDEN";
-                        const isUpdating =
-                            updatingContentKey === contentKey;
-                        const isHideFormOpen =
-                            activeHideKey === contentKey;
+                {!isLoading && listError && (
+                    <div className={styles.stateMessage} role="alert">
+                        <p>{listError}</p>
+                        <button
+                            type="button"
+                            className="button"
+                            onClick={() =>
+                                loadContents({
+                                    reset: contents.length === 0,
+                                })
+                            }
+                        >
+                            {t("admin.community.retry")}
+                        </button>
+                    </div>
+                )}
 
-                        return (
-                            <li
-                                key={contentKey}
-                                className={styles.contentItem}
-                            >
-                                <div className={styles.contentInfo}>
-                                    <div className={styles.contentHeading}>
-                                        <span className={styles.type}>
-                                            {content.resourceType === "POST"
-                                                ? t(
-                                                    "admin.community.resourceTypePost",
-                                                )
-                                                : t(
-                                                    "admin.community.resourceTypeComment",
-                                                )}
-                                        </span>
+                {!isLoading && !listError && contents.length === 0 && (
+                    <p className={styles.stateMessage}>{t("admin.community.empty")}</p>
+                )}
 
-                                        <span
-                                            className={
-                                                isHidden
-                                                    ? styles.hidden
-                                                    : styles.visible
-                                            }
-                                        >
-                                            {isHidden
-                                                ? t(
-                                                    "admin.community.statusHidden",
-                                                )
-                                                : t(
-                                                    "admin.community.statusVisible",
-                                                )}
-                                        </span>
+                {contents.length > 0 && (
+                    <ul className={styles.contentList}>
+                        {contents.map((content) => {
+                            const contentKey = getContentKey(content);
+                            const isHidden = content.moderationStatus === "HIDDEN";
+                            const isUpdating = updatingContentKey === contentKey;
+                            const isHideFormOpen = activeHideKey === contentKey;
+
+                            return (
+                                <li key={contentKey} className={styles.contentItem}>
+                                    <div className={styles.contentInfo}>
+                                        <div className={styles.contentHeading}>
+                                            <span className={styles.type}>
+                                                {content.resourceType === "POST"
+                                                    ? t("admin.community.resourceTypePost")
+                                                    : t("admin.community.resourceTypeComment")}
+                                            </span>
+
+                                            <span
+                                                className={
+                                                    isHidden ? styles.hidden : styles.visible
+                                                }
+                                            >
+                                                {isHidden
+                                                    ? t("admin.community.statusHidden")
+                                                    : t("admin.community.statusVisible")}
+                                            </span>
+                                        </div>
+
+                                        <p className={styles.contentText}>
+                                            {translatedContents[targetLanguage]?.[contentKey] ||
+                                                content.content}
+                                        </p>
+
+                                        <p className={styles.author}>
+                                            {content.authorNickname || content.authorLoginId} ·{" "}
+                                            {content.authorLoginId}
+                                        </p>
+
+                                        <time dateTime={content.createdAt}>
+                                            {t("admin.community.createdAt")}:{" "}
+                                            {formatDateTime(content.createdAt, i18n.language)}
+                                        </time>
+
+                                        {isHidden && (
+                                            <p className={styles.reason}>
+                                                {t("admin.community.reasonLabel")}:{" "}
+                                                {content.moderationReason ||
+                                                    t("admin.community.reasonNone")}
+                                            </p>
+                                        )}
                                     </div>
 
-                                    <p className={styles.contentText}>
-                                        {translatedContents[targetLanguage]?.[contentKey]
-                                            || content.content}
-                                    </p>
-
-                                    <p className={styles.author}>
-                                        {content.authorNickname ||
-                                            content.authorLoginId}{" "}
-                                        · {content.authorLoginId}
-                                    </p>
-
-                                    <time dateTime={content.createdAt}>
-                                        {t("admin.community.createdAt")}:{" "}
-                                        {formatDateTime(
-                                            content.createdAt,
-                                            i18n.language,
-                                        )}
-                                    </time>
-
-                                    {isHidden && (
-                                        <p className={styles.reason}>
-                                            {t(
-                                                "admin.community.reasonLabel",
-                                            )}
-                                            :{" "}
-                                            {content.moderationReason ||
-                                                t(
-                                                    "admin.community.reasonNone",
-                                                )}
-                                        </p>
-                                    )}
-                                </div>
-
-                                <div className={styles.actions}>
-                                    {isHidden ? (
-                                        <button
-                                            type="button"
-                                            className="button button-primary"
-                                            onClick={() =>
-                                                handleModerationChange(
-                                                    content,
-                                                    "VISIBLE",
-                                                )
-                                            }
-                                            disabled={isUpdating}
-                                        >
-                                            {isUpdating
-                                                ? t(
-                                                    "admin.community.updating",
-                                                )
-                                                : t(
-                                                    "admin.community.restore",
-                                                )}
-                                        </button>
-                                    ) : (
-                                        <button
-                                            type="button"
-                                            className="button"
-                                            onClick={() => {
-                                                setActiveHideKey(contentKey);
-                                                setHideReason("");
-                                                setUpdateResult({
-                                                    contentKey: null,
-                                                    error: "",
-                                                    success: "",
-                                                });
-                                            }}
-                                            disabled={isUpdating}
-                                        >
-                                            {t("admin.community.hide")}
-                                        </button>
-                                    )}
-                                </div>
-
-                                {isHideFormOpen && (
-                                    <div className={styles.reasonForm}>
-                                        <label>
-                                            <span>
-                                                {t(
-                                                    "admin.community.reasonLabel",
-                                                )}
-                                            </span>
-                                            <textarea
-                                                value={hideReason}
-                                                maxLength={500}
-                                                placeholder={t(
-                                                    "admin.community.reasonPlaceholder",
-                                                )}
-                                                onChange={(event) =>
-                                                    setHideReason(
-                                                        event.target.value,
-                                                    )
-                                                }
-                                            />
-                                        </label>
-
-                                        <div className={styles.reasonActions}>
+                                    <div className={styles.actions}>
+                                        {isHidden ? (
                                             <button
                                                 type="button"
                                                 className="button button-primary"
                                                 onClick={() =>
-                                                    handleModerationChange(
-                                                        content,
-                                                        "HIDDEN",
-                                                        hideReason,
-                                                    )
+                                                    handleModerationChange(content, "VISIBLE")
                                                 }
                                                 disabled={isUpdating}
                                             >
                                                 {isUpdating
-                                                    ? t(
-                                                        "admin.community.updating",
-                                                    )
-                                                    : t(
-                                                        "admin.community.confirmHide",
-                                                    )}
+                                                    ? t("admin.community.updating")
+                                                    : t("admin.community.restore")}
                                             </button>
-
+                                        ) : (
                                             <button
                                                 type="button"
                                                 className="button"
                                                 onClick={() => {
-                                                    setActiveHideKey(null);
+                                                    setActiveHideKey(contentKey);
                                                     setHideReason("");
+                                                    setUpdateResult({
+                                                        contentKey: null,
+                                                        error: "",
+                                                        success: "",
+                                                    });
                                                 }}
                                                 disabled={isUpdating}
                                             >
-                                                {t("admin.community.cancel")}
+                                                {t("admin.community.hide")}
                                             </button>
-                                        </div>
+                                        )}
                                     </div>
-                                )}
 
-                                {updateResult.contentKey === contentKey &&
-                                    updateResult.error && (
-                                        <p
-                                            className={styles.itemError}
-                                            role="alert"
-                                        >
-                                            {updateResult.error}
-                                        </p>
+                                    {isHideFormOpen && (
+                                        <div className={styles.reasonForm}>
+                                            <label>
+                                                <span>{t("admin.community.reasonLabel")}</span>
+                                                <textarea
+                                                    value={hideReason}
+                                                    maxLength={500}
+                                                    placeholder={t(
+                                                        "admin.community.reasonPlaceholder",
+                                                    )}
+                                                    onChange={(event) =>
+                                                        setHideReason(event.target.value)
+                                                    }
+                                                />
+                                            </label>
+
+                                            <div className={styles.reasonActions}>
+                                                <button
+                                                    type="button"
+                                                    className="button button-primary"
+                                                    onClick={() =>
+                                                        handleModerationChange(
+                                                            content,
+                                                            "HIDDEN",
+                                                            hideReason,
+                                                        )
+                                                    }
+                                                    disabled={isUpdating}
+                                                >
+                                                    {isUpdating
+                                                        ? t("admin.community.updating")
+                                                        : t("admin.community.confirmHide")}
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    className="button"
+                                                    onClick={() => {
+                                                        setActiveHideKey(null);
+                                                        setHideReason("");
+                                                    }}
+                                                    disabled={isUpdating}
+                                                >
+                                                    {t("admin.community.cancel")}
+                                                </button>
+                                            </div>
+                                        </div>
                                     )}
 
-                                {updateResult.contentKey === contentKey &&
-                                    updateResult.success && (
-                                        <p
-                                            className={styles.itemSuccess}
-                                            role="status"
-                                        >
-                                            {updateResult.success}
-                                        </p>
-                                    )}
-                            </li>
-                        );
-                    })}
-                </ul>
-            )}
+                                    {updateResult.contentKey === contentKey &&
+                                        updateResult.error && (
+                                            <p className={styles.itemError} role="alert">
+                                                {updateResult.error}
+                                            </p>
+                                        )}
+
+                                    {updateResult.contentKey === contentKey &&
+                                        updateResult.success && (
+                                            <p className={styles.itemSuccess} role="status">
+                                                {updateResult.success}
+                                            </p>
+                                        )}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
+            </section>
 
             {isLoading && contents.length > 0 && (
-                <p className={styles.moreLoading}>
-                    {t("admin.community.loading")}
-                </p>
+                <p className={styles.moreLoading}>{t("admin.community.loading")}</p>
             )}
 
             <div ref={observerTarget} aria-hidden="true" />

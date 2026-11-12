@@ -545,6 +545,10 @@ const ko = {
             loadMore: "콘텐츠 더 보기",
 
             reportsTitle: "접수된 신고",
+            reportsDescription:
+                "신고 한 건별로 증빙을 확인하고 콘텐츠 숨김 또는 신고 기각을 처리합니다.",
+            contentsTitle: "콘텐츠 공개 상태 관리",
+            contentsDescription: "신고와 별개로 게시글·댓글 자체를 숨기거나 공개로 복구합니다.",
             reportsLoading: "신고 목록을 불러오는 중입니다.",
             reportsLoadError: "신고 목록을 불러오지 못했습니다.",
             reportsEmpty: "접수된 신고가 없습니다.",

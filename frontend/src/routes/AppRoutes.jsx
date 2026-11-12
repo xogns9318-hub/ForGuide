@@ -184,11 +184,11 @@ export default function AppRoutes({ language, isLoggedIn, onLanguageChange, onLo
                         <Route path="/admin/inquiries" element={<AdminInquiryPage />} />
                         <Route path="/admin/community" element={<AdminCommunityPage />} />
                         <Route path="/admin/members" element={<AdminMemberPage />} />
+                        <Route
+                            path="/admin/recommendation-usage"
+                            element={<AdminRecommendationUsagePage />}
+                        />
                     </Route>
-                    <Route
-                        path="/admin/recommendation-usage"
-                        element={<AdminRecommendationUsagePage />}
-                    />
 
                     {/* 추천 화면 */}
                     {recommendRoutes()}

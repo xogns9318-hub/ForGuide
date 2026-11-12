@@ -200,6 +200,27 @@
     background: var(--surface);
 }
 
+.contentSection {
+    display: grid;
+    gap: 14px;
+}
+
+.contentSectionHeading {
+    padding: 4px 0;
+}
+
+.contentSectionHeading h2 {
+    margin: 0;
+    color: var(--ink);
+}
+
+.sectionDescription {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
 .reportSectionHeading,
 .imageModalHeading {
     display: flex;
