@@ -244,7 +244,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - 앱 시작 시 `App.jsx`가 `restoreSession()`을 한 번 부르고, 끝나면 성공·실패와 무관하게 `initialized`를 표시한다.
 - `login` 성공 시 스토어에 저장한다. 실패 메시지는 아이디·비밀번호 중 무엇이 틀렸는지 구분하지 않는다.
 - 이메일은 소문자로 바꿔 비교·저장한다.
-- 이메일 인증(`member/controller/EmailVerificationController`, 테이블 `email_verifications`): 코드 6자리·10분 유효·5번 틀리면 무효, 다시 받기는 60초 간격·하루 10번. 확인하면 30분 동안 한 번만 쓸 수 있는 토큰을 준다. 코드·토큰은 SHA-256 해시만 저장. 가장 최근 코드만 유효.
+- 이메일 인증(`member/controller/EmailVerificationController`, 테이블 `email_verifications`): 코드 6자리·10분 유효·5번 틀리면 무효, 다시 받기는 60초 간격·하루 10번. 모든 주소를 합친 하루 발송 상한(`forguide.mail.daily-total-limit`, 기본 300 예시값, 실제로 보낸 메일만 셈)에 닿으면 누구든 `VERIFICATION_DAILY_LIMIT`. 배포 서버는 Nginx에서 IP당 1분 5번(+3번 몰림 허용)으로 한 번 더 막고, 넘으면 같은 JSON 형식의 `VERIFICATION_RESEND_TOO_SOON`(429). 확인하면 30분 동안 한 번만 쓸 수 있는 토큰을 준다. 코드·토큰은 SHA-256 해시만 저장. 가장 최근 코드만 유효.
 - 비밀번호 찾기(`AuthService.resetPassword`): 가입되지 않은 이메일로 `PASSWORD_RESET` 코드를 요청해도 같은 응답을 주고 실제로는 보내지 않는다(재발송 간격·하루 한도도 같게 적용, 가입 여부가 드러나지 않게). 재설정하면 모든 기기의 refresh token을 지우고(새로 발급하지 않음) 로그인 잠금도 푼다. 응답의 `loginId`는 로그인 화면에 미리 채운다.
 - 아이디 찾기(`AuthService.findLoginId`): 비밀번호 찾기와 같이 가입되지 않은 이메일에도 같은 응답(미발송). 아이디는 앞 4자(6자 이하면 앞 2자)만 보이고 뒤는 항상 `***`(길이도 비공개). 인증 용도가 달라(`FIND_ID`, V33) 아이디 찾기 토큰으로 비밀번호를 바꿀 수 없다.
 - 화면의 이메일 인증 부분은 `src/auth/useEmailVerification.js`(상태·요청)와 `src/auth/components/EmailVerificationFields.jsx`(입력칸)를 회원가입·비밀번호 찾기가 같이 쓴다.

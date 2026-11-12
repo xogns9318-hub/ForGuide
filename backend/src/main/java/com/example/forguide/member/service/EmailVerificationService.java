@@ -6,11 +6,13 @@ import com.example.forguide.member.mapper.EmailVerificationMapper;
 import com.example.forguide.member.mapper.EmailVerificationRow;
 import com.example.forguide.member.mapper.MemberMapper;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
  * 규칙
  * - 코드: 6자리 숫자, 10분 유효, 5번 틀리면 무효(새 코드 필요)
  * - 재발송: 같은 이메일·목적은 1분 간격, 하루(24시간) 10번까지
+ * - 전체 상한: 모든 주소를 합쳐 하루(날짜 기준)에 실제로 보내는 메일 수 (forguide.mail.daily-total-limit)
+ *   주소를 바꿔 가며 보내는 남용으로 발송 계정(Gmail) 한도가 바닥나거나 계정이 정지되는 것을 막는다
  * - 인증 완료 토큰: 무작위 32바이트, 30분 유효, 한 번만 사용
  * - 보안: 코드와 토큰은 원문이 아니라 SHA-256 해시만 저장하고, 비교는 시간 차이가 나지 않는 방식으로 한다
  */
@@ -41,11 +45,20 @@ public class EmailVerificationService {
     private final MemberMapper memberMapper;
     private final VerificationMailSender mailSender;
 
+    // 전체 발송 상한: 오늘 실제로 보낸(보내는 중인) 메일 수
+    // 서버 메모리에만 두므로 서버를 다시 켜면 0부터 다시 센다 (서버 한 대 기준, 재시작은 드물어 감수)
+    // DB 기록 수로 세지 않는 이유: 계정 찾기에서 가입되지 않은 주소는 기록만 남기고 메일은 보내지 않기 때문
+    private final int dailyTotalLimit;
+    private LocalDate sentDate = LocalDate.now();
+    private int sentToday = 0;
+
     public EmailVerificationService(EmailVerificationMapper verificationMapper, MemberMapper memberMapper,
-                                    VerificationMailSender mailSender) {
+                                    VerificationMailSender mailSender,
+                                    @Value("${forguide.mail.daily-total-limit:300}") int dailyTotalLimit) {
         this.verificationMapper = verificationMapper;
         this.memberMapper = memberMapper;
         this.mailSender = mailSender;
+        this.dailyTotalLimit = dailyTotalLimit;
     }
 
     /** 발송 결과: 코드 유효 시간과 다음 재발송까지 기다릴 시간(초) */
@@ -74,6 +87,12 @@ public class EmailVerificationService {
             throw new ApiException(ErrorCode.VERIFICATION_DAILY_LIMIT);
         }
 
+        // 전체 상한에 닿았으면 목적·가입 여부와 상관없이 같은 안내로 막는다 (계정 찾기로 가입 여부를 알 수 없게)
+        if (isDailyTotalReached()) {
+            log.warn("인증 메일 하루 전체 상한({}통)에 도달해 발송을 막았습니다.", dailyTotalLimit);
+            throw new ApiException(ErrorCode.VERIFICATION_DAILY_LIMIT);
+        }
+
         String code = SecureTokens.sixDigits();
         EmailVerificationRow row = new EmailVerificationRow();
         row.setEmail(email);
@@ -90,15 +109,51 @@ public class EmailVerificationService {
             return new SendResult(CODE_TTL.toSeconds(), RESEND_INTERVAL.toSeconds());
         }
 
+        // 전체 상한 한 칸을 먼저 잡는다 (동시에 여러 요청이 와도 상한을 넘지 않게). 이미 다 찼으면 막는다
+        if (!reserveDailySend()) {
+            log.warn("인증 메일 하루 전체 상한({}통)에 도달해 발송을 막았습니다.", dailyTotalLimit);
+            throw new ApiException(ErrorCode.VERIFICATION_DAILY_LIMIT);
+        }
+
         // 발송에 실패하면 예외로 기록 저장도 되돌린다 (보내지 못한 코드가 재발송 간격을 막지 않게)
+        // 잡아 둔 상한 한 칸도 돌려준다 (보내지 못한 메일은 세지 않는다)
         try {
             mailSender.send(email, code, purpose, CODE_TTL.toMinutes());
         } catch (RuntimeException e) {
+            releaseDailySend();
             log.error("인증 메일 발송 실패: purpose={}", purpose, e);
             throw new ApiException(ErrorCode.MAIL_SEND_FAILED);
         }
 
         return new SendResult(CODE_TTL.toSeconds(), RESEND_INTERVAL.toSeconds());
+    }
+
+    // 날짜가 바뀌었으면 오늘 보낸 수를 0으로 되돌린다 (아래 synchronized 메서드 안에서만 부른다)
+    private void rollDate() {
+        LocalDate today = LocalDate.now();
+        if (!today.equals(sentDate)) {
+            sentDate = today;
+            sentToday = 0;
+        }
+    }
+
+    // 오늘 전체 상한에 닿았는지 (보내기 전 미리 확인)
+    private synchronized boolean isDailyTotalReached() {
+        rollDate();
+        return sentToday >= dailyTotalLimit;
+    }
+
+    // 오늘 보낼 수 있으면 한 칸 잡고 true, 상한이면 false
+    private synchronized boolean reserveDailySend() {
+        rollDate();
+        if (sentToday >= dailyTotalLimit) return false;
+        sentToday++;
+        return true;
+    }
+
+    // 발송에 실패한 한 칸 돌려주기
+    private synchronized void releaseDailySend() {
+        if (sentToday > 0) sentToday--;
     }
 
     /**
