@@ -91,6 +91,9 @@ export function normalizeInstitution(item) {
 
 // 검색과 정렬은 서버에서 처리하고 화면에서는 표시 형식만 맞춘다.
 export async function getConsultationInstitutions(filters = {}) {
+    // 전체 기관 보기에서만 MySQL 카드 API를 사용한다.
+    const showAll = filters === null;
+    filters = filters ?? {};
     const params = new URLSearchParams();
 
     for (const key of ["query", "topic", "province", "district", "language", "method"]) {
@@ -107,7 +110,10 @@ export async function getConsultationInstitutions(filters = {}) {
     }
 
     const query = params.toString();
-    const result = await client.get(`/consultation/institutions/search${query ? `?${query}` : ""}`);
+    const path = showAll
+        ? "/consultation/institutions/cards"
+        : `/consultation/institutions/search${query ? `?${query}` : ""}`;
+    const result = await client.get(path);
 
     if (!Array.isArray(result?.items) || !Array.isArray(result?.filters?.keywords)) {
         throw new Error("INVALID_RESPONSE");

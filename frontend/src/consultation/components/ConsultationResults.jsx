@@ -510,7 +510,7 @@ export default function ConsultationResults({ filters, visible, reloadKey }) {
         setError(null);
         setResult(null);
 
-        getConsultationInstitutions(filters || {})
+        getConsultationInstitutions(filters)
             .then((data) => {
                 if (active) setResult(data);
             })

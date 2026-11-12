@@ -16,6 +16,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import tools.jackson.databind.ObjectMapper;
 
+import com.example.forguide.consultation.institution.dto.InstitutionSearchCriteria;
+import com.example.forguide.consultation.institution.dto.InstitutionSearchHit;
+import java.util.Set;
+
 // 기관 조회 중 데이터를 변경하지 않는다.
 @Service
 public class InstitutionService {
@@ -23,15 +27,18 @@ public class InstitutionService {
     private final InstitutionMapper mapper;
     private final ObjectMapper objectMapper;
     private final TranslationService translationService;
+    private final InstitutionSearchResultAssembler assembler;
 
     public InstitutionService(
             InstitutionMapper mapper,
             ObjectMapper objectMapper,
-            TranslationService translationService
+            TranslationService translationService,
+            InstitutionSearchResultAssembler assembler
     ) {
         this.mapper = mapper;
         this.objectMapper = objectMapper;
         this.translationService = translationService;
+        this.assembler = assembler;
     }
 
     // 기존 DB 기관 목록 조회 기능을 유지한다.
@@ -48,6 +55,18 @@ public class InstitutionService {
                 .map(this::read)
                 .toList();
     }
+
+    public InstitutionSearchService.Result findCards() {
+        // 전체 기관 목록에도 기존 대표 업무 선택과 정렬 규칙을 적용한다.
+        var criteria = new InstitutionSearchCriteria("", "", List.of(), "", "", "", "");
+        var hits = mapper.findCardDocuments().stream()
+                .map(this::read)
+                .map(institution -> new InstitutionSearchHit(institution, false, Set.of()))
+                .toList();
+
+        return new InstitutionSearchService.Result(assembler.assemble(hits, criteria), criteria);
+    }
+
 
     // 잘못된 번호와 존재하지 않는 기관을 구분한다.
     public InstitutionDocument findById(long id) {
