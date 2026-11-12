@@ -259,7 +259,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | givenName | 이름. 필수, 1~50자, 문자 종류 제한 없음 |
 | familyName | 성. 선택(성이 없는 사용자는 비움), 최대 50자 |
 | nickname | 필수, 2~20자, 다국어 글자·숫자·기호 허용, 보이지 않는 문자 불가, 중복 허용 |
-| email    | 이메일 형식, 최대 254자, 중복 불가                                             |
+| email    | 이메일 형식(서버 `@Email`과 같거나 더 엄격: 쉼표·괄호·연속 점·앞뒤 점 불가), 최대 254자, 중복 불가 |
 
 ## 회원 (`src/auth/api/memberApi.js`)
 

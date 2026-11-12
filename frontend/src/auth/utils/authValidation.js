@@ -74,14 +74,35 @@ export function validateFamilyName(value) {
     return "";
 }
 
-// 이메일: 기본 형식(아이디@도메인.최상위)과 표준 최대 길이(254자) 확인
+// 이메일 형식: 서버(@Email)가 막는 형식은 화면에서도 막는다
+// (서버에서 막히면 서버의 한국어 문구가 그대로 보이므로, 화면이 같거나 더 엄격해야 한다)
+// - 앞부분: 영문·숫자·허용 기호(!#$%&'*+/=?^_`{|}~-)·비영문 글자, 점은 사이에만 하나씩 (.a@ · a..b@ 불가)
+//   쉼표·괄호·공백 등은 불가 (a,b@ 같은 오타를 바로 알려 준다), 최대 64자
+// - 비영문 글자는 U+0080~U+FFFF까지 (이모지 같은 확장 문자는 서버가 막으므로 u 플래그로 코드 포인트 단위 검사)
+// - 도메인: 점으로 나뉜 두 칸 이상, 각 칸은 63자 이하이고 영문·숫자·_·비영문 글자이고 하이픈은 가운데에만 (a@-x.com 불가)
+const EMAIL_LOCAL_PART =
+    /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~\u0080-\uFFFF-]+(\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~\u0080-\uFFFF-]+)*$/u;
+const EMAIL_DOMAIN_LABEL = /^[A-Za-z0-9_\u0080-\uFFFF]+(-+[A-Za-z0-9_\u0080-\uFFFF]+)*$/u;
+
+// 이메일: 위 형식과 표준 최대 길이(254자) 확인
 export function validateEmail(value) {
     const text = typeof value === "string" ? value.trim() : "";
 
     if (!text) return msg(`${V}.emailRequired`);
-    if (text.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) {
-        return msg(`${V}.emailFormat`);
-    }
+
+    const at = text.lastIndexOf("@");
+    const local = text.slice(0, at);
+    const labels = text.slice(at + 1).split(".");
+
+    const valid =
+        text.length <= 254 &&
+        at > 0 &&
+        local.length <= 64 &&
+        EMAIL_LOCAL_PART.test(local) &&
+        labels.length >= 2 &&
+        labels.every((label) => label.length <= 63 && EMAIL_DOMAIN_LABEL.test(label));
+
+    if (!valid) return msg(`${V}.emailFormat`);
     return "";
 }
 
