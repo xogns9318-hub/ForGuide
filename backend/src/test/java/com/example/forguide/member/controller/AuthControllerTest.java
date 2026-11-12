@@ -117,6 +117,32 @@ class AuthControllerTest {
     }
 
     @Test
+    void 이름_글자_수는_이모지도_한_글자로_센다() throws Exception {
+        // 이모지 50개 = 50자 → 이름 검사를 통과한다 (@Size였다면 100자로 세어 막혔다)
+        // 저장까지는 확인하지 않는다: 테스트용 H2는 VARCHAR 길이를 이모지 2글자로 세지만,
+        // 실제 MySQL(utf8mb4)은 한 글자로 세므로 VARCHAR(50)에 들어간다
+        String fifty = "😀".repeat(50);
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"loginId\":\"emoji1\",\"password\":\"Abcdef1!\",\"givenName\":\"" + fifty
+                                + "\",\"familyName\":\"" + fifty
+                                + "\",\"nickname\":\"이모지\",\"email\":\"emoji@example.com\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.fieldErrors.emailVerificationToken").exists())
+                .andExpect(jsonPath("$.error.fieldErrors.givenName").doesNotExist())
+                .andExpect(jsonPath("$.error.fieldErrors.familyName").doesNotExist());
+
+        // 51자는 이름·성 모두 400
+        String fiftyOne = fifty + "😀";
+        mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"loginId\":\"emoji2\",\"password\":\"Abcdef1!\",\"givenName\":\"" + fiftyOne
+                                + "\",\"familyName\":\"" + fiftyOne
+                                + "\",\"nickname\":\"이모지\",\"email\":\"emoji2@example.com\",\"emailVerificationToken\":\"any\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error.fieldErrors.givenName").value("50자 이하로 입력해주세요."))
+                .andExpect(jsonPath("$.error.fieldErrors.familyName").value("50자 이하로 입력해주세요."));
+    }
+
+    @Test
     void 닉네임_규칙_위반은_400() throws Exception {
         mockMvc.perform(post("/api/v1/auth/signup").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"loginId\":\"nick1\",\"password\":\"Abcdef1!\",\"givenName\":\"A\","

@@ -1416,6 +1416,21 @@ const ko = {
             nickname: "닉네임",
             nicknameHelp:
                 "커뮤니티에 보이는 이름이에요. 2~20자, 여러 언어의 글자·숫자·기호를 쓸 수 있습니다.",
+            // 입력칸 아래 조건 안내
+            loginIdHelp: "영문 소문자·숫자 4~20자",
+            nameHelp: "50자 이하",
+            familyNameHelp: "50자 이하, 성이 없으면 비워 두세요.",
+            emailHelp: "인증 코드를 받아 확인해야 가입할 수 있어요.",
+            // 비밀번호 조건 목록 (met·notMet은 화면 낭독기용)
+            passwordRules: {
+                length: "8~32자",
+                lower: "소문자",
+                upper: "대문자",
+                digit: "숫자",
+                special: "특수문자",
+                met: "(충족)",
+                notMet: "(미충족)",
+            },
             checkingLoginId: "아이디를 확인하고 있습니다…",
             loginIdAvailable: "사용할 수 있는 아이디입니다.",
             submit: "회원가입",

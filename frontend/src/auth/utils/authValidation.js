@@ -36,6 +36,27 @@ export function validatePassword(value) {
     return "";
 }
 
+// 비밀번호 조건별 충족 여부 (회원가입 화면에서 입력하는 동안 바로 보여 준다)
+// validatePassword와 같은 조건을 항목별로 나눈 것. key는 번역 키 끝부분
+export function passwordChecks(value) {
+    const text = typeof value === "string" ? value : "";
+
+    return [
+        { key: "length", met: text.length >= 8 && text.length <= 32 },
+        { key: "lower", met: /[a-z]/.test(text) },
+        { key: "upper", met: /[A-Z]/.test(text) },
+        { key: "digit", met: /[0-9]/.test(text) },
+        // 특수문자: 영문 자판의 기호만 센다 (한글 등은 특수문자가 아니라 쓸 수 없는 문자)
+        { key: "special", met: /[\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E]/.test(text) },
+    ];
+}
+
+// 비밀번호에 쓸 수 없는 문자(공백·한글 등 영문 자판 외)가 있는지 → 입력 중 바로 안내할 때 쓴다
+export function hasInvalidPasswordChars(value) {
+    const text = typeof value === "string" ? value : "";
+    return text.length > 0 && !/^[\x21-\x7E]+$/.test(text);
+}
+
 // 이름(given name): 필수, 앞뒤 공백을 뺀 1~50자. 외국인 이름을 고려해 문자 종류 제한 없음
 export function validateGivenName(value) {
     const text = typeof value === "string" ? value.trim() : "";

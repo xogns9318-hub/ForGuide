@@ -13,12 +13,15 @@ function formatTime(seconds) {
 // 이메일 입력 + 인증 코드 받기 + 코드 확인 (회원가입·비밀번호 찾기 공통)
 // - verification: useEmailVerification()의 결과
 // - emailInputProps: 화면의 이메일 입력 속성 (id·name·value·onChange·ref·aria 등. 화면이 오류·포커스를 관리한다)
+// - emailHelp: 이메일 칸 아래 안내 (선택. 회원가입은 "인증해야 가입할 수 있다"를 미리 알린다)
+//   보일 때 emailInputProps의 aria-describedby에 `${idPrefix}-email-help`를 넣어 연결한다
 // - emailError: 이메일 칸 아래에 보일 메시지, onSendCode: "인증 코드 받기"를 눌렀을 때
 // - disabled: 화면이 처리 중이면 코드 받기를 막는다
 export default function EmailVerificationFields({
     idPrefix,
     verification,
     emailInputProps,
+    emailHelp = "",
     emailError,
     onSendCode,
     disabled = false,
@@ -73,6 +76,11 @@ export default function EmailVerificationFields({
                         {sendLabel}
                     </button>
                 </div>
+                {emailHelp && (
+                    <p id={`${idPrefix}-email-help`} className="form-help">
+                        {emailHelp}
+                    </p>
+                )}
                 {v.isWaitingCode && (
                     <p className="form-help" role="status">
                         {t(sentKey, { email: v.email })}
