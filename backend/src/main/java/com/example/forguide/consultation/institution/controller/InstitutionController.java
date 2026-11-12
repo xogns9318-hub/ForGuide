@@ -2,6 +2,7 @@ package com.example.forguide.consultation.institution.controller;
 
 import com.example.forguide.common.response.ApiResponse;
 import com.example.forguide.consultation.institution.dto.InstitutionDocument;
+import com.example.forguide.consultation.institution.service.InstitutionSearchService;
 import com.example.forguide.consultation.institution.service.InstitutionService;
 import com.example.forguide.translation.dto.TranslationResponse;
 import com.example.forguide.translation.dto.TranslationTargetRequest;
@@ -30,6 +31,12 @@ public class InstitutionController {
     public ApiResponse<List<InstitutionDocument>> list() {
         return ApiResponse.ok(service.findAll());
     }
+
+    @GetMapping("/cards")
+    public ApiResponse<InstitutionSearchService.Result> cards() {
+        return ApiResponse.ok(service.findCards());
+    }
+
 
     // 상세 자료도 DB에서 조회한다.
     @GetMapping("/{id}")

@@ -13,6 +13,8 @@ import {
     validateFamilyName,
     validateNickname,
     validateEmail,
+    passwordChecks,
+    hasInvalidPasswordChars,
 } from "../utils/authValidation.js";
 import styles from "./AuthPage.module.css";
 
@@ -36,6 +38,30 @@ const validators = {
     familyName: validateFamilyName,
     nickname: validateNickname,
     email: validateEmail,
+};
+
+// 최대 글자 수 (서버와 같은 기준, 이모지도 한 글자)
+// 입력칸 maxLength는 이모지를 2글자로 센다. 그래서 여러 언어를 쓰는 이름·닉네임은 여기서 직접 자르고,
+// 나머지는 maxLength를 그대로 쓴다 (아이디·비밀번호는 영문 자판 문자만 허용,
+// 이메일은 서버 @Size·화면 검사도 maxLength와 같은 방식으로 센다)
+const charLimits = {
+    givenName: 50,
+    familyName: 50,
+    nickname: 20,
+};
+
+// 최대 글자 수를 넘으면 뒤를 잘라 낸다. 코드 포인트 단위(Array.from)로 세어 이모지도 한 글자
+function limitChars(text, max) {
+    const chars = Array.from(text);
+    return chars.length > max ? chars.slice(0, max).join("") : text;
+}
+
+// 입력칸 아래 조건 안내 문구 키 (비밀번호는 조건별 목록, 이메일은 인증 안내로 따로 표시)
+const helpKeys = {
+    loginId: "auth.signup.loginIdHelp",
+    givenName: "auth.signup.nameHelp",
+    familyName: "auth.signup.familyNameHelp",
+    nickname: "auth.signup.nicknameHelp",
 };
 
 // 회원가입 화면 (Figma: 회원가입 · 입력, /signup)
@@ -80,10 +106,24 @@ export default function Signup() {
 
     // 입력값 변경: 해당 항목의 이전 오류와 폼 전체 오류를 지운다
     function handleChange(event) {
-        const { name, value } = event.target;
+        const { name } = event.target;
+        let { value } = event.target;
+
+        // 최대 글자 수를 넘으면 더 입력되지 않게 자른다
+        // 한글·일본어 등을 조합하는 중에는 자르면 글자가 깨지므로 조합이 끝난 뒤(handleCompositionEnd) 자른다
+        if (charLimits[name] && !event.nativeEvent.isComposing) {
+            value = limitChars(value, charLimits[name]);
+        }
 
         setForm((prev) => ({ ...prev, [name]: value }));
-        setErrors((prev) => ({ ...prev, [name]: "" }));
+        setErrors((prev) => ({
+            ...prev,
+            // 비밀번호에 공백·한글 등을 넣으면 입력하는 즉시 알려 준다 (나머지 조건은 목록으로 표시)
+            [name]:
+                name === "password" && hasInvalidPasswordChars(value)
+                    ? msg("auth.validation.passwordCharacters")
+                    : "",
+        }));
         setFormError("");
 
         // 아이디를 바꾸면 이전 중복 확인 결과는 무효
@@ -95,6 +135,29 @@ export default function Signup() {
         // 이메일을 바꾸면 그 이메일로 받은 인증은 무효
         if (name === "email") {
             verification.handleEmailChange(value);
+        }
+    }
+
+    // 글자 조합(IME)이 끝나면 최대 글자 수에 맞춰 자른다
+    function handleCompositionEnd(event) {
+        const { name, value } = event.target;
+        if (!charLimits[name]) return;
+
+        const limited = limitChars(value, charLimits[name]);
+        if (limited !== value) {
+            setForm((prev) => ({ ...prev, [name]: limited }));
+        }
+    }
+
+    // 입력칸을 벗어나면 형식 오류를 바로 보여 준다 (빈 칸은 가입 버튼을 누를 때 안내)
+    // 아이디는 중복 확인까지 하는 handleLoginIdBlur, 비밀번호는 조건 목록이 대신한다
+    function handleFieldBlur(event) {
+        const { name, value } = event.target;
+        if (!value.trim()) return;
+
+        const message = validators[name](value);
+        if (message) {
+            setErrors((prev) => ({ ...prev, [name]: message }));
         }
     }
 
@@ -233,24 +296,40 @@ export default function Signup() {
         }
     }
 
-    // 입력 항목 공통 속성 (라벨 연결, 오류 안내 연결, 포커스 참조)
-    function fieldProps(name) {
+    // 입력 항목 공통 속성 (라벨 연결, 조건 안내·오류 안내 연결, 포커스 참조)
+    function fieldProps(name, { hasHelp = false } = {}) {
+        const describedBy = [
+            hasHelp && `signup-${name}-help`,
+            errors[name] && `signup-${name}-error`,
+        ].filter(Boolean);
+
         return {
             id: `signup-${name}`,
             name,
             value: form[name],
             onChange: handleChange,
+            onCompositionEnd: handleCompositionEnd,
             ref: (element) => {
                 inputRefs.current[name] = element;
             },
             "aria-invalid": Boolean(errors[name]),
-            "aria-describedby": errors[name] ? `signup-${name}-error` : undefined,
+            "aria-describedby": describedBy.length > 0 ? describedBy.join(" ") : undefined,
             // 처리 중에는 수정만 막는다 (disabled면 오류 항목으로 포커스를 옮길 수 없다)
             readOnly: isSubmitting,
         };
     }
 
+    // 입력칸 아래 조건 안내 한 줄
+    function fieldHelp(name) {
+        return (
+            <p id={`signup-${name}-help`} className="form-help">
+                {t(helpKeys[name])}
+            </p>
+        );
+    }
+
     const isIdAvailable = idCheck.status === "available" && idCheck.checkedId === form.loginId;
+    const isEmailVerified = verification.isVerifiedFor(form.email);
 
     return (
         <div className="page-stack">
@@ -273,7 +352,7 @@ export default function Signup() {
                     <div className="form-field">
                         <label htmlFor="signup-loginId">{t("auth.common.loginId")}</label>
                         <input
-                            {...fieldProps("loginId")}
+                            {...fieldProps("loginId", { hasHelp: true })}
                             type="text"
                             autoComplete="username"
                             autoCapitalize="none"
@@ -281,6 +360,7 @@ export default function Signup() {
                             maxLength={20}
                             onBlur={handleLoginIdBlur}
                         />
+                        {fieldHelp("loginId")}
                         {idCheck.status === "checking" && (
                             <p className="form-help" role="status">
                                 {t("auth.signup.checkingLoginId")}
@@ -302,7 +382,7 @@ export default function Signup() {
                         <label htmlFor="signup-password">{t("auth.common.password")}</label>
                         <div className={styles.password}>
                             <input
-                                {...fieldProps("password")}
+                                {...fieldProps("password", { hasHelp: true })}
                                 type={showPassword ? "text" : "password"}
                                 autoComplete="new-password"
                                 maxLength={32}
@@ -317,6 +397,20 @@ export default function Signup() {
                                 {showPassword ? t("auth.common.hide") : t("auth.common.show")}
                             </button>
                         </div>
+                        {/* 비밀번호 조건별 충족 여부 (입력하는 동안 바로 바뀐다) */}
+                        <ul id="signup-password-help" className={styles.rules}>
+                            {passwordChecks(form.password).map(({ key, met }) => (
+                                <li key={key} className={met ? styles.ruleMet : undefined}>
+                                    <span aria-hidden="true">{met ? "✓" : "•"}</span>
+                                    {t(`auth.signup.passwordRules.${key}`)}
+                                    <span className={styles.srOnly}>
+                                        {met
+                                            ? t("auth.signup.passwordRules.met")
+                                            : t("auth.signup.passwordRules.notMet")}
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
                         <FieldError
                             id="signup-password-error"
                             message={messageText(t, errors.password)}
@@ -327,11 +421,12 @@ export default function Signup() {
                     <div className="form-field">
                         <label htmlFor="signup-givenName">{t("auth.signup.givenName")}</label>
                         <input
-                            {...fieldProps("givenName")}
+                            {...fieldProps("givenName", { hasHelp: true })}
                             type="text"
                             autoComplete="given-name"
-                            maxLength={50}
+                            onBlur={handleFieldBlur}
                         />
+                        {fieldHelp("givenName")}
                         <FieldError
                             id="signup-givenName-error"
                             message={messageText(t, errors.givenName)}
@@ -345,11 +440,12 @@ export default function Signup() {
                             <span className="text-muted">{t("auth.common.optional")}</span>
                         </label>
                         <input
-                            {...fieldProps("familyName")}
+                            {...fieldProps("familyName", { hasHelp: true })}
                             type="text"
                             autoComplete="family-name"
-                            maxLength={50}
+                            onBlur={handleFieldBlur}
                         />
+                        {fieldHelp("familyName")}
                         <FieldError
                             id="signup-familyName-error"
                             message={messageText(t, errors.familyName)}
@@ -360,14 +456,12 @@ export default function Signup() {
                     <div className="form-field">
                         <label htmlFor="signup-nickname">{t("auth.signup.nickname")}</label>
                         <input
-                            {...fieldProps("nickname")}
+                            {...fieldProps("nickname", { hasHelp: true })}
                             type="text"
                             autoComplete="nickname"
-                            aria-describedby={`signup-nickname-help${errors.nickname ? " signup-nickname-error" : ""}`}
+                            onBlur={handleFieldBlur}
                         />
-                        <p id="signup-nickname-help" className="form-help">
-                            {t("auth.signup.nicknameHelp")}
-                        </p>
+                        {fieldHelp("nickname")}
                         <FieldError
                             id="signup-nickname-error"
                             message={messageText(t, errors.nickname)}
@@ -378,7 +472,11 @@ export default function Signup() {
                     <EmailVerificationFields
                         idPrefix="signup"
                         verification={verification}
-                        emailInputProps={fieldProps("email")}
+                        emailInputProps={{
+                            ...fieldProps("email", { hasHelp: !isEmailVerified }),
+                            onBlur: handleFieldBlur,
+                        }}
+                        emailHelp={isEmailVerified ? "" : t("auth.signup.emailHelp")}
                         emailError={errors.email}
                         onSendCode={handleSendCode}
                         disabled={isSubmitting}

@@ -307,8 +307,8 @@ export default function Consultation() {
         // 이전 선택 조건 확인 영역을 지운다.
         setConfirmed(null);
 
-        // 조건 없는 조회를 새로 실행한다.
-        setRequestedFilters({});
+        // 전체 기관 보기 버튼은 MySQL 카드 목록을 요청한다.
+        setRequestedFilters(null);
 
         // 전체 기관 결과를 표시한다.
         setResultsVisible(true);

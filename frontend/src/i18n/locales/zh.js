@@ -159,8 +159,7 @@ const zh = {
         },
         chatbot: {
             headline: "先向 AI 聊天机器人咨询吧",
-            description:
-                "使用服务时有疑问，可以询问 AI 聊天机器人，\n快速确认所需信息。",
+            description: "使用服务时有疑问，可以询问 AI 聊天机器人，\n快速确认所需信息。",
         },
         inquiry: {
             headline: "如有疑问，欢迎随时咨询",
@@ -1493,6 +1492,19 @@ const zh = {
             familyName: "姓",
             nickname: "昵称",
             nicknameHelp: "这是在社区中显示的名称。2~20 个字符，可使用各种语言的文字、数字和符号。",
+            loginIdHelp: "4–20位英文小写字母或数字",
+            nameHelp: "最多50个字",
+            familyNameHelp: "最多50个字。没有姓氏可留空。",
+            emailHelp: "需通过验证码验证邮箱后才能注册。",
+            passwordRules: {
+                length: "8–32位",
+                lower: "小写字母",
+                upper: "大写字母",
+                digit: "数字",
+                special: "特殊字符",
+                met: "（已满足）",
+                notMet: "（未满足）",
+            },
             checkingLoginId: "正在检查账号…",
             loginIdAvailable: "该账号可以使用。",
             submit: "注册",
