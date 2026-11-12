@@ -20,11 +20,11 @@ public record SignupRequest(
 
         // 이름(given name): 필수, 최대 50자. 외국인 이름을 고려해 문자 종류 제한 없음
         @NotBlank(message = "이름을 입력해주세요.")
-        @Size(max = 50, message = "50자 이하로 입력해주세요.")
+        @Pattern(regexp = NAME_PATTERN, message = NAME_MESSAGE)
         String givenName,
 
         // 성(family name): 선택. 성이 없는 문화권 사용자를 위해 비워 둘 수 있다
-        @Size(max = 50, message = "50자 이하로 입력해주세요.")
+        @Pattern(regexp = NAME_PATTERN, message = NAME_MESSAGE)
         String familyName,
 
         // 닉네임: 필수. 세부 규칙(2~20자, 보이지 않는 문자 불가)은 NicknamePolicy에서 검사한다
@@ -43,6 +43,12 @@ public record SignupRequest(
     // 아이디 규칙 (아이디 확인·로그인 시도 제한·관리자 계정도 같은 규칙을 쓴다)
     public static final String LOGIN_ID_PATTERN = "^[a-z0-9]{4,20}$";
     public static final String LOGIN_ID_MESSAGE = "4~20자의 영문 소문자와 숫자만 사용할 수 있습니다.";
+
+    // 이름·성 최대 50자. @Size는 이모지를 2글자로 세므로 정규식으로 센다
+    // (자바 정규식의 '.'은 이모지 같은 확장 문자도 한 글자로 본다, (?s)는 줄바꿈도 한 글자로 세기 위해)
+    // 프론트 validateGivenName·입력 제한(Array.from 기준)과 같은 기준
+    public static final String NAME_PATTERN = "(?s)^.{0,50}$";
+    public static final String NAME_MESSAGE = "50자 이하로 입력해주세요.";
 
     // 비밀번호 규칙 (비밀번호 변경 요청도 같은 규칙을 쓴다)
     // 8~32자, 영문 소문자·대문자·숫자·특수문자 모두 포함, 공백·비영문 자판 문자 불가

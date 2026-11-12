@@ -250,7 +250,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 - 화면의 이메일 인증 부분은 `src/auth/useEmailVerification.js`(상태·요청)와 `src/auth/components/EmailVerificationFields.jsx`(입력칸)를 회원가입·비밀번호 찾기가 같이 쓴다.
 - 메일 발송: 환경변수 `FORGUIDE_MAIL_USERNAME`·`FORGUIDE_MAIL_PASSWORD`(Gmail 앱 비밀번호)가 있으면 Gmail SMTP로 보내고, 없으면 메일 대신 서버 로그에 코드를 남긴다(개발용, 시작 시 경고).
 
-입력 규칙 (`src/auth/utils/authValidation.js`, 서버도 같은 규칙으로 다시 검사):
+입력 규칙 (`src/auth/utils/authValidation.js`, 서버도 같은 규칙으로 다시 검사). 이름·성·닉네임 글자 수는 이모지도 한 글자로 센다(코드 포인트 기준):
 
 | 항목     | 규칙                                                                           |
 | -------- | ------------------------------------------------------------------------------ |
@@ -259,7 +259,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
 | givenName | 이름. 필수, 1~50자, 문자 종류 제한 없음 |
 | familyName | 성. 선택(성이 없는 사용자는 비움), 최대 50자 |
 | nickname | 필수, 2~20자, 다국어 글자·숫자·기호 허용, 보이지 않는 문자 불가, 중복 허용 |
-| email    | 이메일 형식, 최대 254자, 중복 불가                                             |
+| email    | 이메일 형식(서버 `@Email`과 같거나 더 엄격: 쉼표·괄호·연속 점·앞뒤 점 불가), 최대 254자, 중복 불가 |
 
 ## 회원 (`src/auth/api/memberApi.js`)
 
