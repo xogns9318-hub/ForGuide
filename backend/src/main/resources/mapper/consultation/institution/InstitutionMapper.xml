@@ -160,5 +160,75 @@
         WHERE i.institution_id = #{id}
           AND i.is_example = 0
     </select>
-
+    <!-- 전체 기관 카드에 표시할 정보와 대표 업무 선정에 필요한 정보만 조회한다. -->
+    <select id="findCardDocuments" resultType="string">
+        SELECT CAST(JSON_OBJECT(
+        'id', i.institution_id,
+        'name', i.institution_name,
+        'phone', i.phone,
+        'guidance', JSON_OBJECT(
+        'location', JSON_EXTRACT(i.guidance_data, '$.detail."기관위치_전화지역"'),
+        'phoneWeekend', JSON_EXTRACT(i.guidance_data, '$.detail."주말전화"'),
+        'phoneHoliday', JSON_EXTRACT(i.guidance_data, '$.detail."공휴일전화"')
+        ),
+        'services', COALESCE((
+        SELECT JSON_ARRAYAGG(JSON_OBJECT(
+        'id', s.service_id,
+        'topic', s.topic_code,
+        'role', s.guidance_role,
+        'keywords', COALESCE((
+        SELECT JSON_ARRAYAGG(k.keyword_code)
+        FROM institution_service_keywords k
+        WHERE k.service_id = s.service_id
+        ), JSON_ARRAY()),
+        'phone', JSON_OBJECT(
+        'available', s.phone_available,
+        'hours', s.phone_hours,
+        'weekend', s.phone_weekend_available,
+        'holiday', s.phone_holiday_available,
+        'regionStatus', s.phone_region_status
+        ),
+        'visit', JSON_OBJECT(
+        'available', s.visit_available,
+        'hours', s.opening_hours
+        ),
+        'online', JSON_OBJECT('available', s.online_available),
+        'specialPhone', JSON_OBJECT(
+        'hours', s.special_phone_hours,
+        'scope', s.special_phone_scope
+        ),
+        'languages', COALESCE((
+        SELECT JSON_ARRAYAGG(JSON_OBJECT(
+        'code', l.language_code,
+        'method', l.consultation_method
+        ))
+        FROM institution_service_languages l
+        WHERE l.service_id = s.service_id
+        ), JSON_ARRAY()),
+        'regions', COALESCE((
+        SELECT JSON_ARRAYAGG(JSON_OBJECT(
+        'province', CASE
+        WHEN r.region_level = 'province' THEN r.region_name
+        ELSE p.region_name
+        END,
+        'district', CASE
+        WHEN r.region_level = 'district' THEN r.region_name
+        ELSE NULL
+        END,
+        'method', sr.consultation_method
+        ))
+        FROM institution_service_regions sr
+        JOIN regions r ON r.region_id = sr.region_id
+        LEFT JOIN regions p ON p.region_id = r.parent_region_id
+        WHERE sr.service_id = s.service_id
+        ), JSON_ARRAY())
+        ))
+        FROM institution_services s
+        WHERE s.institution_id = i.institution_id
+        ), JSON_ARRAY())
+        ) AS CHAR CHARACTER SET utf8mb4) AS document
+        FROM support_institutions i
+        WHERE i.is_example = 0
+        ORDER BY i.institution_id
+    </select>
 </mapper>

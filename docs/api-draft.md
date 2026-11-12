@@ -567,6 +567,7 @@ auth의 api 함수는 `client.get / post / patch / delete`를 거쳐 요청한�
   - 검색 조건은 새 검색 API에 쿼리 파라미터로 전달하며, 기존 DB 목록·상세 API는 유지한다.
 - 최초 진입은 조건 없는 조회이며, 입력 조건이 바뀌면 이전 결과를 숨긴다.
 - 안내받기를 누르면 확정 조건으로 다시 조회한다.
+- 전체 기관 보기는 GET /api/v1/consultation/institutions/cards를 호출한다. MySQL의 카드 목록을 { items, filters } 형태로 반환한다.
 - 서버 연결 실패를 가짜 기관이나 빈 목록으로 대체하지 않는다.
 - 확인되지 않은 이용 조건은 ‘확인 필요’로 표시한다.
 - 기관 목록·상세 응답에 guidance 객체를 추가한다.
