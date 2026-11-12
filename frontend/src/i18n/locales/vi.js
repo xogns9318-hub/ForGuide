@@ -1566,6 +1566,8 @@ const vi = {
             nameHelp: "Tối đa 50 ký tự",
             familyNameHelp: "Tối đa 50 ký tự. Để trống nếu bạn không có họ.",
             emailHelp: "Bạn cần xác minh email bằng mã để đăng ký.",
+            charCount: "{{count}}/{{max}}",
+            charLimitReached: "Bạn có thể nhập tối đa {{max}} ký tự. Phần vượt quá đã bị xóa.",
             passwordRules: {
                 length: "8–32 ký tự",
                 lower: "Chữ thường",

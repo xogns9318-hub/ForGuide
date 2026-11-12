@@ -75,6 +75,10 @@ export default function Signup() {
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // 최대 글자 수를 넘어 잘린 항목 ({ nickname: true }) → 잘렸다는 안내를 보여 준다 (말없이 잘리면 헷갈리므로)
+    // 그 항목을 다시 입력해 잘리지 않으면 안내를 지운다
+    const [cutFields, setCutFields] = useState({});
+
     // 아이디 중복 확인 결과
     // status: idle(확인 전) / checking / available / taken
     // checkedId: 확인한 아이디. 입력값이 바뀌면 결과는 무효가 된다
@@ -112,7 +116,9 @@ export default function Signup() {
         // 최대 글자 수를 넘으면 더 입력되지 않게 자른다
         // 한글·일본어 등을 조합하는 중에는 자르면 글자가 깨지므로 조합이 끝난 뒤(handleCompositionEnd) 자른다
         if (charLimits[name] && !event.nativeEvent.isComposing) {
-            value = limitChars(value, charLimits[name]);
+            const limited = limitChars(value, charLimits[name]);
+            markCut(name, limited !== value);
+            value = limited;
         }
 
         setForm((prev) => ({ ...prev, [name]: value }));
@@ -144,9 +150,15 @@ export default function Signup() {
         if (!charLimits[name]) return;
 
         const limited = limitChars(value, charLimits[name]);
+        markCut(name, limited !== value);
         if (limited !== value) {
             setForm((prev) => ({ ...prev, [name]: limited }));
         }
+    }
+
+    // 잘림 안내 표시 여부 갱신
+    function markCut(name, wasCut) {
+        setCutFields((prev) => (prev[name] === wasCut ? prev : { ...prev, [name]: wasCut }));
     }
 
     // 입력칸을 벗어나면 형식 오류를 바로 보여 준다 (빈 칸은 가입 버튼을 누를 때 안내)
@@ -320,11 +332,34 @@ export default function Signup() {
     }
 
     // 입력칸 아래 조건 안내 한 줄
+    // 글자 수 제한이 있는 항목은 오른쪽에 "지금 글자 수/최대"를 함께 보여 주고, 잘렸으면 안내를 덧붙인다
     function fieldHelp(name) {
-        return (
+        const help = (
             <p id={`signup-${name}-help`} className="form-help">
                 {t(helpKeys[name])}
             </p>
+        );
+
+        const max = charLimits[name];
+        if (!max) return help;
+
+        // 조합 중에는 잠깐 최대보다 많을 수 있어 표시는 최대에서 멈춘다 (조합이 끝나면 잘린다)
+        const count = Math.min(Array.from(form[name]).length, max);
+
+        return (
+            <>
+                <div className={styles.helpRow}>
+                    {help}
+                    <span className={styles.charCount}>
+                        {t("auth.signup.charCount", { count, max })}
+                    </span>
+                </div>
+                {cutFields[name] && (
+                    <p className="form-help" role="status">
+                        {t("auth.signup.charLimitReached", { max })}
+                    </p>
+                )}
+            </>
         );
     }
 

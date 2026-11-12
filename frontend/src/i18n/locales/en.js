@@ -1604,6 +1604,8 @@ const en = {
             nameHelp: "Up to 50 characters",
             familyNameHelp: "Up to 50 characters. Leave blank if you have no family name.",
             emailHelp: "Verify your email with a code to sign up.",
+            charCount: "{{count}}/{{max}}",
+            charLimitReached: "You can enter up to {{max}} characters. The extra text was removed.",
             passwordRules: {
                 length: "8–32 characters",
                 lower: "Lowercase",
@@ -1689,7 +1691,7 @@ const en = {
             passwordLength: "Your password must be 8–32 characters.",
             passwordCharacters:
                 "Your password can't contain spaces or characters outside the English keyboard.",
-            passwordMissing: "Please include {{items}}.",
+            passwordMissing: "Your password still needs: {{items}}.",
             passwordParts: {
                 lower: "a lowercase letter",
                 upper: "an uppercase letter",

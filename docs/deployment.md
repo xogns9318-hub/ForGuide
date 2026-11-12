@@ -37,6 +37,7 @@ sudo bash ~/deploy/server-setup.sh        # Java·Nginx·MySQL·Redis 설치, �
 .\deploy\deploy.ps1 -Server ubuntu@<서버 IP> -Key <키.pem 경로>
 ```
 백엔드 jar·화면을 빌드해 올리고 백엔드를 다시 켠 뒤, 켜질 때까지 기다린다. 빌드 없이 올리기만 하려면 `-SkipBuild`.
+`deploy/nginx-forguide.conf`가 바뀌었으면(배포 스크립트는 Nginx 설정을 올리지 않는다) 그 파일을 서버 `~/deploy/`에 복사한 뒤 서버에서 `sudo cp ~/deploy/nginx-forguide.conf /etc/nginx/sites-available/forguide && sudo nginx -t && sudo systemctl reload nginx`.
 
 ## 4. 확인
 - 브라우저로 `https://forguide.duckdns.org` (6절 전에는 `http://<서버 IP>`): 회원가입(메일 인증)·로그인·새로고침 후 로그인 유지·추천·챗봇(글자가 이어서 써지는지)·알림·사진 올리기(프로필·커뮤니티·문의·이력서·신고 — 올린 뒤 `/var/lib/forguide/uploads/` 아래 각 폴더에 파일이 생기는지도 본다. 이력서·신고는 경로를 Spring 설정 이름으로 넘겨서 실서버 확인이 필요하다)

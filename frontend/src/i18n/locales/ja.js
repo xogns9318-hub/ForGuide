@@ -1532,6 +1532,8 @@ const ja = {
             nameHelp: "50文字以内",
             familyNameHelp: "50文字以内。姓がない場合は空欄にしてください。",
             emailHelp: "認証コードで確認すると登録できます。",
+            charCount: "{{count}}/{{max}}",
+            charLimitReached: "{{max}}文字まで入力できます。超えた部分は削除しました。",
             passwordRules: {
                 length: "8〜32文字",
                 lower: "小文字",
