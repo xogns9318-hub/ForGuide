@@ -15,6 +15,7 @@ import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 import CommunityReportAction from "./CommunityReportAction.jsx";
 import { useTranslation } from "react-i18next";
 import { confirm } from "../../components/Modal/modal.js";
+import { queueTranslation } from "../../utils/translationQueue.js";
 
 const COMMENT_PAGE_SIZE = 10;
 
@@ -211,10 +212,14 @@ export default function CommunityCommentSection({ postId, postMemberId, onCommen
                     .filter((comment) => !comment.deleted)
                     .map(async (comment) => {
                         try {
-                            const response = await translateCommunityComment(
-                                postId,
-                                comment.commentId,
-                                targetLanguage,
+                            const response = await queueTranslation(
+                                `community-comment:${postId}:${comment.commentId}:${comment.contentVersion ?? comment.updatedAt ?? comment.content}:${targetLanguage}`,
+                                () =>
+                                    translateCommunityComment(
+                                        postId,
+                                        comment.commentId,
+                                        targetLanguage,
+                                    ),
                             );
                             return [comment.commentId, response.translatedText || ""];
                         } catch {

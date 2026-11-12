@@ -28,6 +28,7 @@ import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 import CommunityPostEditForm from "./CommunityPostEditForm.jsx";
 import CommunityPostModal from "./CommunityPostModal.jsx";
 import CommunityReportAction from "./CommunityReportAction.jsx";
+import { queueTranslation } from "../../utils/translationQueue.js";
 
 // 게시글 사진은 최대 4장, 한 장당 4MB
 const MAX_IMAGE_COUNT = 4;
@@ -43,7 +44,8 @@ const MENU_ICON_PATHS = {
     ACCOUNT: "M3 6h18v12H3z M3 10h18 M7 15h4",
     LOAN: "M3 6h18v12H3z M6 9h.01 M18 15h.01 M14.5 12a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z",
     INSURANCE: "m12 3 7 3v5c0 4-2.5 7-7 10-4.5-3-7-6-7-10V6z M9 12l2 2 4-4",
-    VISA_STAY: "M6 3h12v18H6z M9 16h6 M15.5 10a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z M9 10h6 M12 6.5v7",
+    VISA_STAY:
+        "M6 3h12v18H6z M9 16h6 M15.5 10a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0z M9 10h6 M12 6.5v7",
     LIFE_TIP: "M9 17v-1.5a6 6 0 1 1 6 0V17 M9 17h6 M10 20h4",
 };
 
@@ -131,7 +133,10 @@ function PostCard({
             }
 
             try {
-                const response = await translateCommunityPost(post.postId, targetLanguage);
+                const response = await queueTranslation(
+                    `community-post:${post.postId}:${post.contentVersion ?? post.updatedAt ?? post.content}:${targetLanguage}`,
+                    () => translateCommunityPost(post.postId, targetLanguage),
+                );
 
                 if (isMounted && response.translatedText) {
                     setTranslatedContent(response.translatedText);
@@ -318,6 +323,7 @@ function PostCard({
                                 {post.images.map((image, index) => (
                                     <img
                                         key={image.imageId ?? `${image.imageUrl}-${index}`}
+                                        className="community-post-image"
                                         src={image.imageUrl}
                                         alt={t("community.post.imageAlt", {
                                             index: index + 1,
@@ -916,7 +922,9 @@ export default function Community() {
                                         <span className="community-topic-icon" aria-hidden="true">
                                             <CommunityMenuIcon code={topic.code} />
                                         </span>
-                                        <span className="community-menu-label">{t(topic.labelKey)}</span>
+                                        <span className="community-menu-label">
+                                            {t(topic.labelKey)}
+                                        </span>
                                     </button>
                                 ))}
                             </div>

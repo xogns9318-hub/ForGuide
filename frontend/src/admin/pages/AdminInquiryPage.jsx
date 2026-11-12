@@ -10,15 +10,14 @@ import InquiryImageList from "../../inquiry/components/InquiryImageList.jsx";
 import { formatDateTime } from "../../utils/formatDateTime.js";
 import AdminFilter from "../components/AdminFilter.jsx";
 import styles from "./AdminInquiryPage.module.css";
+import { queueTranslation } from "../../utils/translationQueue.js";
 
 const PAGE_SIZE = 10;
 
 export default function AdminInquiryPage() {
     const { t, i18n } = useTranslation();
 
-    const targetLanguage = (
-        i18n.resolvedLanguage || i18n.language || "ko"
-    ).split("-")[0];
+    const targetLanguage = (i18n.resolvedLanguage || i18n.language || "ko").split("-")[0];
 
     const [inquiries, setInquiries] = useState([]);
     const [translatedInquiries, setTranslatedInquiries] = useState({});
@@ -119,10 +118,9 @@ export default function AdminInquiryPage() {
             setTranslationErrors((previous) => ({ ...previous, [key]: "" }));
 
             try {
-                const response = await translateAdminInquiryText(
-                    inquiry.inquiryId,
-                    field,
-                    targetLanguage,
+                const response = await queueTranslation(
+                    `admin-inquiry:${inquiry.inquiryId}:${field}:${targetLanguage}`,
+                    () => translateAdminInquiryText(inquiry.inquiryId, field, targetLanguage),
                 );
 
                 setTranslatedInquiries((previous) => ({
@@ -343,14 +341,14 @@ export default function AdminInquiryPage() {
                                     {t(`inquiry.category.${inquiry.inquiryCategory}`)}
                                 </p>
                                 <h2>
-                                    {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.title
-                                        || inquiry.title}
+                                    {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]
+                                        ?.title || inquiry.title}
                                 </h2>
                                 {renderTranslationRetry(inquiry, "title")}
 
                                 <p className={styles.content}>
-                                    {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.content
-                                        || inquiry.content}
+                                    {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]
+                                        ?.content || inquiry.content}
                                 </p>
                                 {renderTranslationRetry(inquiry, "content")}
                                 <InquiryImageList
@@ -363,8 +361,9 @@ export default function AdminInquiryPage() {
                                     <div className={styles.answer}>
                                         <h3>{t("inquiry.answer.title")}</h3>
                                         <p>
-                                            {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.answer
-                                                || inquiry.answerContent}
+                                            {translatedInquiries[targetLanguage]?.[
+                                                inquiry.inquiryId
+                                            ]?.answer || inquiry.answerContent}
                                         </p>
                                         {renderTranslationRetry(inquiry, "answer")}
                                         <time dateTime={inquiry.answeredAt}>

@@ -17,6 +17,7 @@ import CommunityCommentSection from "./CommunityCommentSection.jsx";
 import CommunityPostEditForm from "./CommunityPostEditForm.jsx";
 import CommunityMemberPreview from "./CommunityMemberPreview.jsx";
 import CommunityReportAction from "./CommunityReportAction.jsx";
+import { queueTranslation } from "../../utils/translationQueue.js";
 // relatedService는 사용자가 쓴 본문이 아니라 서비스 식별값이므로 LLM 대신 i18next로 표시한다.
 const RELATED_SERVICE_LINKS = {
     ACCOUNT_RECOMMEND: {
@@ -163,7 +164,10 @@ export default function CommunityPostModal({
 
         async function loadTranslation() {
             try {
-                const response = await translateCommunityPost(postId, targetLanguage);
+                const response = await queueTranslation(
+                    `community-post:${postId}:${post.contentVersion ?? post.updatedAt ?? post.content}:${targetLanguage}`,
+                    () => translateCommunityPost(postId, targetLanguage),
+                );
                 if (isMounted) setTranslatedText(response.translatedText || "");
             } catch {
                 // 번역 장애가 나도 원문 게시글은 계속 볼 수 있게 한다.
@@ -346,6 +350,7 @@ export default function CommunityPostModal({
                                 {post.images.map((image, index) => (
                                     <img
                                         key={image.imageId ?? `${image.imageUrl}-${index}`}
+                                        className="community-post-image"
                                         src={image.imageUrl}
                                         alt={t("community.postModal.imageAlt", {
                                             index: index + 1,

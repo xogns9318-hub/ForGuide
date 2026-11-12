@@ -11,6 +11,7 @@ import InquiryImageList from "../components/InquiryImageList.jsx";
 import SelectBox from "../../components/SelectBox/SelectBox.jsx";
 import styles from "./InquiryPage.module.css";
 import { formatDateTime } from "../../utils/formatDateTime.js";
+import { queueTranslation } from "../../utils/translationQueue.js";
 
 const PAGE_SIZE = 10;
 
@@ -24,9 +25,7 @@ const INITIAL_FORM = {
 
 export default function InquiryPage() {
     const { t, i18n } = useTranslation();
-    const targetLanguage = (
-        i18n.resolvedLanguage || i18n.language || "ko"
-    ).split("-")[0];
+    const targetLanguage = (i18n.resolvedLanguage || i18n.language || "ko").split("-")[0];
 
     const [form, setForm] = useState(INITIAL_FORM);
     const [inquiries, setInquiries] = useState([]);
@@ -45,7 +44,6 @@ export default function InquiryPage() {
     const isLoadingRef = useRef(false);
     const hasMoreRef = useRef(true);
     const translatedTitleRequestsRef = useRef(new Set());
-
 
     // 첫 조회와 다음 목록 조회가 같은 커서 규칙을 사용한다.
     const loadInquiries = useCallback(
@@ -118,7 +116,9 @@ export default function InquiryPage() {
 
             translatedTitleRequestsRef.current.add(key);
 
-            translateMyInquiryText(inquiry.inquiryId, "title", targetLanguage)
+            queueTranslation(`my-inquiry:${inquiry.inquiryId}:title:${targetLanguage}`, () =>
+                translateMyInquiryText(inquiry.inquiryId, "title", targetLanguage),
+            )
                 .then((response) => {
                     setTranslatedInquiries((previous) => ({
                         ...previous,
@@ -148,7 +148,9 @@ export default function InquiryPage() {
 
             translatedTitleRequestsRef.current.add(key);
 
-            translateMyInquiryText(inquiry.inquiryId, "content", targetLanguage)
+            queueTranslation(`my-inquiry:${inquiry.inquiryId}:content:${targetLanguage}`, () =>
+                translateMyInquiryText(inquiry.inquiryId, "content", targetLanguage),
+            )
                 .then((response) => {
                     setTranslatedInquiries((previous) => ({
                         ...previous,
@@ -180,7 +182,9 @@ export default function InquiryPage() {
 
             translatedTitleRequestsRef.current.add(key);
 
-            translateMyInquiryText(inquiry.inquiryId, "answer", targetLanguage)
+            queueTranslation(`my-inquiry:${inquiry.inquiryId}:answer:${targetLanguage}`, () =>
+                translateMyInquiryText(inquiry.inquiryId, "answer", targetLanguage),
+            )
                 .then((response) => {
                     setTranslatedInquiries((previous) => ({
                         ...previous,
@@ -432,12 +436,12 @@ export default function InquiryPage() {
                                     {t(`inquiry.category.${inquiry.inquiryCategory}`)}
                                 </p>
                                 <h3>
-                                    {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.title
-                                        || inquiry.title}
+                                    {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]
+                                        ?.title || inquiry.title}
                                 </h3>
                                 <p className={styles.content}>
-                                    {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.content
-                                        || inquiry.content}
+                                    {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]
+                                        ?.content || inquiry.content}
                                 </p>
                                 <InquiryImageList
                                     inquiryId={inquiry.inquiryId}
@@ -448,8 +452,9 @@ export default function InquiryPage() {
                                     <div className={styles.answer}>
                                         <h4>{t("inquiry.answer.title")}</h4>
                                         <p>
-                                            {translatedInquiries[targetLanguage]?.[inquiry.inquiryId]?.answer
-                                                || inquiry.answerContent}
+                                            {translatedInquiries[targetLanguage]?.[
+                                                inquiry.inquiryId
+                                            ]?.answer || inquiry.answerContent}
                                         </p>
                                         <time dateTime={inquiry.answeredAt}>
                                             {formatDateTime(inquiry.answeredAt, i18n.language)}
