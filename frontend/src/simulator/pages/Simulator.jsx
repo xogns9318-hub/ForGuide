@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import {
     MONEY_FIELDS,
     allocateBudget,
@@ -102,7 +101,7 @@ function DateField({ id, label, value, onChange, t }) {
     );
 }
 
-function MoneyField({ id, label, value, hint, onChange, won }) {
+function MoneyField({ id, label, value, hint, onChange, won, placeholder }) {
     return (
         <div className={styles.field}>
             <label htmlFor={id}>{label}</label>
@@ -113,7 +112,7 @@ function MoneyField({ id, label, value, hint, onChange, won }) {
                     type="text"
                     inputMode="numeric"
                     autoComplete="off"
-                    maxLength={14}
+                    placeholder={placeholder}
                     value={value}
                     onChange={(event) => onChange(event.target.value)}
                     aria-describedby={id + "-hint"}
@@ -142,9 +141,8 @@ export default function Simulator() {
     const [editDate, setEditDate] = useState("");
     const [extra, setExtra] = useState("");
     const [extraError, setExtraError] = useState("");
-
-    const calendarRef = useRef(null);
     const touchStart = useRef(null);
+    const amountWarningTimer = useRef(null);
 
     const numberFormatter = useMemo(
         () => new Intl.NumberFormat(i18n.language),
@@ -174,7 +172,10 @@ export default function Simulator() {
             .join(" ");
     };
 
-    const canCalculate = inputError(values) === "";
+    const validationError = inputError(values);
+    const canCalculate = validationError === "";
+    const startDate = readDate(values.start);
+    const endDate = readDate(values.end);
 
     const plan = useMemo(
         () => (result ? allocateBudget(result, specialDays) : null),
@@ -190,10 +191,22 @@ export default function Simulator() {
         return () => window.clearTimeout(timer);
     }, [result]);
 
+    useEffect(() => {
+        return () => window.clearTimeout(amountWarningTimer.current);
+    }, []);
+
     function changeValue(field, value) {
         if (MONEY_FIELDS.includes(field)) {
-            if (value !== "" && moneyError(value)) {
-                setError(moneyError(value));
+            const warning = value === "" ? "" : moneyError(value);
+
+            if (warning) {
+                window.clearTimeout(amountWarningTimer.current);
+                setError(warning);
+
+                // 마지막으로 거부한 금액 입력부터 3초 뒤에 경고를 숨긴다.
+                amountWarningTimer.current = window.setTimeout(() => {
+                    setError("");
+                }, 3000);
                 return;
             }
 
@@ -209,7 +222,6 @@ export default function Simulator() {
         setLayoutReady(false);
         setSpecialDays({});
         setEditDate("");
-        setError("");
     }
 
     function calculate(event) {
@@ -226,7 +238,6 @@ export default function Simulator() {
         setMonth(next.start.monthIndex);
         setSpecialDays({});
         setEditDate("");
-        setError("");
     }
 
     const moveMonth = useCallback(
@@ -246,49 +257,6 @@ export default function Simulator() {
         },
         [result],
     );
-
-    useEffect(() => {
-        const calendar = calendarRef.current;
-        if (!layoutReady || !calendar) return;
-
-        const wheel = { last: 0, sum: 0, lockedUntil: 0 };
-
-        function onWheel(event) {
-            if (
-                event.ctrlKey ||
-                Math.abs(event.deltaY) <= Math.abs(event.deltaX)
-            ) {
-                return;
-            }
-
-            event.preventDefault();
-
-            const now = performance.now();
-
-            if (now - wheel.last > 140) wheel.sum = 0;
-
-            wheel.last = now;
-
-            // 잠금 시간이 지나면 자동으로 다시 입력을 받는다.
-            if (now < wheel.lockedUntil) return;
-
-            const multiplier =
-                event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? 300 : 1;
-
-            wheel.sum += event.deltaY * multiplier;
-
-            if (Math.abs(wheel.sum) < 40) return;
-
-            moveMonth(Math.sign(wheel.sum));
-
-            wheel.sum = 0;
-            wheel.lockedUntil = now + 400;
-        }
-
-        calendar.addEventListener("wheel", onWheel, { passive: false });
-
-        return () => calendar.removeEventListener("wheel", onWheel);
-    }, [layoutReady, moveMonth]);
 
     function closeEditor() {
         document.getElementById(id + "-day-" + editDate)?.focus();
@@ -389,13 +357,17 @@ export default function Simulator() {
                                 ))}
                             </div>
 
-                            {values.start &&
-                                values.end &&
-                                inputError(values) === "dateOrder" && (
-                                    <p className={styles.error}>
-                                        {text("errors.dateOrder")}
-                                    </p>
-                                )}
+                            {(!startDate || !endDate) && (
+                                <p className={styles.dateHint}>
+                                    {text("errors.dateRange")}
+                                </p>
+                            )}
+
+                            {startDate && endDate && startDate.ordinal > endDate.ordinal && (
+                                <p className={styles.error} role="alert">
+                                    {text("errors.dateOrder")}
+                                </p>
+                            )}
                         </fieldset>
 
                         {MONEY_FIELDS.slice(1).map(renderMoney)}
@@ -420,7 +392,6 @@ export default function Simulator() {
                     <>
                         <div className={styles.calendarColumn}>
                             <div
-                                ref={calendarRef}
                                 className={styles.calendar}
                                 role="region"
                                 aria-label={text("calendar")}
@@ -543,7 +514,7 @@ export default function Simulator() {
                                                 aria-label={text(
                                                     amount === null
                                                         ? "outsideDay"
-                                                        : "dayLabel",
+                                                        : "extraSpendDayLabel",
                                                     {
                                                         date: key,
                                                         amount:
@@ -581,7 +552,7 @@ export default function Simulator() {
                                 </div>
 
                                 <p className={styles.calendarHint}>
-                                    {text("calendarHint")}
+                                    {text("calendarDateHint")}
                                 </p>
 
                                 {editDate && (
@@ -591,7 +562,7 @@ export default function Simulator() {
                                     >
                                         <div className={styles.editorHeader}>
                                             <strong>
-                                                {text("extraTitle", {
+                                                {text("extraSpendTitle", {
                                                     date: editDate,
                                                 })}
                                             </strong>
@@ -607,8 +578,9 @@ export default function Simulator() {
 
                                         <MoneyField
                                             id={id + "-extra"}
-                                            label={text("extraAmount")}
+                                            label={text("extraSpendAmount")}
                                             value={extra}
+                                            placeholder="0"
                                             hint={converted(extra)}
                                             won={i18n.language === "ko" ? text("units.won") : "KRW"}
                                             onChange={(value) => {
@@ -633,7 +605,7 @@ export default function Simulator() {
                                         />
 
                                         <p className={styles.calendarHint}>
-                                            {text("extraHint")}
+                                            {text("extraSpendHint")}
                                         </p>
 
                                         {extraError && (
@@ -667,7 +639,7 @@ export default function Simulator() {
                                                     closeEditor();
                                                 }}
                                             >
-                                                {text("remove")}
+                                                {text("resetExtra")}
                                             </button>
                                         </div>
                                     </form>
@@ -687,28 +659,30 @@ export default function Simulator() {
                             </h2>
 
                             <p className={styles.formula}>
-                                {text("formula", {
+                                {text("budgetFormulaAfterExtra", {
                                     cash: won(result.totals.cash),
                                     income: won(result.totals.income),
                                     payment: won(result.totals.payment),
                                     fixed: won(result.totals.fixed),
                                     food: won(result.totals.food),
                                     living: won(result.totals.living),
-                                    balance: won(result.balance),
+                                    extra: won(plan.specialTotal),
+                                    balance: won(result.balance - plan.specialTotal),
                                 })}
                             </p>
 
                             <dl className={styles.summary}>
                                 {[
-                                    ["available", won(result.balance)],
+                                    ["availableAfterExtra", won(plan.pool)],
                                     [
-                                        "days",
+                                        "totalRepaymentDays",
                                         text("dayCount", {
                                             count: result.days,
                                         }),
                                     ],
-                                    ["daily", won(plan.daily)],
-                                    ["extraTotal", won(plan.specialTotal)],
+                                    ["dailyAvailable", won(plan.daily)],
+                                    ["remainingAvailable", won(plan.remainder)],
+                                    ["extraSpendTotal", won(plan.specialTotal)],
                                 ].map(([key, value]) => (
                                     <div key={key}>
                                         <dt>{text(key)}</dt>
@@ -725,74 +699,7 @@ export default function Simulator() {
                                 </p>
                             )}
 
-                            <p className={styles.note}>
-                                {text("dailyFormula", {
-                                    available: won(result.available),
-                                    extra: won(plan.specialTotal),
-                                    days: result.days,
-                                    daily: won(plan.daily),
-                                })}{" "}
-                                {plan.remainder > 0n &&
-                                    text("remainder", {
-                                        count: numberFormatter.format(plan.remainder),
-                                    })}
-                            </p>
-
-                            <p className={styles.note}>
-                                {text("assumption")}
-                            </p>
-
-                            <div
-                                className={styles.chart}
-                                role="img"
-                                aria-label={text("chartLabel")}
-                            >
-                                <ResponsiveContainer width="100%" height={26}>
-                                    <BarChart
-                                        layout="vertical"
-                                        data={[
-                                            {
-                                                name: "budget",
-                                                expenses: Number(
-                                                    result.expenses,
-                                                ),
-                                                available: Number(
-                                                    result.available,
-                                                ),
-                                            },
-                                        ]}
-                                        margin={{
-                                            top: 0,
-                                            right: 0,
-                                            bottom: 0,
-                                            left: 0,
-                                        }}
-                                    >
-                                        <XAxis type="number" hide />
-                                        <YAxis
-                                            type="category"
-                                            dataKey="name"
-                                            hide
-                                        />
-
-                                        <Bar
-                                            dataKey="expenses"
-                                            stackId="budget"
-                                            fill="#d4eae2"
-                                            isAnimationActive={false}
-                                        />
-
-                                        <Bar
-                                            dataKey="available"
-                                            stackId="budget"
-                                            fill="#527b73"
-                                            isAnimationActive={false}
-                                        />
-                                    </BarChart>
-                                </ResponsiveContainer>
-
-                                <span>{text("chartLegend")}</span>
-                            </div>
+                            <p className={styles.note}>{text("budgetSummaryNote")}</p>
 
                             {specialEntries.length > 0 && (
                                 <ul className={styles.specialList}>
