@@ -11,6 +11,7 @@
 | DB | 같은 서버의 MySQL, DB `forguide`. 테이블은 서버 시작 때 Flyway가 V1부터 만든다 |
 | 기타 | Redis(번역 캐시), 사진은 `/var/lib/forguide/uploads` |
 | 기관 검색 | Docker로 팀 `compose.yml`의 Elasticsearch(Nori)만 실행, 서버용 값은 `deploy/compose.server.yml` (힙 768MB, 재부팅 시 자동 시작) |
+| 주소 | `https://forguide.duckdns.org` (DuckDNS 무료 도메인 → 탄력적 IP, Let's Encrypt 인증서·자동 갱신). http·IP로 들어와도 https로 넘긴다 |
 | 비밀값 | `/etc/forguide/forguide.env` (권한 600, root만 읽음) |
 
 ## 1. AWS 콘솔 (처음 한 번)
@@ -38,7 +39,7 @@ sudo bash ~/deploy/server-setup.sh        # Java·Nginx·MySQL·Redis 설치, �
 백엔드 jar·화면을 빌드해 올리고 백엔드를 다시 켠 뒤, 켜질 때까지 기다린다. 빌드 없이 올리기만 하려면 `-SkipBuild`.
 
 ## 4. 확인
-- 브라우저로 `http://<서버 IP>`: 회원가입(메일 인증)·로그인·새로고침 후 로그인 유지·추천·챗봇(글자가 이어서 써지는지)·알림·사진 올리기(프로필·커뮤니티·문의·이력서·신고 — 올린 뒤 `/var/lib/forguide/uploads/` 아래 각 폴더에 파일이 생기는지도 본다. 이력서·신고는 경로를 Spring 설정 이름으로 넘겨서 실서버 확인이 필요하다)
+- 브라우저로 `https://forguide.duckdns.org` (6절 전에는 `http://<서버 IP>`): 회원가입(메일 인증)·로그인·새로고침 후 로그인 유지·추천·챗봇(글자가 이어서 써지는지)·알림·사진 올리기(프로필·커뮤니티·문의·이력서·신고 — 올린 뒤 `/var/lib/forguide/uploads/` 아래 각 폴더에 파일이 생기는지도 본다. 이력서·신고는 경로를 Spring 설정 이름으로 넘겨서 실서버 확인이 필요하다)
 - 재부팅: `sudo reboot` 뒤 다시 접속해 로그인되는지 (백엔드 자동 시작)
 - 관리자 계정: 환경변수 `FORGUIDE_ADMIN_*`로 서버 시작 때 만들어진다
 
@@ -62,6 +63,26 @@ curl -s http://127.0.0.1:9200        # "number" : "9.4.7"이 보이면 켜진 �
 3. `FORGUIDE_ELASTICSEARCH_REINDEX_ON_START=false`로 되돌리고 다시 `sudo systemctl restart forguide`
 4. 화면의 도움 기관 검색에서 결과가 나오는지 본다. 팀이 `compose.yml`·`database/Dockerfile.elasticsearch`를 바꾸면 위 복사와 `up` 명령을 다시 실행한다
 
+## 6. HTTPS (도메인 연결, 처음 한 번)
+1. duckdns.org에서 이름(`forguide`)을 만들고 current ip를 **서버의 탄력적 IP**로 바꾼다 (처음엔 내 PC IP가 들어 있다). token은 공유하지 않는다
+2. 서버에서 인증서를 받는다 (Let's Encrypt 약관 동의, 만료 메일 없이):
+```bash
+sudo sed -i "s|server_name _;|server_name forguide.duckdns.org;|" /etc/nginx/sites-available/forguide
+sudo apt-get install -y certbot python3-certbot-nginx
+sudo certbot --nginx -d forguide.duckdns.org --agree-tos --register-unsafely-without-email --redirect --non-interactive
+```
+3. certbot이 만든 맨 아래 `listen 80` 블록을 아래로 바꿔 IP로 들어와도 https로 넘긴다 (그대로 두면 IP 접속이 404)
+```nginx
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+    return 301 https://forguide.duckdns.org$request_uri;
+}
+```
+4. `sudo nginx -t && sudo systemctl reload nginx`, `/etc/forguide/forguide.env`의 `JWT_COOKIE_SECURE=true` → `sudo systemctl restart forguide`
+5. 갱신 확인: `sudo certbot renew --dry-run` (자동 실행이라 몇 분 기다렸다가 끝난다). 갱신은 `certbot.timer`가 알아서 한다
+
 ## 문제 생길 때
 | 확인 | 명령 |
 | --- | --- |
@@ -70,5 +91,6 @@ curl -s http://127.0.0.1:9200        # "number" : "9.4.7"이 보이면 켜진 �
 | DB 접속 | `sudo mysql forguide` |
 | 검색 서버 | `sudo docker ps`, `sudo docker logs forguide-elasticsearch --tail 100` |
 
-- HTTP로 접속하는 동안은 `JWT_COOKIE_SECURE=false`여야 로그인 유지 쿠키가 저장된다. HTTPS를 붙이면 `true`로 바꾼다.
+- `JWT_COOKIE_SECURE`는 https면 `true`, http만 쓰는 동안(6절 전)은 `false`여야 로그인 유지 쿠키가 저장된다.
+- `server-setup.sh`를 다시 실행하면 Nginx 설정이 http용으로 돌아간다. 그 뒤엔 6절 2~4를 다시 한다.
 - 서버 DB는 팀 공용 DB와 따로다. 테스트 데이터는 서버에서 새로 만든다.
