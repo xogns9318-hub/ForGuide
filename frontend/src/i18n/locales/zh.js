@@ -159,8 +159,7 @@ const zh = {
         },
         chatbot: {
             headline: "先向 AI 聊天机器人咨询吧",
-            description:
-                "使用服务时有疑问，可以询问 AI 聊天机器人，\n快速确认所需信息。",
+            description: "使用服务时有疑问，可以询问 AI 聊天机器人，\n快速确认所需信息。",
         },
         inquiry: {
             headline: "如有疑问，欢迎随时咨询",

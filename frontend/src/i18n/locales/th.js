@@ -851,8 +851,7 @@ const th = {
             myRepostsLoginRequired: "กรุณาเข้าสู่ระบบเพื่อดูรีโพสต์ของคุณ",
             postsLoadError: "ไม่สามารถโหลดโพสต์ได้",
             imageCountLimit: "คุณสามารถแนบรูปภาพได้สูงสุด {{count}} รูป",
-            imageValidation:
-                "สามารถแนบได้เฉพาะไฟล์ JPG หรือ PNG โดยแต่ละรูปต้องมีขนาดไม่เกิน 4 MB",
+            imageValidation: "สามารถแนบได้เฉพาะไฟล์ JPG หรือ PNG โดยแต่ละรูปต้องมีขนาดไม่เกิน 4 MB",
             writeLoginRequired: "กรุณาเข้าสู่ระบบเพื่อโพสต์",
             contentRequired: "กรุณาเพิ่มเนื้อหาโพสต์หรือรูปภาพ",
             writeFailed: "ไม่สามารถโพสต์ได้",
