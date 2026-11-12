@@ -1421,6 +1421,8 @@ const ko = {
             nameHelp: "50자 이하",
             familyNameHelp: "50자 이하, 성이 없으면 비워 두세요.",
             emailHelp: "인증 코드를 받아 확인해야 가입할 수 있어요.",
+            charCount: "{{count}}/{{max}}",
+            charLimitReached: "최대 {{max}}자까지 입력할 수 있어요. 넘는 부분은 지웠어요.",
             // 비밀번호 조건 목록 (met·notMet은 화면 낭독기용)
             passwordRules: {
                 length: "8~32자",

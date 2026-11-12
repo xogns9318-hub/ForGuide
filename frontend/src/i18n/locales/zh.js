@@ -1496,6 +1496,8 @@ const zh = {
             nameHelp: "最多50个字",
             familyNameHelp: "最多50个字。没有姓氏可留空。",
             emailHelp: "需通过验证码验证邮箱后才能注册。",
+            charCount: "{{count}}/{{max}}",
+            charLimitReached: "最多可输入{{max}}个字，超出部分已删除。",
             passwordRules: {
                 length: "8–32位",
                 lower: "小写字母",

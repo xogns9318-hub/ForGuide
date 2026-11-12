@@ -1604,6 +1604,8 @@ const en = {
             nameHelp: "Up to 50 characters",
             familyNameHelp: "Up to 50 characters. Leave blank if you have no family name.",
             emailHelp: "Verify your email with a code to sign up.",
+            charCount: "{{count}}/{{max}}",
+            charLimitReached: "You can enter up to {{max}} characters. The extra text was removed.",
             passwordRules: {
                 length: "8–32 characters",
                 lower: "Lowercase",

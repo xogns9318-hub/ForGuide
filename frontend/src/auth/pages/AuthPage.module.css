@@ -79,6 +79,21 @@
     white-space: nowrap;
 }
 
+/* 회원가입: 입력칸 아래 안내 + 오른쪽 글자 수 (예: 12/20) */
+.helpRow {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.charCount {
+    flex-shrink: 0;
+    color: var(--muted);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+
 /* 회원가입 비밀번호 조건 목록: 충족한 조건은 체크 표시와 주 색상으로 바뀐다 */
 .rules {
     display: flex;
