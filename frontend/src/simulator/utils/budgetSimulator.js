@@ -1,4 +1,4 @@
-export const MAX_MONEY = 10_000_000_000_000n;
+export const MAX_MONEY = 9_999_999_999_999n;
 
 export const MONEY_FIELDS = [
     "payment",
@@ -17,7 +17,7 @@ export function readDate(value) {
 
     const [year, month, day] = value.split("-").map(Number);
 
-    if (year < 1 || year > 9999 || month < 1 || month > 12) return null;
+    if (isYearOutOfRange(year) || month < 1 || month > 12) return null;
 
     const date = new Date(0);
     date.setUTCHours(0, 0, 0, 0);
@@ -68,10 +68,22 @@ export function moneyError(value) {
     if (value === "") return "required";
     if (!/^\d+$/.test(value)) return "digits";
 
-    return BigInt(value) > MAX_MONEY ? "limit" : "";
+    return BigInt(value) > MAX_MONEY ? "amountLimit" : "";
+}
+
+function isYearOutOfRange(year) {
+    return year < 1900 || year > 2099;
 }
 
 export function inputError(values) {
+    for (const value of [values.start, values.end]) {
+        const year = (value ?? "").split("-", 1)[0];
+
+        if (/^\d{4}$/.test(year) && isYearOutOfRange(Number(year))) {
+            return "dateRange";
+        }
+    }
+
     for (const field of MONEY_FIELDS) {
         const error = moneyError(values[field] ?? "");
         if (error) return error;
@@ -179,7 +191,6 @@ export function allocateBudget(result, specialDays = {}) {
         pool,
         daily: pool / BigInt(result.days),
         remainder: pool % BigInt(result.days),
-        specialDays,
     };
 }
 
@@ -194,14 +205,7 @@ export function dayBudget(result, plan, key) {
         return null;
     }
 
-    const offset = BigInt(date.ordinal - result.start.ordinal);
-
-    // 나머지 원을 앞 날짜부터 배분해 일별 합계와 전체 예산을 맞춘다.
-    return (
-        plan.daily +
-        (offset < plan.remainder ? 1n : 0n) +
-        BigInt(plan.specialDays[key] ?? 0)
-    );
+    return plan.daily;
 }
 
 // 기존 계산기의 만원 입력용 함수와 분리해 원 단위를 환산한다.
