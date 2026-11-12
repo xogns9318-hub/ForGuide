@@ -205,6 +205,13 @@
     overflow-wrap: anywhere;
 }
 
+.dateHint {
+    margin: 4px 0;
+    color: var(--ink);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
 .calendarColumn {
     position: relative;
     display: flex;
@@ -350,14 +357,24 @@
 .editor {
     position: absolute;
     z-index: 5;
-    left: 12px;
-    right: 12px;
+    left: 50%;
+    width: min(360px, calc(100% - 24px));
+    transform: translateX(-50%);
     bottom: 12px;
     padding: 18px;
     border: 1px solid var(--line);
     border-radius: var(--panel-radius);
     background: #fff;
     box-shadow: 0 12px 28px rgb(32 59 51 / 14%);
+}
+
+.editor .numberLine {
+    max-width: 220px;
+}
+
+.editor .numberLine input::placeholder {
+    color: inherit;
+    opacity: 0.35;
 }
 
 .editorHeader {
@@ -401,8 +418,10 @@
 
 .summary {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(5, minmax(0, max-content));
+    width: fit-content;
+    max-width: 100%;
+    gap: 8px 100px;
     margin: 0 0 10px;
 }
 
@@ -423,19 +442,7 @@
     line-height: 1.5;
 }
 
-.chart {
-    margin-top: 8px;
-}
-
-.chart > span {
-    display: block;
-    margin-top: 3px;
-    font-size: 11px;
-}
-
 .specialList {
-    max-height: 64px;
-    overflow-y: auto;
     margin: 8px 0 0;
     padding-left: 18px;
     font-size: 12px;
