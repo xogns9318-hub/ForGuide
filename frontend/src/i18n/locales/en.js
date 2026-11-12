@@ -1691,7 +1691,7 @@ const en = {
             passwordLength: "Your password must be 8–32 characters.",
             passwordCharacters:
                 "Your password can't contain spaces or characters outside the English keyboard.",
-            passwordMissing: "Please include {{items}}.",
+            passwordMissing: "Your password still needs: {{items}}.",
             passwordParts: {
                 lower: "a lowercase letter",
                 upper: "an uppercase letter",
