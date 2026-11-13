@@ -3,8 +3,8 @@
 [Unit]
 Description=ForGuide backend
 After=network-online.target mysql.service redis-server.service
-Wants=network-online.target
-Requires=mysql.service
+# mysql은 Requires가 아니라 Wants: 자동 업데이트로 MySQL이 재시작될 때 백엔드까지 같이 멈추지 않게 한다.
+Wants=network-online.target mysql.service
 
 [Service]
 User=forguide
@@ -13,7 +13,8 @@ WorkingDirectory=/opt/forguide
 EnvironmentFile=/etc/forguide/forguide.env
 ExecStart=/usr/bin/java -Xms256m -Xmx768m -Duser.timezone=Asia/Seoul -jar /opt/forguide/forguide.jar
 SuccessExitStatus=143
-Restart=on-failure
+# 정상 종료(143)로 끝나도 다시 켠다. systemctl stop으로 직접 멈춘 경우는 다시 켜지 않는다.
+Restart=always
 RestartSec=10
 
 [Install]
